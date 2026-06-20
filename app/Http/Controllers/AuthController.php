@@ -3,12 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Models\User;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     use ApiResponses;
+
+    // Register
+    public function register(RegisterRequest $request){
+        $credentials = $request->validated();
+
+        $user = User::create($credentials);
+
+
+        return $this->ok(
+            "User registered successfully",
+            [
+                "name"=>$user->name,
+                "email"=>$user->email,
+                "phone"=>$user->phone,
+                "position"=>$user->position,
+                "role_scope_id"=>$user->role_scope_id,
+                "role_scope_type"=>$user->role_scope_type,
+            ]
+        );
+    }
 
     // Login
     public function login(LoginRequest $request){
@@ -19,6 +41,7 @@ class AuthController extends Controller
         }
         $user = Auth::user();
         $token = $user->createToken('api-token')->plainTextToken;
+
         return $this->ok(
             "User logged in successfully",
             [
