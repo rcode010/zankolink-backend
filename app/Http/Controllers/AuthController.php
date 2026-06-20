@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Traits\ApiResponses;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
@@ -26,5 +27,11 @@ class AuthController extends Controller
                 "token"=>$token,
             ]
         );
+    }
+
+    // Logout
+    public function logout(Request $request){
+        $request->user()->currentAccessToken()->delete();
+        return $this->ok("Logged out successfully");
     }
 }
