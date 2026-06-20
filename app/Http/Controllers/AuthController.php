@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
 class AuthController extends Controller
 {
     use ApiResponses;
@@ -56,5 +59,23 @@ class AuthController extends Controller
     public function logout(Request $request){
         $request->user()->currentAccessToken()->delete();
         return $this->ok("Logged out successfully");
+    }
+
+    // Change Password
+    public function changePassword(ChangePasswordRequest $request){
+        $credentials = $request->validated();
+        $user = Auth::user();
+
+        if (! Hash::check($credentials['current_password'], $user->password)) {
+            return $this->error("Current password is incorrect.", 401);
+        }
+        if ($credentials['password'] === $credentials['current_password']) {
+            return $this->error("New password can't be the same as current one.", 422);
+
+        }
+
+            $user->update(['password'=>$credentials['password']]);
+
+        return $this->ok("Password changed successfully");
     }
 }
