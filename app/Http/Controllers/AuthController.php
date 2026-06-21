@@ -7,9 +7,13 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Traits\ApiResponses;
+use Illuminate\Auth\Events\PasswordReset;
+use App\Http\Requests\ResetPasswordRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -77,5 +81,46 @@ class AuthController extends Controller
             $user->update(['password'=>$credentials['password']]);
 
         return $this->ok("Password changed successfully");
+    }
+
+    // Forget Password
+    public function forgetPassword(Request $request){
+        $credentials = $request->validate([
+           'email' => 'required|string|email',
+        ]);
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        $status = Password::sendResetLink(['email'=>$credentials['email']]);
+
+
+
+        return $status === Password::RESET_LINK_SENT
+        ?    $this->ok("Password reset link sent to your email.")
+        :    $this->error("Unable to snd reset link.",400);
+
+    }
+
+
+    // Reset Password
+    public function resetPassword(ResetPasswordRequest $request){
+        $credentials = $request->validated();
+
+        $status = Password::reset(
+            $credentials,
+            function (User $user,string $password) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ?    $this->ok("Password reset successfully.")
+            :    $this->error("Invalid token or email, Please request a new reset link.",422);
     }
 }
