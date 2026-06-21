@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('letters', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('letter_number')->nullable();
+            $table->string('letter_number');
             $table->string('sender_type');
             $table->unsignedBigInteger('original_sender_id');
             $table->unsignedBigInteger('sender_id');
