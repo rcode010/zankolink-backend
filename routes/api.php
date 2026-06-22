@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\LetterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
+
+    //Faculties
+    Route::post(
+        'universities/{university}/faculties',
+        [FacultyController::class, 'store']
+    );
+
     // Departments
     Route::prefix('departments')->group(function () {
         Route::get('/', [DepartmentController::class, 'index']);

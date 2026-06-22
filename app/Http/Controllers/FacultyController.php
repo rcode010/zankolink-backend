@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFacultyRequest;
 use App\Http\Requests\UpdateFacultyRequest;
+use App\Http\Resources\FacultyResource;
+use App\Traits\ApiResponses;
 use App\Models\Faculty;
 use App\Models\University;
 use Illuminate\Http\Request;
 
 class FacultyController extends Controller
 {
+    use ApiResponses;
     /**
      * Display a listing of the resource.
      */
@@ -23,7 +26,16 @@ class FacultyController extends Controller
      */
     public function store(StoreFacultyRequest $request, University $university)
     {
-        //
+        $faculty = $university->faculties()->create(
+            $request->validated()
+        );
+
+        return $this->success(
+            'Faculty created successfully.',
+            (new FacultyResource($faculty))
+            ->toArray($request),
+            201
+        );
     }
 
     /**
