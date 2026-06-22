@@ -16,10 +16,10 @@ class LetterObserver
         $latest = Letter::max('letter_number');
 
         // Increment
-        $next = $latest ? (int)$latest + 1 : 1;
+        $next = $latest ? (int) $latest + 1 : 1;
 
         // Assign as string
-        $letter->letter_number = (string)$next;
+        $letter->letter_number = (string) $next;
     }
 
     /**
