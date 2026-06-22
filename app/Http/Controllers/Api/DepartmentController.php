@@ -7,95 +7,108 @@ use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use App\Http\Resources\DepartmentResource;
 use App\Traits\ApiResponses;
+use App\Models\Department;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class DepartmentController extends Controller
 {
     use ApiResponses;
 
+    /**
+     * Display a listing of the departments with filters and pagination.
+     * * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request)
     {
-        $query = DB::table('departments');
+        // Fetch departments using Spatie QueryBuilder for dynamic filtering
+        $departments = QueryBuilder::for(Department::class)
+            ->allowedFilters(['name', 'code', 'faculty_id'])
+            ->latest()
+            ->paginate($request->query('per_page', 15));
 
-        if ($request->has('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->has('faculty_id')) {
-            $query->where('faculty_id', $request->input('faculty_id'));
-        }
-
-        $departments = $query->latest()->paginate(10);
-        $resourceCollection = DepartmentResource::collection($departments)->response()->getData(true);
-
-        return $this->ok('Departments retrieved successfully', $resourceCollection);
+        return $this->ok(
+            'Departments retrieved successfully.',
+            DepartmentResource::collection($departments)->response()->getData(true)
+        );
     }
 
+    /**
+     * Store a newly created department in storage.
+     * * @param StoreDepartmentRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(StoreDepartmentRequest $request)
     {
-        $data = $request->validated();
-        $data['created_at'] = now();
-        $data['updated_at'] = now();
+        // Create department with validated request data
+        $department = Department::create($request->validated());
 
-        $id = DB::table('departments')->insertGetId($data);
-        $department = DB::table('departments')->where('id', $id)->first();
-        $resource = new DepartmentResource($department);
-
-        return $this->created('Department created successfully', $resource->resolve());
+        return $this->success(
+            'Department created successfully.',
+            (new DepartmentResource($department))->toArray($request),
+            201
+        );
     }
 
-    public function show($id)
+    /**
+     * Display the specified department details.
+     * * @param Department $department
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Department $department)
     {
-        $department = DB::table('departments')->where('id', $id)->first();
-
-        if (!$department) {
-            return $this->error('Department not found', 404);
-        }
-
-        $resource = new DepartmentResource($department);
-        return $this->ok('Department details retrieved successfully', $resource->resolve());
+        return $this->ok(
+            'Department details retrieved successfully.',
+            (new DepartmentResource($department))->toArray(request())
+        );
     }
 
-    public function update(UpdateDepartmentRequest $request, $id)
+    /**
+     * Update the specified department in storage.
+     * * @param UpdateDepartmentRequest $request
+     * @param Department $department
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(UpdateDepartmentRequest $request, Department $department)
     {
-        $exists = DB::table('departments')->where('id', $id)->exists();
+        // Update the department model instance directly
+        $department->update($request->validated());
 
-        if (!$exists) {
-            return $this->error('Department not found', 404);
-        }
-
-        $data = $request->validated();
-        $data['updated_at'] = now();
-
-        DB::table('departments')->where('id', $id)->update($data);
-
-        $department = DB::table('departments')->where('id', $id)->first();
-        $resource = new DepartmentResource($department);
-
-        return $this->ok('Department updated successfully', $resource->resolve());
+        return $this->ok(
+            'Department updated successfully.',
+            (new DepartmentResource($department->fresh()))->toArray($request)
+        );
     }
 
-    public function destroy($id)
+    /**
+     * Remove the specified department from storage.
+     * * @param Department $department
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(Department $department)
     {
-        $deleted = DB::table('departments')->where('id', $id)->delete();
+        // Delete the department from database
+        $department->delete();
 
-        if (!$deleted) {
-            return $this->error('Department not found', 404);
-        }
-
-        return $this->deleted('Department deleted successfully');
+        return $this->ok('Department deleted successfully.');
     }
 
+    /**
+     * Get all departments associated with a specific faculty.
+     * * @param int $faculty_id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function indexByFaculty($faculty_id)
     {
-        $departments = DB::table('departments')->where('faculty_id', $faculty_id)->get();
-        $resource = DepartmentResource::collection($departments);
+        // Filter departments by faculty_id using QueryBuilder
+        $departments = QueryBuilder::for(Department::class)
+            ->where('faculty_id', $faculty_id)
+            ->get();
 
-        return $this->ok('Faculty departments retrieved successfully', $resource->resolve());
+        return $this->ok(
+            'Faculty departments retrieved successfully.',
+            DepartmentResource::collection($departments)->resolve()
+        );
     }
 }
