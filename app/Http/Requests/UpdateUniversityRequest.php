@@ -23,7 +23,14 @@ class UpdateUniversityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'sometimes|string|max:255',
+            'admin_id' => 'nullable|exists:users,id',
+            'academic_year' => 'nullable|string|regex:/^\d{4}-\d{4}$/',
+            'location' => 'sometimes|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after:start_date',
+            'established_year' => 'sometimes|date',
+            'is_active' => 'sometimes|boolean',
         ];
     }
 }
