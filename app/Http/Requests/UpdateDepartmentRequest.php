@@ -25,7 +25,7 @@ class UpdateDepartmentRequest extends FormRequest
     {
         $departmentId = $this->route('id');
         
-        return [
+       return [
             'name' => 'sometimes|required|string|max:255',
             'code' => [
                 'sometimes',
