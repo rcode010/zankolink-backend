@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('position',['student','teacher','head_of_department','dean','admin']);
             $table->string('phone');
             $table->foreignId('role_scope_id')->nullable();
-            $table->enum('role_scope_type',['course','department','faculty'])->nullable();
+            $table->enum('role_scope_type',['course','department','faculty','university'])->nullable();
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
