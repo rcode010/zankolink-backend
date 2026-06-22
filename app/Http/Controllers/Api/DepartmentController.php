@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use App\Http\Resources\DepartmentResource;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
+    use ApiResponses;
 
-    // Display a listing of departments with search and filter.
     public function index(Request $request)
     {
-        $query = Department::query();
+        $query = DB::table('departments');
 
-        // Search by name or code
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -26,65 +26,76 @@ class DepartmentController extends Controller
             });
         }
 
-        // Filter by faculty_id if provided
         if ($request->has('faculty_id')) {
             $query->where('faculty_id', $request->input('faculty_id'));
         }
 
-        // Paginate results 
-        $departments = $query->paginate(10);
+        $departments = $query->latest()->paginate(10);
+        $resourceCollection = DepartmentResource::collection($departments)->response()->getData(true);
 
-        return DepartmentResource::collection($departments);
-    
+        return $this->ok('Departments retrieved successfully', $resourceCollection);
     }
 
-    
-    //Store a newly created department in storage.
-     
     public function store(StoreDepartmentRequest $request)
     {
-        $department = Department::create($request->validated());
+        $data = $request->validated();
+        $data['created_at'] = now();
+        $data['updated_at'] = now();
 
-        return response()->json([
-            'message' => 'Department created successfully',
-            'data' => new DepartmentResource($department)
-        ], 201); // 201 Created
+        $id = DB::table('departments')->insertGetId($data);
+        $department = DB::table('departments')->where('id', $id)->first();
+        $resource = new DepartmentResource($department);
+
+        return $this->created('Department created successfully', $resource->resolve());
     }
 
-    //Display the specified department.
     public function show($id)
     {
-        $department = Department::findOrFail($id);
-        return new DepartmentResource($department);
+        $department = DB::table('departments')->where('id', $id)->first();
+
+        if (!$department) {
+            return $this->error('Department not found', 404);
+        }
+
+        $resource = new DepartmentResource($department);
+        return $this->ok('Department details retrieved successfully', $resource->resolve());
     }
 
-    //Update the specified department in storage.
     public function update(UpdateDepartmentRequest $request, $id)
     {
-        $department = Department::findOrFail($id);
-        $department->update($request->validated());
+        $exists = DB::table('departments')->where('id', $id)->exists();
 
-        return response()->json([
-            'message' => 'Department updated successfully',
-            'data' => new DepartmentResource($department)
-        ], 200); // 200 OK
+        if (!$exists) {
+            return $this->error('Department not found', 404);
+        }
+
+        $data = $request->validated();
+        $data['updated_at'] = now();
+
+        DB::table('departments')->where('id', $id)->update($data);
+
+        $department = DB::table('departments')->where('id', $id)->first();
+        $resource = new DepartmentResource($department);
+
+        return $this->ok('Department updated successfully', $resource->resolve());
     }
 
-    //Remove the specified department from storage.
     public function destroy($id)
     {
-        $department = Department::findOrFail($id);
-        $department->delete();
+        $deleted = DB::table('departments')->where('id', $id)->delete();
 
-        return response()->json([
-            'message' => 'Department deleted successfully'
-        ], 200); // 200 OK
+        if (!$deleted) {
+            return $this->error('Department not found', 404);
+        }
+
+        return $this->deleted('Department deleted successfully');
     }
 
-    //Get departments belonging to a specific faculty (Nested Route).
     public function indexByFaculty($faculty_id)
     {
-        $departments = Department::where('faculty_id', $faculty_id)->get();
-        return DepartmentResource::collection($departments);
+        $departments = DB::table('departments')->where('faculty_id', $faculty_id)->get();
+        $resource = DepartmentResource::collection($departments);
+
+        return $this->ok('Faculty departments retrieved successfully', $resource->resolve());
     }
 }
