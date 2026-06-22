@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\DepartmentController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\LetterController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,17 +11,17 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // Public Routes
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/login',[AuthController::class, 'login']);
+Route::post('/auth/reset-password',[AuthController::class, 'resetPassword']);
+Route::post('/auth/forget-password',[AuthController::class, 'forgetPassword']);
+
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/auth/register', [AuthController::class, 'register']);
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
-    Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
-    Route::post('/auth/forget-password', [AuthController::class, 'forgetPassword']);
-    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
-
-    // Routes for Departments Module
+    Route::post('/auth/register',[AuthController::class, 'register']);
+    Route::post('/auth/logout',[AuthController::class, 'logout']);
+    Route::post('/auth/change-password',[AuthController::class, 'changePassword']);
+    // Departments
     Route::prefix('departments')->group(function () {
         Route::get('/', [DepartmentController::class, 'index']);
         Route::post('/', [DepartmentController::class, 'store']);
@@ -31,18 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('{id}', [DepartmentController::class, 'destroy']);
     });
     Route::get('faculties/{faculty_id}/departments', [DepartmentController::class, 'indexByFaculty']);
-  
-    // Letters Module
-    Route::post('/letters', [LetterController::class, 'store']);
-    Route::get('/letters', [LetterController::class, 'index']);
-    Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
 
-    // Routes for Users Module (EZK-31)
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index']);
-        Route::get('{id}', [UserController::class, 'show']);
-        Route::patch('{id}', [UserController::class, 'update']);
-        Route::post('{id}/activate', [UserController::class, 'activate']);
-        Route::post('{id}/deactivate', [UserController::class, 'deactivate']);
-    });
+    // Letters
+    Route::post('/letters',[LetterController::class, 'store']);
+    Route::get('/letters',[LetterController::class, 'index']);
+    Route::get('/letters/{letter}',[LetterController::class, 'show'])->whereNumber('letter');
 });

@@ -12,10 +12,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('letters', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('letter_number');
-            $table->string('sender_type');
-            $table->unsignedBigInteger('original_sender_id');
+            $table->id();
+            $table->string('letter_number')->unique();
+            $table->foreignId('original_sender_id')->constrained('users')->onDelete('cascade');
             $table->unsignedBigInteger('sender_id');
             $table->string('receiver_type');
             $table->unsignedBigInteger('receiver_id');
@@ -25,10 +24,9 @@ return new class extends Migration
             $table->boolean('is_read')->default(false);
             $table->string('academic_year');
             $table->boolean('is_archived')->default(false);
-            $table->enum('status', ['draft', 'pending', 'sent', 'rejected'])->default('draft');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
 
-            $table->foreign('original_sender_id')->references('id')->on('Users')->onDelete('cascade');
         });
     }
 
