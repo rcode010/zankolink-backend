@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
 {
@@ -21,14 +21,14 @@ class Course extends Model
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'course-student')
-                    ->withPivot('grade', 'enrolled_at', 'academic_year')
-                    ->withTimestamps();
+            ->withPivot('grade', 'enrolled_at', 'academic_year')
+            ->withTimestamps();
     }
 
     public function teachers(): BelongsToMany
     {
         return $this->belongsToMany(Teacher::class, 'course-teacher')
-                    ->withPivot('role')
-                    ->withTimestamps();
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }
