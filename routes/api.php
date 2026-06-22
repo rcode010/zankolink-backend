@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LetterController;
 use App\Http\Controllers\UniversityController;
 use Illuminate\Http\Request;
@@ -12,10 +12,9 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // Public Routes
-Route::post('/auth/login',[AuthController::class, 'login']);
-Route::post('/auth/reset-password',[AuthController::class, 'resetPassword']);
-Route::post('/auth/forget-password',[AuthController::class, 'forgetPassword']);
-
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/auth/forget-password', [AuthController::class, 'forgetPassword']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -48,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/letters',[LetterController::class, 'store']);
     Route::get('/letters',[LetterController::class, 'index']);
     Route::get('/letters/{letter}',[LetterController::class, 'show'])->whereNumber('letter');
+
 
 });
 

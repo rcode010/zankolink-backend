@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('universities', function (Blueprint $table) {
             $table->id();
             $table->text('name');
-            $table->foreignId('admin_id')->nullable(); 
+            $table->foreignId('admin_id')->nullable();
             $table->text('academic_year')->nullable();
             $table->text('location');
             $table->date('start_date')->nullable();

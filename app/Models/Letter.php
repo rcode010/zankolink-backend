@@ -8,7 +8,7 @@ class Letter extends Model
 {
     protected $fillable = [
         'title', 'body', 'type', 'receiver_type', 'receiver_id',
-        'sender_type', 'sender_id', 'original_sender_id', 'status', 'academic_year'
+        'sender_type', 'sender_id', 'original_sender_id', 'status', 'academic_year',
     ];
 
     // Relationship to the person who sent the letter
@@ -23,6 +23,4 @@ class Letter extends Model
         // We tell Laravel to use 'receiver_id' as the foreign key
         return $this->belongsTo(User::class, 'receiver_id');
     }
-
-
 }

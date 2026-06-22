@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('enrollment_type', ['morning', 'parallel', 'evening']);
             $table->text('student_number');
             $table->bigInteger('year_of_study');
-            $table->enum('status',['active','inactive','on_leave','suspended','graduated'])->default('active');
+            $table->enum('status', ['active', 'inactive', 'on_leave', 'suspended', 'graduated'])->default('active');
             $table->timestamps();
             $table->softDeletes();
         });
