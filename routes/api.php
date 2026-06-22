@@ -34,4 +34,6 @@ Route::middleware('auth:sanctum')->prefix('universities')->group(function () {
     Route::get('/', [UniversityController::class,'index']);
     Route::get('/{university}', [UniversityController::class,'show']);
     Route::post('/', [UniversityController::class,'store']);
+    Route::patch('/{university}', [UniversityController::class,'update']);
+    Route::delete('/{university}', [UniversityController::class,'destroy']);
 });

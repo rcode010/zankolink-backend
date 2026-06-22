@@ -69,7 +69,15 @@ class UniversityController extends Controller
      */
     public function update(UpdateUniversityRequest $request, University $university)
     {
-        //
+        $university->update(
+            $request->validated()
+        );
+
+        return $this->ok(
+            'University updated successfully.',
+            (new UniversityResource($university->fresh()))
+                ->toArray($request),
+        );
     }
 
     /**
@@ -77,6 +85,10 @@ class UniversityController extends Controller
      */
     public function destroy(University $university)
     {
-        //
+        $university->delete();
+
+        return $this->ok(
+            'University deleted successfully.'
+        );
     }
 }
