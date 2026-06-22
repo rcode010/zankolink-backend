@@ -17,9 +17,13 @@ class FacultyResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'university_id' => $this->university_id,
             'admin_id' => $this->admin_id,
             'is_active' => $this->is_active,
+
+            'university_id' => [
+                'id' => $this->university?->id,
+                'name' => $this->university?->name,
+            ],
         ];
     }
 }

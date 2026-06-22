@@ -9,6 +9,7 @@ use App\Traits\ApiResponses;
 use App\Models\Faculty;
 use App\Models\University;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class FacultyController extends Controller
 {
@@ -18,7 +19,22 @@ class FacultyController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        $faculties = QueryBuilder::for(Faculty::class)
+            ->with('university:id,name')
+            ->allowedFilters(
+                'name',
+                'is_active',
+                'university_id'
+            )
+            ->latest()
+            ->paginate($request->query('per_page', 15));
+
+        return $this->ok(
+            'Faculties retrieved successfully',
+            FacultyResource::collection($faculties)
+            ->response()
+            ->getData(true)
+        );
     }
 
     /**
@@ -43,7 +59,14 @@ class FacultyController extends Controller
      */
     public function show(Faculty $faculty)
     {
-        //
+        $faculty->load('university:id,name');
+
+        return $this->ok(
+            'Faculty retrieved successfully',
+            (new FacultyResource($faculty))
+            ->toArray(request())
+        );
+
     }
 
     /**

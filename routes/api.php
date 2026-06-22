@@ -23,6 +23,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
 
     //Faculties
+    Route::prefix('faculties')->group(function () {
+        Route::get('/', [FacultyController::class,'index']);
+        Route::get('/{faculty}', [FacultyController::class,'show']);
+    });
+
     Route::post(
         'universities/{university}/faculties',
         [FacultyController::class, 'store']
