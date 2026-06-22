@@ -74,7 +74,16 @@ class FacultyController extends Controller
      */
     public function update(UpdateFacultyRequest $request, Faculty $faculty)
     {
-        //
+        $faculty->update(
+            $request->validated()
+        );
+
+        return $this->ok(
+            'Faculty updated successfully.',
+            (new FacultyResource(
+                $faculty->fresh()->load('university:id,name')
+            ))->toArray($request)
+        );
     }
 
     /**
@@ -82,6 +91,10 @@ class FacultyController extends Controller
      */
     public function destroy(Faculty $faculty)
     {
-        //
+        $faculty->delete();
+
+        return $this->ok(
+            'Faculty deleted successfully.',
+        );
     }
 }
