@@ -9,18 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('attachments', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('letter_id');
-            $table->string('file_name');
-            $table->string('file_type');
-            $table->bigInteger('file_size');
-            $table->string('file_url'); // Path to your Cloud Storage
+        Schema::create('signature_letters', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('letter_id')->constrained('letters')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('role_at_time',['student','teacher','head_of_department','dean','admin']);
+            $table->string('comment')->nullable();
+            $table->string('verification_hash')->nullable();
             $table->timestamps();
 
-            $table->foreign('letter_id')->references('id')->on('letters')->onDelete('cascade');
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('letter_signature');
+        Schema::dropIfExists('signature_letters');
     }
 };
