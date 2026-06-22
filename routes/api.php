@@ -21,4 +21,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Letters
     Route::post('/letters',[LetterController::class, 'store']);
+    Route::get('/letters',[LetterController::class, 'index']);
 });

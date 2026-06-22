@@ -13,10 +13,20 @@ class LetterController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+    public function index(Request $request)
+{
+    $perPage = $request->query('per_page', 15);
+
+    // Fetch paginated letters with eager-loaded sender and receiver fields.
+    // We select only 'id' and 'name' for both relations to optimize query performance.
+    $letters = Letter::with([
+        'sender:id,name',
+        'receiver:id,name'
+    ])
+        ->latest()
+        ->paginate($perPage);
+    return $this->ok('Letters retrieved successfully', $letters->toArray());
+}
 
     /**
      * Show the form for creating a new resource.
