@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 //Universities
-Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/universities', [UniversityController::class,'store']);
+Route::middleware('auth:sanctum')->prefix('universities')->group(function () {
+    Route::get('/', [UniversityController::class,'index']);
+    Route::get('/{university}', [UniversityController::class,'show']);
+    Route::post('/', [UniversityController::class,'store']);
 });

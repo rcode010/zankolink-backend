@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateUniversityRequest;
 use App\Http\Resources\UniversityResource;
 use App\Traits\ApiResponses;
 use App\Models\University;
+use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UniversityController extends Controller
 {
@@ -14,9 +16,24 @@ class UniversityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $universities = QueryBuilder::for(University::class)
+            ->allowedFilters(
+                'name',
+                'location',
+            )
+            ->latest()
+            ->paginate(
+                $request->query('per_page', 15)
+            );
+
+        return $this->ok(
+            'Universities retrieved successfully.',
+            UniversityResource::collection($universities)
+            ->response()
+            ->getData(true)
+        );
     }
 
     /**
@@ -40,7 +57,11 @@ class UniversityController extends Controller
      */
     public function show(University $university)
     {
-        //
+        return $this->ok(
+            'University retrieved successfully.',
+            (new UniversityResource($university))
+                ->toArray(request())
+        );
     }
 
     /**
