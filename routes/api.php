@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\DepartmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/change-password',[AuthController::class, 'changePassword']);
     Route::post('/auth/forget-password',[AuthController::class, 'forgetPassword']);
     Route::post('/auth/reset-password',[AuthController::class, 'resetPassword']);
+
+// Routes for Departments Module
+    Route::prefix('departments')->group(function () {
+        Route::get('/', [DepartmentController::class, 'index']);
+        Route::post('/', [DepartmentController::class, 'store']);
+        Route::get('{id}', [DepartmentController::class, 'show']);
+        Route::patch('{id}', [DepartmentController::class, 'update']);
+        Route::delete('{id}', [DepartmentController::class, 'destroy']);
+    });
+    Route::get('faculties/{faculty_id}/departments', [DepartmentController::class, 'indexByFaculty']);
 });
+
