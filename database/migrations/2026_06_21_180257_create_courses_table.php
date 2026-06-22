@@ -11,21 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('courses', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->text('name');
-            $table->text('email')->unique();
-            $table->text('password');
-            $table->text('position');
-            $table->text('phone');
-            $table->bigInteger('role_scope_id');
-            $table->text('role_scope_type');
+            $table->text('code');
+            $table->bigInteger('credit_hours');
+            $table->bigInteger('year_level');
             $table->boolean('is_active');
             $table->timestamps();
             $table->softDeletes();
         });
-
-       
     }
 
     /**
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('courses');
     }
 };
