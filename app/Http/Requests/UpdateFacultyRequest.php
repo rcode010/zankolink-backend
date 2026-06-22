@@ -12,7 +12,7 @@ class UpdateFacultyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,9 @@ class UpdateFacultyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'sometimes|string|max:255',
+            'admin_id' => 'nullable|exists:users,id',
+            'is_active' => 'sometimes|boolean',
         ];
     }
 }
