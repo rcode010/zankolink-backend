@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LetterController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,4 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/letters', [LetterController::class, 'store']);
     Route::get('/letters', [LetterController::class, 'index']);
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
+
+    // The endpoint for the reports dashboard statistics
+    Route::get('/reports/statistics', [ReportController::class, 'getStatistics']);
 });
