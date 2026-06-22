@@ -6,6 +6,7 @@ use App\Http\Requests\StoreLetterRequest;
 use App\Models\Letter;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Integer;
 
 class LetterController extends Controller
 {
@@ -42,9 +43,10 @@ class LetterController extends Controller
     public function store(StoreLetterRequest $request)
     {
         $data = $request->validated();
+        $user = auth()->user();
 
         $data['sender_id']          = auth()->id();
-        $data['sender_type']        = get_class(auth()->user());
+        $data['sender_type']        = $user->position;
         $data['status']             = 'draft';
 
         $letter = Letter::create($data);
@@ -60,7 +62,8 @@ class LetterController extends Controller
      */
     public function show(Letter $letter)
     {
-        //
+
+        return $this->ok('Letter retrieved successfully', $letter->load('sender:id,name','receiver:id,name')->toArray());
     }
 
     /**
