@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->enum('title',['prof','assoc_prof','asst_prof','lecturer','dr','mr','ms']);
+            $table->enum('title', ['prof', 'assoc_prof', 'asst_prof', 'lecturer', 'dr', 'mr', 'ms']);
             $table->string('speciality');
             $table->softDeletes();
             $table->timestamps();

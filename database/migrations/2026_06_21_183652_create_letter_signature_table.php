@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('letter_id')->constrained('letters')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('role_at_time',['student','teacher','head_of_department','dean','admin']);
+            $table->enum('role_at_time', ['student', 'teacher', 'head_of_department', 'dean', 'admin']);
             $table->string('comment')->nullable();
             $table->string('verification_hash')->nullable();
             $table->timestamps();
