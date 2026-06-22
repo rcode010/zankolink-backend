@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LetterController;
+use App\Http\Controllers\UniversityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,10 +21,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/change-password',[AuthController::class, 'changePassword']);
     Route::post('/auth/forget-password',[AuthController::class, 'forgetPassword']);
     Route::post('/auth/reset-password',[AuthController::class, 'resetPassword']);
-  
+
     // Letters
     Route::post('/letters',[LetterController::class, 'store']);
     Route::get('/letters',[LetterController::class, 'index']);
     Route::get('/letters/{letter}',[LetterController::class, 'show'])->whereNumber('letter');
-    
+
+});
+
+//Universities
+Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/universities', [UniversityController::class,'store']);
 });
