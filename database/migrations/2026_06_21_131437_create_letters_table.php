@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('letters', function (Blueprint $table) {
             $table->id();
-            $table->string('letter_number')->nullable()->unique();
+            $table->string('letter_number')->unique();
             $table->foreignId('original_sender_id')->constrained('users')->onDelete('cascade');
             $table->unsignedBigInteger('sender_id');
             $table->string('receiver_type');
