@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LetterSignature extends Model
 {
@@ -16,13 +17,13 @@ class LetterSignature extends Model
         'verification_hash',
     ];
 
-    public function letter()
-    {
-        return $this->belongsTo(Letter::class);
-    }
-
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function letter(): BelongsTo
+    {
+        return $this->belongsTo(Letter::class);
     }
 }
