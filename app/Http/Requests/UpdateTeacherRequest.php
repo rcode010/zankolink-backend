@@ -35,8 +35,8 @@ class UpdateTeacherRequest extends FormRequest
                     'lecturer',
                     'dr',
                     'mr',
-                    'ms'
-                ])
+                    'ms',
+                ]),
             ],
 
             'speciality' => 'sometimes|string|max:255',

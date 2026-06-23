@@ -35,8 +35,8 @@ class StoreTeacherRequest extends FormRequest
                     'lecturer',
                     'dr',
                     'mr',
-                    'ms'
-                ])
+                    'ms',
+                ]),
             ],
 
             'speciality' => 'required|string|max:255',

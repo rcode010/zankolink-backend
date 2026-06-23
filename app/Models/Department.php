@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Department extends Model
 {
-    use SoftDeletes;
+    use HasFactory,SoftDeletes;
 
     protected $fillable = ['faculty_id', 'name', 'admin_id', 'is_active'];
 
@@ -31,6 +32,6 @@ class Department extends Model
 
     public function teachers(): BelongsToMany
     {
-        return $this->belongsToMany(Teacher::class, 'teacher-department');
+        return $this->belongsToMany(Teacher::class, 'teacher_department');
     }
 }

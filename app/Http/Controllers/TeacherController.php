@@ -13,6 +13,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 class TeacherController extends Controller
 {
     use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -35,8 +36,8 @@ class TeacherController extends Controller
         return $this->ok(
             'Teachers retrieved successfully.',
             TeacherResource::collection($teachers)
-            ->response()
-            ->getData(true)
+                ->response()
+                ->getData(true)
         );
     }
 
@@ -68,7 +69,7 @@ class TeacherController extends Controller
         return $this->ok(
             'Teacher retrieved successfully.',
             (new TeacherResource($teacher))
-            ->toArray(request())
+                ->toArray(request())
         );
     }
 
@@ -85,7 +86,7 @@ class TeacherController extends Controller
             'Teacher updated successfully.',
             (new TeacherResource(
                 $teacher->fresh()->load('user:id,name')
-                ))->toArray($request),
+            ))->toArray($request),
         );
     }
 
