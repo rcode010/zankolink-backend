@@ -4,110 +4,84 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
+    use ApiResponses;
+
     /**
-     * GET /api/users
-     * Fetch all users with optional filtering based on role (scoped by role)
+     * Display a listing of the resource with filters and pagination.
      */
     public function index(Request $request)
     {
-        $query = User::query();
 
-        // Filter by role if specified in query parameters (e.g., ?role=admin)
-        if ($request->has('role')) {
-            $query->where('role_scope_type', $request->role);
-        }
+        $users = QueryBuilder::for(User::class)
+            ->allowedFilters(['role_scope_type'])
+            ->latest()
+            ->paginate($request->query('per_page', 10));
 
-        $users = $query->latest()->paginate(10);
-
-        return response()->json([
-            'success' => true,
-            'data' => $users
-        ]);
+        return $this->ok(
+            'Users retrieved successfully.',
+            $users
+        );
     }
-    /**
-     * GET /api/users/{id}
-     * Retrieve the profile details of a single user
-     */
-    public function show($id)
-    {
-        $user = User::findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'data' => $user
-        ]);
+    /**
+     * Display the specified resource.
+     */
+    public function show(User $user)
+    {
+        return $this->ok(
+            'User retrieved successfully.',
+            $user
+        );
     }
-    /**
-     * PATCH /api/users/{id}
-     * Update profile details and handle profile photo uploads
-     */
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
 
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, User $user)
+    {
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'phone' => 'sometimes|string|max:20',
-            'profile_photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Handle profile photo upload if provided
-        if ($request->hasFile('profile_photo')) {
-            // Delete old photo from storage if it exists
-            if ($user->profile_photo_path) {
-                Storage::disk('public')->delete($user->profile_photo_path);
-            }
-            
-            $path = $request->file('profile_photo')->store('profile-photos', 'public');
-            $user->profile_photo_path = $path;
-        }
+        // Directly update user details (Profile photo logic completely removed)
+        $user->update($validated);
 
-        // Update name and phone fields if present in the request
-        $user->update(array_filter($validated, function ($key) {
-            return $key !== 'profile_photo';
-        }, ARRAY_FILTER_USE_KEY));
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Profile updated successfully',
-            'data' => $user
-        ]);
+        return $this->ok(
+            'Profile updated successfully',
+            $user->fresh()
+        );
     }
 
     /**
-     * POST /api/users/{id}/activate
-     * Activate a user account (set is_active to true)
+     * Activate a user account.
      */
-    public function activate($id)
+    public function activate(User $user)
     {
-        $user = User::findOrFail($id);
         $user->update(['is_active' => true]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User activated successfully',
-            'data' => $user
-        ]);
+        return $this->ok(
+            'User activated successfully',
+            $user->fresh()
+        );
     }
 
     /**
-     * POST /api/users/{id}/deactivate
-     * Deactivate a user account (set is_active to false)
+     * Deactivate a user account.
      */
-    public function deactivate($id)
+    public function deactivate(User $user)
     {
-        $user = User::findOrFail($id);
         $user->update(['is_active' => false]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User deactivated successfully',
-            'data' => $user
-        ]);
+        return $this->ok(
+            'User deactivated successfully',
+            $user->fresh()
+        );
     }
 }
