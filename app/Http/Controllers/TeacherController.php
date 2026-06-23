@@ -8,6 +8,7 @@ use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TeacherController extends Controller
 {
@@ -17,7 +18,26 @@ class TeacherController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        $teachers = QueryBuilder::for(Teacher::class)
+            ->with('user:id,name')
+            ->allowedFilters(
+                'title',
+                'speciality',
+                'user:name'
+            )
+            ->allowedSorts(
+                'title',
+                'speciality'
+            )
+            ->latest()
+            ->paginate($request->query('per_page', 15));
+
+        return $this->ok(
+            'Teachers retrieved successfully.',
+            TeacherResource::collection($teachers)
+            ->response()
+            ->getData(true)
+        );
     }
 
     /**
@@ -43,7 +63,13 @@ class TeacherController extends Controller
      */
     public function show(Teacher $teacher)
     {
-        //
+        $teacher->load('user:id,name');
+
+        return $this->ok(
+            'Teacher retrieved successfully.',
+            (new TeacherResource($teacher))
+            ->toArray(request())
+        );
     }
 
     /**
