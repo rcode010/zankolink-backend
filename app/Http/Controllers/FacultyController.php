@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFacultyRequest;
 use App\Http\Requests\UpdateFacultyRequest;
 use App\Http\Resources\FacultyResource;
-use App\Traits\ApiResponses;
 use App\Models\Faculty;
 use App\Models\University;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class FacultyController extends Controller
 {
     use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -32,8 +33,8 @@ class FacultyController extends Controller
         return $this->ok(
             'Faculties retrieved successfully',
             FacultyResource::collection($faculties)
-            ->response()
-            ->getData(true)
+                ->response()
+                ->getData(true)
         );
     }
 
@@ -49,7 +50,7 @@ class FacultyController extends Controller
         return $this->success(
             'Faculty created successfully.',
             (new FacultyResource($faculty))
-            ->toArray($request),
+                ->toArray($request),
             201
         );
     }
@@ -64,7 +65,7 @@ class FacultyController extends Controller
         return $this->ok(
             'Faculty retrieved successfully',
             (new FacultyResource($faculty))
-            ->toArray(request())
+                ->toArray(request())
         );
 
     }
