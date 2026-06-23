@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UniversityController;
+use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LetterController;
-use App\Http\Controllers\UniversityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{university}', [UniversityController::class,'destroy']);
     });
 
+    //Faculties
+    Route::prefix('faculties')->group(function () {
+        Route::get('/', [FacultyController::class,'index']);
+        Route::get('/{faculty}', [FacultyController::class,'show']);
+        Route::patch('/{faculty}', [FacultyController::class,'update']);
+        Route::delete('/{faculty}', [FacultyController::class,'destroy']);
+    });
+    Route::post(
+        'universities/{university}/faculties',
+        [FacultyController::class, 'store']
+    );
+
     // Departments
     Route::prefix('departments')->group(function () {
         Route::get('/', [DepartmentController::class, 'index']);
@@ -60,5 +73,3 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 });
-
-
