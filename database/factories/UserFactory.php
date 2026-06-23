@@ -25,79 +25,114 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            //            'email_verified_at' => now(),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
             'password' => static::$password ??= Hash::make('password'),
-            'position' => 'student',
+
+            // Default normal user/student
+            'position' => 'DEPARTMENT',
             'phone' => $this->faker->phoneNumber(),
             'role_scope_id' => null,
-            'role_scope_type' => null,
-            'is_active' => true,
+            'role_scope_type' => 'student',
 
+            'is_active' => true,
             'remember_token' => Str::random(10),
         ];
     }
 
     /**
-     * State helper to create a Ministry Admin (Global Superadmin)
+     * Ministry Admin
      */
     public function ministryAdmin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'position' => 'admin',
+            'position' => 'MINISTRY',
             'role_scope_id' => null,
-            'role_scope_type' => null, // Ministry has global access
+            'role_scope_type' => 'MINISTRY_ADMIN',
         ]);
     }
 
     /**
-     * State helper to create a University Admin
-     * * NOTE: If you haven't run the alter migration to add 'university'
-     * to your role_scope_type enum yet, this will use 'faculty' as a temporary fallback.
+     * Ministry Staff
+     */
+    public function ministryStaff(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'position' => 'MINISTRY',
+            'role_scope_id' => null,
+            'role_scope_type' => 'MINISTRY_STAFF',
+        ]);
+    }
+
+    /**
+     * University Admin
      */
     public function universityAdmin(int $universityId): static
     {
         return $this->state(fn (array $attributes) => [
-            'position' => 'admin',
+            'position' => 'UNIVERSITY',
             'role_scope_id' => $universityId,
-            'role_scope_type' => 'faculty',
+            'role_scope_type' => 'UNIVERSITY_ADMIN',
         ]);
     }
 
     /**
-     * State helper to create a Faculty Dean
+     * University Staff
+     */
+    public function universityStaff(int $universityId): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'position' => 'UNIVERSITY',
+            'role_scope_id' => $universityId,
+            'role_scope_type' => 'UNIVERSITY_STAFF',
+        ]);
+    }
+
+    /**
+     * Faculty Dean
      */
     public function dean(int $facultyId): static
     {
         return $this->state(fn (array $attributes) => [
-            'position' => 'dean',
+            'position' => 'FACULTY',
             'role_scope_id' => $facultyId,
-            'role_scope_type' => 'faculty',
+            'role_scope_type' => 'DEAN',
         ]);
     }
 
     /**
-     * State helper to create a Department Head
+     * Department Head
      */
-    public function headOfDepartment(int $departmentId): static
+    public function departmentHead(int $departmentId): static
     {
         return $this->state(fn (array $attributes) => [
-            'position' => 'head_of_department',
+            'position' => 'DEPARTMENT',
             'role_scope_id' => $departmentId,
-            'role_scope_type' => 'department',
+            'role_scope_type' => 'DEPARTMENT_HEAD',
         ]);
     }
 
     /**
-     * State helper to create a Teacher
+     * Lecturer
      */
-    public function teacher(int $scopeId, string $scopeType = 'course'): static
+    public function lecturer(int $departmentId): static
     {
         return $this->state(fn (array $attributes) => [
-            'position' => 'teacher',
-            'role_scope_id' => $scopeId,
-            'role_scope_type' => $scopeType, // Can be scoped to 'course' or 'department'
+            'position' => 'DEPARTMENT',
+            'role_scope_id' => $departmentId,
+            'role_scope_type' => 'lecturer',
+        ]);
+    }
+
+    /**
+     * Student
+     */
+    public function student(int $departmentId): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'position' => 'DEPARTMENT',
+            'role_scope_id' => $departmentId,
+            'role_scope_type' => 'student',
         ]);
     }
 

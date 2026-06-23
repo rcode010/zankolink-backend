@@ -17,10 +17,24 @@ return new class extends Migration
             $table->string('email')->unique();
             //            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('position', ['student', 'teacher', 'head_of_department', 'dean', 'admin']);
+            $table->enum('position', [
+                'MINISTRY',
+                'UNIVERSITY',
+                'FACULTY',
+                'DEPARTMENT',
+            ]);
             $table->string('phone');
             $table->foreignId('role_scope_id')->nullable();
-            $table->enum('role_scope_type', ['course', 'department', 'faculty', 'university'])->nullable();
+            $table->enum('role_scope_type', [
+                'MINISTRY_ADMIN',
+                'MINISTRY_STAFF',
+                'UNIVERSITY_ADMIN',
+                'UNIVERSITY_STAFF',
+                'DEAN',
+                'DEPARTMENT_HEAD',
+                'lecturer',
+                'student',
+            ])->nullable();
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
