@@ -32,7 +32,9 @@ class RegisterRequest extends FormRequest
             'role_scope_type' => 'nullable|string|in:university,faculty,department',
         ];
     }
-    public function messages(): array{
+
+    public function messages(): array
+    {
         return [
             'phone.regex' => 'Phone number must be a valid Iraqi number (e.g. 07701234567).',
         ];

@@ -28,5 +28,6 @@ class Student extends Model
         return $this->belongsToMany(Course::class, 'course_student')
                     ->withPivot('grade', 'enrolled_at', 'academic_year')
                     ->withTimestamps();
+
     }
 }

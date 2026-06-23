@@ -4,9 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateDepartmentRequest extends FormRequest
+class UpdateUniversityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,19 +22,15 @@ class UpdateDepartmentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $departmentId = $this->route('id');
-
         return [
-            'name' => 'sometimes|required|string|max:255',
-            'code' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:50',
-
-                Rule::unique('departments', 'code')->ignore($departmentId),
-            ],
-            'faculty_id' => 'sometimes|required|exists:faculties,id',
+            'name' => 'sometimes|string|max:255',
+            'admin_id' => 'nullable|exists:users,id',
+            'academic_year' => 'nullable|string|regex:/^\d{4}-\d{4}$/',
+            'location' => 'sometimes|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after:start_date',
+            'established_year' => 'sometimes|date',
+            'is_active' => 'sometimes|boolean',
         ];
     }
 }

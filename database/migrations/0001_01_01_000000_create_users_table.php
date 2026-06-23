@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-//            $table->timestamp('email_verified_at')->nullable();
+            //            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('position');
+            $table->enum('position', ['student', 'teacher', 'head_of_department', 'dean', 'admin']);
             $table->string('phone');
             $table->foreignId('role_scope_id')->nullable();
-            $table->string('role_scope_type')->nullable();
+            $table->enum('role_scope_type', ['course', 'department', 'faculty', 'university'])->nullable();
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();

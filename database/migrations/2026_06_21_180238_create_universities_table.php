@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('faculties', function (Blueprint $table) {
-           $table->id();
-            $table->foreignId('university_id')->constrained('universities')->onDelete('cascade');
+        Schema::create('universities', function (Blueprint $table) {
+            $table->id();
             $table->text('name');
             $table->foreignId('admin_id')->nullable();
+            $table->text('academic_year')->nullable();
+            $table->text('location');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->date('established_year');
             $table->boolean('is_active');
             $table->timestamps();
             $table->softDeletes();
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('faculties');
+        Schema::dropIfExists('universities');
     }
 };
