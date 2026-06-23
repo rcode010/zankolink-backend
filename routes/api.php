@@ -62,3 +62,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
 
 });
+
+
+Route::get('/',function (){
+    return response()->json([
+        'status'=>'ok',
+        'timestamp'=>now()
+    ]);
+});
