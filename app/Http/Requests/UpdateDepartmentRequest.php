@@ -23,7 +23,11 @@ class UpdateDepartmentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $departmentId = $this->route('id');
+        // Capture the route parameter dynamically (works with both {id} or {department})
+        $departmentParam = $this->route('department') ?? $this->route('id');
+
+        // Extract the integer ID if the parameter is a bound Model instance
+        $departmentId = is_object($departmentParam) ? $departmentParam->id : $departmentParam;
 
         return [
             'name' => 'sometimes|required|string|max:255',
@@ -32,7 +36,7 @@ class UpdateDepartmentRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-
+                // Ignore the current department ID to prevent unique validation failure during updates
                 Rule::unique('departments', 'code')->ignore($departmentId),
             ],
             'faculty_id' => 'sometimes|required|exists:faculties,id',
