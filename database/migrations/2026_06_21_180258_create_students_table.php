@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->enum('enrollment_type', ['morning', 'parallel', 'evening']);
             $table->text('student_number');
-            $table->bigInteger('year_of_study');
+            $table->unsignedTinyInteger('stage');
             $table->enum('status', ['active', 'inactive', 'on_leave', 'suspended', 'graduated'])->default('active');
             $table->timestamps();
             $table->softDeletes();
