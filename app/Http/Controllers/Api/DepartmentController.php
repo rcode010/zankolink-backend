@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use App\Http\Resources\DepartmentResource;
-use App\Traits\ApiResponses;
 use App\Models\Department;
+use App\Traits\ApiResponses;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -17,8 +18,8 @@ class DepartmentController extends Controller
 
     /**
      * Display a listing of the departments with filters and pagination.
-     * * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public function index(Request $request)
     {
@@ -36,8 +37,8 @@ class DepartmentController extends Controller
 
     /**
      * Store a newly created department in storage.
-     * * @param StoreDepartmentRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public function store(StoreDepartmentRequest $request)
     {
@@ -46,29 +47,28 @@ class DepartmentController extends Controller
 
         return $this->success(
             'Department created successfully.',
-            (new DepartmentResource($department))->toArray($request),
+            new DepartmentResource($department),
             201
         );
     }
 
     /**
      * Display the specified department details.
-     * * @param Department $department
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public function show(Department $department)
     {
         return $this->ok(
             'Department details retrieved successfully.',
-            (new DepartmentResource($department))->toArray(request())
+            new DepartmentResource($department)
         );
     }
 
     /**
      * Update the specified department in storage.
-     * * @param UpdateDepartmentRequest $request
-     * @param Department $department
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public function update(UpdateDepartmentRequest $request, Department $department)
     {
@@ -77,14 +77,14 @@ class DepartmentController extends Controller
 
         return $this->ok(
             'Department updated successfully.',
-            (new DepartmentResource($department->fresh()))->toArray($request)
+            new DepartmentResource($department->fresh())
         );
     }
 
     /**
      * Remove the specified department from storage.
-     * * @param Department $department
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @return JsonResponse
      */
     public function destroy(Department $department)
     {
@@ -96,8 +96,9 @@ class DepartmentController extends Controller
 
     /**
      * Get all departments associated with a specific faculty.
-     * * @param int $faculty_id
-     * @return \Illuminate\Http\JsonResponse
+     *
+     * @param  int  $faculty_id
+     * @return JsonResponse
      */
     public function indexByFaculty($faculty_id)
     {
@@ -108,7 +109,7 @@ class DepartmentController extends Controller
 
         return $this->ok(
             'Faculty departments retrieved successfully.',
-            DepartmentResource::collection($departments)->resolve()
+            DepartmentResource::collection($departments)
         );
     }
 }
