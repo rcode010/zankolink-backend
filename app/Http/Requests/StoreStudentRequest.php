@@ -12,7 +12,7 @@ class StoreStudentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,12 @@ class StoreStudentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'required|exists:users,id|unique:students,user_id',
+            'department_id' => 'required|exists:departments,id',
+            'enrollment_type' => 'required|in:morning,parallel,evening',
+            'stage' => 'required|integer',
+            'student_number' => 'required|string|max:50|unique:students,student_number',
+            'status' => 'required|in:active,inactive,on_leave,suspended,graduated',
         ];
     }
 }
