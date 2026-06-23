@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\DepartmentController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\LetterController;
@@ -61,30 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/letters', [LetterController::class, 'store']);
     Route::get('/letters', [LetterController::class, 'index']);
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
-<<<<<<< feature/EZK-29-implement-reports-module
 
     // The endpoint for the reports dashboard statistics
     Route::get('/reports/statistics', [ReportController::class, 'getStatistics']);
-=======
 
-    // Users
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index']);
-        Route::get('/{user}', [UserController::class, 'show']);
-        Route::patch('/{user}', [UserController::class, 'update']);
-        Route::post('/{user}/activate', [UserController::class, 'activate']);
-        Route::post('/{user}/deactivate', [UserController::class, 'deactivate']);
-    });
-
-});
->>>>>>> main
-
-});
-
-
-Route::get('/',function (){
-    return response()->json([
-        'status'=>'ok',
-        'timestamp'=>now()
-    ]);
 });
