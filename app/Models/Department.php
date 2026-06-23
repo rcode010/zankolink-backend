@@ -31,6 +31,6 @@ class Department extends Model
 
     public function teachers(): BelongsToMany
     {
-        return $this->belongsToMany(Teacher::class, 'teacher-department');
+        return $this->belongsToMany(Teacher::class, 'teacher_department');
     }
 }
