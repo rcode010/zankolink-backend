@@ -80,7 +80,16 @@ class CourseController extends Controller
      */
     public function update(UpdateCourseRequest $request, Course $course)
     {
-        //
+        $course->update(
+            $request->validated()
+        );
+
+        return $this->ok(
+            'Course updated successfully.',
+            (new CourseResource(
+                $course->fresh()->load('department:id,name')
+            ))->toArray($request)
+        );
     }
 
     /**
@@ -88,6 +97,10 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-        //
+        $course->delete();
+
+        return $this->ok(
+            'Course deleted successfully.'
+        );
     }
 }
