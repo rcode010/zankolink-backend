@@ -30,12 +30,12 @@ class CourseFactory extends Factory
             'Computer Networks',
             'Operating Systems',
             'Cyber Security',
-            'Software Quality Assurance'
+            'Software Quality Assurance',
         ];
         $yearLevel = $this->faker->numberBetween(1, 4);
 
         $prefix = $this->faker->randomElement(['KOU', 'UOS', 'SUE']);
-        $code = $prefix . $this->faker->unique()->numerify('#####');
+        $code = $prefix.$this->faker->unique()->numerify('#####');
 
         return [
             'name' => $this->faker->randomElement($subjects),
@@ -43,7 +43,7 @@ class CourseFactory extends Factory
             'code' => $code,
             'year_level' => $yearLevel,
             'credit_hours' => $this->faker->randomElement([2, 3, 4]),
-            'is_active' => $this->faker->randomElement([true, false])
+            'is_active' => $this->faker->randomElement([true, false]),
         ];
     }
 }
