@@ -47,8 +47,7 @@ class LetterController extends Controller
         $user = auth()->user();
 
         $data['sender_id'] = auth()->id();
-        $data['sender_type'] = $user->position;
-        $data['status'] = 'draft';
+        $data['status'] = 'pending';
 
         $letter = Letter::create($data);
 

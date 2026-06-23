@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('letter_number')->unique();
             $table->foreignId('original_sender_id')->constrained('users')->onDelete('cascade');
             $table->unsignedBigInteger('sender_id');
-            $table->string('receiver_type');
             $table->unsignedBigInteger('receiver_id');
             $table->enum('type', ['internal', 'directive', 'request', 'decision', 'appeal']);
             $table->string('title');
