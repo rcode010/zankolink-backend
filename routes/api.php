@@ -75,6 +75,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/', function () {
     return response()->json([
         'status' => 'ok',
-        'timestamp' => now()
+        'timestamp' => now(),
     ]);
 });

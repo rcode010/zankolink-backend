@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
 {
-    use SoftDeletes,HasFactory;
+    use HasFactory,SoftDeletes;
 
     protected $fillable = ['department_id', 'name', 'code', 'credit_hours', 'year_level', 'is_active'];
 
@@ -22,16 +22,16 @@ class Course extends Model
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'course_student')
-                    ->withPivot('grade', 'enrolled_at', 'academic_year')
-                    ->withTimestamps();
+            ->withPivot('grade', 'enrolled_at', 'academic_year')
+            ->withTimestamps();
 
     }
 
     public function teachers(): BelongsToMany
     {
         return $this->belongsToMany(Teacher::class, 'course_teacher')
-                    ->withPivot('role')
-                    ->withTimestamps();
+            ->withPivot('role')
+            ->withTimestamps();
 
     }
 }

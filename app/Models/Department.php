@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Department extends Model
 {
-    use SoftDeletes,HasFactory;
+    use HasFactory,SoftDeletes;
 
     protected $fillable = ['faculty_id', 'name', 'admin_id', 'is_active'];
 
