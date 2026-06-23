@@ -8,6 +8,7 @@ use App\Http\Resources\CourseResource;
 use App\Traits\ApiResponses;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CourseController extends Controller
 {
@@ -17,7 +18,28 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        $courses = QueryBuilder::for(Course::class)
+            ->with('department:id,name')
+            ->allowedFilters(
+                'name',
+                'code',
+                'year_level',
+                'department_id'
+            )
+            ->allowedSorts(
+                'name',
+                'credit_hours',
+                'year_level',
+            )
+            ->latest()
+            ->paginate($request->query('per_page', 15));
+
+        return $this->ok(
+            'Courses retrieved successfully.',
+            CourseResource::collection($courses)
+                ->response()
+                ->getData(true)
+        );
     }
 
     /**
@@ -42,7 +64,15 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        //
+        $course->load(
+            'department:id,name'
+        );
+
+        return $this->ok(
+            'Course retrieved successfully.',
+            (new CourseResource($course))
+            ->toArray(request()),
+        );
     }
 
     /**
