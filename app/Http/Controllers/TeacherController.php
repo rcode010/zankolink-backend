@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Requests\UpdateTeacherRequest;
+use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
+    use ApiResponses;
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +25,17 @@ class TeacherController extends Controller
      */
     public function store(StoreTeacherRequest $request)
     {
-        //
+        $teacher = Teacher::create(
+            $request->validated()
+        );
+
+        return $this->success(
+            'Teacher created successfully.',
+            (new TeacherResource(
+                $teacher->load('user')
+            ))->toArray($request),
+            201
+        );
     }
 
     /**

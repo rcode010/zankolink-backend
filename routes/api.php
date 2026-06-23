@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\LetterController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UniversityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('{id}', [DepartmentController::class, 'destroy']);
     });
     Route::get('faculties/{faculty_id}/departments', [DepartmentController::class, 'indexByFaculty']);
+
+    //Teachers
+    Route::prefix('teachers')->group(function () {
+        Route::post('/', [TeacherController::class,'store']);
+    });
 
     // Letters
     Route::post('/letters',[LetterController::class, 'store']);
