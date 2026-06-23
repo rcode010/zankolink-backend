@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUniversityRequest;
 use App\Http\Requests\UpdateUniversityRequest;
 use App\Http\Resources\UniversityResource;
-use App\Traits\ApiResponses;
 use App\Models\University;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class UniversityController extends Controller
 {
     use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -31,8 +32,8 @@ class UniversityController extends Controller
         return $this->ok(
             'Universities retrieved successfully.',
             UniversityResource::collection($universities)
-            ->response()
-            ->getData(true)
+                ->response()
+                ->getData(true)
         );
     }
 
