@@ -25,12 +25,12 @@ class ReportController extends Controller
 
         $totalLetters = $letters->count();
 
-        $approvedLetters = $letters->where('status', 'APPROVED')->count();
+        $approvedLetters = $letters->where('status', 'approved')->count();
 
         $approvalRate = $totalLetters > 0 ? round(($approvedLetters / $totalLetters) * 100) : 0;
 
         // Filter letters that have been processed and contain valid timestamps
-        $processedLetters = $letters->whereIn('status', ['APPROVED', 'REJECTED'])
+        $processedLetters = $letters->whereIn('status', ['approved', 'rejected'])
             ->filter(fn ($letter) => $letter->updated_at && $letter->created_at);
 
         // Calculate average response time using Carbon's diffInDays
