@@ -12,7 +12,7 @@ class StoreCourseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,12 @@ class StoreCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'department_id' => 'required|exists:departments,id',
+            'name' => 'required|string|max:255',
+            'code' => 'required|string|max:50|unique:courses,code',
+            'credit_hours' => 'required|integer|min:1',
+            'year_level' => 'required|integer|min:1',
+            'is_active' => 'required|boolean',
         ];
     }
 }

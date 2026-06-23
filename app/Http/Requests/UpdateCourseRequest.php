@@ -12,7 +12,7 @@ class UpdateCourseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,12 @@ class UpdateCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'department_id' => 'sometimes|exists:departments,id',
+            'name' => 'sometimes|string|max:255',
+            'code' => 'sometimes|string|max:50|unique:courses,code',
+            'credit_hours' => 'sometimes|integer|min:1',
+            'year_level' => 'sometimes|integer|min:1',
+            'is_active' => 'sometimes|boolean',
         ];
     }
 }
