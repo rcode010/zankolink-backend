@@ -77,7 +77,16 @@ class TeacherController extends Controller
      */
     public function update(UpdateTeacherRequest $request, Teacher $teacher)
     {
-        //
+        $teacher->update(
+            $request->validated()
+        );
+
+        return $this->ok(
+            'Teacher updated successfully.',
+            (new TeacherResource(
+                $teacher->fresh()->load('user:id,name')
+                ))->toArray($request),
+        );
     }
 
     /**
@@ -85,6 +94,10 @@ class TeacherController extends Controller
      */
     public function destroy(Teacher $teacher)
     {
-        //
+        $teacher->delete();
+
+        return $this->ok(
+            'Teacher deleted successfully.',
+        );
     }
 }
