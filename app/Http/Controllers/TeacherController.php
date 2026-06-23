@@ -24,7 +24,7 @@ class TeacherController extends Controller
             ->allowedFilters(
                 'title',
                 'speciality',
-                'user:name'
+                'user.name'
             )
             ->allowedSorts(
                 'title',
