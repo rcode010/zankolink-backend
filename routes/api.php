@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\LetterController;
@@ -59,6 +60,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/letters', [LetterController::class, 'store']);
     Route::get('/letters', [LetterController::class, 'index']);
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
+
+    // Users
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::get('/{user}', [UserController::class, 'show']);
+        Route::patch('/{user}', [UserController::class, 'update']);
+        Route::post('/{user}/activate', [UserController::class, 'activate']);
+        Route::post('/{user}/deactivate', [UserController::class, 'deactivate']);
+    });
+
+});
 
 });
 
