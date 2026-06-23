@@ -50,11 +50,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('departments')->group(function () {
         Route::get('/', [DepartmentController::class, 'index']);
         Route::post('/', [DepartmentController::class, 'store']);
-        Route::get('{id}', [DepartmentController::class, 'show']);
-        Route::patch('{id}', [DepartmentController::class, 'update']);
-        Route::delete('{id}', [DepartmentController::class, 'destroy']);
+        Route::get('/{department}', [DepartmentController::class, 'show']);
+        Route::patch('/{department}', [DepartmentController::class, 'update']);
+        Route::delete('/{department}', [DepartmentController::class, 'destroy']);
     });
-    Route::get('faculties/{faculty_id}/departments', [DepartmentController::class, 'indexByFaculty']);
 
     // Letters
     Route::post('/letters', [LetterController::class, 'store']);
