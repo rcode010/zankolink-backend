@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTeacherRequest extends FormRequest
 {
@@ -23,7 +24,22 @@ class UpdateTeacherRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'sometimes|exists:users,id',
+
+            'title' => [
+                'sometimes',
+                Rule::in([
+                    'prof',
+                    'assoc_prof',
+                    'asst_prof',
+                    'lecturer',
+                    'dr',
+                    'mr',
+                    'ms'
+                ])
+            ],
+
+            'speciality' => 'sometimes|string|max:255',
         ];
     }
 }

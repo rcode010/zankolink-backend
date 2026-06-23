@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreTeacherRequest extends FormRequest
 {
@@ -23,7 +24,22 @@ class StoreTeacherRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id' => 'required|exists:users,id',
+
+            'title' => [
+                'required',
+                Rule::in([
+                    'prof',
+                    'assoc_prof',
+                    'asst_prof',
+                    'lecturer',
+                    'dr',
+                    'mr',
+                    'ms'
+                ])
+            ],
+
+            'speciality' => 'required|string|max:255',
         ];
     }
 }
