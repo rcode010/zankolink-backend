@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\LetterController;
@@ -51,11 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('departments')->group(function () {
         Route::get('/', [DepartmentController::class, 'index']);
         Route::post('/', [DepartmentController::class, 'store']);
-        Route::get('{id}', [DepartmentController::class, 'show']);
-        Route::patch('{id}', [DepartmentController::class, 'update']);
-        Route::delete('{id}', [DepartmentController::class, 'destroy']);
+        Route::get('/{department}', [DepartmentController::class, 'show']);
+        Route::patch('/{department}', [DepartmentController::class, 'update']);
+        Route::delete('/{department}', [DepartmentController::class, 'destroy']);
     });
-    Route::get('faculties/{faculty_id}/departments', [DepartmentController::class, 'indexByFaculty']);
 
     // Teachers
     Route::prefix('teachers')->group(function () {
@@ -71,9 +71,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/letters', [LetterController::class, 'index']);
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
 
+    // Users
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::get('/{user}', [UserController::class, 'show']);
+        Route::patch('/{user}', [UserController::class, 'update']);
+        Route::post('/{user}/activate', [UserController::class, 'activate']);
+        Route::post('/{user}/deactivate', [UserController::class, 'deactivate']);
+    });
+
 });
 
-Route::get('/', function () {
+Route::get('/',function (){
     return response()->json([
         'status' => 'ok',
         'timestamp' => now(),
