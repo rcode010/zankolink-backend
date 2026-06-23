@@ -20,15 +20,17 @@ class Course extends Model
 
     public function students(): BelongsToMany
     {
-        return $this->belongsToMany(Student::class, 'course-student')
-            ->withPivot('grade', 'enrolled_at', 'academic_year')
-            ->withTimestamps();
+        return $this->belongsToMany(Student::class, 'course_student')
+                    ->withPivot('grade', 'enrolled_at', 'academic_year')
+                    ->withTimestamps();
+
     }
 
     public function teachers(): BelongsToMany
     {
-        return $this->belongsToMany(Teacher::class, 'course-teacher')
-            ->withPivot('role')
-            ->withTimestamps();
+        return $this->belongsToMany(Teacher::class, 'course_teacher')
+                    ->withPivot('role')
+                    ->withTimestamps();
+
     }
 }
