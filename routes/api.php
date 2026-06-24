@@ -11,6 +11,13 @@ use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\TeacherDepartmentController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\LetterController;
+use App\Http\Controllers\UniversityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -96,6 +103,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/letters', [LetterController::class, 'store']);
     Route::get('/letters', [LetterController::class, 'index']);
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
+    Route::patch('/letters/{letter}', [LetterController::class, 'update'])->whereNumber('letter');
 
     // Users
     Route::prefix('users')->group(function () {
