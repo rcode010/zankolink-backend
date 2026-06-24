@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\LetterController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\UserController;
@@ -65,13 +66,22 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{teacher}', [TeacherController::class, 'destroy']);
     });
 
-    //Courses
+    // Students
+    Route::prefix('students')->group(function () {
+        Route::get('/', [StudentController::class, 'index']);
+        Route::post('/', [StudentController::class, 'store']);
+        Route::get('/{student}', [StudentController::class, 'show']);
+        Route::patch('/{student}', [StudentController::class, 'update']);
+        Route::delete('/{student}', [StudentController::class, 'destroy']);
+    });
+
+    // Courses
     Route::prefix('courses')->group(function () {
-        Route::get('/', [CourseController::class,'index']);
-        Route::post('/', [CourseController::class,'store']);
-        Route::get('/{course}', [CourseController::class,'show']);
-        Route::patch('/{course}', [CourseController::class,'update']);
-        Route::delete('/{course}', [CourseController::class,'destroy']);
+        Route::get('/', [CourseController::class, 'index']);
+        Route::post('/', [CourseController::class, 'store']);
+        Route::get('/{course}', [CourseController::class, 'show']);
+        Route::patch('/{course}', [CourseController::class, 'update']);
+        Route::delete('/{course}', [CourseController::class, 'destroy']);
     });
 
     // Letters

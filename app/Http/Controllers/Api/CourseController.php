@@ -14,6 +14,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 class CourseController extends Controller
 {
     use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -55,7 +56,7 @@ class CourseController extends Controller
         return $this->success(
             'Course created successfully.',
             (new CourseResource($course))
-            ->toArray($request),
+                ->toArray($request),
             201
         );
     }
@@ -72,7 +73,7 @@ class CourseController extends Controller
         return $this->ok(
             'Course retrieved successfully.',
             (new CourseResource($course))
-            ->toArray(request()),
+                ->toArray(request()),
         );
     }
 
