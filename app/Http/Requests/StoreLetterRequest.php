@@ -29,7 +29,6 @@ class StoreLetterRequest extends FormRequest
 
             'receiver_id' => 'required|integer|exists:users,id', // Your controller will handle dynamic validation
 
-
             'original_sender_id' => 'required|integer',
 
             'status' => 'required|in:pending,approved,rejected',
