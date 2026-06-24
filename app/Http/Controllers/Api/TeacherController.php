@@ -29,10 +29,6 @@ class TeacherController extends Controller
                 'speciality',
                 'user.name'
             )
-            ->allowedSorts(
-                'title',
-                'speciality'
-            )
             ->latest()
             ->paginate($per_page);
 

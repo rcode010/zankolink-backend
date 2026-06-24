@@ -26,6 +26,7 @@ class UniversityController extends Controller
             ->allowedFilters(
                 'name',
                 'location',
+                'is_active'
             )
             ->latest()
             ->paginate($per_page);

@@ -35,11 +35,6 @@ class StudentController extends Controller
                 'user.name',
                 'enrollment_type'
             )
-            ->allowedSorts(
-                'student_number',
-                'stage',
-                'created_at'
-            )
             ->Latest()
             ->paginate($perPage);
 

@@ -27,13 +27,7 @@ class CourseController extends Controller
             ->allowedFilters(
                 'name',
                 'code',
-                'year_level',
                 'department_id'
-            )
-            ->allowedSorts(
-                'name',
-                'credit_hours',
-                'year_level',
             )
             ->latest()
             ->paginate($per_page);

@@ -26,8 +26,8 @@ class DepartmentController extends Controller
             ->with('faculty:id,name')
             ->allowedFilters(
                 'name',
-                'code',
                 'faculty_id',
+                'is_active'
             )
             ->latest()
             ->paginate($per_page);
