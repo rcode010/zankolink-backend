@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLetterRequest;
 use App\Models\Letter;
 use App\Traits\ApiResponses;
@@ -47,8 +48,7 @@ class LetterController extends Controller
         $user = auth()->user();
 
         $data['sender_id'] = auth()->id();
-        $data['sender_type'] = $user->position;
-        $data['status'] = 'draft';
+        $data['status'] = 'pending';
 
         $letter = Letter::create($data);
 

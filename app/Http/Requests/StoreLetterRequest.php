@@ -27,14 +27,12 @@ class StoreLetterRequest extends FormRequest
             'body' => 'required|string|min:10',
             'type' => 'required|in:internal,directive,request,decision,appeal',
 
-            'receiver_type' => 'required|in:University,Faculty,Department',
             'receiver_id' => 'required|integer|exists:users,id', // Your controller will handle dynamic validation
 
-            'sender_type' => 'required',
 
             'original_sender_id' => 'required|integer',
 
-            'status' => 'required|in:draft,approved,rejected',
+            'status' => 'required|in:pending,approved,rejected',
 
             'academic_year' => 'required|string|regex:/^\d{4}-\d{4}$/',
 

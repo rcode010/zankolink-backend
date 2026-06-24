@@ -1,16 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\FacultyController;
+use App\Http\Controllers\Api\LetterController;
+use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UniversityController;
-use App\Http\Controllers\FacultyController;
-use App\Http\Controllers\Api\DepartmentController;
-use App\Http\Controllers\CourseController;
-use App\Http\Controllers\LetterController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\UniversityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -66,7 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/{teacher}', [TeacherController::class, 'update']);
         Route::delete('/{teacher}', [TeacherController::class, 'destroy']);
     });
-  
+
     //Courses
     Route::prefix('courses')->group(function () {
         Route::get('/', [CourseController::class,'index']);
