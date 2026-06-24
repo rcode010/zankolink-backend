@@ -14,6 +14,24 @@ class StudentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'enrollment_type' => $this->enrollment_type,
+            'stage' => $this->stage,
+            'student_number' => $this->student_number,
+            'status' => $this->status,
+
+            'user' => [
+                'id' => $this->user?->id,
+                'name' => $this->user?->name
+            ],
+
+            'department' => new DepartmentResource(
+                $this->whenLoaded('department')
+            ),
+
+            'created_at' => $this->created_at?->toDateTimeString(),
+            'updated_at' => $this->updated_at?->toDateTimeString(),
+        ];
     }
 }

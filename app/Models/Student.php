@@ -11,7 +11,7 @@ class Student extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['user_id', 'department_id', 'student_number', 'year_of_study', 'status'];
+    protected $fillable = ['user_id', 'department_id', 'enrollment_type', 'stage', 'student_number', 'status'];
 
     public function user(): BelongsTo
     {

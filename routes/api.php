@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FacultyController;
@@ -54,6 +55,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{department}', [DepartmentController::class, 'show']);
         Route::patch('/{department}', [DepartmentController::class, 'update']);
         Route::delete('/{department}', [DepartmentController::class, 'destroy']);
+    });
+
+    //Students
+    Route::prefix('students')->group(function () {
+        Route::post('/', [StudentController::class,'store']);
     });
 
     // Letters
