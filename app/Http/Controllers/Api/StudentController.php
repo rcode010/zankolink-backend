@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentRequest;
+use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
 use App\Models\Student;
 use App\Traits\ApiResponses;
@@ -90,9 +91,21 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreStudentRequest $request, Student $student)
+    public function update(UpdateStudentRequest $request, Student $student)
     {
-        //
+        $student->update(
+            $request->validated()
+        );
+
+        return $this->ok(
+            'Student updated successfully.',
+            (new StudentResource(
+                $student->fresh()->load([
+                    'user:id,name',
+                    'department:id,name'
+                ])
+            ))->toArray($request)
+        );
     }
 
     /**
@@ -100,6 +113,10 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        //
+        $student->delete();
+
+        return $this->ok(
+            'Student deleted successfully.'
+        );
     }
 }
