@@ -26,7 +26,7 @@ return new class extends Migration
 
             $table->text('comment')->nullable();
 
-            $table->text('verification_hash')->nullable();
+            $table->text('verification_hash');
 
             $table->timestamps();
         });
