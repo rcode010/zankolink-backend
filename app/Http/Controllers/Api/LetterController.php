@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLetterRequest;
 use App\Http\Requests\UpdateLetterRequest;
+use App\Http\Resources\LetterResource;
 use App\Models\Letter;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class LetterController extends Controller
             ->paginate($perPage);
 
 
-        return $this->ok('Letters retrieved successfully', $letters->toArray());
+        return $this->ok('Letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
     }
 
     /**
@@ -49,7 +50,6 @@ class LetterController extends Controller
     public function store(StoreLetterRequest $request)
     {
         $data = $request->validated();
-        $user = auth()->user();
 
         $data['sender_id'] = auth()->id();
         $data['status'] = 'pending';
@@ -57,7 +57,15 @@ class LetterController extends Controller
         $letter = Letter::create($data);
 
         if ($letter) {
-            return $this->ok('Letter created successfully', [$letter]);
+            return $this->ok(
+                'Letter created successfully',
+                (new LetterResource(
+                    $letter->load([
+                        'sender:id,name',
+                        'receiver:id,name',
+                    ])
+                ))->resolve()
+            );
         }
 
         return $this->error('Letter could not be created', 400);
@@ -66,10 +74,19 @@ class LetterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Letter $letter)
-    {
 
-        return $this->ok('Letter retrieved successfully', $letter->load('sender:id,name', 'receiver:id,name')->toArray());
+
+        public function show(Letter $letter)
+    {
+        return $this->ok(
+            'Letter retrieved successfully',
+            (new LetterResource(
+                $letter->load([
+                    'sender:id,name',
+                    'receiver:id,name',
+                ])
+            ))->resolve()
+        );
     }
 
     /**
@@ -87,13 +104,21 @@ class LetterController extends Controller
     {
         $credentials = $request->validated();
 
-        if($letter->receiver_id === $credentials['receiver_id']){
+        if($letter->receiver_id === (int)$credentials['receiver_id']){
             return $this->error("New receiver can't be the same as current one.", 400);
         }
 
         $letter->update($credentials);
 
-        return $this->ok('Letter updated successfully', $letter->load('sender:id,name','receiver:id,name')->toArray());
+        return $this->ok(
+            'Letter updated successfully',
+            (new LetterResource(
+                $letter->load([
+                    'sender:id,name',
+                    'receiver:id,name',
+                ])
+            ))->resolve()
+        );
     }
 
     /**
