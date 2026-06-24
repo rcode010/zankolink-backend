@@ -24,7 +24,8 @@ class UniversityResource extends JsonResource
             'end_date' => $this->end_date,
             'established_year' => $this->established_year,
             'is_active' => $this->is_active,
-            'created_at' => $this->created_at,
+            'created_at' => $this->created_at?->toDateTimeString(),
+            'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
 }

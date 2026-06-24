@@ -19,11 +19,12 @@ class FacultyResource extends JsonResource
             'name' => $this->name,
             'admin_id' => $this->admin_id,
             'is_active' => $this->is_active,
+            'university_id' => $this->university_id,
 
-            'university_id' => [
-                'id' => $this->university?->id,
-                'name' => $this->university?->name,
-            ],
+            'university' => new UniversityResource($this->whenLoaded('university')),
+
+            'created_at' => $this->created_at?->toDateTimeString(),
+            'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
 }

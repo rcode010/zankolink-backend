@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCourseRequest extends FormRequest
 {
@@ -25,7 +26,14 @@ class UpdateCourseRequest extends FormRequest
         return [
             'department_id' => 'sometimes|exists:departments,id',
             'name' => 'sometimes|string|max:255',
-            'code' => 'sometimes|string|max:50|unique:courses,code',
+
+            'code' => [
+                'sometimes',
+                'string',
+                'max:50',
+                Rule::unique('courses', 'code')->ignore($this->course),
+            ],
+
             'credit_hours' => 'sometimes|integer|min:1',
             'year_level' => 'sometimes|integer|min:1',
             'is_active' => 'sometimes|boolean',

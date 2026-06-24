@@ -20,21 +20,17 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
+        $per_page = $request->query('per_page', 15);
+
         $courses = QueryBuilder::for(Course::class)
             ->with('department:id,name')
             ->allowedFilters(
                 'name',
                 'code',
-                'year_level',
                 'department_id'
             )
-            ->allowedSorts(
-                'name',
-                'credit_hours',
-                'year_level',
-            )
             ->latest()
-            ->paginate($request->query('per_page', 15));
+            ->paginate($per_page);
 
         return $this->ok(
             'Courses retrieved successfully.',

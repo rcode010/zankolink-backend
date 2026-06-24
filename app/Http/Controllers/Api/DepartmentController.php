@@ -20,16 +20,17 @@ class DepartmentController extends Controller
      */
     public function index(Request $request)
     {
+        $per_page = $request->query('per_page', 15);
+
         $departments = QueryBuilder::for(Department::class)
+            ->with('faculty:id,name')
             ->allowedFilters(
                 'name',
-                'code',
                 'faculty_id',
+                'is_active'
             )
             ->latest()
-            ->paginate(
-                $request->query('per_page', 15)
-            );
+            ->paginate($per_page);
 
         return $this->ok(
             'Departments retrieved successfully.',
@@ -60,6 +61,8 @@ class DepartmentController extends Controller
      */
     public function show(Department $department)
     {
+        $department->load('faculty:id,name');
+
         return $this->ok(
             'Department retrieved successfully.',
             (new DepartmentResource($department))
