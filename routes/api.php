@@ -59,7 +59,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Students
     Route::prefix('students')->group(function () {
+        Route::get('/', [StudentController::class,'index']);
         Route::post('/', [StudentController::class,'store']);
+        Route::get('/{student}', [StudentController::class,'show']);
     });
 
     // Letters

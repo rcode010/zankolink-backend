@@ -8,6 +8,7 @@ use App\Http\Resources\StudentResource;
 use App\Models\Student;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class StudentController extends Controller
 {
@@ -17,7 +18,35 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        $perPage = $request->query('per_page', 15);
+
+        $student = QueryBuilder::for(Student::class)
+            ->with([
+                'user:id,name',
+                'department:id,name'
+            ])
+            ->allowedFilters(
+                'student_number',
+                'stage',
+                'status',
+                'department.name',
+                'user.name',
+                'enrollment_type'
+            )
+            ->allowedSorts(
+                'student_number',
+                'stage',
+                'created_at'
+            )
+            ->Latest()
+            ->paginate($perPage);
+
+        return $this->ok(
+            'Student retrieved successfully.',
+            StudentResource::collection($student)
+            ->response()
+            ->getData(true)
+        );
     }
 
     /**
@@ -46,7 +75,16 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        //
+        $student->load([
+            'user:id,name',
+            'department:id,name'
+        ]);
+
+        return $this->ok(
+            'Student retrieved successfully.',
+            (new StudentResource($student))
+            ->toArray(request()),
+        );
     }
 
     /**
