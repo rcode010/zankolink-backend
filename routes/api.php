@@ -88,6 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //teacher_department
     Route::prefix('departments')->group(function () {
         Route::post('/{department}/assign-teacher', [TeacherDepartmentController::class, 'store']);
+        Route::get('/{department}/teachers', [TeacherDepartmentController::class,'index']);
     });
 
     // Letters
