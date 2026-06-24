@@ -38,13 +38,14 @@ class DepartmentFactory extends Factory
             'Kurdish Literature',
             'Basic Education and Teaching',
             'Soil and Water Science',
-            'Fine Arts and Design'
+            'Fine Arts and Design',
         ];
+
         return [
 
-            'name' =>$this->faker->randomElement($departments),
+            'name' => $this->faker->randomElement($departments),
             'faculty_id' => Faculty::factory(),
-            'admin_id'=>null,
+            'admin_id' => null,
             'is_active' => true,
         ];
     }

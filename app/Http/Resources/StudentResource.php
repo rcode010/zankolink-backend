@@ -23,7 +23,7 @@ class StudentResource extends JsonResource
 
             'user' => [
                 'id' => $this->user?->id,
-                'name' => $this->user?->name
+                'name' => $this->user?->name,
             ],
 
             'department' => new DepartmentResource(

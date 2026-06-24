@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use App\Http\Resources\DepartmentResource;
-use App\Traits\ApiResponses;
 use App\Models\Department;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 

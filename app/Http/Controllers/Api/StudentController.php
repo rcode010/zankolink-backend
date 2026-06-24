@@ -14,6 +14,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 class StudentController extends Controller
 {
     use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -24,7 +25,7 @@ class StudentController extends Controller
         $student = QueryBuilder::for(Student::class)
             ->with([
                 'user:id,name',
-                'department:id,name'
+                'department:id,name',
             ])
             ->allowedFilters(
                 'student_number',
@@ -45,8 +46,8 @@ class StudentController extends Controller
         return $this->ok(
             'Student retrieved successfully.',
             StudentResource::collection($student)
-            ->response()
-            ->getData(true)
+                ->response()
+                ->getData(true)
         );
     }
 
@@ -60,11 +61,11 @@ class StudentController extends Controller
         );
 
         return $this->success(
-          'Student created successfully.',
+            'Student created successfully.',
             (new StudentResource(
                 $student->load([
                     'user:id,name',
-                    'department:id,name'
+                    'department:id,name',
                 ])
             ))->toArray($request),
             201
@@ -78,13 +79,13 @@ class StudentController extends Controller
     {
         $student->load([
             'user:id,name',
-            'department:id,name'
+            'department:id,name',
         ]);
 
         return $this->ok(
             'Student retrieved successfully.',
             (new StudentResource($student))
-            ->toArray(request()),
+                ->toArray(request()),
         );
     }
 
@@ -102,7 +103,7 @@ class StudentController extends Controller
             (new StudentResource(
                 $student->fresh()->load([
                     'user:id,name',
-                    'department:id,name'
+                    'department:id,name',
                 ])
             ))->toArray($request)
         );

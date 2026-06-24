@@ -32,13 +32,14 @@ class FacultyFactory extends Factory
             'College of Agricultural Engineering',
             'College of Fine Arts',
             'College of Languages',
-            'College of Physical Education'
+            'College of Physical Education',
         ];
+
         return [
             'name' => $this->faker->randomElement($colleges),
             'university_id' => University::factory(),
-            'admin_id'=>null,
-            'is_active' => true
+            'admin_id' => null,
+            'is_active' => true,
         ];
     }
 }

@@ -26,7 +26,7 @@ class UpdateStudentRequest extends FormRequest
         return [
             'user_id' => [
                 'sometimes', 'exists:users,id',
-                Rule::unique('students', 'user_id')->ignore($this->student)
+                Rule::unique('students', 'user_id')->ignore($this->student),
             ],
 
             'department_id' => 'sometimes|exists:departments,id',
@@ -35,7 +35,7 @@ class UpdateStudentRequest extends FormRequest
 
             'student_number' => [
                 'sometimes', 'string', 'max:50',
-                Rule::unique('students', 'student_number')->ignore($this->student)
+                Rule::unique('students', 'student_number')->ignore($this->student),
             ],
 
             'status' => 'sometimes|in:active,inactive,on_leave,suspended,graduated',

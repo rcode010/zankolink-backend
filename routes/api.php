@@ -1,12 +1,15 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\FacultyController;
+use App\Http\Controllers\Api\LetterController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\FacultyController;
-use App\Http\Controllers\LetterController;
-use App\Http\Controllers\UniversityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,10 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/{faculty}', [FacultyController::class, 'update']);
         Route::delete('/{faculty}', [FacultyController::class, 'destroy']);
     });
-    Route::post(
-        'universities/{university}/faculties',
-        [FacultyController::class, 'store']
-    );
+    Route::post('universities/{university}/faculties', [FacultyController::class, 'store']);
 
     // Departments
     Route::prefix('departments')->group(function () {
@@ -57,13 +57,31 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{department}', [DepartmentController::class, 'destroy']);
     });
 
-    //Students
+    // Teachers
+    Route::prefix('teachers')->group(function () {
+        Route::get('/', [TeacherController::class, 'index']);
+        Route::post('/', [TeacherController::class, 'store']);
+        Route::get('/{teacher}', [TeacherController::class, 'show']);
+        Route::patch('/{teacher}', [TeacherController::class, 'update']);
+        Route::delete('/{teacher}', [TeacherController::class, 'destroy']);
+    });
+
+    // Students
     Route::prefix('students')->group(function () {
-        Route::get('/', [StudentController::class,'index']);
-        Route::post('/', [StudentController::class,'store']);
-        Route::get('/{student}', [StudentController::class,'show']);
-        Route::patch('/{student}', [StudentController::class,'update']);
-        Route::delete('/{student}', [StudentController::class,'destroy']);
+        Route::get('/', [StudentController::class, 'index']);
+        Route::post('/', [StudentController::class, 'store']);
+        Route::get('/{student}', [StudentController::class, 'show']);
+        Route::patch('/{student}', [StudentController::class, 'update']);
+        Route::delete('/{student}', [StudentController::class, 'destroy']);
+    });
+
+    // Courses
+    Route::prefix('courses')->group(function () {
+        Route::get('/', [CourseController::class, 'index']);
+        Route::post('/', [CourseController::class, 'store']);
+        Route::get('/{course}', [CourseController::class, 'show']);
+        Route::patch('/{course}', [CourseController::class, 'update']);
+        Route::delete('/{course}', [CourseController::class, 'destroy']);
     });
 
     // Letters
@@ -80,13 +98,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{user}/deactivate', [UserController::class, 'deactivate']);
     });
 
+    // The endpoint for the reports dashboard statistics
+    Route::get('/reports/statistics', [ReportController::class, 'getStatistics']);
 });
 
-
-
-Route::get('/',function (){
+Route::get('/', function () {
     return response()->json([
-        'status'=>'ok',
-        'timestamp'=>now()
+        'status' => 'ok',
+        'timestamp' => now(),
     ]);
 });

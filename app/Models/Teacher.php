@@ -26,7 +26,7 @@ class Teacher extends Model
     public function courses(): BelongsToMany
     {
         return $this->belongsToMany(Course::class, 'course_teacher')
-                    ->withPivot('role')
-                    ->withTimestamps();
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }
