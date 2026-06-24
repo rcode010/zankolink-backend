@@ -23,6 +23,9 @@ class TeacherResource extends JsonResource
                 'id' => $this->user?->id,
                 'name' => $this->user?->name,
             ],
+
+            'created_at' => $this->created_at?->toDateTimeString(),
+            'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
 }

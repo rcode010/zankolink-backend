@@ -24,6 +24,9 @@ class FacultyResource extends JsonResource
                 'id' => $this->university?->id,
                 'name' => $this->university?->name,
             ],
+
+            'created_at' => $this->created_at?->toDateTimeString(),
+            'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
 }

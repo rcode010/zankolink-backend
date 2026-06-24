@@ -26,6 +26,9 @@ class CourseResource extends JsonResource
                 'id' => $this->department?->id,
                 'name' => $this->department?->name,
             ],
+
+            'created_at' => $this->created_at?->toDateTimeString(),
+            'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
 }

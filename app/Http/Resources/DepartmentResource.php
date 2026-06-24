@@ -21,8 +21,8 @@ class DepartmentResource extends JsonResource
             'faculty_id' => $this->faculty_id,
 
             'faculty' => new FacultyResource($this->whenLoaded('faculty')),
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'created_at' => $this->created_at?->toDateTimeString(),
+            'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
 }
