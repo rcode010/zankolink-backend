@@ -7,6 +7,8 @@ use App\Http\Requests\StoreLetterRequest;
 use App\Models\Letter;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class LetterController extends Controller
 {
@@ -19,14 +21,15 @@ class LetterController extends Controller
     {
         $perPage = $request->query('per_page', 15);
 
-        // Fetch paginated letters with eager-loaded sender and receiver fields.
-        // We select only 'id' and 'name' for both relations to optimize query performance.
-        $letters = Letter::with([
-            'sender:id,name',
-            'receiver:id,name',
-        ])
-            ->latest()
-            ->paginate($perPage);
+        $letters = QueryBuilder::for(Letter::class)
+            ->with(['sender:id,name','receiver:id,name'])
+            ->allowedFilters(
+                AllowedFilter::exact('status')
+            )->defaultSort(
+                '-created_at',
+            )
+            ->paginate($perPage,);
+
 
         return $this->ok('Letters retrieved successfully', $letters->toArray());
     }
