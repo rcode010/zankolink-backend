@@ -86,9 +86,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     //teacher_department
-    Route::prefix('departments')->group(function () {
-        Route::post('/{department}/assign-teacher', [TeacherDepartmentController::class, 'store']);
-        Route::get('/{department}/teachers', [TeacherDepartmentController::class,'index']);
+    Route::prefix('departments/{department}')->group(function () {
+        Route::post('/assign-teacher', [TeacherDepartmentController::class, 'store']);
+        Route::get('/teachers', [TeacherDepartmentController::class,'index']);
+        Route::delete('/teachers/{teacher}', [TeacherDepartmentController::class,'destroy']);
     });
 
     // Letters

@@ -39,14 +39,14 @@ class TeacherDepartmentController extends Controller
         );
     }
 
-    public function update(Request $request, Department $department, Teacher $teacher)
-    {
-
-    }
-
     public function destroy(Department $department, Teacher $teacher)
     {
+        $department->teachers()
+            ->detach($teacher);
 
+        return $this->ok(
+            'Teacher removed from department successfully.'
+        );
     }
 
 }
