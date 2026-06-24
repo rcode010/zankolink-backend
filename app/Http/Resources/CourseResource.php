@@ -21,11 +21,9 @@ class CourseResource extends JsonResource
             'credit_hours' => $this->credit_hours,
             'year_level' => $this->year_level,
             'is_active' => $this->is_active,
+            'department_id' => $this->department_id,
 
-            'department_id' => [
-                'id' => $this->department?->id,
-                'name' => $this->department?->name,
-            ],
+            'department' => new DepartmentResource($this->whenLoaded('department')),
 
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),

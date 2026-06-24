@@ -21,6 +21,7 @@ class DepartmentController extends Controller
     public function index(Request $request)
     {
         $departments = QueryBuilder::for(Department::class)
+            ->with('faculty:id,name')
             ->allowedFilters(
                 'name',
                 'code',
@@ -60,6 +61,8 @@ class DepartmentController extends Controller
      */
     public function show(Department $department)
     {
+        $department->load('faculty:id,name');
+
         return $this->ok(
             'Department retrieved successfully.',
             (new DepartmentResource($department))
