@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 class TeacherDepartmentController extends Controller
 {
     use ApiResponses;
+
     public function index(Request $request, Department $department)
     {
         $per_page = $request->query('per_page', 15);
@@ -24,8 +25,8 @@ class TeacherDepartmentController extends Controller
         return $this->ok(
             'Department teachers retrieved successfully.',
             TeacherResource::collection($teachers)
-            ->response()
-            ->getData(true)
+                ->response()
+                ->getData(true)
         );
     }
 
@@ -48,5 +49,4 @@ class TeacherDepartmentController extends Controller
             'Teacher removed from department successfully.'
         );
     }
-
 }

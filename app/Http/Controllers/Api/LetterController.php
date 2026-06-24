@@ -24,14 +24,13 @@ class LetterController extends Controller
         $perPage = $request->query('per_page', 15);
 
         $letters = QueryBuilder::for(Letter::class)
-            ->with(['sender:id,name','receiver:id,name'])
+            ->with(['sender:id,name', 'receiver:id,name'])
             ->allowedFilters(
                 AllowedFilter::exact('status')
             )->defaultSort(
                 '-created_at',
             )
             ->paginate($perPage);
-
 
         return $this->ok('Letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
     }
@@ -74,9 +73,7 @@ class LetterController extends Controller
     /**
      * Display the specified resource.
      */
-
-
-        public function show(Letter $letter)
+    public function show(Letter $letter)
     {
         return $this->ok(
             'Letter retrieved successfully',
@@ -104,7 +101,7 @@ class LetterController extends Controller
     {
         $credentials = $request->validated();
 
-        if($letter->receiver_id === (int)$credentials['receiver_id']){
+        if ($letter->receiver_id === (int) $credentials['receiver_id']) {
             return $this->error("New receiver can't be the same as current one.", 400);
         }
 
