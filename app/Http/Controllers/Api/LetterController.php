@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RaiseLetterRequest;
 use App\Http\Requests\StoreLetterRequest;
 use App\Http\Requests\UpdateLetterRequest;
 use App\Http\Resources\LetterResource;
 use App\Models\Letter;
+use App\Models\LetterSignature;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -136,6 +139,39 @@ class LetterController extends Controller
             ->get();
 
         return $this->ok('Letters retrieved successfully', (LetterResource::collection($letters->load(['sender:id,name','receiver:id,name'])))->resolve());
+    }
+
+
+    public function raiseLetter (Letter $letter, RaiseLetterRequest $request){
+        $user = auth()->user();
+        $credentials = $request->validated();
+
+        if ($letter->receiver_id !== $user->id) {
+            return $this->error('You are not allowed to raise this letter.', 403);
+        }
+
+        if($letter->receiver_id === (int)$credentials['receiver_id']){
+            return $this->error("New receiver can't be the same as current one.", 400);
+        }
+
+        DB::transaction(function () use ($letter, $user, $credentials) {
+            LetterSignature::create([
+                'letter_id' => $letter->id,
+                'user_id' => $user->id,
+                'role_at_time' => $user->role_scope_type,
+            ]);
+
+            $letter->update([
+                'sender_id' => $user->id,
+                'receiver_id' => $credentials['receiver_id'],
+            ]);
+        });
+
+
+        return $this->ok(
+            'Letter raised'
+        );
+
     }
 
     /**
