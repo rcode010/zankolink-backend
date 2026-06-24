@@ -10,13 +10,7 @@ use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\DepartmentController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CourseController;
-use App\Http\Controllers\FacultyController;
-use App\Http\Controllers\LetterController;
-use App\Http\Controllers\UniversityController;
+use App\Http\Controllers\Api\SignatureController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -96,6 +90,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/letters', [LetterController::class, 'index']);
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
     Route::patch('/letters/{letter}', [LetterController::class, 'update'])->whereNumber('letter');
+
+    // Signatures 
+    Route::post('/signatures', [SignatureController::class, 'store']);
+    Route::get('/signatures/{id}', [SignatureController::class, 'show']);
+    Route::get('/signatures', [SignatureController::class, 'index']);
 
     // Users
     Route::prefix('users')->group(function () {
