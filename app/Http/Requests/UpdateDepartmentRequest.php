@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateDepartmentRequest extends FormRequest
 {
@@ -32,7 +31,7 @@ class UpdateDepartmentRequest extends FormRequest
         return [
             'name' => 'sometimes|required|string|max:255',
             'faculty_id' => 'sometimes|required|exists:faculties,id',
-            'is_active' => 'sometimes|boolean'
+            'is_active' => 'sometimes|boolean',
         ];
     }
 }
