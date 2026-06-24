@@ -20,6 +20,8 @@ class TeacherController extends Controller
      */
     public function index(Request $request)
     {
+        $per_page = $request->query('per_page', 15);
+
         $teachers = QueryBuilder::for(Teacher::class)
             ->with('user:id,name')
             ->allowedFilters(
@@ -32,7 +34,7 @@ class TeacherController extends Controller
                 'speciality'
             )
             ->latest()
-            ->paginate($request->query('per_page', 15));
+            ->paginate($per_page);
 
         return $this->ok(
             'Teachers retrieved successfully.',

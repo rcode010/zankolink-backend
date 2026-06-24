@@ -20,15 +20,15 @@ class UniversityController extends Controller
      */
     public function index(Request $request)
     {
+        $per_page = $request->query('per_page', 15);
+
         $universities = QueryBuilder::for(University::class)
             ->allowedFilters(
                 'name',
                 'location',
             )
             ->latest()
-            ->paginate(
-                $request->query('per_page', 15)
-            );
+            ->paginate($per_page);
 
         return $this->ok(
             'Universities retrieved successfully.',

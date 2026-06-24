@@ -21,6 +21,8 @@ class FacultyController extends Controller
      */
     public function index(Request $request)
     {
+        $per_page = $request->query('per_page', 15);
+
         $faculties = QueryBuilder::for(Faculty::class)
             ->with('university:id,name')
             ->allowedFilters(
@@ -29,7 +31,7 @@ class FacultyController extends Controller
                 'university_id'
             )
             ->latest()
-            ->paginate($request->query('per_page', 15));
+            ->paginate($per_page);
 
         return $this->ok(
             'Faculties retrieved successfully',
