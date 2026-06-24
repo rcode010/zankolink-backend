@@ -11,16 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('signature_letters', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('letter_id')->constrained('letters')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('role_at_time', ['student', 'teacher', 'head_of_department', 'dean', 'admin']);
-            $table->string('comment')->nullable();
-            $table->string('verification_hash')->nullable();
-            $table->timestamps();
+       Schema::create('letter_signature', function (Blueprint $table) {
+    $table->id();
 
-        });
+    $table->foreignId('letter_id')
+        ->constrained('letters')
+        ->cascadeOnDelete();
+
+    $table->foreignId('user_id')
+        ->constrained('users')
+        ->cascadeOnDelete();
+
+    $table->string('role_at_time');
+
+    $table->string('comment')->nullable();
+
+    $table->string('verification_hash')->nullable();
+
+    $table->timestamps();
+});
     }
 
     /**
@@ -28,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('signature_letters');
+        Schema::dropIfExists('letter_signature');
     }
 };
