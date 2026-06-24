@@ -51,6 +51,7 @@ class LetterController extends Controller
     {
         $data = $request->validated();
 
+        $data['original_sender_id'] = auth()->id();
         $data['sender_id'] = auth()->id();
         $data['status'] = 'pending';
 
@@ -119,6 +120,22 @@ class LetterController extends Controller
                 ])
             ))->resolve()
         );
+    }
+
+
+
+    public function recentLetters(Request $request){
+        $user = auth()->user();
+        $letters = Letter::with([
+            'sender:id,name',
+            'receiver:id,name',
+        ])
+            ->where('receiver_id', $user->id)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return $this->ok('Letters retrieved successfully', (LetterResource::collection($letters->load(['sender:id,name','receiver:id,name'])))->resolve());
     }
 
     /**
