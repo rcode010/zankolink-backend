@@ -25,20 +25,7 @@ class UpdateTeacherRequest extends FormRequest
     {
         return [
             'user_id' => 'sometimes|exists:users,id',
-
-            'title' => [
-                'sometimes',
-                Rule::in([
-                    'prof',
-                    'assoc_prof',
-                    'asst_prof',
-                    'lecturer',
-                    'dr',
-                    'mr',
-                    'ms',
-                ]),
-            ],
-
+            'title' => 'sometimes|in:prof,assoc_prof,asst_prof,lecturer,dr,mr,ms',
             'speciality' => 'sometimes|string|max:255',
         ];
     }

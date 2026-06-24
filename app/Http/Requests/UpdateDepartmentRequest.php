@@ -31,15 +31,8 @@ class UpdateDepartmentRequest extends FormRequest
 
         return [
             'name' => 'sometimes|required|string|max:255',
-            'code' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:50',
-                // Ignore the current department ID to prevent unique validation failure during updates
-                Rule::unique('departments', 'code')->ignore($departmentId),
-            ],
             'faculty_id' => 'sometimes|required|exists:faculties,id',
+            'is_active' => 'sometimes|boolean'
         ];
     }
 }

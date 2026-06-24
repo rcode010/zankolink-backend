@@ -25,20 +25,7 @@ class StoreTeacherRequest extends FormRequest
     {
         return [
             'user_id' => 'required|exists:users,id|unique:teachers,user_id',
-
-            'title' => [
-                'required',
-                Rule::in([
-                    'prof',
-                    'assoc_prof',
-                    'asst_prof',
-                    'lecturer',
-                    'dr',
-                    'mr',
-                    'ms',
-                ]),
-            ],
-
+            'title' => 'required|in:prof,assoc_prof,asst_prof,lecturer,dr,mr,ms',
             'speciality' => 'required|string|max:255',
         ];
     }
