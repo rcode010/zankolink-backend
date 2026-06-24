@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLetterRequest;
+use App\Http\Requests\UpdateLetterRequest;
 use App\Models\Letter;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class LetterController extends Controller
             )->defaultSort(
                 '-created_at',
             )
-            ->paginate($perPage,);
+            ->paginate($perPage);
 
 
         return $this->ok('Letters retrieved successfully', $letters->toArray());
@@ -82,9 +83,17 @@ class LetterController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Letter $letter)
+    public function update(UpdateLetterRequest $request, Letter $letter)
     {
-        //
+        $credentials = $request->validated();
+
+        if($letter->receiver_id === $credentials['receiver_id']){
+            return $this->error("New receiver can't be the same as current one.", 400);
+        }
+
+        $letter->update($credentials);
+
+        return $this->ok('Letter updated successfully', $letter->load('sender:id,name','receiver:id,name')->toArray());
     }
 
     /**
