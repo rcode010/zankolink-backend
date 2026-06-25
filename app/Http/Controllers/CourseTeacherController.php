@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TeacherResource;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Teacher;
@@ -12,7 +13,21 @@ class CourseTeacherController extends Controller
 {
     use ApiResponses;
 
-    public function departmentTeachers(Department $department) {}
+    public function departmentTeachers(Request $request, Department $department)
+    {
+        $per_page = $request->query('per_page', 15);
+
+        $teachers = $department->teachers()
+            ->with('user:id,name')
+            ->paginate($per_page);
+
+        return $this->ok(
+            'Department teachers retrieved successfully.',
+            TeacherResource::collection($teachers)
+                ->response()
+                ->getData(true)
+        );
+    }
 
     public function courseTeachers(Course $course) {}
 
