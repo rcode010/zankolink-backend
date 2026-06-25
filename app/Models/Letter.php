@@ -25,5 +25,10 @@ class Letter extends Model
     }
     public function originalSender(){
         return $this->belongsTo(User::class, 'original_sender_id');
+    public function attachments()
+    {
+
+    return $this->hasMany(Attachment::class);
+    
     }
 }

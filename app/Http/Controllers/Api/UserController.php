@@ -15,32 +15,33 @@ class UserController extends Controller
     /**
      * Display a listing of the resource with filters and pagination.
      */
+   /**
+     * Display a listing of the resource with filters and pagination.
+     */
     public function index(Request $request)
     {
-
         $users = QueryBuilder::for(User::class)
-            ->allowedFilters(['role_scope_type'])
+            ->allowedFilters('role_scope_type')
             ->latest()
             ->paginate($request->query('per_page', 10));
 
         return $this->ok(
             'Users retrieved successfully.',
-            $users
+            $users->toArray() // ✨ لێرەدا دەیکەین بە ئەرەی بۆ ئەوەی ترەیتەکە ختا نەدات
         );
     }
 
-    /**
+   /**
      * Display the specified resource.
      */
     public function show(User $user)
     {
         return $this->ok(
             'User retrieved successfully.',
-            $user
+            $user->toArray() 
         );
     }
-
-    /**
+   /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, User $user)
@@ -50,12 +51,11 @@ class UserController extends Controller
             'phone' => 'sometimes|string|max:20',
         ]);
 
-        // Directly update user details (Profile photo logic completely removed)
         $user->update($validated);
 
         return $this->ok(
             'Profile updated successfully',
-            $user->fresh()
+            $user->fresh()->toArray() // ✨ لێرەدا کرا بە ئەرەی
         );
     }
 
@@ -68,7 +68,7 @@ class UserController extends Controller
 
         return $this->ok(
             'User activated successfully',
-            $user->fresh()
+            $user->fresh()->toArray() 
         );
     }
 
@@ -81,7 +81,7 @@ class UserController extends Controller
 
         return $this->ok(
             'User deactivated successfully',
-            $user->fresh()
+            $user->fresh()->toArray() 
         );
     }
 }
