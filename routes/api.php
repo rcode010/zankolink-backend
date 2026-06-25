@@ -7,7 +7,9 @@ use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\LetterController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\SignatureController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\StudentCourseController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\TeacherDepartmentController;
 use App\Http\Controllers\Api\UniversityController;
@@ -29,8 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
-    Route::post('/auth/forget-password', [AuthController::class, 'forgetPassword']);
-    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 
     // Universities
     Route::prefix('universities')->group(function () {
@@ -94,12 +94,24 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // course_teacher
-    Route::get('/departments/{department}/teachers', [CourseTeacherController::class, 'departmentTeachers']);
+    Route::get('/departments/{department}/teachers/available', [CourseTeacherController::class, 'departmentTeachers']);
+  
     Route::prefix('courses/{course}')->group(function () {
         Route::post('/assign-teacher', [CourseTeacherController::class, 'store']);
         Route::get('/teachers', [CourseTeacherController::class, 'courseTeachers']);
         Route::put('/teachers/{teacher}', [CourseTeacherController::class, 'update']);
         Route::delete('/teachers/{teacher}', [CourseTeacherController::class, 'destroy']);
+    });
+
+      
+    // course_student
+    Route::get('/departments/{department}/students', [StudentCourseController::class, 'departmentStudents']);
+  
+    Route::prefix('courses/{course}')->group(function () {
+        Route::get('/students', [StudentCourseController::class, 'courseStudents']);
+        Route::post('/assign-student', [StudentCourseController::class, 'store']);
+        Route::put('/students/{student}', [StudentCourseController::class, 'update']);
+        Route::delete('/students/{student}', [StudentCourseController::class, 'destroy']);
     });
 
     // Letters
@@ -109,6 +121,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
     Route::patch('/letters/{letter}', [LetterController::class, 'update'])->whereNumber('letter');
     Route::post('/letters/{letter}/raise', [LetterController::class, 'raiseLetter'])->whereNumber('letter');
+
+    // Signatures
+    Route::post('/signatures', [SignatureController::class, 'store']);
+    Route::get('/signatures/{id}', [SignatureController::class, 'show']);
+    Route::get('/signatures', [SignatureController::class, 'index']);
 
     // Users
     Route::prefix('users')->group(function () {

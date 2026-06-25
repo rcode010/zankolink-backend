@@ -23,7 +23,9 @@ class Letter extends Model
         // We tell Laravel to use 'receiver_id' as the foreign key
         return $this->belongsTo(User::class, 'receiver_id');
     }
-    public function originalSender(){
+
+    public function originalSender()
+    {
         return $this->belongsTo(User::class, 'original_sender_id');
     }
 }
