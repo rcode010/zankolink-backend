@@ -23,7 +23,7 @@ class StoreAttachmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-             'file' => [
+            'file' => [
                 'required',
                 'file',
                 'mimes:pdf,doc,docx,jpg,jpeg,png',

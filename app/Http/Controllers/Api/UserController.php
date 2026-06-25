@@ -15,7 +15,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource with filters and pagination.
      */
-   /**
+    /**
      * Display a listing of the resource with filters and pagination.
      */
     public function index(Request $request)
@@ -31,17 +31,18 @@ class UserController extends Controller
         );
     }
 
-   /**
+    /**
      * Display the specified resource.
      */
     public function show(User $user)
     {
         return $this->ok(
             'User retrieved successfully.',
-            $user->toArray() 
+            $user->toArray()
         );
     }
-   /**
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, User $user)
@@ -68,7 +69,7 @@ class UserController extends Controller
 
         return $this->ok(
             'User activated successfully',
-            $user->fresh()->toArray() 
+            $user->fresh()->toArray()
         );
     }
 
@@ -81,7 +82,7 @@ class UserController extends Controller
 
         return $this->ok(
             'User deactivated successfully',
-            $user->fresh()->toArray() 
+            $user->fresh()->toArray()
         );
     }
 }

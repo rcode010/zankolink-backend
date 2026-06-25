@@ -32,13 +32,12 @@ class AttachmentController extends Controller
             'file_name' => $file->getClientOriginalName(),
             'file_type' => $file->getClientOriginalExtension(),
             'file_size' => $file->getSize(),
-            'file_url'  => $path,
+            'file_url' => $path,
         ]);
 
         return $this->created(
             'Attachment uploaded successfully.',
-            (new AttachmentResource($attachment))
-                ->toArray($request)
+            (new AttachmentResource($attachment))->resolve()
         );
     }
 
@@ -54,7 +53,7 @@ class AttachmentController extends Controller
             );
         }
 
-        if (!Storage::disk('public')->exists($attachment->file_url)) {
+        if (! Storage::disk('public')->exists($attachment->file_url)) {
             return $this->error(
                 'File not found.',
                 404

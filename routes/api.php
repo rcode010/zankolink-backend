@@ -1,18 +1,17 @@
 <?php
 
+use App\Http\Controllers\Api\AttachmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\LetterController;
-use App\Http\Controllers\Api\SignatureController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\TeacherDepartmentController;
 use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\AttachmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -97,12 +96,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Letters
     Route::post('/letters', [LetterController::class, 'store']);
     Route::get('/letters', [LetterController::class, 'index']);
-    Route::get('/letters/recents',[LetterController::class, 'recentLetters']);
+    Route::get('/letters/recents', [LetterController::class, 'recentLetters']);
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
     Route::patch('/letters/{letter}', [LetterController::class, 'update'])->whereNumber('letter');
     Route::post('/letters/{letter}/raise', [LetterController::class, 'raiseLetter'])->whereNumber('letter');
 
-     
     // Attachments
     Route::post('/letters/{letter}/attachments', [AttachmentController::class, 'store']);
     Route::get('/letters/{letter}/attachments/{attachment}/download', [AttachmentController::class, 'download']);
@@ -120,9 +118,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // The endpoint for the reports dashboard statistics
     Route::get('/reports/statistics', [ReportController::class, 'getStatistics']);
 
-   
 });
-
 
 Route::get('/', function () {
     return response()->json([
