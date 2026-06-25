@@ -87,7 +87,10 @@ class StudentCourseController extends Controller
 
     public function destroy(Course $course, Student $student)
     {
+        $course->students()->detach($student);
 
+        return $this->ok(
+            'Student removed from course successfully.'
+        );
     }
-
 }

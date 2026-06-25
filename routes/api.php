@@ -95,9 +95,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // course_student
     Route::get('/departments/{department}/students', [StudentCourseController::class, 'departmentStudents']);
-    Route::get('/courses/{course}/students', [StudentCourseController::class, 'courseStudents']);
-    Route::post('/courses/{course}/assign-student', [StudentCourseController::class, 'store']);
-    Route::put('/courses/{course}/students/{student}', [StudentCourseController::class, 'update']);
+    Route::prefix('/courses/{course}')->group(function () {
+        Route::get('/students', [StudentCourseController::class, 'courseStudents']);
+        Route::post('/assign-student', [StudentCourseController::class, 'store']);
+        Route::put('/students/{student}', [StudentCourseController::class, 'update']);
+        Route::delete('/students/{student}', [StudentCourseController::class, 'destroy']);
+    });
 
     // Letters
     Route::post('/letters', [LetterController::class, 'store']);
