@@ -122,9 +122,8 @@ class LetterController extends Controller
         );
     }
 
-
-
-    public function recentLetters(Request $request){
+    public function recentLetters(Request $request)
+    {
         $user = auth()->user();
         $letters = Letter::with([
             'sender:id,name',
@@ -135,11 +134,11 @@ class LetterController extends Controller
             ->take(3)
             ->get();
 
-        return $this->ok('Letters retrieved successfully', (LetterResource::collection($letters->load(['sender:id,name','receiver:id,name'])))->resolve());
+        return $this->ok('Letters retrieved successfully', (LetterResource::collection($letters->load(['sender:id,name', 'receiver:id,name'])))->resolve());
     }
 
-
-    public function raiseLetter (Letter $letter, RaiseLetterRequest $request){
+    public function raiseLetter(Letter $letter, RaiseLetterRequest $request)
+    {
         $user = auth()->user();
         $credentials = $request->validated();
 
@@ -147,7 +146,7 @@ class LetterController extends Controller
             return $this->error('You are not allowed to raise this letter.', 403);
         }
 
-        if($letter->receiver_id === (int)$credentials['receiver_id']){
+        if ($letter->receiver_id === (int) $credentials['receiver_id']) {
             return $this->error("New receiver can't be the same as current one.", 400);
         }
 
@@ -163,7 +162,6 @@ class LetterController extends Controller
                 'receiver_id' => $credentials['receiver_id'],
             ]);
         });
-
 
         return $this->ok(
             'Letter raised'
