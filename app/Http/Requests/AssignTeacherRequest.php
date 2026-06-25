@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSignatureRequest extends FormRequest
+class AssignTeacherRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -16,12 +17,13 @@ class StoreSignatureRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'letter_id' => 'required|exists:letters,id',
-            'comment' => 'nullable|string|max:1000',
+            'teacher_id' => 'required|exists:teachers,id',
         ];
     }
 }

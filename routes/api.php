@@ -6,11 +6,12 @@ use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\LetterController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\SignatureController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\TeacherDepartmentController;
 use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\SignatureController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -85,13 +86,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{course}', [CourseController::class, 'destroy']);
     });
 
+    // teacher_department
+    Route::prefix('departments/{department}')->group(function () {
+        Route::post('/assign-teacher', [TeacherDepartmentController::class, 'store']);
+        Route::get('/teachers', [TeacherDepartmentController::class, 'index']);
+        Route::delete('/teachers/{teacher}', [TeacherDepartmentController::class, 'destroy']);
+    });
+
     // Letters
     Route::post('/letters', [LetterController::class, 'store']);
     Route::get('/letters', [LetterController::class, 'index']);
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
     Route::patch('/letters/{letter}', [LetterController::class, 'update'])->whereNumber('letter');
 
-    // Signatures 
+    // Signatures
     Route::post('/signatures', [SignatureController::class, 'store']);
     Route::get('/signatures/{id}', [SignatureController::class, 'show']);
     Route::get('/signatures', [SignatureController::class, 'index']);

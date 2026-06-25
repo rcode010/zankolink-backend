@@ -11,25 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('letter_signature', function (Blueprint $table) {
-    $table->id();
+        Schema::create('letter_signature', function (Blueprint $table) {
+            $table->id();
 
-    $table->foreignId('letter_id')
-        ->constrained('letters')
-        ->cascadeOnDelete();
+            $table->foreignId('letter_id')
+                ->constrained('letters')
+                ->cascadeOnDelete();
 
-    $table->foreignId('user_id')
-        ->constrained('users')
-        ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-    $table->string('role_at_time');
+            $table->string('role_at_time');
 
-    $table->string('comment')->nullable();
+            $table->string('comment')->nullable();
 
-    $table->string('verification_hash')->nullable();
+            $table->string('verification_hash')->nullable();
 
-    $table->timestamps();
-});
+            $table->timestamps();
+        });
     }
 
     /**

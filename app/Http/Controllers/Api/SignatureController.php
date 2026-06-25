@@ -8,8 +8,8 @@ use App\Http\Resources\LetterSignatureResource;
 use App\Models\Letter;
 use App\Models\LetterSignature;
 use App\Traits\ApiResponses;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -42,7 +42,7 @@ class SignatureController extends Controller
     {
         $signature = LetterSignature::with(['letter', 'user:id,name'])->find($id);
 
-        if (!$signature) {
+        if (! $signature) {
             return $this->error('Signature not found.', 404);
         }
 
@@ -72,19 +72,19 @@ class SignatureController extends Controller
         try {
             // Update the letter status to approved
             $letter->update([
-                'status' => 'approved'
+                'status' => 'approved',
             ]);
 
             // Generate a verification hash
-            $hashData = $user->id . '|' . $letter->id . '|' . now()->toIso8601String() . '|' . config('app.key');
+            $hashData = $user->id.'|'.$letter->id.'|'.now()->toIso8601String().'|'.config('app.key');
             $verificationHash = hash('sha256', $hashData);
 
             // Create the signature record
             $signature = LetterSignature::create([
-                'letter_id'         => $letter->id,
-                'user_id'           => $user->id,
-                'role_at_time'      => $user->position,
-                'comment'           => $validated['comment'] ?? null,
+                'letter_id' => $letter->id,
+                'user_id' => $user->id,
+                'role_at_time' => $user->position,
+                'comment' => $validated['comment'] ?? null,
                 'verification_hash' => $verificationHash,
             ]);
 
@@ -95,14 +95,12 @@ class SignatureController extends Controller
                 (new LetterSignatureResource($signature->load(['letter', 'user'])))->toArray($request)
             );
 
-       } catch (\Exception $e) {
-    DB::rollBack();
-    
-    
-    \Log::error('Signature Processing Failed: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
 
-    
-    return $this->error('Failed to process signature.', 500);
-}
+            \Log::error('Signature Processing Failed: '.$e->getMessage());
+
+            return $this->error('Failed to process signature.', 500);
+        }
     }
 }
