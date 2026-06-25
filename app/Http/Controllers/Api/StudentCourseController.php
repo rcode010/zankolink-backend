@@ -50,9 +50,7 @@ class StudentCourseController extends Controller
 
     public function store(AssignStudentCourseRequest $request, Course $course)
     {
-        $student = Student::find(
-            $request->validated('student_id')
-        );
+        $student = Student::findOrFail($request->validated('student_id'));
 
         if ($student->department_id !== $course->department_id) {
             return $this->error(
