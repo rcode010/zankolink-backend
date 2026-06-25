@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\LetterController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\SignatureController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\StudentCourseController;
 use App\Http\Controllers\Api\TeacherController;
@@ -105,10 +106,15 @@ Route::middleware('auth:sanctum')->group(function () {
     // Letters
     Route::post('/letters', [LetterController::class, 'store']);
     Route::get('/letters', [LetterController::class, 'index']);
-    Route::get('/letters/recents',[LetterController::class, 'recentLetters']);
+    Route::get('/letters/recents', [LetterController::class, 'recentLetters']);
     Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
     Route::patch('/letters/{letter}', [LetterController::class, 'update'])->whereNumber('letter');
     Route::post('/letters/{letter}/raise', [LetterController::class, 'raiseLetter'])->whereNumber('letter');
+
+    // Signatures
+    Route::post('/signatures', [SignatureController::class, 'store']);
+    Route::get('/signatures/{id}', [SignatureController::class, 'show']);
+    Route::get('/signatures', [SignatureController::class, 'index']);
 
     // Users
     Route::prefix('users')->group(function () {
