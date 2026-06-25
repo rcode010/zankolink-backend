@@ -98,6 +98,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('courses/{course}')->group(function () {
         Route::post('/assign-teacher', [CourseTeacherController::class, 'store']);
         Route::get('/teachers', [CourseTeacherController::class, 'courseTeachers']);
+        Route::put('/teachers/{teacher}', [CourseTeacherController::class, 'update']);
     });
 
     // Letters

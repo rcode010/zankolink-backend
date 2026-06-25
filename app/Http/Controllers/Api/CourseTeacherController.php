@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssignTeacherCourseRequest;
+use App\Http\Requests\UpdateTeacherCourseRequest;
 use App\Http\Resources\TeacherResource;
 use App\Models\Course;
 use App\Models\Department;
@@ -75,7 +76,17 @@ class CourseTeacherController extends Controller
         );
     }
 
-    public function update(Request $request, Course $course, Teacher $teacher) {}
+    public function update(UpdateTeacherCourseRequest $request, Course $course, Teacher $teacher)
+    {
+        $course->teachers()->updateExistingPivot(
+            $teacher->id,
+            ['role' => $request->role]
+        );
+
+        return $this->ok(
+            'Teacher role updated successfully.'
+        );
+    }
 
     public function destroy(Course $course, Teacher $teacher) {}
 }
