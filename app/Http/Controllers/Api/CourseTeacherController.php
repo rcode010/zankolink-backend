@@ -54,7 +54,6 @@ class CourseTeacherController extends Controller
 
         $teacher = Teacher::findOrFail($data['teacher_id']);
 
-
         $belongsToDepartment = $teacher->departments()
             ->where('department_id', $course->department_id)
             ->exists();
@@ -68,7 +67,7 @@ class CourseTeacherController extends Controller
 
         $course->teachers()
             ->syncWithoutDetaching([$teacher->id => [
-                'role' =>$data['role'],
+                'role' => $data['role'],
             ],
             ]);
 
@@ -81,13 +80,12 @@ class CourseTeacherController extends Controller
     {
         $data = $request->validated();
 
-
         if (! $course->teachers()->where('teachers.id', $teacher->id)->exists()) {
             return $this->error('Teacher is not assigned to this course.', 404);
         }
         $course->teachers()->updateExistingPivot(
             $teacher->id,
-            ['role' => $data['role]]
+            ['role' => $data['role']]
         );
 
         return $this->ok(
@@ -97,12 +95,13 @@ class CourseTeacherController extends Controller
 
     public function destroy(Course $course, Teacher $teacher)
     {
-        $detached=$course->teachers()
+        $detached = $course->teachers()
             ->detach($teacher->id);
-            
+
         if ($detached === 0) {
             return $this->error('Teacher is not assigned to this course.', 404);
         }
+
         return $this->ok(
             'Teacher removed from course successfully.'
         );

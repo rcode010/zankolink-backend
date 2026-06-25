@@ -95,7 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // course_teacher
     Route::get('/departments/{department}/teachers/available', [CourseTeacherController::class, 'departmentTeachers']);
-  
+
     Route::prefix('courses/{course}')->group(function () {
         Route::post('/assign-teacher', [CourseTeacherController::class, 'store']);
         Route::get('/teachers', [CourseTeacherController::class, 'courseTeachers']);
@@ -103,10 +103,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/teachers/{teacher}', [CourseTeacherController::class, 'destroy']);
     });
 
-      
     // course_student
     Route::get('/departments/{department}/students', [StudentCourseController::class, 'departmentStudents']);
-  
+
     Route::prefix('courses/{course}')->group(function () {
         Route::get('/students', [StudentCourseController::class, 'courseStudents']);
         Route::post('/assign-student', [StudentCourseController::class, 'store']);
