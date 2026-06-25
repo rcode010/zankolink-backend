@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssignStudentCourseRequest;
+use App\Http\Requests\UpdateStudentCourseRequest;
 use App\Http\Resources\StudentResource;
 use App\Models\Course;
 use App\Models\Department;
@@ -72,9 +73,16 @@ class StudentCourseController extends Controller
         );
     }
 
-    public function update(Request $request, Course $course, Student $student)
+    public function update(UpdateStudentCourseRequest $request, Course $course, Student $student)
     {
+        $course->students()->updateExistingPivot(
+            $student->id,
+            $request->validated()
+        );
 
+        return $this->ok(
+            'Student course enrollment updated successfully.'
+        );
     }
 
     public function destroy(Course $course, Student $student)
