@@ -99,6 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/assign-teacher', [CourseTeacherController::class, 'store']);
         Route::get('/teachers', [CourseTeacherController::class, 'courseTeachers']);
         Route::put('/teachers/{teacher}', [CourseTeacherController::class, 'update']);
+        Route::delete('/teachers/{teacher}', [CourseTeacherController::class, 'destroy']);
     });
 
     // Letters

@@ -88,5 +88,13 @@ class CourseTeacherController extends Controller
         );
     }
 
-    public function destroy(Course $course, Teacher $teacher) {}
+    public function destroy(Course $course, Teacher $teacher)
+    {
+        $course->teachers()
+            ->detach($teacher->id);
+
+        return $this->ok(
+            'Teacher removed from course successfully.'
+        );
+    }
 }
