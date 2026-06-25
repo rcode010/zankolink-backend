@@ -50,9 +50,10 @@ class CourseTeacherController extends Controller
 
     public function store(AssignTeacherCourseRequest $request, Course $course)
     {
-        $teacher = Teacher::findOrFail(
-            $request->validated('teacher_id')
-        );
+        $data = $request->validated();
+
+        $teacher = Teacher::findOrFail($data['teacher_id']);
+
 
         $belongsToDepartment = $teacher->departments()
             ->where('department_id', $course->department_id)
@@ -67,7 +68,7 @@ class CourseTeacherController extends Controller
 
         $course->teachers()
             ->syncWithoutDetaching([$teacher->id => [
-                'role' => $request->role,
+                'role' =>$data['role'],
             ],
             ]);
 
@@ -78,9 +79,15 @@ class CourseTeacherController extends Controller
 
     public function update(UpdateTeacherCourseRequest $request, Course $course, Teacher $teacher)
     {
+        $data = $request->validated();
+
+
+        if (! $course->teachers()->where('teachers.id', $teacher->id)->exists()) {
+            return $this->error('Teacher is not assigned to this course.', 404);
+        }
         $course->teachers()->updateExistingPivot(
             $teacher->id,
-            ['role' => $request->role]
+            ['role' => $data['role]]
         );
 
         return $this->ok(
@@ -90,9 +97,12 @@ class CourseTeacherController extends Controller
 
     public function destroy(Course $course, Teacher $teacher)
     {
-        $course->teachers()
+        $detached=$course->teachers()
             ->detach($teacher->id);
-
+            
+        if ($detached === 0) {
+            return $this->error('Teacher is not assigned to this course.', 404);
+        }
         return $this->ok(
             'Teacher removed from course successfully.'
         );
