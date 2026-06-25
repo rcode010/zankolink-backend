@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\LetterController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\StudentCourseController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\TeacherDepartmentController;
 use App\Http\Controllers\Api\UniversityController;
@@ -90,6 +91,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/assign-teacher', [TeacherDepartmentController::class, 'store']);
         Route::get('/teachers', [TeacherDepartmentController::class, 'index']);
         Route::delete('/teachers/{teacher}', [TeacherDepartmentController::class, 'destroy']);
+    });
+
+    // course_student
+    Route::get('/departments/{department}/students', [StudentCourseController::class, 'departmentStudents']);
+    Route::prefix('/courses/{course}')->group(function () {
+        Route::get('/students', [StudentCourseController::class, 'courseStudents']);
+        Route::post('/assign-student', [StudentCourseController::class, 'store']);
+        Route::put('/students/{student}', [StudentCourseController::class, 'update']);
+        Route::delete('/students/{student}', [StudentCourseController::class, 'destroy']);
     });
 
     // Letters
