@@ -73,10 +73,15 @@ class StudentCourseController extends Controller
 
     public function update(UpdateStudentCourseRequest $request, Course $course, Student $student)
     {
+
+         if (! $course->students()->where('students.id', $student->id)->exists()) {
+            return $this->error('Student is not enrolled in this course.', 404);
+        }
         $course->students()->updateExistingPivot(
             $student->id,
             $request->validated()
         );
+        
 
         return $this->ok(
             'Student course enrollment updated successfully.'
@@ -85,8 +90,12 @@ class StudentCourseController extends Controller
 
     public function destroy(Course $course, Student $student)
     {
-        $course->students()->detach($student);
+        $detached = $course->students()->detach($student->id);
 
+        // check if pivot row exists before detach
+        if ($detached === 0) {
+            return $this->error('Student is not enrolled in this course.', 404);
+        }
         return $this->ok(
             'Student removed from course successfully.'
         );
