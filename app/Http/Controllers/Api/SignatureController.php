@@ -95,14 +95,14 @@ class SignatureController extends Controller
                 (new LetterSignatureResource($signature->load(['letter', 'user'])))->toArray($request)
             );
 
-        } catch (\Exception $e) {
+       } catch (\Exception $e) {
     DB::rollBack();
     
-    // کاتی بگۆڕە بۆ ئەمە بۆ ئەوەی بزانیت خەتاکە چییە:
-    return response()->json([
-        'error' => $e->getMessage(),
-        'trace' => $e->getTrace()[0] ?? null
-    ], 500);
+    
+    \Log::error('Signature Processing Failed: ' . $e->getMessage());
+
+    
+    return $this->error('Failed to process signature.', 500);
 }
     }
 }
