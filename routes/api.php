@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\CourseTeacherController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\LetterController;
@@ -30,8 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
-    Route::post('/auth/forget-password', [AuthController::class, 'forgetPassword']);
-    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 
     // Universities
     Route::prefix('universities')->group(function () {
@@ -94,9 +93,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/teachers/{teacher}', [TeacherDepartmentController::class, 'destroy']);
     });
 
+    // course_teacher
+    Route::get('/departments/{department}/teachers/available', [CourseTeacherController::class, 'departmentTeachers']);
+  
+    Route::prefix('courses/{course}')->group(function () {
+        Route::post('/assign-teacher', [CourseTeacherController::class, 'store']);
+        Route::get('/teachers', [CourseTeacherController::class, 'courseTeachers']);
+        Route::put('/teachers/{teacher}', [CourseTeacherController::class, 'update']);
+        Route::delete('/teachers/{teacher}', [CourseTeacherController::class, 'destroy']);
+    });
+
+      
     // course_student
     Route::get('/departments/{department}/students', [StudentCourseController::class, 'departmentStudents']);
-    Route::prefix('/courses/{course}')->group(function () {
+  
+    Route::prefix('courses/{course}')->group(function () {
         Route::get('/students', [StudentCourseController::class, 'courseStudents']);
         Route::post('/assign-student', [StudentCourseController::class, 'store']);
         Route::put('/students/{student}', [StudentCourseController::class, 'update']);
