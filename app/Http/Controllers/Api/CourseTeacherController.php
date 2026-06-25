@@ -31,7 +31,21 @@ class CourseTeacherController extends Controller
         );
     }
 
-    public function courseTeachers(Course $course) {}
+    public function courseTeachers(Request $request, Course $course)
+    {
+        $per_page = $request->query('per_page', 15);
+
+        $teachers = $course->teachers()
+            ->with('user:id,name')
+            ->paginate($per_page);
+
+        return $this->ok(
+            'Course teachers retrieved successfully.',
+            TeacherResource::collection($teachers)
+                ->response()
+                ->getData(true)
+        );
+    }
 
     public function store(AssignTeacherCourseRequest $request, Course $course)
     {
