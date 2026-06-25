@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AssignStudentCourseRequest;
 use App\Http\Resources\StudentResource;
 use App\Models\Course;
 use App\Models\Department;
@@ -45,9 +47,29 @@ class StudentCourseController extends Controller
         );
     }
 
-    public function store(Request $request, Course $course)
+    public function store(AssignStudentCourseRequest $request, Course $course)
     {
+        $student = Student::find(
+            $request->validated('student_id')
+        );
 
+        if ($student->department_id !== $course->department_id) {
+            return $this->error(
+                'Student cannot enroll outside their department.',
+                400
+            );
+        }
+        $course->students()
+            ->syncWithoutDetaching([
+                $student->id => [
+                    'academic_year' => $request->validated('academic_year'),
+                    'enrolled_at' => now(),
+                ],
+            ]);
+
+        return $this->ok(
+            'Student assigned successfully.'
+        );
     }
 
     public function update(Request $request, Course $course, Student $student)

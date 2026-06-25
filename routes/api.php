@@ -7,11 +7,11 @@ use App\Http\Controllers\Api\FacultyController;
 use App\Http\Controllers\Api\LetterController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\StudentCourseController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\TeacherDepartmentController;
 use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\StudentCourseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -96,6 +96,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // course_student
     Route::get('/departments/{department}/students', [StudentCourseController::class, 'departmentStudents']);
     Route::get('/courses/{course}/students', [StudentCourseController::class, 'courseStudents']);
+    Route::post('/courses/{course}/assign-student', [StudentCourseController::class, 'store']);
 
     // Letters
     Route::post('/letters', [LetterController::class, 'store']);
