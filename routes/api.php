@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\TeacherDepartmentController;
 use App\Http\Controllers\Api\UniversityController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\StudentCourseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -91,6 +92,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/teachers', [TeacherDepartmentController::class, 'index']);
         Route::delete('/teachers/{teacher}', [TeacherDepartmentController::class, 'destroy']);
     });
+
+    // course_student
+    Route::get('/departments/{department}/students', [StudentCourseController::class, 'departmentStudents']);
 
     // Letters
     Route::post('/letters', [LetterController::class, 'store']);
