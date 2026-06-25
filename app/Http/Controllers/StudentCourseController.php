@@ -29,9 +29,20 @@ class StudentCourseController extends Controller
         );
     }
 
-    public function courseStudents(Course $course)
+    public function courseStudents(Request $request, Course $course)
     {
+        $per_page = $request->query('per_page', 15);
 
+        $students = $course->students()
+            ->with('user:id,name')
+            ->paginate($per_page);
+
+        return $this->ok(
+            'Course students retrieved successfully.',
+            StudentResource::collection($students)
+                ->response()
+                ->getData(true)
+        );
     }
 
     public function store(Request $request, Course $course)
