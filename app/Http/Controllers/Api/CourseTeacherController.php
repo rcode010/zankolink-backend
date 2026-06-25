@@ -50,7 +50,7 @@ class CourseTeacherController extends Controller
 
     public function store(AssignTeacherCourseRequest $request, Course $course)
     {
-        $teacher = Teacher::find(
+        $teacher = Teacher::findOrFail(
             $request->validated('teacher_id')
         );
 
