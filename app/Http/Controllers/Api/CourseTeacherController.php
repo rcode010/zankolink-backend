@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AssignTeacherCourseRequest;
 use App\Http\Resources\TeacherResource;
 use App\Models\Course;
 use App\Models\Department;
@@ -31,7 +33,33 @@ class CourseTeacherController extends Controller
 
     public function courseTeachers(Course $course) {}
 
-    public function store(Request $request, Course $course) {}
+    public function store(AssignTeacherCourseRequest $request, Course $course)
+    {
+        $teacher = Teacher::find(
+            $request->validated('teacher_id')
+        );
+
+        $belongsToDepartment = $teacher->departments()
+            ->where('department_id', $course->department_id)
+            ->exists();
+
+        if (! $belongsToDepartment) {
+            return $this->error(
+                'Teacher does not belong to this department.',
+                400
+            );
+        }
+
+        $course->teachers()
+            ->syncWithoutDetaching([$teacher->id => [
+                'role' => $request->role,
+            ],
+            ]);
+
+        return $this->ok(
+            'Teacher assigned successfully.'
+        );
+    }
 
     public function update(Request $request, Course $course, Teacher $teacher) {}
 
