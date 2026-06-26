@@ -25,6 +25,7 @@ class StoreFacultyRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'admin_id' => 'nullable|exists:users,id',
+            'university_id' => 'required|exists:universities,id',
             'is_active' => 'required|boolean',
         ];
     }
