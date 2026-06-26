@@ -18,136 +18,37 @@ use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-// Public Routes
-Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
-Route::post('/auth/forget-password', [AuthController::class, 'forgetPassword']);
-
-// Protected Routes
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/auth/register', [AuthController::class, 'register']);
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
-    Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
-
-    // Universities
-    Route::prefix('universities')->group(function () {
-        Route::get('/', [UniversityController::class, 'index']);
-        Route::get('/{university}', [UniversityController::class, 'show']);
-        Route::post('/', [UniversityController::class, 'store']);
-        Route::patch('/{university}', [UniversityController::class, 'update']);
-        Route::delete('/{university}', [UniversityController::class, 'destroy']);
-    });
-
-    // Faculties
-    Route::prefix('faculties')->group(function () {
-        Route::get('/', [FacultyController::class, 'index']);
-        Route::get('/{faculty}', [FacultyController::class, 'show']);
-        Route::patch('/{faculty}', [FacultyController::class, 'update']);
-        Route::delete('/{faculty}', [FacultyController::class, 'destroy']);
-    });
-    Route::post('universities/{university}/faculties', [FacultyController::class, 'store']);
-
-    // Departments
-    Route::prefix('departments')->group(function () {
-        Route::get('/', [DepartmentController::class, 'index']);
-        Route::post('/', [DepartmentController::class, 'store']);
-        Route::get('/{department}', [DepartmentController::class, 'show']);
-        Route::patch('/{department}', [DepartmentController::class, 'update']);
-        Route::delete('/{department}', [DepartmentController::class, 'destroy']);
-    });
-
-    // Teachers
-    Route::prefix('teachers')->group(function () {
-        Route::get('/', [TeacherController::class, 'index']);
-        Route::post('/', [TeacherController::class, 'store']);
-        Route::get('/{teacher}', [TeacherController::class, 'show']);
-        Route::patch('/{teacher}', [TeacherController::class, 'update']);
-        Route::delete('/{teacher}', [TeacherController::class, 'destroy']);
-    });
-
-    // Students
-    Route::prefix('students')->group(function () {
-        Route::get('/', [StudentController::class, 'index']);
-        Route::post('/', [StudentController::class, 'store']);
-        Route::get('/{student}', [StudentController::class, 'show']);
-        Route::patch('/{student}', [StudentController::class, 'update']);
-        Route::delete('/{student}', [StudentController::class, 'destroy']);
-    });
-
-    // Courses
-    Route::prefix('courses')->group(function () {
-        Route::get('/', [CourseController::class, 'index']);
-        Route::post('/', [CourseController::class, 'store']);
-        Route::get('/{course}', [CourseController::class, 'show']);
-        Route::patch('/{course}', [CourseController::class, 'update']);
-        Route::delete('/{course}', [CourseController::class, 'destroy']);
-    });
-
-    // teacher_department
-    Route::prefix('departments/{department}')->group(function () {
-        Route::post('/assign-teacher', [TeacherDepartmentController::class, 'store']);
-        Route::get('/teachers', [TeacherDepartmentController::class, 'index']);
-        Route::delete('/teachers/{teacher}', [TeacherDepartmentController::class, 'destroy']);
-    });
-
-    // course_teacher
-    Route::get('/departments/{department}/teachers/available', [CourseTeacherController::class, 'departmentTeachers']);
-
-    Route::prefix('courses/{course}')->group(function () {
-        Route::post('/assign-teacher', [CourseTeacherController::class, 'store']);
-        Route::get('/teachers', [CourseTeacherController::class, 'courseTeachers']);
-        Route::put('/teachers/{teacher}', [CourseTeacherController::class, 'update']);
-        Route::delete('/teachers/{teacher}', [CourseTeacherController::class, 'destroy']);
-    });
-
-    // course_student
-    Route::get('/departments/{department}/students', [StudentCourseController::class, 'departmentStudents']);
-
-    Route::prefix('courses/{course}')->group(function () {
-        Route::get('/students', [StudentCourseController::class, 'courseStudents']);
-        Route::post('/assign-student', [StudentCourseController::class, 'store']);
-        Route::put('/students/{student}', [StudentCourseController::class, 'update']);
-        Route::delete('/students/{student}', [StudentCourseController::class, 'destroy']);
-    });
-
-    // Letters
-    Route::post('/letters', [LetterController::class, 'store']);
-    Route::get('/letters', [LetterController::class, 'index']);
-    Route::get('/letters/recents', [LetterController::class, 'recentLetters']);
-    Route::get('/letters/{letter}', [LetterController::class, 'show'])->whereNumber('letter');
-    Route::patch('/letters/{letter}', [LetterController::class, 'update'])->whereNumber('letter');
-    Route::post('/letters/{letter}/raise', [LetterController::class, 'raiseLetter'])->whereNumber('letter');
-
-    // Attachments
-    Route::post('/letters/{letter}/attachments', [AttachmentController::class, 'store']);
-    Route::get('/letters/{letter}/attachments/{attachment}/download', [AttachmentController::class, 'download']);
-    Route::delete('/letters/{letter}/attachments/{attachment}', [AttachmentController::class, 'destroy']);
-    // Signatures
-    Route::post('/signatures', [SignatureController::class, 'store']);
-    Route::get('/signatures/{id}', [SignatureController::class, 'show']);
-    Route::get('/signatures', [SignatureController::class, 'index']);
-
-    // Users
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index']);
-        Route::get('/{user}', [UserController::class, 'show']);
-        Route::patch('/{user}', [UserController::class, 'update']);
-        Route::post('/{user}/activate', [UserController::class, 'activate']);
-        Route::post('/{user}/deactivate', [UserController::class, 'deactivate']);
-    });
-
-    // The endpoint for the reports dashboard statistics
-    Route::get('/reports/statistics', [ReportController::class, 'getStatistics']);
-
-});
 
 Route::get('/', function () {
     return response()->json([
         'status' => 'ok',
         'timestamp' => now(),
     ]);
+});
+
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+require __DIR__ . '/api/auth.php';
+
+// Protected Routes
+Route::middleware('auth:sanctum')->group(function () {
+    require __DIR__ . '/api/universities.php';
+    require __DIR__ . '/api/faculties.php';
+    require __DIR__ . '/api/departments.php';
+    require __DIR__ . '/api/teachers.php';
+    require __DIR__ . '/api/students.php';
+    require __DIR__ . '/api/courses.php';
+
+    require __DIR__ . '/api/teacher-departments.php';
+    require __DIR__ . '/api/course-teachers.php';
+    require __DIR__ . '/api/course-students.php';
+
+    require __DIR__ . '/api/letters.php';
+    require __DIR__ . '/api/attachments.php';
+    require __DIR__ . '/api/signatures.php';
+    require __DIR__ . '/api/users.php';
+    require __DIR__ . '/api/reports.php';
 });
