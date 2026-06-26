@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AttachmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseTeacherController;
@@ -121,6 +122,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/letters/{letter}', [LetterController::class, 'update'])->whereNumber('letter');
     Route::post('/letters/{letter}/raise', [LetterController::class, 'raiseLetter'])->whereNumber('letter');
 
+    // Attachments
+    Route::post('/letters/{letter}/attachments', [AttachmentController::class, 'store']);
+    Route::get('/letters/{letter}/attachments/{attachment}/download', [AttachmentController::class, 'download']);
+    Route::delete('/letters/{letter}/attachments/{attachment}', [AttachmentController::class, 'destroy']);
     // Signatures
     Route::post('/signatures', [SignatureController::class, 'store']);
     Route::get('/signatures/{id}', [SignatureController::class, 'show']);
@@ -137,6 +142,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // The endpoint for the reports dashboard statistics
     Route::get('/reports/statistics', [ReportController::class, 'getStatistics']);
+
 });
 
 Route::get('/', function () {

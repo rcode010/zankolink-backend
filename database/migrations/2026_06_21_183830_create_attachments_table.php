@@ -12,14 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attachments', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->foreignId('letter_id')->constrained('letters')->onDelete('cascade');
+            $table->id();
+
+            $table->foreignId('letter_id')
+                ->constrained('letters')
+                ->cascadeOnDelete();
+
             $table->string('file_name');
             $table->string('file_type');
-            $table->bigInteger('file_size');
-            $table->string('file_url'); // Path to your Cloud Storage
-            $table->timestamps();
+            $table->unsignedBigInteger('file_size');
 
+            $table->text('file_url');
+
+            $table->timestamps();
         });
     }
 

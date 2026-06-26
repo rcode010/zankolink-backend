@@ -49,6 +49,8 @@ class DepartmentController extends Controller
             $request->validated()
         );
 
+        $department->load('faculty:id,name');
+
         return $this->success(
             'Department created successfully.',
             (new DepartmentResource($department))->toArray($request),
