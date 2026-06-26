@@ -3,8 +3,6 @@
 
 use App\Http\Controllers\Api\CourseTeacherController;
 
-Route::get('/departments/{department}/teachers/available', [CourseTeacherController::class, 'departmentTeachers']);
-
 Route::prefix('courses/{course}')->group(function () {
     Route::post('/assign-teacher', [CourseTeacherController::class, 'store']);
     Route::get('/teachers', [CourseTeacherController::class, 'courseTeachers']);
