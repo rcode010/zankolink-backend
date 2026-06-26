@@ -27,7 +27,7 @@ class UserController extends Controller
 
         return $this->ok(
             'Users retrieved successfully.',
-            $users->toArray() // ✨ لێرەدا دەیکەین بە ئەرەی بۆ ئەوەی ترەیتەکە ختا نەدات
+            $users->toArray() 
         );
     }
 
@@ -56,7 +56,7 @@ class UserController extends Controller
 
         return $this->ok(
             'Profile updated successfully',
-            $user->fresh()->toArray() // ✨ لێرەدا کرا بە ئەرەی
+            $user->fresh()->toArray() 
         );
     }
 
