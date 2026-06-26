@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Api\LetterController;
 
 Route::post('/letters', [LetterController::class, 'store']);

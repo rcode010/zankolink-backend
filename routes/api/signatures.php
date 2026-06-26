@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Api\SignatureController;
 
 Route::post('/signatures', [SignatureController::class, 'store']);

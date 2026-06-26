@@ -7,7 +7,6 @@ use App\Http\Requests\AssignTeacherCourseRequest;
 use App\Http\Requests\UpdateTeacherCourseRequest;
 use App\Http\Resources\TeacherResource;
 use App\Models\Course;
-use App\Models\Department;
 use App\Models\Teacher;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;

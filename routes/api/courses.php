@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Api\CourseController;
 
 Route::prefix('courses')->group(function () {
