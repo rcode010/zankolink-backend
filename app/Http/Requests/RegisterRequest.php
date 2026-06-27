@@ -26,10 +26,10 @@ class RegisterRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
-            'position' => 'required|string|in:ministry_admin,university_admin,faculty_admin,department_head,teacher,student,applicant',
             'phone' => 'required|string|regex:/^07[0-9]{9}$/',
-            'role_scope_id' => 'nullable|integer',
-            'role_scope_type' => 'nullable|string|in:university,faculty,department',
+            'role' => 'required|string|exists:roles,name',
+            'scope_id' => 'nullable|integer',
+            'scope_type' => 'required|string|in:MINISTRY,UNIVERSITY,FACULTY,DEPARTMENT',
         ];
     }
 
