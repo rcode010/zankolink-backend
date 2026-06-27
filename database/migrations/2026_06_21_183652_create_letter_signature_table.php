@@ -22,7 +22,6 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->string('role_at_time');
 
             $table->string('comment')->nullable();
 

@@ -83,7 +83,6 @@ class SignatureController extends Controller
             $signature = LetterSignature::create([
                 'letter_id' => $letter->id,
                 'user_id' => $user->id,
-                'role_at_time' => $user->position,
                 'comment' => $validated['comment'] ?? null,
                 'verification_hash' => $verificationHash,
             ]);

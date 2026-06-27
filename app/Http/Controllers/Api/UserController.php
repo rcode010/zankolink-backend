@@ -21,13 +21,13 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = QueryBuilder::for(User::class)
-            ->allowedFilters('role_scope_type')
+//            ->allowedFilters('role_scope_type')
             ->latest()
             ->paginate($request->query('per_page', 10));
 
         return $this->ok(
             'Users retrieved successfully.',
-            $users->toArray() 
+            $users->toArray()
         );
     }
 
@@ -56,7 +56,7 @@ class UserController extends Controller
 
         return $this->ok(
             'Profile updated successfully',
-            $user->fresh()->toArray() 
+            $user->fresh()->toArray()
         );
     }
 
