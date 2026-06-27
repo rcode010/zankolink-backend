@@ -49,6 +49,8 @@ class CourseController extends Controller
             $request->validated()
         );
 
+        $course->load('department:id,name');
+
         return $this->success(
             'Course created successfully.',
             (new CourseResource($course))

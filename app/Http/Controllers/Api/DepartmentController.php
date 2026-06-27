@@ -83,8 +83,9 @@ class DepartmentController extends Controller
 
         return $this->ok(
             'Department updated successfully.',
-            (new DepartmentResource($department->fresh()))
-                ->toArray($request),
+            (new DepartmentResource(
+                $department->fresh()->load('faculty:id,name')
+            ))->toArray($request),
         );
     }
 

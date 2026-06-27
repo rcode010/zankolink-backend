@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Api\DepartmentController;
 
 Route::prefix('departments')->group(function () {

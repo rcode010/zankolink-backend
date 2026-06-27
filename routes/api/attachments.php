@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Api\AttachmentController;
 
 Route::post('/letters/{letter}/attachments', [AttachmentController::class, 'store']);

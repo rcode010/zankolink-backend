@@ -27,7 +27,7 @@ class UserController extends Controller
 
         return $this->ok(
             'Users retrieved successfully.',
-            $users->toArray() 
+            $users->toArray()
         );
     }
 
@@ -56,7 +56,7 @@ class UserController extends Controller
 
         return $this->ok(
             'Profile updated successfully',
-            $user->fresh()->toArray() 
+            $user->fresh()->toArray()
         );
     }
 
