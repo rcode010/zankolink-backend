@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Letter;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -33,16 +32,13 @@ class LetterFactory extends Factory
         ]);
 
         return [
-            'letter_number' => 'LTR' . $this->faker->unique()->numerify('######'),
             'original_sender_id' => null,
             'sender_id' => null,
             'receiver_id' => null,
             'type' => $type,
             'title' => $this->faker->sentence(),
             'body' => $this->faker->paragraphs(3, true),
-            'is_read' => $this->faker->boolean(),
             'academic_year' => '2025-2026',
-            'is_archived' => false,
             'status' => $status
         ];
     }

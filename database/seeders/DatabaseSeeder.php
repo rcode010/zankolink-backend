@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Attachment;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Faculty;
+use App\Models\Letter;
+use App\Models\LetterSignature;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\University;
@@ -25,6 +28,8 @@ class DatabaseSeeder extends Seeder
 
         $this->seedMinistryAdmin();
         $this->seedUniversities();
+
+        $this->seedLetters();
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
     }
@@ -444,5 +449,38 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
+    }
+
+    private function seedLetters(): void
+    {
+        $users = User::all();
+
+        Letter::factory()
+            ->count(30)
+            ->make()
+            ->each(function ($letter) use ($users) {
+                $sender = $users->random();
+
+                $receiver = $users->where('id', '!=', $sender->id)->random();
+
+                $letter->original_sender_id = $sender->id;
+                $letter->sender_id = $sender->id;
+                $letter->receiver_id = $receiver->id;
+
+                $letter->save();
+
+                Attachment::factory()
+                    ->count(fake()->numberBetween(0,3))
+                    ->create([
+                        'letter_id' => $letter->id
+                    ]);
+
+                LetterSignature::factory()
+                    ->count(fake()->numberBetween(1,2))
+                    ->create([
+                        'letter_id' => $letter->id,
+                        'user_id' => $receiver->id
+                    ]);
+            });
     }
 }
