@@ -64,12 +64,28 @@ class AuthController extends Controller
     // Login
     public function login(LoginRequest $request)
     {
+
         $credentials = $request->validated();
+        $allowedRoles = [
+            'MINISTRY_ADMIN',
+            'MINISTRY_STAFF',
+            'UNIVERSITY_ADMIN',
+            'UNIVERSITY_STAFF',
+            'DEAN',
+            'DEPARTMENT_HEAD',
+        ];
+
 
         if (! Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
         }
         $user = Auth::user();
+        if (! $user->hasAnyRole($allowedRoles)) {
+            Auth::logout();
+
+            return $this->error('You are not allowed to access the admin panel.', 403);
+        }
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return $this->ok(
