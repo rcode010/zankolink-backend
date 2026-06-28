@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Letter extends Model
 {
     protected $fillable = [
         'title', 'body', 'type', 'receiver_type', 'receiver_id',
-        'sender_type', 'sender_id', 'original_sender_id', 'status', 'academic_year',
+        'sender_type', 'sender_id', 'original_sender_id', 'status', 'academic_year_id',
     ];
 
     // Relationship to the person who sent the letter
@@ -34,5 +35,9 @@ class Letter extends Model
 
         return $this->hasMany(Attachment::class);
 
+    }
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class);
     }
 }

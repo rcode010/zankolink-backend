@@ -26,7 +26,7 @@ class UniversityFactory extends Factory
         return [
             'name' => $this->faker->city().'University',
             'admin_id' => null,
-            'academic_year' => '2026-2027',
+            'academic_year_id' => null,
             'location' => $this->faker->city(),
             'start_date' => $tenureStartDate,
             'end_date' => $this->faker->optional(0.8, null)->passthrough($tenureEndDate),
