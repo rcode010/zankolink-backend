@@ -13,7 +13,7 @@ class Department extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['faculty_id', 'name', 'admin_id', 'is_active'];
+    protected $fillable = ['faculty_id', 'name', 'admin_id', 'is_active', 'seat_available'];
 
     public function faculty(): BelongsTo
     {

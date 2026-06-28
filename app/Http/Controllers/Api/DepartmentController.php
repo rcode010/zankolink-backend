@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
+use App\Http\Requests\UpdateDepartmentSeatRequest;
 use App\Http\Resources\DepartmentResource;
 use App\Models\Department;
 use App\Traits\ApiResponses;
@@ -98,6 +99,18 @@ class DepartmentController extends Controller
 
         return $this->ok(
             'Department deleted successfully.'
+        );
+    }
+
+    public function updateSeat(UpdateDepartmentSeatRequest $request, Department $department)
+    {
+        $department->update($request->validated());
+
+        return $this->success(
+            'Department seats updated successfully.',
+            (new DepartmentResource(
+                $department->fresh()->load('faculty:id,name')
+            ))->toArray($request)
         );
     }
 }
