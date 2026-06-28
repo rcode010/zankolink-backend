@@ -3,9 +3,14 @@
 namespace Database\Seeders;
 
 use App\Models\AcademicYear;
+use App\Models\Attachment;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Faculty;
+use App\Models\Letter;
+use App\Models\LetterSignature;
+use App\Models\Student;
+use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
 use App\Models\UserScope;
@@ -22,11 +27,12 @@ class DatabaseSeeder extends Seeder
 
         $this->seedRoles();
 
-        // لێرەدا یەکەمجار ساڵی ئەکادیمی بانگ دەدەین تاوەکو زانکۆکان ئێرەر نەدەن
         $this->call(AcademicYearSeeder::class);
 
         $this->seedMinistryAdmin();
         $this->seedUniversities();
+
+        $this->seedLetters();
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
     }
@@ -159,7 +165,6 @@ class DatabaseSeeder extends Seeder
                 'academic_year_id' => $academicYear->id,
             ])
             ->each(function (University $university) {
-                // لێرەدا مێتۆدەکە بە تەواوی چاککراوە و دووبارەبوونەوەکە نەماوە
                 $admin = $this->createScopedUser(
                     name: fake()->name(),
                     email: "university-admin-{$university->id}@test.com",
@@ -218,7 +223,57 @@ class DatabaseSeeder extends Seeder
                     'admin_id' => $admin->id,
                 ]);
 
+                $this->seedTeachers($department);
+                $this->seedStudents($department);
+
                 $this->seedCourses($department);
+            });
+    }
+
+    private function seedTeachers(Department $department): void
+    {
+        Teacher::factory()
+            ->count(5)
+            ->create()
+            ->each(function (Teacher $teacher) use ($department) {
+                $teacher->user->assignRole('lecturer');
+
+                UserScope::create([
+                    'user_id' => $teacher->user_id,
+                    'role_id' => Role::where(
+                        'name',
+                        'lecturer'
+                    )->firstOrFail()->id,
+
+                    'scope_type' => 'DEPARTMENT',
+                    'scope_id' => $department->id,
+                ]);
+
+                $department->teachers()->attach($teacher);
+            });
+    }
+
+    private function seedStudents(Department $department): void
+    {
+        Student::factory()
+            ->count(20)
+            ->create([
+                'department_id' => $department->id,
+            ])
+            ->each(function (Student $student) use ($department) {
+
+                $student->user->assignRole('student');
+
+                UserScope::create([
+                    'user_id' => $student->user_id,
+                    'role_id' => Role::where(
+                        'name',
+                        'student'
+                    )->firstOrFail()->id,
+
+                    'scope_type' => 'DEPARTMENT',
+                    'scope_id' => $department->id,
+                ]);
             });
     }
 
@@ -227,6 +282,96 @@ class DatabaseSeeder extends Seeder
         Course::factory()
             ->count(5)
             ->for($department)
-            ->create();
+            ->create()
+            ->each(function (Course $course) use ($department) {
+                $this->seedCourseTeachers($course, $department);
+                $this->seedCourseStudents($course, $department);
+            });
+    }
+
+    private function seedCourseTeachers(Course $course, Department $department): void
+    {
+        $teachers = $department->teachers()
+            ->inRandomOrder()
+            ->limit(fake()->numberBetween(1, 3))
+            ->get();
+
+        foreach ($teachers as $index => $teacher) {
+            $roles = [
+                'primary_lecturer',
+                'assistant_lecturer',
+                'lab_instructor',
+            ];
+
+            $course->teachers()->attach(
+                $teacher->id,
+                [
+                    'role' => $roles[$index],
+                ]
+            );
+        }
+    }
+
+    private function seedCourseStudents(Course $course, Department $department): void
+    {
+        $academicYear = AcademicYear::where('is_active', true)->first();
+
+        $students = Student::where(
+            'department_id',
+            $department->id
+        )
+            ->inRandomOrder()
+            ->limit(fake()->numberBetween(8, 15))
+            ->get();
+
+        foreach ($students as $student) {
+
+            $course->students()->attach(
+                $student->id,
+                [
+                    'academic_year_id' => $academicYear->id,
+                    'grade' => fake()->optional()
+                        ->numberBetween(50, 100),
+
+                    'enrolled_at' => now(),
+                ]
+            );
+        }
+    }
+
+    private function seedLetters(): void
+    {
+        $users = User::all();
+        $academicYear = AcademicYear::where('is_active', true)->first();
+
+        Letter::factory()
+            ->count(30)
+            ->make([
+                'academic_year_id' => $academicYear->id,
+            ])
+            ->each(function ($letter) use ($users) {
+                $sender = $users->random();
+
+                $receiver = $users->where('id', '!=', $sender->id)->random();
+
+                $letter->original_sender_id = $sender->id;
+                $letter->sender_id = $sender->id;
+                $letter->receiver_id = $receiver->id;
+
+                $letter->save();
+
+                Attachment::factory()
+                    ->count(fake()->numberBetween(0, 3))
+                    ->create([
+                        'letter_id' => $letter->id,
+                    ]);
+
+                LetterSignature::factory()
+                    ->count(fake()->numberBetween(1, 2))
+                    ->create([
+                        'letter_id' => $letter->id,
+                        'user_id' => $receiver->id,
+                    ]);
+            });
     }
 }
