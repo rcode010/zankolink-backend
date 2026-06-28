@@ -38,7 +38,7 @@ class LetterFactory extends Factory
             'type' => $type,
             'title' => $this->faker->sentence(),
             'body' => $this->faker->paragraphs(3, true),
-            'academic_year' => '2025-2026',
+            'academic_year_id' => null,
             'status' => $status,
         ];
     }

@@ -314,6 +314,8 @@ class DatabaseSeeder extends Seeder
 
     private function seedCourseStudents(Course $course, Department $department): void
     {
+        $academicYear = AcademicYear::where('is_active', true)->first();
+
         $students = Student::where(
             'department_id',
             $department->id
@@ -327,7 +329,7 @@ class DatabaseSeeder extends Seeder
             $course->students()->attach(
                 $student->id,
                 [
-                    'academic_year' => '2025-2026',
+                    'academic_year_id' => $academicYear->id,
                     'grade' => fake()->optional()
                         ->numberBetween(50, 100),
 
@@ -340,10 +342,13 @@ class DatabaseSeeder extends Seeder
     private function seedLetters(): void
     {
         $users = User::all();
+        $academicYear = AcademicYear::where('is_active', true)->first();
 
         Letter::factory()
             ->count(30)
-            ->make()
+            ->make([
+                'academic_year_id' => $academicYear->id,
+            ])
             ->each(function ($letter) use ($users) {
                 $sender = $users->random();
 
