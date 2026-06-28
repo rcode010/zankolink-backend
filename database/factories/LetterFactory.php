@@ -39,6 +39,7 @@ class LetterFactory extends Factory
             'title' => $this->faker->sentence(),
             'body' => $this->faker->paragraphs(3, true),
             'academic_year_id' => null,
+            'verification_hash' => $this->faker->sha256(),
             'status' => $status,
         ];
     }
