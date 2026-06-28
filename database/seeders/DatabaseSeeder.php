@@ -367,7 +367,6 @@ class DatabaseSeeder extends Seeder
                     ]);
 
                 LetterSignature::factory()
-                    ->count(fake()->numberBetween(1, 2))
                     ->create([
                         'letter_id' => $letter->id,
                         'user_id' => $receiver->id,
