@@ -34,7 +34,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function userScopes(array $attributes = []){
+
+    public function userScopes(array $attributes = [])
+    {
         return $this->hasMany(UserScope::class);
     }
 
