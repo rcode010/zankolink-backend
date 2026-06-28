@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Faculty;
+use App\Models\Student;
+use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
 use App\Models\UserScope;
@@ -331,10 +333,59 @@ class DatabaseSeeder extends Seeder
                     'admin_id' => $admin->id,
                 ]);
 
+                $this->seedTeachers($department);
+                $this->seedStudents($department);
+
                 $this->seedCourses($department);
             });
     }
 
+    private function seedTeachers(Department $department): void
+    {
+        Teacher::factory()
+            ->count(5)
+            ->create()
+            ->each(function (Teacher $teacher) use ($department) {
+                $teacher->user->assignRole('lecturer');
+
+                UserScope::create([
+                    'user_id' => $teacher->user_id,
+                    'role_id' => Role::where(
+                        'name',
+                        'lecturer'
+                    )->first()->id,
+
+                    'scope_type' => 'DEPARTMENT',
+                    'scope_id' => $department->id
+                ]);
+
+                $department->teachers()->attach($teacher);
+            });
+    }
+
+    private function seedStudents(Department $department): void
+    {
+        Student::factory()
+            ->count(20)
+            ->create([
+                'department_id' => $department->id
+            ])
+            ->each(function (Student $student) use ($department) {
+
+                $student->user->assignRole('student');
+
+                UserScope::create([
+                    'user_id' => $student->user_id,
+                    'role_id' => Role::where(
+                        'name',
+                        'student'
+                    )->first()->id,
+
+                    'scope_type' => 'DEPARTMENT',
+                    'scope_id' => $department->id,
+                ]);
+            });
+    }
     private function seedCourses(Department $department): void
     {
         Course::factory()
