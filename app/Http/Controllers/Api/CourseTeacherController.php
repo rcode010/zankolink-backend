@@ -7,7 +7,6 @@ use App\Http\Requests\AssignTeacherCourseRequest;
 use App\Http\Requests\UpdateTeacherCourseRequest;
 use App\Http\Resources\TeacherResource;
 use App\Models\Course;
-use App\Models\Department;
 use App\Models\Teacher;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -15,22 +14,6 @@ use Illuminate\Http\Request;
 class CourseTeacherController extends Controller
 {
     use ApiResponses;
-
-    public function departmentTeachers(Request $request, Department $department)
-    {
-        $per_page = $request->query('per_page', 15);
-
-        $teachers = $department->teachers()
-            ->with('user:id,name')
-            ->paginate($per_page);
-
-        return $this->ok(
-            'Department teachers retrieved successfully.',
-            TeacherResource::collection($teachers)
-                ->response()
-                ->getData(true)
-        );
-    }
 
     public function courseTeachers(Request $request, Course $course)
     {

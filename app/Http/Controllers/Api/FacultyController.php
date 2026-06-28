@@ -46,9 +46,11 @@ class FacultyController extends Controller
      */
     public function store(StoreFacultyRequest $request, University $university)
     {
-        $faculty = $university->faculties()->create(
+        $faculty = Faculty::create(
             $request->validated()
         );
+
+        $faculty->load('university:id,name');
 
         return $this->success(
             'Faculty created successfully.',
