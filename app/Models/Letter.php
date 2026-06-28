@@ -43,4 +43,11 @@ class Letter extends Model
     {
         return $this->belongsTo(AcademicYear::class);
     }
+
+    protected function casts(): array
+    {
+        return [
+            'payload' => 'array',
+        ];
+    }
 }
