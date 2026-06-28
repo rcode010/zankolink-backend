@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Letter;
+use Illuminate\Support\Str;
 
 class LetterObserver
 {
@@ -11,15 +12,9 @@ class LetterObserver
      */
     public function creating(Letter $letter)
     {
-        // Get the max existing number.
-        // Since it's a string now, we cast it to integer for the math.
-        $latest = Letter::max('letter_number');
-
-        // Increment
-        $next = $latest ? (int) $latest + 1 : 1;
-
-        // Assign as string
-        $letter->letter_number = (string) $next;
+        if (! $letter->letter_number) {
+            $letter->letter_number = (string) Str::uuid();
+        }
     }
 
     /**
