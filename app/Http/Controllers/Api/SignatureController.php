@@ -70,15 +70,6 @@ class SignatureController extends Controller
         DB::beginTransaction();
 
         try {
-            $hashData = $user->id.'|'.$letter->id.'|'.now()->toIso8601String().'|'.config('app.key');
-
-            $verificationHash = hash('sha256', $hashData);
-
-            $letter->update([
-                'status' => 'approved',
-                'verification_hash' => $verificationHash,
-            ]);
-
             $signature = LetterSignature::create([
                 'letter_id' => $letter->id,
                 'user_id' => $user->id,
