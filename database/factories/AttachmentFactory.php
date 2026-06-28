@@ -20,10 +20,10 @@ class AttachmentFactory extends Factory
     {
         return [
             'letter_id' => Letter::factory(),
-            'file_name' => $this->faker->word(). '.pdf',
+            'file_name' => $this->faker->word().'.pdf',
             'file_type' => 'pdf',
             'file_size' => $this->faker->numberBetween(10000, 5000000),
-            'file_url' => '/storage/files/'. $this->faker->uuid(). '.pdf'
+            'file_url' => '/storage/files/'.$this->faker->uuid().'.pdf',
         ];
     }
 }

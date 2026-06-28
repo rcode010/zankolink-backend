@@ -48,8 +48,6 @@ class AuthController extends Controller
             return [$user, $role];
         });
 
-        
-
         return $this->ok(
             'User registered successfully',
             [

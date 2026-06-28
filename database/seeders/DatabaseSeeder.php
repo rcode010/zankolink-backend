@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AcademicYear;
 use App\Models\Attachment;
 use App\Models\Course;
 use App\Models\Department;
@@ -26,6 +27,8 @@ class DatabaseSeeder extends Seeder
 
         $this->seedRoles();
 
+        $this->call(AcademicYearSeeder::class);
+
         $this->seedMinistryAdmin();
         $this->seedUniversities();
 
@@ -38,68 +41,25 @@ class DatabaseSeeder extends Seeder
     {
         $permissions = [
             // Universities
-            'view universities',
-            'create universities',
-            'update universities',
-            'delete universities',
-
+            'view universities', 'create universities', 'update universities', 'delete universities',
             // Faculties
-            'view faculties',
-            'create faculties',
-            'update faculties',
-            'delete faculties',
-
+            'view faculties', 'create faculties', 'update faculties', 'delete faculties',
             // Departments
-            'view departments',
-            'create departments',
-            'update departments',
-            'delete departments',
-
+            'view departments', 'create departments', 'update departments', 'delete departments',
             // Users
-            'view users',
-            'create users',
-            'update users',
-            'delete users',
-            'activate users',
-            'deactivate users',
-
+            'view users', 'create users', 'update users', 'delete users', 'activate users', 'deactivate users',
             // Teachers
-            'view teachers',
-            'create teachers',
-            'update teachers',
-            'delete teachers',
-            'assign teachers',
-
+            'view teachers', 'create teachers', 'update teachers', 'delete teachers', 'assign teachers',
             // Students
-            'view students',
-            'create students',
-            'update students',
-            'delete students',
-            'assign students',
-
+            'view students', 'create students', 'update students', 'delete students', 'assign students',
             // Courses
-            'view courses',
-            'create courses',
-            'update courses',
-            'delete courses',
-            'assign course teachers',
-            'assign course students',
-
+            'view courses', 'create courses', 'update courses', 'delete courses', 'assign course teachers', 'assign course students',
             // Letters
-            'view letters',
-            'create letters',
-            'update letters',
-            'raise letters',
-
+            'view letters', 'create letters', 'update letters', 'raise letters',
             // Attachments
-            'upload attachments',
-            'download attachments',
-            'delete attachments',
-
+            'upload attachments', 'download attachments', 'delete attachments',
             // Signatures
-            'view signatures',
-            'create signatures',
-
+            'view signatures', 'create signatures',
             // Reports
             'view reports',
         ];
@@ -113,114 +73,36 @@ class DatabaseSeeder extends Seeder
 
         $roles = [
             'MINISTRY_ADMIN' => $permissions,
-
             'MINISTRY_STAFF' => [
-                'view universities',
-                'view faculties',
-                'view departments',
-                'view users',
-                'view reports',
-                'view letters',
-                'create letters',
-                'raise letters',
-                'upload attachments',
-                'download attachments',
-                'view signatures',
-                'create signatures',
+                'view universities', 'view faculties', 'view departments', 'view users', 'view reports',
+                'view letters', 'create letters', 'raise letters', 'upload attachments', 'download attachments',
+                'view signatures', 'create signatures',
             ],
-
             'UNIVERSITY_ADMIN' => [
-                'view faculties',
-                'create faculties',
-                'update faculties',
-                'view departments',
-                'create departments',
-                'update departments',
-                'view users',
-                'create users',
-                'update users',
-                'activate users',
-                'deactivate users',
-                'view teachers',
-                'view students',
-                'view courses',
-                'view reports',
-                'view letters',
-                'create letters',
-                'raise letters',
-                'upload attachments',
-                'download attachments',
-                'view signatures',
-                'create signatures',
+                'view faculties', 'create faculties', 'update faculties', 'view departments', 'create departments',
+                'update departments', 'view users', 'create users', 'update users', 'activate users', 'deactivate users',
+                'view teachers', 'view students', 'view courses', 'view reports', 'view letters', 'create letters',
+                'raise letters', 'upload attachments', 'download attachments', 'view signatures', 'create signatures',
             ],
-
             'UNIVERSITY_STAFF' => [
-                'view faculties',
-                'view departments',
-                'view users',
-                'view teachers',
-                'view students',
-                'view courses',
-                'view letters',
-                'create letters',
-                'raise letters',
-                'upload attachments',
-                'download attachments',
+                'view faculties', 'view departments', 'view users', 'view teachers', 'view students',
+                'view courses', 'view letters', 'create letters', 'raise letters', 'upload attachments', 'download attachments',
             ],
-
             'DEAN' => [
-                'view departments',
-                'create departments',
-                'update departments',
-                'view teachers',
-                'create teachers',
-                'update teachers',
-                'assign teachers',
-                'view students',
-                'view courses',
-                'create courses',
-                'update courses',
-                'view letters',
-                'create letters',
-                'raise letters',
-                'upload attachments',
-                'download attachments',
-                'view reports',
+                'view departments', 'create departments', 'update departments', 'view teachers', 'create teachers',
+                'update teachers', 'assign teachers', 'view students', 'view courses', 'create courses', 'update courses',
+                'view letters', 'create letters', 'raise letters', 'upload attachments', 'download attachments', 'view reports',
             ],
-
             'DEPARTMENT_HEAD' => [
-                'view teachers',
-                'assign teachers',
-                'view students',
-                'assign students',
-                'view courses',
-                'create courses',
-                'update courses',
-                'assign course teachers',
-                'assign course students',
-                'view letters',
-                'create letters',
-                'raise letters',
-                'upload attachments',
-                'download attachments',
+                'view teachers', 'assign teachers', 'view students', 'assign students', 'view courses', 'create courses',
+                'update courses', 'assign course teachers', 'assign course students', 'view letters', 'create letters',
+                'raise letters', 'upload attachments', 'download attachments',
             ],
-
             'lecturer' => [
-                'view courses',
-                'view students',
-                'view letters',
-                'create letters',
-                'raise letters',
-                'upload attachments',
-                'download attachments',
+                'view courses', 'view students', 'view letters', 'create letters', 'raise letters', 'upload attachments', 'download attachments',
             ],
-
             'student' => [
-                'view courses',
-                'view letters',
-                'create letters',
-                'upload attachments',
-                'download attachments',
+                'view courses', 'view letters', 'create letters', 'upload attachments', 'download attachments',
             ],
         ];
 
@@ -249,7 +131,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $role = Role::where('name', $roleName)->firstOrFail();
-
         $user->assignRole($role);
 
         UserScope::create([
@@ -276,9 +157,13 @@ class DatabaseSeeder extends Seeder
 
     private function seedUniversities(): void
     {
+        $academicYear = AcademicYear::where('is_active', true)->first();
+
         University::factory()
             ->count(3)
-            ->create()
+            ->create([
+                'academic_year_id' => $academicYear->id,
+            ])
             ->each(function (University $university) {
                 $admin = $this->createScopedUser(
                     name: fake()->name(),
@@ -361,7 +246,7 @@ class DatabaseSeeder extends Seeder
                     )->firstOrFail()->id,
 
                     'scope_type' => 'DEPARTMENT',
-                    'scope_id' => $department->id
+                    'scope_id' => $department->id,
                 ]);
 
                 $department->teachers()->attach($teacher);
@@ -373,7 +258,7 @@ class DatabaseSeeder extends Seeder
         Student::factory()
             ->count(20)
             ->create([
-                'department_id' => $department->id
+                'department_id' => $department->id,
             ])
             ->each(function (Student $student) use ($department) {
 
@@ -391,6 +276,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             });
     }
+
     private function seedCourses(Department $department): void
     {
         Course::factory()
@@ -414,13 +300,13 @@ class DatabaseSeeder extends Seeder
             $roles = [
                 'primary_lecturer',
                 'assistant_lecturer',
-                'lab_instructor'
+                'lab_instructor',
             ];
 
             $course->teachers()->attach(
                 $teacher->id,
                 [
-                    'role' => $roles[$index]
+                    'role' => $roles[$index],
                 ]
             );
         }
@@ -433,7 +319,7 @@ class DatabaseSeeder extends Seeder
             $department->id
         )
             ->inRandomOrder()
-            ->limit(fake()->numberBetween(8,15))
+            ->limit(fake()->numberBetween(8, 15))
             ->get();
 
         foreach ($students as $student) {
@@ -443,7 +329,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'academic_year' => '2025-2026',
                     'grade' => fake()->optional()
-                        ->numberBetween(50,100),
+                        ->numberBetween(50, 100),
 
                     'enrolled_at' => now(),
                 ]
@@ -470,16 +356,16 @@ class DatabaseSeeder extends Seeder
                 $letter->save();
 
                 Attachment::factory()
-                    ->count(fake()->numberBetween(0,3))
+                    ->count(fake()->numberBetween(0, 3))
                     ->create([
-                        'letter_id' => $letter->id
+                        'letter_id' => $letter->id,
                     ]);
 
                 LetterSignature::factory()
-                    ->count(fake()->numberBetween(1,2))
+                    ->count(fake()->numberBetween(1, 2))
                     ->create([
                         'letter_id' => $letter->id,
-                        'user_id' => $receiver->id
+                        'user_id' => $receiver->id,
                     ]);
             });
     }

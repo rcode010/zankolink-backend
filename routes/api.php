@@ -19,6 +19,7 @@ require __DIR__.'/api/auth.php';
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
     require __DIR__.'/api/universities.php';
+    require __DIR__.'/api/academic-years.php';
     require __DIR__.'/api/faculties.php';
     require __DIR__.'/api/departments.php';
     require __DIR__.'/api/teachers.php';

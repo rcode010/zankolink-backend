@@ -22,7 +22,6 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-
             $table->string('comment')->nullable();
 
             $table->string('verification_hash')->nullable();

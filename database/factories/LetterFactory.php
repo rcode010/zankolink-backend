@@ -22,13 +22,13 @@ class LetterFactory extends Factory
             'directive',
             'request',
             'decision',
-            'appeal'
+            'appeal',
         ]);
 
         $status = $this->faker->randomElement([
             'pending',
             'approved',
-            'rejected'
+            'rejected',
         ]);
 
         return [
@@ -39,7 +39,7 @@ class LetterFactory extends Factory
             'title' => $this->faker->sentence(),
             'body' => $this->faker->paragraphs(3, true),
             'academic_year' => '2025-2026',
-            'status' => $status
+            'status' => $status,
         ];
     }
 }

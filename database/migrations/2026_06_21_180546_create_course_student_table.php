@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->decimal('grade', 5, 2)->nullable();
             $table->timestamp('enrolled_at')->nullable();
-            $table->text('academic_year');
+            $table->foreignId('academic_year_id')->constrained('academic_years');
             $table->timestamps();
         });
     }

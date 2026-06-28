@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('name');
             $table->foreignId('admin_id')->nullable();
-            $table->text('academic_year')->nullable();
+            $table->foreignId('academic_year_id')->constrained('academic_years');
             $table->text('location');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

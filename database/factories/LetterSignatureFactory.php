@@ -23,7 +23,7 @@ class LetterSignatureFactory extends Factory
             'letter_id' => Letter::factory(),
             'user_id' => User::factory(),
             'comment' => $this->faker->optional()->sentence(),
-            'verification_hash' => $this->faker->sha256()
+            'verification_hash' => $this->faker->sha256(),
         ];
     }
 }

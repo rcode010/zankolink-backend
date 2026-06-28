@@ -12,7 +12,7 @@ class LetterObserver
      */
     public function creating(Letter $letter)
     {
-        if(!$letter->letter_number) {
+        if (! $letter->letter_number) {
             $letter->letter_number = (string) Str::uuid();
         }
     }

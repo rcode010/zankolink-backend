@@ -10,6 +10,6 @@ class UserScope extends Model
         'role_id',
         'user_id',
         'scope_id',
-        'scope_type'
+        'scope_type',
     ];
 }

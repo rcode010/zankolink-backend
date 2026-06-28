@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('title');
             $table->longText('body');
             $table->boolean('is_read')->default(false);
-            $table->string('academic_year');
+            $table->foreignId('academic_year_id')->constrained('academic_years');
             $table->boolean('is_archived')->default(false);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();

@@ -11,12 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_scopes', function (Blueprint $table) {
+        Schema::create('academic_years', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('role_id')->constrained()->onDelete('cascade');
-            $table->enum('scope_type', ['MINISTRY', 'FACULTY', 'UNIVERSITY', 'DEPARTMENT']);
-            $table->foreignId('scope_id')->nullable();
+
+            $table->string('year');          // 2025-2026
+
+            $table->date('start_date');
+
+            $table->date('end_date');
+
+            $table->boolean('is_active')->default(false);
+
             $table->timestamps();
         });
     }
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_scopes');
+        Schema::dropIfExists('academic_years');
     }
 };

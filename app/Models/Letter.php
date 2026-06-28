@@ -38,4 +38,9 @@ class Letter extends Model
         return $this->hasMany(Attachment::class);
 
     }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(AcademicYear::class);
+    }
 }

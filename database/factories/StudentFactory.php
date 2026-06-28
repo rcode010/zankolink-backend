@@ -30,7 +30,7 @@ class StudentFactory extends Factory
             'department_id' => Department::factory(),
             'enrollment_type' => $enrollment_type,
             'stage' => $this->faker->numberBetween(1, 4),
-            'student_number' => 'ST' . $this->faker->unique()->numberBetween(10000, 99999),
+            'student_number' => 'ST'.$this->faker->unique()->numberBetween(10000, 99999),
             'status' => 'active',
         ];
     }
