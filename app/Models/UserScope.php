@@ -13,7 +13,9 @@ class UserScope extends Model
         'scope_id',
         'scope_type',
     ];
-    public function role(){
+
+    public function role()
+    {
         return $this->belongsTo(Role::class);
     }
 }

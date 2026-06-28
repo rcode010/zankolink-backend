@@ -16,3 +16,4 @@ Route::get('/permissions', [PermissionController::class, 'index']);
 // User Role
 Route::get('users/{user}/roles', [UserRoleController::class, 'index']);
 Route::post('users/{user}/roles', [UserRoleController::class, 'store']);
+Route::delete('users/{user}/roles/{userScope}', [UserRoleController::class, 'destroy']);
