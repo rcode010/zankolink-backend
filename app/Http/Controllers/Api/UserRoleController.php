@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssignUserRoleRequest;
-use App\Http\Requests\UnassignUserRoleRequest;
 use App\Models\User;
 use App\Models\UserScope;
 use App\Traits\ApiResponses;
@@ -75,10 +74,11 @@ class UserRoleController extends Controller
         ]);
     }
 
-    public function destroy(User $user, UserScope $userScope){
+    public function destroy(User $user, UserScope $userScope)
+    {
 
-        if($userScope->user_id != $user->id){
-            return $this->error("This role does not belong to this user", 409);
+        if ($userScope->user_id != $user->id) {
+            return $this->error('This role does not belong to this user', 409);
         }
 
         DB::transaction(function () use ($userScope, $user) {
@@ -96,5 +96,20 @@ class UserRoleController extends Controller
         });
 
         return $this->ok('Role deleted successfully.');
+    }
+
+    public function destroyByRole(User $user, Role $role)
+    {
+        DB::transaction(function () use ($user, $role) {
+            UserScope::where('user_id', $user->id)
+                ->where('role_id', $role->id)
+                ->delete();
+
+            if ($user->hasRole($role)) {
+                $user->removeRole($role);
+            }
+        });
+
+        return $this->ok('Role removed from user successfully.');
     }
 }
