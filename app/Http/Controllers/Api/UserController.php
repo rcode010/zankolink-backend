@@ -21,7 +21,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = QueryBuilder::for(User::class)
-            ->allowedFilters('role_scope_type')
+//            ->allowedFilters('role_scope_type')
             ->latest()
             ->paginate($request->query('per_page', 10));
 

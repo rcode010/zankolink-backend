@@ -18,10 +18,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'position',
         'phone',
-        'role_scope_id',
-        'role_scope_type',
         'is_active',
     ];
 
@@ -36,6 +33,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function userScopes(array $attributes = []){
+        return $this->hasMany(UserScope::class);
     }
 
     public function teacher()

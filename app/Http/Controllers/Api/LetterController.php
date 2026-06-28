@@ -154,7 +154,6 @@ class LetterController extends Controller
             LetterSignature::create([
                 'letter_id' => $letter->id,
                 'user_id' => $user->id,
-                'role_at_time' => $user->role_scope_type,
             ]);
 
             $letter->update([

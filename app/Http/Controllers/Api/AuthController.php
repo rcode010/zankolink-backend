@@ -8,13 +8,16 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Models\User;
+use App\Models\UserScope;
 use App\Traits\ApiResponses;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -24,8 +27,28 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $credentials = $request->validated();
+        [$user, $role] = DB::transaction(function () use ($credentials) {
+            $user = User::create([
+                'name' => $credentials['name'],
+                'email' => $credentials['email'],
+                'password' => $credentials['password'],
+                'phone' => $credentials['phone'],
+            ]);
 
-        $user = User::create($credentials);
+            $role = Role::where('name', $credentials['role'])->firstOrFail();
+            $user->assignRole($role);
+
+            UserScope::create([
+                'user_id' => $user->id,
+                'role_id' => $role->id,
+                'scope_type' => $credentials['scope_type'],
+                'scope_id' => $credentials['scope_id'] ?? null,
+            ]);
+
+            return [$user, $role];
+        });
+
+        
 
         return $this->ok(
             'User registered successfully',
@@ -33,9 +56,9 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'phone' => $user->phone,
-                'position' => $user->position,
-                'role_scope_id' => $user->role_scope_id,
-                'role_scope_type' => $user->role_scope_type,
+                'role' => $role->name,
+                'scope_type' => $credentials['scope_type'],
+                'scope_id' => $credentials['scope_id'] ?? null,
             ]
         );
     }
@@ -80,7 +103,6 @@ class AuthController extends Controller
         }
         if ($credentials['password'] === $credentials['current_password']) {
             return $this->error("New password can't be the same as current one.", 422);
-
         }
 
         $user->update(['password' => $credentials['password']]);
@@ -100,9 +122,8 @@ class AuthController extends Controller
         $status = Password::sendResetLink(['email' => $credentials['email']]);
 
         return $status === Password::RESET_LINK_SENT
-        ? $this->ok('Password reset link sent to your email.')
-        : $this->error('Unable to snd reset link.', 400);
-
+            ? $this->ok('Password reset link sent to your email.')
+            : $this->error('Unable to snd reset link.', 400);
     }
 
     // Reset Password
