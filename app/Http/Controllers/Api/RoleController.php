@@ -75,4 +75,28 @@ class RoleController extends Controller
         ]);
 
     }
+
+    public function destroy(Role $role)
+    {
+        $protectedRoles = [
+            'MINISTRY_ADMIN',
+            'MINISTRY_STAFF',
+            'UNIVERSITY_ADMIN',
+            'UNIVERSITY_STAFF',
+            'DEAN',
+            'DEPARTMENT_HEAD',
+            'lecturer',
+            'student',
+        ];
+        if (in_array($role->name, $protectedRoles, true)) {
+            return $this->error('System roles cannot be deleted.', 403);
+        }
+
+        if ($role->users()->exists()) {
+            return $this->error('Cannot delete role because it is assigned to users.', 409);
+        }
+        $role->delete();
+
+        return $this->ok('Role deleted successfully.');
+    }
 }

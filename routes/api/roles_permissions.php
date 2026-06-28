@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\RoleController;
 Route::get('/roles', [RoleController::class, 'index']);
 Route::post('/roles', [RoleController::class, 'store']);
 Route::put('/roles/{role}', [RoleController::class, 'update']);
+Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
 
 // Permissions
 Route::get('/permissions', [PermissionController::class, 'index']);
