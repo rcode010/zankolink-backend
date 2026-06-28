@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('name');
             $table->foreignId('admin_id')->nullable();
             $table->boolean('is_active');
+            $table->bigInteger('seat_available')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
