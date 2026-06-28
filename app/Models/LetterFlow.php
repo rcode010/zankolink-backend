@@ -10,14 +10,13 @@ class LetterFlow extends Model
 {
     use HasFactory;
 
-    protected $table = 'letter_signature';
+    protected $table = 'letter_flow';
 
-    protected $fillable = [
-        'letter_id',
-        'user_id',
-        'role_at_time',
-        'comment',
-    ];
+    /**
+     * Disable mass assignment protection entirely for this model.
+     * This will solve the MassAssignmentException once and for all.
+     */
+    protected $guarded = [];
 
     public function letter(): BelongsTo
     {
@@ -26,6 +25,6 @@ class LetterFlow extends Model
 
     public function actor(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'actor_id');
     }
 }
