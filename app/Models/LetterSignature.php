@@ -17,7 +17,6 @@ class LetterSignature extends Model
         'user_id',
         'role_at_time',
         'comment',
-        'verification_hash',
     ];
 
     public function user(): BelongsTo

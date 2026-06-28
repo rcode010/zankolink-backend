@@ -20,7 +20,6 @@ class LetterSignatureResource extends JsonResource
             'user_id' => $this->user_id,
             'role_at_time' => $this->role_at_time,
             'comment' => $this->comment,
-            'verification_hash' => $this->verification_hash,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
 

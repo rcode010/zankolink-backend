@@ -70,21 +70,19 @@ class SignatureController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update the letter status to approved
-            $letter->update([
-                'status' => 'approved',
-            ]);
-
-            // Generate a verification hash
             $hashData = $user->id.'|'.$letter->id.'|'.now()->toIso8601String().'|'.config('app.key');
+
             $verificationHash = hash('sha256', $hashData);
 
-            // Create the signature record
+            $letter->update([
+                'status' => 'approved',
+                'verification_hash' => $verificationHash,
+            ]);
+
             $signature = LetterSignature::create([
                 'letter_id' => $letter->id,
                 'user_id' => $user->id,
                 'comment' => $validated['comment'] ?? null,
-                'verification_hash' => $verificationHash,
             ]);
 
             DB::commit();
