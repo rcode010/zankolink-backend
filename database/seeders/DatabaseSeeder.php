@@ -366,12 +366,17 @@ class DatabaseSeeder extends Seeder
                         'letter_id' => $letter->id,
                     ]);
 
-                LetterSignature::factory()
-                    ->count(fake()->numberBetween(1, 2))
-                    ->create([
+                $signers = $users
+                    ->where('id', '!=', $sender->id)
+                    ->shuffle()
+                    ->take(fake()->numberBetween(1, 2));
+
+                foreach ($signers as $signer) {
+                    LetterSignature::factory()->create([
                         'letter_id' => $letter->id,
-                        'user_id' => $receiver->id,
+                        'user_id' => $signer->id,
                     ]);
+                }
             });
     }
 }
