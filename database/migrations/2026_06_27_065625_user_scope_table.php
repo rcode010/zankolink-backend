@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
-            $table->enum('scope_type',['MINISTRY','FACULTY','UNIVERSITY','DEPARTMENT']);
+            $table->enum('scope_type', ['MINISTRY', 'FACULTY', 'UNIVERSITY', 'DEPARTMENT']);
             $table->foreignId('scope_id')->nullable();
             $table->timestamps();
         });

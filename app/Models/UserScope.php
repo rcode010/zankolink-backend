@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role;
 
 class UserScope extends Model
 {
@@ -10,6 +11,11 @@ class UserScope extends Model
         'role_id',
         'user_id',
         'scope_id',
-        'scope_type'
+        'scope_type',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 }
