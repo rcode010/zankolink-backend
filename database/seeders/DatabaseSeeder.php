@@ -353,7 +353,7 @@ class DatabaseSeeder extends Seeder
                     'role_id' => Role::where(
                         'name',
                         'lecturer'
-                    )->first()->id,
+                    )->firstOrFail()->id,
 
                     'scope_type' => 'DEPARTMENT',
                     'scope_id' => $department->id
@@ -379,7 +379,7 @@ class DatabaseSeeder extends Seeder
                     'role_id' => Role::where(
                         'name',
                         'student'
-                    )->first()->id,
+                    )->firstOrFail()->id,
 
                     'scope_type' => 'DEPARTMENT',
                     'scope_id' => $department->id,
@@ -391,6 +391,58 @@ class DatabaseSeeder extends Seeder
         Course::factory()
             ->count(5)
             ->for($department)
-            ->create();
+            ->create()
+            ->each(function (Course $course) use ($department) {
+                $this->seedCourseTeachers($course, $department);
+                $this->seedCourseStudents($course, $department);
+            });
+    }
+
+    private function seedCourseTeachers(Course $course, Department $department): void
+    {
+        $teachers = $department->teachers()
+            ->inRandomOrder()
+            ->limit(fake()->numberBetween(1, 3))
+            ->get();
+
+        foreach ($teachers as $index => $teacher) {
+            $roles = [
+                'primary_lecturer',
+                'assistant_lecturer',
+                'lab_instructor'
+            ];
+
+            $course->teachers()->attach(
+                $teacher->id,
+                [
+                    'role' => $roles[$index]
+                ]
+            );
+        }
+    }
+
+    private function seedCourseStudents(Course $course, Department $department): void
+    {
+        $students = Student::where(
+            'department_id',
+            $department->id
+        )
+            ->inRandomOrder()
+            ->limit(fake()->numberBetween(8,15))
+            ->get();
+
+        foreach ($students as $student) {
+
+            $course->students()->attach(
+                $student->id,
+                [
+                    'academic_year' => '2025-2026',
+                    'grade' => fake()->optional()
+                        ->numberBetween(50,100),
+
+                    'enrolled_at' => now(),
+                ]
+            );
+        }
     }
 }
