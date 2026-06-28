@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -34,7 +35,44 @@ class RoleController extends Controller
             'guard_name' => 'web',
         ]);
         $role->syncPermissions($credentials['permissions']);
+        $role->load('permissions:id,name');
 
-        return $this->created('Role created successfully.', $role->load('permissions:name,id')->toArray());
+        return $this->created('Role created successfully.', [
+            'id' => $role->id,
+            'name' => $role->name,
+            'permissions' => $role->permissions
+                ->map(fn ($permission) => [
+                    'id' => $permission->id,
+                    'name' => $permission->name,
+                ])
+                ->values(),
+        ]);
+    }
+
+    public function update(UpdateRoleRequest $request, Role $role)
+    {
+        $credentials = $request->validated();
+
+        if (array_key_exists('name', $credentials)) {
+            $role->update([
+                'name' => $credentials['name'],
+            ]);
+        }
+        if (array_key_exists('permissions', $credentials)) {
+            $role->syncPermissions($credentials['permissions']);
+        }
+        $role->load('permissions:id,name');
+
+        return $this->ok('Role updated successfully.', [
+            'id' => $role->id,
+            'name' => $role->name,
+            'permissions' => $role->permissions
+                ->map(fn ($permission) => [
+                    'id' => $permission->id,
+                    'name' => $permission->name,
+                ])
+                ->values(),
+        ]);
+
     }
 }
