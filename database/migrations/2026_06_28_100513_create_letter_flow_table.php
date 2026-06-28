@@ -10,36 +10,29 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('letter_flow', function (Blueprint $table) {
-        $table->id();
-        
-        
-        $table->foreignId('letter_id')->constrained()->onDelete('cascade');
-        
-      
-        $table->string('action'); 
-        
-        
-        $table->string('role')->nullable();
-        
-   
-        $table->unsignedBigInteger('scope_id')->nullable();
-        $table->string('scope_type')->nullable();
-        
-       
-        $table->text('note')->nullable();
-        
-        
-        $table->foreignId('actor_id')->constrained('users')->cascadeOnDelete();
-        
-     
-        $table->unsignedBigInteger('from_recipient_id')->nullable();
-        $table->unsignedBigInteger('to_recipient_id')->nullable();
-        
-        $table->timestamps(); 
-    });
-}
+    {
+        Schema::create('letter_flow', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('letter_id')->constrained()->onDelete('cascade');
+
+            $table->string('action');
+
+            $table->string('role')->nullable();
+
+            $table->unsignedBigInteger('scope_id')->nullable();
+            $table->string('scope_type')->nullable();
+
+            $table->text('note')->nullable();
+
+            $table->foreignId('actor_id')->constrained('users')->cascadeOnDelete();
+
+            $table->unsignedBigInteger('from_recipient_id')->nullable();
+            $table->unsignedBigInteger('to_recipient_id')->nullable();
+
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

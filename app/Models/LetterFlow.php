@@ -12,11 +12,15 @@ class LetterFlow extends Model
 
     protected $table = 'letter_flow';
 
-    /**
-     * Disable mass assignment protection entirely for this model.
-     * This will solve the MassAssignmentException once and for all.
-     */
-    protected $guarded = [];
+    protected $fillable = [
+        'letter_id',
+        'action',
+        'actor_id',
+        'role',
+        'scope_id',
+        'scope_type',
+        'note',
+    ];
 
     public function letter(): BelongsTo
     {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Letter;
 use App\Models\LetterFlow;
 use App\Traits\ApiResponses;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LetterWorkflowController extends Controller
@@ -15,9 +16,7 @@ class LetterWorkflowController extends Controller
     /**
      * Approve a letter and log the activity.
      *
-     * @param Letter $letter
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function approve(Letter $letter, Request $request)
     {
@@ -30,7 +29,7 @@ class LetterWorkflowController extends Controller
 
         // 2. Update letter status to approved
         $letter->update([
-            'status' => 'approved'
+            'status' => 'approved',
         ]);
 
         // 3. Get the primary scope role if available for logging
@@ -38,13 +37,13 @@ class LetterWorkflowController extends Controller
 
         // 4. Log the action in the letter_flow table
         LetterFlow::create([
-            'letter_id'   => $letter->id,
-            'action'      => 'approved',
-            'actor_id'    => $user->id,
-            'role'        => $activeScope ? $activeScope->role?->name : null,
-            'scope_id'    => $activeScope?->scope_id,
-            'scope_type'  => $activeScope?->scope_type,
-            'note'        => $request->input('note', 'Letter approved successfully.'),
+            'letter_id' => $letter->id,
+            'action' => 'approved',
+            'actor_id' => $user->id,
+            'role' => $activeScope ? $activeScope->role?->name : null,
+            'scope_id' => $activeScope?->scope_id,
+            'scope_type' => $activeScope?->scope_type,
+            'note' => $request->input('note', 'Letter approved successfully.'),
         ]);
 
         // TODO: In the next step (Action Mapping), handle automatic triggers based on letter type
@@ -55,9 +54,7 @@ class LetterWorkflowController extends Controller
     /**
      * Decline a letter and log the activity.
      *
-     * @param Letter $letter
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function decline(Letter $letter, Request $request)
     {
@@ -70,7 +67,7 @@ class LetterWorkflowController extends Controller
 
         // 2. Update letter status to rejected
         $letter->update([
-            'status' => 'rejected'
+            'status' => 'rejected',
         ]);
 
         // 3. Get the primary scope role if available for logging
@@ -78,13 +75,13 @@ class LetterWorkflowController extends Controller
 
         // 4. Log the action in the letter_flow table
         LetterFlow::create([
-            'letter_id'   => $letter->id,
-            'action'      => 'rejected',
-            'actor_id'    => $user->id,
-            'role'        => $activeScope ? $activeScope->role?->name : null,
-            'scope_id'    => $activeScope?->scope_id,
-            'scope_type'  => $activeScope?->scope_type,
-            'note'        => $request->input('note', 'Letter declined by user.'),
+            'letter_id' => $letter->id,
+            'action' => 'rejected',
+            'actor_id' => $user->id,
+            'role' => $activeScope ? $activeScope->role?->name : null,
+            'scope_id' => $activeScope?->scope_id,
+            'scope_type' => $activeScope?->scope_type,
+            'note' => $request->input('note', 'Letter declined by user.'),
         ]);
 
         return $this->ok('Letter declined successfully and workflow logged.', $letter->toArray());

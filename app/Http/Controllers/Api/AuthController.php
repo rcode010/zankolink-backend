@@ -64,12 +64,27 @@ class AuthController extends Controller
     // Login
     public function login(LoginRequest $request)
     {
+
         $credentials = $request->validated();
+        $allowedRoles = [
+            'MINISTRY_ADMIN',
+            'MINISTRY_STAFF',
+            'UNIVERSITY_ADMIN',
+            'UNIVERSITY_STAFF',
+            'DEAN',
+            'DEPARTMENT_HEAD',
+        ];
 
         if (! Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
         }
         $user = Auth::user();
+        if (! $user->hasAnyRole($allowedRoles)) {
+            Auth::logout();
+
+            return $this->error('You are not allowed to access the admin panel.', 403);
+        }
+
         $token = $user->createToken('api-token')->plainTextToken;
 
         return $this->ok(
@@ -145,5 +160,32 @@ class AuthController extends Controller
         return $status === Password::PASSWORD_RESET
             ? $this->ok('Password reset successfully.')
             : $this->error('Invalid token or email, Please request a new reset link.', 422);
+    }
+
+    // Get Profile
+    public function profile()
+    {
+        $user = Auth::user();
+        $user->load([
+            'roles:id,name',
+            'userScopes.role:id,name',
+        ]);
+
+        return $this->ok('User profile', [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'roles' => $user->roles->pluck('name'),
+            'scopes' => $user->userScopes->map(function ($scope) {
+                return [
+                    'user_scope_id' => $scope->id,
+                    'role_id' => $scope->role_id,
+                    'role_name' => $scope->role->name,
+                    'scope_type' => $scope->scope_type,
+                    'scope_id' => $scope->scope_id,
+                ];
+            }),
+        ]);
     }
 }
