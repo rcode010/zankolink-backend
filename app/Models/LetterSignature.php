@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LetterSignature extends Model
 {
+    use HasFactory;
+    
     protected $table = 'letter_signature';
 
     protected $fillable = [
