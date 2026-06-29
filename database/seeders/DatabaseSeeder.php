@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Console\Commands\CreateTestUsersCommand;
 use App\Models\AcademicYear;
 use App\Models\Attachment;
 use App\Models\Course;
@@ -15,6 +16,7 @@ use App\Models\University;
 use App\Models\User;
 use App\Models\UserScope;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -33,6 +35,8 @@ class DatabaseSeeder extends Seeder
         $this->seedUniversities();
 
         $this->seedLetters();
+
+        Artisan::call('zankolink:seed-frontend-users');
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
     }
