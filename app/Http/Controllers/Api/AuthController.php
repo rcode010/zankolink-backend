@@ -9,6 +9,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\VerifyRequest;
+use App\Http\Resources\UserResource;
 use App\Mail\TwoFactorCodeMail;
 use App\Models\User;
 use App\Models\UserScope;
@@ -54,14 +55,7 @@ class AuthController extends Controller
 
         return $this->ok(
             'User registered successfully',
-            [
-                'name' => $user->name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'role' => $role->name,
-                'scope_type' => $credentials['scope_type'],
-                'scope_id' => $credentials['scope_id'] ?? null,
-            ]
+            (new UserResource($user->load(['userScopes.role:id,name', 'role:id,name'])))->resolve()
         );
     }
 
@@ -72,11 +66,17 @@ class AuthController extends Controller
         $credentials = $request->validated();
         $allowedRoles = [
             'MINISTRY_ADMIN',
-            'MINISTRY_STAFF',
+            'MINISTRY_IMPORT_EXPORT_STAFF',
+            'MINISTRY_ADMINISTRATION_HEAD',
             'UNIVERSITY_ADMIN',
-            'UNIVERSITY_STAFF',
+            'UNIVERSITY_ADMIN_ADMINISTRATION',
+            'UNIVERSITY_ADMIN_STUDENTS',
+            'UNIVERSITY_ADMIN_SCIENCE',
             'DEAN',
-            'DEPARTMENT_HEAD',
+            'HEAD_OF_DEPARTMENT',
+            'lecturer',
+            'student',
+            'HIGH_SCHOOL_GRADUATE',
         ];
 
         if (! Auth::attempt($credentials)) {
@@ -115,13 +115,14 @@ class AuthController extends Controller
         $token = $user->createToken('api-token')->plainTextToken;
 
         return $this->ok(
-            'User logged in successfully',
-            [
-                'name' => $user->name,
-                'email' => $user->email,
+            'User logged in successfully', [
                 'token' => $token,
-            ],
-        );
+                'user' => (new UserResource($user->load([
+                    'roles:id,name',
+                    'userScopes.role:id,name',
+                ])))
+                    ->resolve(),
+        ]);
     }
 
     public function verify(VerifyRequest $request)
@@ -164,10 +165,14 @@ class AuthController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
 
-        return $this->ok('User logged in successfully', [
-            'name' => $user->name,
-            'email' => $user->email,
+        return $this->ok(
+            'User logged in successfully', [
             'token' => $token,
+            'user' => (new UserResource($user->load([
+                'roles:id,name',
+                'userScopes.role:id,name',
+            ])))
+                ->resolve(),
         ]);
     }
 
@@ -190,7 +195,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! Hash::check((string)$request->otp, $user->two_factor_code)) {
+        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
             return $this->error('Invalid OTP', 401);
         }
         if (now()->isAfter($user->two_factor_expires_at)) {
@@ -210,7 +215,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! Hash::check((string)$request->otp, $user->two_factor_code)) {
+        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
             return $this->error('Invalid OTP', 401);
         }
         if (now()->isAfter($user->two_factor_expires_at)) {
@@ -299,21 +304,13 @@ class AuthController extends Controller
             'userScopes.role:id,name',
         ]);
 
-        return $this->ok('User profile', [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'roles' => $user->roles->pluck('name'),
-            'scopes' => $user->userScopes->map(function ($scope) {
-                return [
-                    'user_scope_id' => $scope->id,
-                    'role_id' => $scope->role_id,
-                    'role_name' => $scope->role->name,
-                    'scope_type' => $scope->scope_type,
-                    'scope_id' => $scope->scope_id,
-                ];
-            }),
+        return $this->ok(
+            'User profile', [
+            'user' => (new UserResource($user->load([
+                'roles:id,name',
+                'userScopes.role:id,name',
+            ])))
+                ->resolve(),
         ]);
     }
 }
