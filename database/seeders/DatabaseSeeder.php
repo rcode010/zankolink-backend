@@ -26,12 +26,17 @@ class DatabaseSeeder extends Seeder
 {
     private Generator $faker;
 
+    private ?AcademicYear $activeAcademicYear = null;
+
     public function run(): void
     {
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
         $this->faker = FakerFactory::create();
         $this->seedRoles();
 
         $this->call(AcademicYearSeeder::class);
+        $this->activeAcademicYear = AcademicYear::where('is_active', true)->first();
 
         $this->seedMinistryAdmin();
         $this->seedUniversities();
@@ -39,8 +44,6 @@ class DatabaseSeeder extends Seeder
         $this->seedLetters();
 
         Artisan::call('zankolink:seed-frontend-users');
-
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
     }
 
     private function seedRoles(): void
@@ -215,11 +218,9 @@ class DatabaseSeeder extends Seeder
 
     private function seedUniversities(): void
     {
-        $academicYear = AcademicYear::where('is_active', true)->first();
-
         University::factory()
             ->count(3)
-            ->create(['academic_year_id' => $academicYear->id])
+            ->create(['academic_year_id' => $this->activeAcademicYear->id])
             ->each(function (University $university) {
                 $admin = $this->createScopedUser(
                     name: $this->faker->name(),
@@ -343,8 +344,6 @@ class DatabaseSeeder extends Seeder
 
     private function seedCourseStudents(Course $course, Department $department): void
     {
-        $academicYear = AcademicYear::where('is_active', true)->first();
-
         $students = Student::where('department_id', $department->id)
             ->inRandomOrder()
             ->limit($this->faker->numberBetween(8, 15))
@@ -352,7 +351,7 @@ class DatabaseSeeder extends Seeder
 
         foreach ($students as $student) {
             $course->students()->attach($student->id, [
-                'academic_year_id' => $academicYear->id,
+                'academic_year_id' => $this->activeAcademicYear->id,
                 'grade' => $this->faker->optional()->numberBetween(50, 100),
                 'enrolled_at' => now(),
             ]);
@@ -362,11 +361,10 @@ class DatabaseSeeder extends Seeder
     private function seedLetters(): void
     {
         $users = User::all();
-        $academicYear = AcademicYear::where('is_active', true)->first();
 
         Letter::factory()
             ->count(30)
-            ->make(['academic_year_id' => $academicYear->id])
+            ->make(['academic_year_id' => $this->activeAcademicYear->id])
             ->each(function ($letter) use ($users) {
                 $sender = $users->random();
                 $receiver = $users->where('id', '!=', $sender->id)->random();
