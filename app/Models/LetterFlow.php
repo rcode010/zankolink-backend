@@ -19,6 +19,8 @@ class LetterFlow extends Model
         'role',
         'scope_id',
         'scope_type',
+        'from_recipient_id',
+        'to_recipient_id',
         'note',
     ];
 
@@ -30,5 +32,14 @@ class LetterFlow extends Model
     public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_id');
+    }
+    public function fromRecipient(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'from_recipient_id');
+    }
+
+    public function toRecipient(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'to_recipient_id');
     }
 }
