@@ -103,6 +103,9 @@ class DepartmentController extends Controller
         );
     }
 
+    /**
+     * Update department seats.
+     */
     public function updateSeat(UpdateDepartmentSeatRequest $request, Department $department)
     {
         $department->update($request->validated());
@@ -120,7 +123,6 @@ class DepartmentController extends Controller
      */
     public function approveStudentSelection(Request $request)
     {
-        // 1. Validate the incoming request from the department panel
         $request->validate([
             'student_id' => 'required|exists:students,id',
             'academic_year_id' => 'required|exists:academic_years,id',
@@ -129,7 +131,6 @@ class DepartmentController extends Controller
         $studentId = $request->student_id;
         $academicYearId = $request->academic_year_id;
 
-        // 2. Fetch all pending course selections for this student
         $pendingSelections = DB::table('course_selections')
             ->where('student_id', $studentId)
             ->where('academic_year_id', $academicYearId)
@@ -140,10 +141,8 @@ class DepartmentController extends Controller
             return $this->error('No pending course selections found for this student.', 404);
         }
 
-        // 3. Process approval inside a safe database transaction
         DB::transaction(function () use ($studentId, $academicYearId, $pendingSelections) {
 
-            // Step A: Update status to 'approved' in course_selections table
             DB::table('course_selections')
                 ->where('student_id', $studentId)
                 ->where('academic_year_id', $academicYearId)
@@ -153,7 +152,6 @@ class DepartmentController extends Controller
                     'updated_at' => now(),
                 ]);
 
-            // Step B: Prepare data for the final enrollment table (course_student)
             $enrollmentData = [];
             foreach ($pendingSelections as $selection) {
                 $enrollmentData[] = [
@@ -166,7 +164,6 @@ class DepartmentController extends Controller
                 ];
             }
 
-            // Step C: Clear any old records in final table to prevent duplicates, then insert
             DB::table('course_student')
                 ->where('student_id', $studentId)
                 ->where('academic_year_id', $academicYearId)
@@ -176,5 +173,37 @@ class DepartmentController extends Controller
         });
 
         return $this->ok('Department approved successfully and student is now enrolled.');
+    }
+
+    /**
+     * Get the list of courses a specific student has selected and are pending approval.
+     */
+    public function getStudentSelectedCourses(Request $request)
+    {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'academic_year_id' => 'required|exists:academic_years,id',
+        ]);
+
+        $selectedCourses = DB::table('course_selections')
+            ->join('courses', 'course_selections.course_id', '=', 'courses.id')
+            ->where('course_selections.student_id', $request->student_id)
+            ->where('course_selections.academic_year_id', $request->academic_year_id)
+            ->where('course_selections.status', 'pending')
+            ->select(
+                'courses.id as course_id',
+                'courses.name as course_name',
+                'courses.code as course_code',
+                'courses.type as course_type',
+                'course_selections.status',
+                'course_selections.created_at as selected_at'
+            )
+            ->get();
+
+        if ($selectedCourses->isEmpty()) {
+            return $this->error('No pending course selections found for this student.', 404);
+        }
+
+        return $this->ok('Pending courses retrieved successfully.', $selectedCourses);
     }
 }

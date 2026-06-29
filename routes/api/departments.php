@@ -9,5 +9,6 @@ Route::prefix('departments')->group(function () {
     Route::patch('/{department}', [DepartmentController::class, 'update']);
     Route::delete('/{department}', [DepartmentController::class, 'destroy']);
     Route::patch('/{department}/seat', [DepartmentController::class, 'updateSeat']);
+    Route::get('/student-selected-courses', [DepartmentController::class, 'getStudentSelectedCourses']);
     Route::post('/approve-selection', [DepartmentController::class, 'approveStudentSelection']);
 });
