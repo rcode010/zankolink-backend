@@ -49,6 +49,7 @@ class AuthController extends Controller
                 'scope_type' => $credentials['scope_type'],
                 'scope_id' => $credentials['scope_id'] ?? null,
             ]);
+            $user->refresh();
 
             return [$user, $role];
         });

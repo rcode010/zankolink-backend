@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use Faker\Factory as FakerFactory;
-use App\Console\Commands\CreateTestUsersCommand;
 use App\Models\AcademicYear;
 use App\Models\Attachment;
 use App\Models\Course;
@@ -16,6 +14,8 @@ use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
 use App\Models\UserScope;
+use Faker\Factory as FakerFactory;
+use Faker\Generator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\Models\Permission;
@@ -24,8 +24,7 @@ use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
-    private \Faker\Generator $faker;
-
+    private Generator $faker;
 
     public function run(): void
     {
