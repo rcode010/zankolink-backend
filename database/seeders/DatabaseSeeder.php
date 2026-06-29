@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Faker\Factory as FakerFactory;
 use App\Console\Commands\CreateTestUsersCommand;
 use App\Models\AcademicYear;
 use App\Models\Attachment;
@@ -23,10 +24,12 @@ use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
+    private \Faker\Generator $faker;
+
+
     public function run(): void
     {
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
-
+        $this->faker = FakerFactory::create();
         $this->seedRoles();
 
         $this->call(AcademicYearSeeder::class);
@@ -183,7 +186,7 @@ class DatabaseSeeder extends Seeder
         $user = User::factory()->create([
             'name' => $name,
             'email' => $email,
-            'phone' => $phone ?? fake()->phoneNumber(),
+            'phone' => $phone ?? $this->faker->phoneNumber(),
         ]);
 
         $role = Role::where('name', $roleName)->firstOrFail();
@@ -202,7 +205,7 @@ class DatabaseSeeder extends Seeder
     private function seedMinistryAdmin(): void
     {
         $this->createScopedUser(
-            name: fake()->name(),
+            name: $this->faker->name(),
             email: 'admin@ministry.gov',
             roleName: 'MINISTRY_ADMIN',
             scopeType: 'MINISTRY',
@@ -220,7 +223,7 @@ class DatabaseSeeder extends Seeder
             ->create(['academic_year_id' => $academicYear->id])
             ->each(function (University $university) {
                 $admin = $this->createScopedUser(
-                    name: fake()->name(),
+                    name: $this->faker->name(),
                     email: "university-admin-{$university->id}@test.com",
                     roleName: 'UNIVERSITY_ADMIN',
                     scopeType: 'UNIVERSITY',
@@ -241,7 +244,7 @@ class DatabaseSeeder extends Seeder
             ->create()
             ->each(function (Faculty $faculty) {
                 $admin = $this->createScopedUser(
-                    name: fake()->name(),
+                    name: $this->faker->name(),
                     email: "faculty-dean-{$faculty->id}@test.com",
                     roleName: 'DEAN',
                     scopeType: 'FACULTY',
@@ -262,7 +265,7 @@ class DatabaseSeeder extends Seeder
             ->create()
             ->each(function (Department $department) {
                 $admin = $this->createScopedUser(
-                    name: fake()->name(),
+                    name: $this->faker->name(),
                     email: "department-head-{$department->id}@test.com",
                     roleName: 'HEAD_OF_DEPARTMENT',
                     scopeType: 'DEPARTMENT',
@@ -329,7 +332,7 @@ class DatabaseSeeder extends Seeder
     {
         $teachers = $department->teachers()
             ->inRandomOrder()
-            ->limit(fake()->numberBetween(1, 3))
+            ->limit($this->faker->numberBetween(1, 3))
             ->get();
 
         foreach ($teachers as $index => $teacher) {
@@ -345,13 +348,13 @@ class DatabaseSeeder extends Seeder
 
         $students = Student::where('department_id', $department->id)
             ->inRandomOrder()
-            ->limit(fake()->numberBetween(8, 15))
+            ->limit($this->faker->numberBetween(8, 15))
             ->get();
 
         foreach ($students as $student) {
             $course->students()->attach($student->id, [
                 'academic_year_id' => $academicYear->id,
-                'grade' => fake()->optional()->numberBetween(50, 100),
+                'grade' => $this->faker->optional()->numberBetween(50, 100),
                 'enrolled_at' => now(),
             ]);
         }
@@ -375,13 +378,13 @@ class DatabaseSeeder extends Seeder
                 $letter->save();
 
                 Attachment::factory()
-                    ->count(fake()->numberBetween(0, 3))
+                    ->count($this->faker->numberBetween(0, 3))
                     ->create(['letter_id' => $letter->id]);
 
                 $signers = $users
                     ->where('id', '!=', $sender->id)
                     ->shuffle()
-                    ->take(fake()->numberBetween(1, 2));
+                    ->take($this->faker->numberBetween(1, 2));
 
                 foreach ($signers as $signer) {
                     LetterSignature::factory()->create([
