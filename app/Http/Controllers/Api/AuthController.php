@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\Enable2FARequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
@@ -88,7 +89,7 @@ class AuthController extends Controller
             return $this->error('You are not allowed to access the admin panel.', 403);
         }
 
-        if($user->is_two_factor_enabled){
+        if ($user->is_two_factor_enabled) {
             $otp = random_int(100000, 999999);
             $user->update([
                 'two_factor_code' => Hash::make($otp),
@@ -139,11 +140,13 @@ class AuthController extends Controller
 
         if ($fails >= 5) {
             cache()->forget("2fa_challenge_{$request->challenge_token}");
+
             return $this->error('Too many attempts, please login again', 429);
         }
 
         if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
             cache()->put($failKey, $fails + 1, now()->addMinutes(10));
+
             return $this->error('Invalid OTP', 401);
         }
 
@@ -166,6 +169,60 @@ class AuthController extends Controller
             'email' => $user->email,
             'token' => $token,
         ]);
+    }
+
+    public function prepareTwoFactor(Request $request)
+    {
+        $user = Auth::user();
+
+        $otp = random_int(100000, 999999);
+        $user->update([
+            'two_factor_code' => Hash::make($otp),
+            'two_factor_expires_at' => now()->addMinutes(10),
+        ]);
+
+        Mail::to($user->email)->send(new TwoFactorCodeMail($otp, $user));
+
+        return $this->ok('OTP sent to your email');
+    }
+
+    public function enableTwoFactor(Enable2FARequest $request)
+    {
+        $user = $request->user();
+
+        if (! Hash::check((string)$request->otp, $user->two_factor_code)) {
+            return $this->error('Invalid OTP', 401);
+        }
+        if (now()->isAfter($user->two_factor_expires_at)) {
+            return $this->error('OTP has expired, please login again', 401);
+        }
+
+        $user->update([
+            'two_factor_code' => null,
+            'two_factor_expires_at' => null,
+            'is_two_factor_enabled' => true,
+        ]);
+
+        return $this->ok('Two factor authentication enabled');
+    }
+
+    public function disableTwoFactor(Request $request)
+    {
+        $user = $request->user();
+
+        if (! Hash::check((string)$request->otp, $user->two_factor_code)) {
+            return $this->error('Invalid OTP', 401);
+        }
+        if (now()->isAfter($user->two_factor_expires_at)) {
+            return $this->error('OTP has expired, please login again', 401);
+        }
+        $user->update([
+            'two_factor_code' => null,
+            'two_factor_expires_at' => null,
+            'is_two_factor_enabled' => false,
+        ]);
+
+        return $this->ok('Two factor authentication disabled');
     }
 
     // Logout

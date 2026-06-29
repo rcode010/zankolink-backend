@@ -39,7 +39,7 @@
         }
     },
     "scripts": {
-        "format": "pint",
+        "format": "./vendor/bin/pint --dirty",
         "format:test": "pint --test",
         "setup": [
             "composer install",
