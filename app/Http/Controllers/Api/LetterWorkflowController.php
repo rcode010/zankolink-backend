@@ -24,7 +24,6 @@ class LetterWorkflowController extends Controller
             return $this->error('This letter has already been processed.', 422);
         }
 
-        $activeScope = $user->userScopes()->first();
 
         DB::transaction(function () use ($letter, $user, $request, $activeScope) {
             $letter->update([
@@ -36,8 +35,6 @@ class LetterWorkflowController extends Controller
                 'action'     => 'approved',
                 'actor_id'   => $user->id,
                 'role'       => $activeScope?->role?->name,
-                'scope_id'   => $activeScope?->scope_id,
-                'scope_type' => $activeScope?->scope_type,
                 'from_recipient_id' => null,
                 'to_recipient_id'   => null,
                 'note'       => $request->input('note', 'Letter approved successfully.'),
@@ -59,7 +56,6 @@ class LetterWorkflowController extends Controller
             return $this->error('This letter has already been processed.', 422);
         }
 
-        $activeScope = $user->userScopes()->first();
 
         DB::transaction(function () use ($letter, $user, $request, $activeScope) {
             $letter->update([
@@ -71,8 +67,6 @@ class LetterWorkflowController extends Controller
                 'action'     => 'rejected',
                 'actor_id'   => $user->id,
                 'role'       => $activeScope?->role?->name,
-                'scope_id'   => $activeScope?->scope_id,
-                'scope_type' => $activeScope?->scope_type,
                 'from_recipient_id' => null,
                 'to_recipient_id'   => null,
                 'note'       => $request->input('note', 'Letter declined by user.'),
@@ -98,7 +92,6 @@ class LetterWorkflowController extends Controller
             return $this->error("New receiver can't be the same as current one.", 400);
         }
 
-        $activeScope = $user->userScopes()->first();
         $oldReceiverId = $letter->receiver_id; 
 
         DB::transaction(function () use ($letter, $user, $request, $activeScope, $oldReceiverId) {
@@ -115,8 +108,6 @@ class LetterWorkflowController extends Controller
                 'action'             => 'forwarded',
                 'actor_id'           => $user->id,
                 'role'               => $activeScope?->role?->name,
-                'scope_id'           => $activeScope?->scope_id,
-                'scope_type'         => $activeScope?->scope_type,
                 'from_recipient_id'  => $oldReceiverId,          
                 'to_recipient_id'    => $request->receiver_id,  
                 'note'               => $request->input('note', 'Letter forwarded successfully.'),
@@ -142,7 +133,6 @@ class LetterWorkflowController extends Controller
             return $this->error("New receiver can't be the same as current one.", 400);
         }
 
-        $activeScope = $user->userScopes()->first();
         $oldReceiverId = $letter->receiver_id;
 
         DB::transaction(function () use ($letter, $user, $request, $activeScope, $oldReceiverId) {
@@ -158,8 +148,6 @@ class LetterWorkflowController extends Controller
                 'action'             => 'raised',
                 'actor_id'           => $user->id,
                 'role'               => $activeScope?->role?->name,
-                'scope_id'           => $activeScope?->scope_id,
-                'scope_type'         => $activeScope?->scope_type,
                 'from_recipient_id'  => $oldReceiverId,          
                 'to_recipient_id'    => $request->receiver_id,   
                 'note'               => $request->input('note', 'Letter raised to a higher level.'),
