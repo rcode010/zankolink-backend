@@ -30,12 +30,14 @@ class LetterWorkflowController extends Controller
                 'status' => 'approved',
             ]);
 
+            $oldReceiverId = $letter->receiver_id; 
+
             LetterFlow::create([
                 'letter_id'  => $letter->id,
                 'action'     => 'approved',
                 'actor_id'   => $user->id,
                 'role'       => $activeScope?->role?->name,
-                'from_recipient_id' => null,
+                'from_recipient_id' => $oldReceiverId,
                 'to_recipient_id'   => null,
                 'note'       => $request->input('note', 'Letter approved successfully.'),
             ]);
@@ -62,12 +64,14 @@ class LetterWorkflowController extends Controller
                 'status' => 'rejected',
             ]);
 
+            $oldReceiverId = $letter->receiver_id; 
+            
             LetterFlow::create([
                 'letter_id'  => $letter->id,
                 'action'     => 'rejected',
                 'actor_id'   => $user->id,
                 'role'       => $activeScope?->role?->name,
-                'from_recipient_id' => null,
+                'from_recipient_id' => $oldReceiverId,
                 'to_recipient_id'   => null,
                 'note'       => $request->input('note', 'Letter declined by user.'),
             ]);
