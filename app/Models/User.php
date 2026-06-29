@@ -20,6 +20,9 @@ class User extends Authenticatable
         'password',
         'phone',
         'is_active',
+        'two_factor_code',
+        'two_factor_expires_at',
+        'is_two_factor_enabled'
     ];
 
     protected $hidden = [

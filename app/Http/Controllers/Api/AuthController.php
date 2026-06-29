@@ -7,6 +7,8 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\VerifyRequest;
+use App\Mail\TwoFactorCodeMail;
 use App\Models\User;
 use App\Models\UserScope;
 use App\Traits\ApiResponses;
@@ -15,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
@@ -75,7 +78,6 @@ class AuthController extends Controller
             'DEPARTMENT_HEAD',
         ];
 
-
         if (! Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
         }
@@ -86,6 +88,29 @@ class AuthController extends Controller
             return $this->error('You are not allowed to access the admin panel.', 403);
         }
 
+        if($user->is_two_factor_enabled){
+            $otp = random_int(100000, 999999);
+            $user->update([
+                'two_factor_code' => Hash::make($otp),
+                'two_factor_expires_at' => now()->addMinutes(10),
+            ]);
+            Auth::logout();
+            //        $token = $user->createToken('api-token')->plainTextToken;
+            $challengeToken = Str::random(64);
+
+            cache()->put(
+                "2fa_challenge_{$challengeToken}",
+                $user->id,
+                now()->addMinutes(10)
+            );
+
+            Mail::to($user->email)->send(new TwoFactorCodeMail($otp, $user));
+
+            return $this->ok('OTP sent to your email', [
+
+                'challenge_token' => $challengeToken,
+            ], 202);
+        }
         $token = $user->createToken('api-token')->plainTextToken;
 
         return $this->ok(
@@ -94,8 +119,53 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'token' => $token,
-            ]
+            ],
         );
+    }
+
+    public function verify(VerifyRequest $request)
+    {
+        $userId = cache()->get("2fa_challenge_{$request->challenge_token}");
+
+        if (! $userId) {
+            return $this->error('Invalid or expired challenge token', 401);
+        }
+
+        $user = User::findOrFail($userId);
+
+        // ↓ brute-force counter goes here, before any OTP check
+        $failKey = "2fa_fails_{$request->challenge_token}";
+        $fails = cache()->get($failKey, 0);
+
+        if ($fails >= 5) {
+            cache()->forget("2fa_challenge_{$request->challenge_token}");
+            return $this->error('Too many attempts, please login again', 429);
+        }
+
+        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+            cache()->put($failKey, $fails + 1, now()->addMinutes(10));
+            return $this->error('Invalid OTP', 401);
+        }
+
+        if (now()->isAfter($user->two_factor_expires_at)) {
+            return $this->error('OTP has expired, please login again', 401);
+        }
+
+        cache()->forget("2fa_challenge_{$request->challenge_token}");
+        cache()->forget($failKey);
+
+        $user->update([
+            'two_factor_code' => null,
+            'two_factor_expires_at' => null,
+        ]);
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return $this->ok('User logged in successfully', [
+            'name' => $user->name,
+            'email' => $user->email,
+            'token' => $token,
+        ]);
     }
 
     // Logout
@@ -164,7 +234,8 @@ class AuthController extends Controller
     }
 
     // Get Profile
-    public function profile(){
+    public function profile()
+    {
         $user = Auth::user();
         $user->load([
             'roles:id,name',
