@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreignId('academic_year_id')->constrained('academic_years');
             $table->boolean('is_archived')->default(false);
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->string('verification_hash')->nullable();
             $table->timestamps();
 
         });

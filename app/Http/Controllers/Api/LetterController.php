@@ -57,6 +57,13 @@ class LetterController extends Controller
         $data['sender_id'] = auth()->id();
         $data['status'] = 'pending';
 
+        $hashData = $data['title'].'|'.$data['body'];
+
+        $data['verification_hash'] = hash(
+            'sha256',
+            $hashData
+        );
+
         $letter = Letter::create($data);
 
         if ($letter) {

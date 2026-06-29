@@ -24,8 +24,6 @@ return new class extends Migration
 
             $table->string('comment')->nullable();
 
-            $table->string('verification_hash')->nullable();
-
             $table->timestamps();
 
             $table->unique(['user_id', 'letter_id']);
