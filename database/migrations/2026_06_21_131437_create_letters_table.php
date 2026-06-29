@@ -17,7 +17,16 @@ return new class extends Migration
             $table->foreignId('original_sender_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('sender_id')->constrained('users');
             $table->foreignId('receiver_id')->constrained('users');
-            $table->enum('type', ['internal', 'directive', 'request', 'decision', 'appeal']);
+            $table->enum('type', [
+                'hire_teacher',
+                'fire_teacher',
+                'create_department',
+                'close_department',
+                'open_faculty',
+                'close_faculty',
+                'open_university',
+                'close_university',
+            ]);
             $table->string('title');
             $table->longText('body');
             $table->boolean('is_read')->default(false);
