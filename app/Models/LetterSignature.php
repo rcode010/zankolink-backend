@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LetterSignature extends Model
 {
     use HasFactory;
-
+    
     protected $table = 'letter_signature';
 
     protected $fillable = [
