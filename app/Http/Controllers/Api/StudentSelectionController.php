@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\CourseSelection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +24,7 @@ class StudentSelectionController extends Controller
         $studentStage = (int) $student->stage;
         $departmentId = $student->department_id;
 
-        // 2. Validate academic year (course_ids is optional now because Stage 1 doesn't send it)
+        // 2. Validate academic year
         $request->validate([
             'academic_year_id' => 'required|exists:academic_years,id',
             'course_ids' => 'nullable|array',
@@ -42,16 +43,13 @@ class StudentSelectionController extends Controller
         // CASE 1: Stage 1 Students (Auto-enroll all mandatory courses)
         // -----------------------------------------------------------------
         if ($studentStage === 1) {
-            // Automatically get all mandatory courses for Stage 1, no student selection needed
             $mandatoryCourseIds = $availableCourses->where('type', 'mandatory')->pluck('id')->toArray();
 
             if (empty($mandatoryCourseIds)) {
                 return response()->json(['message' => 'No mandatory courses found for Stage 1.'], 422);
             }
 
-            // Direct enrollment into the final course_student table
             DB::transaction(function () use ($studentId, $academicYearId, $mandatoryCourseIds) {
-                // Clear old data for this year to prevent duplicates
                 DB::table('course_student')
                     ->where('student_id', $studentId)
                     ->where('academic_year_id', $academicYearId)
@@ -77,8 +75,6 @@ class StudentSelectionController extends Controller
         // -----------------------------------------------------------------
         // CASE 2: Other Stages (Stage 2, 3, 4 - Manual selection with seat limit)
         // -----------------------------------------------------------------
-
-        // For other stages, course_ids is strictly required
         if (! $request->has('course_ids') || empty($request->course_ids)) {
             return response()->json(['message' => 'The course ids field is required for this stage.'], 422);
         }
@@ -99,10 +95,9 @@ class StudentSelectionController extends Controller
             return response()->json(['message' => 'You cannot select more than one elective course.'], 422);
         }
 
-        // Constraint check: Verify seat capacity for the chosen elective course
+        // Constraint check: Verify seat capacity using CourseSelection Model (لادانی DB::table)
         if ($electiveCourse && ! is_null($electiveCourse->seats)) {
-            $takenSeats = DB::table('course_selections')
-                ->where('course_id', $electiveCourse->id)
+            $takenSeats = CourseSelection::where('course_id', $electiveCourse->id)
                 ->where('academic_year_id', $academicYearId)
                 ->whereIn('status', ['pending', 'approved'])
                 ->count();
@@ -114,10 +109,9 @@ class StudentSelectionController extends Controller
             }
         }
 
-        // Save temporary selection into course_selections table with pending status
+        // Save temporary selection using CourseSelection Model
         DB::transaction(function () use ($studentId, $academicYearId, $courses) {
-            DB::table('course_selections')
-                ->where('student_id', $studentId)
+            CourseSelection::where('student_id', $studentId)
                 ->where('academic_year_id', $academicYearId)
                 ->delete();
 
@@ -132,7 +126,7 @@ class StudentSelectionController extends Controller
                     'updated_at' => now(),
                 ];
             }
-            DB::table('course_selections')->insert($selectionData);
+            CourseSelection::insert($selectionData);
         });
 
         return response()->json(['message' => 'Course selection saved successfully and is pending department approval.'], 200);

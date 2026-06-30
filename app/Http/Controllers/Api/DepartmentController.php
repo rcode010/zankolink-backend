@@ -7,6 +7,7 @@ use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentSeatRequest;
 use App\Http\Resources\DepartmentResource;
+use App\Models\CourseSelection;
 use App\Models\Department;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -131,8 +132,7 @@ class DepartmentController extends Controller
         $studentId = $request->student_id;
         $academicYearId = $request->academic_year_id;
 
-        $pendingSelections = DB::table('course_selections')
-            ->where('student_id', $studentId)
+        $pendingSelections = CourseSelection::where('student_id', $studentId)
             ->where('academic_year_id', $academicYearId)
             ->where('status', 'pending')
             ->get();
@@ -143,8 +143,7 @@ class DepartmentController extends Controller
 
         DB::transaction(function () use ($studentId, $academicYearId, $pendingSelections) {
 
-            DB::table('course_selections')
-                ->where('student_id', $studentId)
+            CourseSelection::where('student_id', $studentId)
                 ->where('academic_year_id', $academicYearId)
                 ->where('status', 'pending')
                 ->update([
@@ -176,33 +175,48 @@ class DepartmentController extends Controller
     }
 
     /**
-     * Get the list of courses a specific student has selected and are pending approval.
+     * Get the list of pending course selections (for all students or a specific student).
      */
     public function getStudentSelectedCourses(Request $request)
     {
+        // Validate incoming request. student_id is optional (sometimes) to allow fetching all records.
         $request->validate([
-            'student_id' => 'required|exists:students,id',
+            'student_id' => 'sometimes|exists:students,id',
             'academic_year_id' => 'required|exists:academic_years,id',
         ]);
 
-        $selectedCourses = DB::table('course_selections')
-            ->join('courses', 'course_selections.course_id', '=', 'courses.id')
-            ->where('course_selections.student_id', $request->student_id)
-            ->where('course_selections.academic_year_id', $request->academic_year_id)
-            ->where('course_selections.status', 'pending')
-            ->select(
-                'courses.id as course_id',
-                'courses.name as course_name',
-                'courses.code as course_code',
-                'courses.type as course_type',
-                'course_selections.status',
-                'course_selections.created_at as selected_at'
-            )
-            ->get();
+        // Eager load both course and student relations for performance and details
+        $query = CourseSelection::with(['course', 'student:id,name,email'])
+            ->where('academic_year_id', $request->academic_year_id)
+            ->where('status', 'pending');
 
-        if ($selectedCourses->isEmpty()) {
-            return $this->error('No pending course selections found for this student.', 404);
+        // If student_id is provided, filter the query for that specific student
+        if ($request->has('student_id') && $request->student_id != '') {
+            $query->where('student_id', $request->student_id);
         }
+
+        // Fetch the newest records first
+        $selections = $query->latest()->get();
+
+        // Return a 404 response if no pending selections match the criteria
+        if ($selections->isEmpty()) {
+            return $this->error('No pending course selections found.', 404);
+        }
+
+        // Map and format the collection data into a clean structure
+        $selectedCourses = $selections->map(function ($selection) {
+            return [
+                'id' => $selection->id,
+                'student_id' => $selection->student_id,
+                'student_name' => $selection->student->name ?? 'N/A', // Useful when listing all students
+                'course_id' => $selection->course->id,
+                'course_name' => $selection->course->name,
+                'course_code' => $selection->course->code,
+                'course_type' => $selection->course->type,
+                'status' => $selection->status,
+                'selected_at' => $selection->created_at,
+            ];
+        })->all(); // Convert the collection to a plain PHP array for the API response trait
 
         return $this->ok('Pending courses retrieved successfully.', $selectedCourses);
     }
