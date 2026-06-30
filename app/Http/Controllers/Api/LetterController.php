@@ -24,16 +24,27 @@ class LetterController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->query('per_page', 15);
+        $per_page = $request->query('per_page', 15);
+
+        $userId = auth()->id();
 
         $letters = QueryBuilder::for(Letter::class)
-            ->with(['sender:id,name', 'receiver:id,name'])
+            ->where(function ($q) use ($userId) {
+                $q->where('sender_id', $userId)
+                    ->orWhere('receiver_id', $userId);
+            })
             ->allowedFilters(
-                AllowedFilter::exact('status')
-            )->defaultSort(
-                '-created_at',
+                AllowedFilter::partial('title'),
+                AllowedFilter::partial('letter_number'),
+                AllowedFilter::exact('status'),
+                AllowedFilter::exact('type'),
             )
-            ->paginate($perPage);
+            ->with([
+                'sender:id,name',
+                'receiver:id,name',
+            ])
+            ->latest()
+            ->paginate($per_page);
 
         return $this->ok('Letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
     }
