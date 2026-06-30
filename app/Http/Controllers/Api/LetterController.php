@@ -12,6 +12,7 @@ use App\Models\LetterSignature;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -63,6 +64,8 @@ class LetterController extends Controller
             'sha256',
             $hashData
         );
+
+        $data['letter_uuid'] = Str::uuid();
 
         $letter = Letter::create($data);
 
