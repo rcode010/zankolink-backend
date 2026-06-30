@@ -24,12 +24,8 @@ class DepartmentController extends Controller
         $per_page = $request->query('per_page', 15);
 
         $departments = QueryBuilder::for(Department::class)
-            ->with('faculty:id,name')
-            ->allowedFilters(
-                'name',
-                'faculty_id',
-                'is_active'
-            )
+            ->with('faculty:id,name', 'admin:id,name')
+            ->allowedFilters('name', 'faculty_id', 'is_active')
             ->latest()
             ->paginate($per_page);
 
@@ -64,7 +60,7 @@ class DepartmentController extends Controller
      */
     public function show(Department $department)
     {
-        $department->load('faculty:id,name');
+        $department->load('faculty:id,name', 'admin:id,name');
 
         return $this->ok(
             'Department retrieved successfully.',
