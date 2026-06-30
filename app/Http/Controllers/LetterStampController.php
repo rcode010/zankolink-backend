@@ -38,9 +38,9 @@ class LetterStampController extends Controller
 
         $letterStamp = LetterStamp::create([
             'user_id' => $user->id,
-            'letter_id' => $request->letter_id,
+            'letter_id' => $letter->id,
+            'comment' => $request->comment,
         ]);
-
         return $this->ok("Successfully created letter stamp",
             $letterStamp->toArray()
         );
