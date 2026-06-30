@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateLetterRequest;
 use App\Http\Resources\LetterResource;
 use App\Models\Letter;
 use App\Models\LetterSignature;
+use App\Services\QrCodeService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +51,7 @@ class LetterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreLetterRequest $request)
+    public function store(StoreLetterRequest $request, QrCodeService $qrCodeService)
     {
         $data = $request->validated();
 
@@ -58,22 +59,38 @@ class LetterController extends Controller
         $data['sender_id'] = auth()->id();
         $data['status'] = 'pending';
 
-        $hashData = $data['title'].'|'.$data['body'];
 
-        $data['verification_hash'] = hash(
-            'sha256',
-            $hashData
-        );
 
         $data['letter_uuid'] = Str::uuid();
-
         $letter = Letter::create($data);
 
+        $dataToBeHashed = [
+            'letter_number' => $letter->letter_number,
+            'type' => $letter->type,
+            'title' => $letter->title,
+            'body' => $letter->body,
+            'original_sender_id' => $letter->original_sender_id,
+            'sender_id' => $letter->sender_id,
+            'receiver_id' => $letter->receiver_id,
+            'academic_year_id' => $letter->academic_year_id,
+            'payload' => $letter->payload ?? null,
+        ];
+        $hashData =hash_hmac(
+            'sha256',
+            json_encode($dataToBeHashed, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            config('app.key')
+        );
+
+        $qrCodePath = $qrCodeService->generate($letter, 'public', 'qr-codes', 400);
+        $letter->update([
+            'verification_hash' => $hashData,
+            'qr_code_path' => $qrCodePath,
+        ]);
         if ($letter) {
             return $this->ok(
                 'Letter created successfully',
                 (new LetterResource(
-                    $letter->load([
+                    $letter->fresh()->load([
                         'sender:id,name',
                         'receiver:id,name',
                     ])
