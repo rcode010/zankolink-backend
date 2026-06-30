@@ -9,6 +9,7 @@ use App\Http\Resources\UniversityResource;
 use App\Models\University;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class UniversityController extends Controller
@@ -24,9 +25,17 @@ class UniversityController extends Controller
 
         $universities = QueryBuilder::for(University::class)
             ->allowedFilters(
-                'name',
-                'location',
+                AllowedFilter::callback(
+                    'search',
+                    function ($query, $value) {
+                        $query->where(function ($q) use ($value) {
+                            $q->where('name', 'like', "%{$value}%")
+                            ->orWhere('location', 'like', "%{$value}%");
+                        });
+                    }
+                ),
                 'is_active'
+
             )
             ->latest()
             ->paginate($per_page);
