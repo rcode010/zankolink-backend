@@ -3,4 +3,5 @@
 
 use App\Http\Controllers\LetterStampController;
 
-Route::post('/stamp', [LetterStampController::class, 'store']);
+Route::post('/stamps', [LetterStampController::class, 'store']);
+Route::get('/stamps', [LetterStampController::class, 'index']);

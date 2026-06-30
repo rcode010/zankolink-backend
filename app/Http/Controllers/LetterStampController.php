@@ -6,10 +6,26 @@ use App\Http\Requests\StoreStampRequest;
 use App\Models\Letter;
 use App\Models\LetterStamp;
 use App\Traits\ApiResponses;
+use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class LetterStampController extends Controller
 {
     use ApiResponses;
+
+    public function index(Request $request){
+
+        $letterStamps = QueryBuilder::for(LetterStamp::class)->allowedFilters(
+            AllowedFilter::exact('letter_id'),
+            AllowedFilter::exact('user_id'),
+        )->with(['letter:id,title', 'user:id,name'])->paginate();
+
+        return $this->ok("Letter stamps retrieved successfully",$letterStamps->toArray());
+
+    }
+
+
     public function store(StoreStampRequest $request){
         $user = $request->user();
 
