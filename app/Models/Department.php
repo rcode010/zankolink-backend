@@ -34,4 +34,9 @@ class Department extends Model
     {
         return $this->belongsToMany(Teacher::class, 'teacher_department');
     }
+
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'admin_id');
+    }
 }
