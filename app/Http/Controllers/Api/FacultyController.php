@@ -47,7 +47,7 @@ class FacultyController extends Controller
                 AllowedFilter::exact('university_id'),
                 'is_active',
             )
-            ->with('university:id,name')
+            ->with('university:id,name', 'admin:id,name')
             ->latest()
             ->paginate($per_page);
 
@@ -83,7 +83,7 @@ class FacultyController extends Controller
      */
     public function show(Faculty $faculty)
     {
-        $faculty->load('university:id,name');
+        $faculty->load('university:id,name', 'admin:id,name');
 
         return $this->ok(
             'Faculty retrieved successfully',

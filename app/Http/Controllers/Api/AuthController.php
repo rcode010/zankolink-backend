@@ -75,9 +75,6 @@ class AuthController extends Controller
             'UNIVERSITY_ADMIN_SCIENCE',
             'DEAN',
             'HEAD_OF_DEPARTMENT',
-            'lecturer',
-            'student',
-            'HIGH_SCHOOL_GRADUATE',
         ];
 
         if (! Auth::attempt($credentials)) {

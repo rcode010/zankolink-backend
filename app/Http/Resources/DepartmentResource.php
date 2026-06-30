@@ -20,6 +20,15 @@ class DepartmentResource extends JsonResource
             'code' => $this->code,
             'faculty_id' => $this->faculty_id,
 
+            'admin' => $this->whenLoaded('admin', function () {
+                return [
+                    'id' => $this->admin->id,
+                    'name' => $this->admin->name,
+                ];
+            }),
+
+            'is_active' => $this->is_active,
+
             'faculty' => new FacultyResource($this->whenLoaded('faculty')),
 
             'created_at' => $this->created_at?->toDateTimeString(),

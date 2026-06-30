@@ -12,6 +12,7 @@ class Letter extends Model
     protected $fillable = [
         'letter_number', 'title', 'body', 'type', 'receiver_id', 'sender_id',
         'original_sender_id', 'status', 'academic_year_id', 'verification_hash',
+        'letter_uuid', 'qr_code_path',
     ];
 
     // Relationship to the person who sent the letter
@@ -49,5 +50,10 @@ class Letter extends Model
         return [
             'payload' => 'array',
         ];
+    }
+
+    public function is_processed(): bool
+    {
+        return in_array($this->status, ['approved', 'rejected']);
     }
 }

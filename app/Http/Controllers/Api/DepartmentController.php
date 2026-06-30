@@ -53,7 +53,7 @@ class DepartmentController extends Controller
                 AllowedFilter::exact('faculty_id'),
                 'is_active',
             )
-            ->with('faculty:id,name')
+            ->with('faculty:id,name', 'admin:id,name')
             ->latest()
             ->paginate($per_page);
 
@@ -88,7 +88,7 @@ class DepartmentController extends Controller
      */
     public function show(Department $department)
     {
-        $department->load('faculty:id,name');
+        $department->load('faculty:id,name', 'admin:id,name');
 
         return $this->ok(
             'Department retrieved successfully.',

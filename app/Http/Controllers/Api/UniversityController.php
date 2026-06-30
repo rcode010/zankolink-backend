@@ -24,6 +24,7 @@ class UniversityController extends Controller
         $per_page = $request->query('per_page', 15);
 
         $universities = QueryBuilder::for(University::class)
+            ->with('admin:id,name')
             ->allowedFilters(
                 AllowedFilter::callback(
                     'search',
@@ -69,6 +70,8 @@ class UniversityController extends Controller
      */
     public function show(University $university)
     {
+        $university->load('admin:id,name');
+
         return $this->ok(
             'University retrieved successfully.',
             (new UniversityResource($university))
