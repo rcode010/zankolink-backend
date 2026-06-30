@@ -19,7 +19,7 @@ class LetterStampController extends Controller
         $letterStamps = QueryBuilder::for(LetterStamp::class)->allowedFilters(
             AllowedFilter::exact('letter_id'),
             AllowedFilter::exact('user_id'),
-        )->with(['letter:id,title', 'user:id,name'])->paginate();
+        )->with(['letter:id,letter_number,title', 'user:id,name'])->paginate();
 
         return $this->ok("Letter stamps retrieved successfully",$letterStamps->toArray());
 
