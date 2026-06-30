@@ -50,4 +50,7 @@ class Letter extends Model
             'payload' => 'array',
         ];
     }
+    public function is_processed(): bool{
+        return in_array($this->status, ['approved', 'rejected']);
+    }
 }
