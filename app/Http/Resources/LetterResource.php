@@ -30,7 +30,6 @@ class LetterResource extends JsonResource
             'academic_year' => $this->academic_year,
             'is_archived' => (bool) $this->is_archived,
             'status' => $this->status,
-            'verification_hash' => $this->verification_hash,
 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
