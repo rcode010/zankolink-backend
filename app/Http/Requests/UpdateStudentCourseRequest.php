@@ -24,7 +24,7 @@ class UpdateStudentCourseRequest extends FormRequest
     {
         return [
             'grade' => 'sometimes|numeric|between:0,100',
-            'academic_year' => 'sometimes|string|max:50',
+            'academic_year_id' => 'nullable|exists:academic_years,id',
             'enrolled_at' => 'sometimes|date',
         ];
     }
