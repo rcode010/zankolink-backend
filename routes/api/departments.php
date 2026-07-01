@@ -9,4 +9,8 @@ Route::prefix('departments')->group(function () {
     Route::patch('/{department}', [DepartmentController::class, 'update'])->middleware('permission:update departments');
     Route::delete('/{department}', [DepartmentController::class, 'destroy'])->middleware('permission:delete departments');
     Route::patch('/{department}/seat', [DepartmentController::class, 'updateSeat'])->middleware('permission:update department seats');
+
+    Route::get('/student-selected-courses', [DepartmentController::class, 'getStudentSelectedCourses']);
+    Route::post('/approve-selection', [DepartmentController::class, 'approveStudentSelection']);
+
 });

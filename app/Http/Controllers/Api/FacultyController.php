@@ -24,12 +24,8 @@ class FacultyController extends Controller
         $per_page = $request->query('per_page', 15);
 
         $faculties = QueryBuilder::for(Faculty::class)
-            ->with('university:id,name')
-            ->allowedFilters(
-                'name',
-                'is_active',
-                'university_id'
-            )
+            ->with('university:id,name', 'admin:id,name')
+            ->allowedFilters('name', 'is_active', 'university_id')
             ->latest()
             ->paginate($per_page);
 
@@ -65,7 +61,7 @@ class FacultyController extends Controller
      */
     public function show(Faculty $faculty)
     {
-        $faculty->load('university:id,name');
+        $faculty->load('university:id,name', 'admin:id,name');
 
         return $this->ok(
             'Faculty retrieved successfully',

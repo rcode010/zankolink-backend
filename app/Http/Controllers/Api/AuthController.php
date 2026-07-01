@@ -103,7 +103,7 @@ class AuthController extends Controller
                 now()->addMinutes(10)
             );
 
-            Mail::to($user->email)->send(new TwoFactorCodeMail($otp, $user));
+            Mail::to($user->email)->queue(new TwoFactorCodeMail($otp, $user));
 
             return $this->ok('OTP sent to your email', [
 
@@ -184,7 +184,7 @@ class AuthController extends Controller
             'two_factor_expires_at' => now()->addMinutes(10),
         ]);
 
-        Mail::to($user->email)->send(new TwoFactorCodeMail($otp, $user));
+        Mail::to($user->email)->queue(new TwoFactorCodeMail($otp, $user));
 
         return $this->ok('OTP sent to your email');
     }

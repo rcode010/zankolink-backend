@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AllowedRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -23,7 +24,7 @@ class User extends Authenticatable
         'is_active',
         'two_factor_code',
         'two_factor_expires_at',
-        'is_two_factor_enabled'
+        'is_two_factor_enabled',
     ];
 
     protected $hidden = [
@@ -63,5 +64,10 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function isProtected()
+    {
+        return $this->role && AllowedRole::tryFrom($this->role->name) == null;
     }
 }

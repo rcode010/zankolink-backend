@@ -24,4 +24,9 @@ class Faculty extends Model
     {
         return $this->hasMany(Department::class);
     }
+
+    public function admin(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'admin_id');
+    }
 }
