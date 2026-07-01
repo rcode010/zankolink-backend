@@ -26,7 +26,7 @@ class ReportController extends Controller
      * GET /api/reports/statistics?scope_type=FACULTY&scope_id=3
      * Optional: &academic_year_id=3
      */
-   public function getStatistics(DashboardFilterRequest $request)
+    public function getStatistics(DashboardFilterRequest $request)
     {
         $validated = $request->validated();
 
@@ -38,14 +38,27 @@ class ReportController extends Controller
             return $this->error('Academic year not found.', 404);
         }
 
-        // لۆژیکی دۆزینەوەی داتاکان بەبێ مەرجی تۆکن بۆ تاقیکردنەوەی خێرا
+        $userScope = $this->resolveUserScope($scopeType, $scopeId);
+
+        if (! $userScope) {
+            return $this->error('You do not have access to this scope.', 403);
+        }
+
+        $roleName = $userScope->role->name ?? null;
+
         return match ($scopeType) {
-            'MINISTRY'   => $this->ministryReport($academicYearId),
-            'UNIVERSITY' => $this->universityReport($scopeId, $academicYearId),
-            'FACULTY'    => $this->deanReport($scopeId, $academicYearId),
-            default      => $this->error('Reports are not available for this scope.', 400),
+            'MINISTRY' => $this->ministryReport($academicYearId),
+
+            'UNIVERSITY' => $roleName === 'UNIVERSITY_ADMIN'
+                ? $this->universityReport($scopeId, $academicYearId)
+                : $this->error('Reports are not available for this role.', 403),
+
+            'FACULTY' => $this->deanReport($scopeId, $academicYearId),
+
+            default => $this->error('Reports are not available for this scope.', 400),
         };
     }
+
     /**
      * TASK 8 — Ministry report.
      */
