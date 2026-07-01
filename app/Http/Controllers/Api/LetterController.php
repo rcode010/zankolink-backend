@@ -83,8 +83,6 @@ class LetterController extends Controller
                 'title' => $letter->title,
                 'body' => $letter->body,
                 'original_sender_id' => $letter->original_sender_id,
-                'sender_id' => $letter->sender_id,
-                'receiver_id' => $letter->receiver_id,
                 'academic_year_id' => $letter->academic_year_id,
                 'payload' => $letter->payload ?? null,
             ];
