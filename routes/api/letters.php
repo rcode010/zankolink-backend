@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\LetterController;
+use App\Http\Controllers\LetterVerificationController;
 
 Route::post('/letters', [LetterController::class, 'store']);
 Route::get('/letters', [LetterController::class, 'index']);
@@ -11,3 +12,4 @@ Route::post('/letters/{letter}/raise', [LetterController::class, 'raiseLetter'])
 
 Route::get('letters/inbox', [LetterController::class, 'inbox']);
 Route::get('letters/outbox', [LetterController::class, 'outbox']);
+Route::get('/verify/{letter_uuid}', [LetterVerificationController::class, 'getLetterVerification']);
