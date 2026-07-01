@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LetterResource;
 use App\Models\Letter;
 use App\Models\LetterFlow;
+use App\Services\LetterActionService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,15 +18,15 @@ class LetterWorkflowController extends Controller
     /**
      * Approve a letter and log the activity.
      */
-    public function approve(Letter $letter, Request $request)
+    public function approve(Letter $letter, Request $request, LetterActionService $letterActionService)
     {
         $user = $request->user();
 
-        if ($letter->status !== 'pending') {
+        if ($letter->status !== 'pending' || $letter->is_executed()) {
             return $this->error('This letter has already been processed.', 422);
         }
 
-        DB::transaction(function () use ($letter, $user, $request) {
+        DB::transaction(function () use ($letter, $user, $request, $letterActionService) {
             $letter->update([
                 'status' => 'approved',
             ]);
@@ -39,12 +41,11 @@ class LetterWorkflowController extends Controller
                 'to_recipient_id' => null,
                 'note' => $request->input('note', 'Letter approved successfully.'),
             ]);
+            $letter->refresh();
+            $letterActionService->execute($letter);
         });
 
-        $letter->refresh();
-
-        return $this->ok('Letter approved successfully and workflow logged.', $letter->toArray());
-    }
+        return $this->ok('Letter approved successfully.', (new LetterResource($letter->fresh()))->resolve());    }
 
     /**
      * Decline a letter and log the activity.
@@ -76,7 +77,7 @@ class LetterWorkflowController extends Controller
 
         $letter->refresh();
 
-        return $this->ok('Letter declined successfully and workflow logged.', $letter->toArray());
+        return $this->ok('Letter declined successfully.', (new LetterResource($letter->fresh()))->resolve());
     }
 
     /**
@@ -116,7 +117,7 @@ class LetterWorkflowController extends Controller
 
         $letter->refresh();
 
-        return $this->ok('Letter forwarded successfully and workflow logged.', $letter->toArray());
+        return $this->ok('Letter forwarded successfully.', (new LetterResource($letter->fresh()))->resolve());
     }
 
     /**
@@ -156,6 +157,6 @@ class LetterWorkflowController extends Controller
 
         $letter->refresh();
 
-        return $this->ok('Letter raised successfully and workflow logged.', $letter->toArray());
+        return $this->ok('Letter raised successfully.', (new LetterResource($letter->fresh()))->resolve());
     }
 }
