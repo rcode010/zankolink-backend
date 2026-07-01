@@ -26,9 +26,12 @@ class LetterController extends Controller
      */
     public function index(Request $request)
     {
+        $user = $request->user();
         $perPage = $request->query('per_page', 15);
 
         $letters = QueryBuilder::for(Letter::class)
+            ->where('sender_id', $user->id)
+            ->where('receiver_id', $user->id)
             ->with(['sender:id,name', 'receiver:id,name'])
             ->allowedFilters(
                 AllowedFilter::exact('status')
