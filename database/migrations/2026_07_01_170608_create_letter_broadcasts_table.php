@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('title');
             $table->longText('body');
             $table->boolean('is_active')->default(true);
-            $table->dateTime('published_at');
             $table->timestamps();
             $table->softDeletes();
         });

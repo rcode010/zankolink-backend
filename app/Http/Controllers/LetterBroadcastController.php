@@ -11,14 +11,17 @@ class LetterBroadcastController extends Controller
 {
     use ApiResponses;
 
-    public function index(StoreLetterBroadcastRequest $request){
+    public function index(Request $request){
         $letterBroadcasts = LetterBroadcast::query()
             ->where('is_active', true)
-            ->latest('published_at')->get();
+            ->get();
         return $this->ok("LetterBroadcasts fetched",$letterBroadcasts->toArray());
     }
 
-    public function store(Request $request){
+    public function store(StoreLetterBroadcastRequest $request){
+        $credentials = $request->validated();
+        $letterBroadcast = LetterBroadcast::create($credentials);
 
+        return $this->created("LetterBroadcast created",$letterBroadcast->toArray());
     }
 }
