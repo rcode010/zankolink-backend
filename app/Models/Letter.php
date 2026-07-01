@@ -12,7 +12,7 @@ class Letter extends Model
     protected $fillable = [
         'letter_number', 'title', 'body', 'type', 'receiver_id', 'sender_id',
         'original_sender_id', 'status', 'academic_year_id', 'verification_hash',
-        'letter_uuid', 'qr_code_path',
+        'letter_uuid', 'qr_code_path', 'payload','executed_at',
     ];
 
     // Relationship to the person who sent the letter
@@ -56,15 +56,25 @@ class Letter extends Model
     {
         return in_array($this->status, ['approved', 'rejected']);
     }
-    public function flows(){
+
+    public function flows()
+    {
         return $this->hasMany(LetterFlow::class)
             ->orderBy('created_at', 'asc');
     }
-    public function signatures(){
+
+    public function signatures()
+    {
         return $this->hasMany(LetterSignature::class);
     }
-    public function stamps(){
+
+    public function stamps()
+    {
         return $this->hasMany(LetterStamp::class);
     }
 
+    public function is_executed(): bool
+    {
+        return $this->executed_at ? true : false;
+    }
 }
