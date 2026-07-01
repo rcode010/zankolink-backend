@@ -14,6 +14,8 @@ class StoreCourseSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'teacher_id' => 'required|exists:teachers,id',
+            'course_id' => 'required|exists:courses,id',
             'title' => 'required|string|max:255',
         ];
     }
