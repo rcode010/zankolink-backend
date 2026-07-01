@@ -70,8 +70,6 @@ class LetterController extends Controller
         $data['sender_id'] = auth()->id();
         $data['status'] = 'pending';
 
-
-
         $data['letter_uuid'] = Str::uuid();
         $letter = DB::transaction(function () use ($data, $qrCodeService) {
 
@@ -83,8 +81,6 @@ class LetterController extends Controller
                 'title' => $letter->title,
                 'body' => $letter->body,
                 'original_sender_id' => $letter->original_sender_id,
-                'sender_id' => $letter->sender_id,
-                'receiver_id' => $letter->receiver_id,
                 'academic_year_id' => $letter->academic_year_id,
                 'payload' => $letter->payload ?? null,
             ];
@@ -99,6 +95,7 @@ class LetterController extends Controller
                 'verification_hash' => $hashData,
                 'qr_code_path' => $qrCodePath,
             ]);
+
             return $letter;
         });
 
@@ -209,6 +206,37 @@ class LetterController extends Controller
             'Letter raised'
         );
 
+    }
+
+    public function inbox(Request $request)
+    {
+        $user = $request->user();
+
+        $letters = QueryBuilder::for(Letter::class)
+            ->where('receiver_id', $user->id)
+            ->with(['sender:id,name', 'receiver:id,name'])
+            ->allowedFilters(
+                AllowedFilter::exact('status')
+            )->defaultSort(
+                '-created_at',
+            )->get();
+
+        return $this->ok('Inbox letters successfully', LetterResource::collection($letters)->response()->getData(true));
+    }
+    public function outbox(Request $request){
+        $user = $request->user();
+
+        $letters = QueryBuilder::for(Letter::class)
+            ->where('sender_id', $user->id)
+            ->where('original_sender_id', $user->id)
+            ->with(['sender:id,name', 'receiver:id,name'])
+            ->allowedFilters(
+                AllowedFilter::exact('status')
+            )->defaultSort(
+                '-created_at',
+            )->get();
+
+        return $this->ok('Outbox letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
     }
 
     /**

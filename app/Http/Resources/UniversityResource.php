@@ -25,7 +25,7 @@ class UniversityResource extends JsonResource
                 ];
             }),
 
-            'academic_year' => $this->academic_year,
+            'academic_year_id' => $this->academic_year_id,
             'location' => $this->location,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,

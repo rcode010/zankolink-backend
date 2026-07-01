@@ -16,7 +16,7 @@ class University extends Model
 
     use SoftDeletes;
 
-    protected $fillable = ['name', 'admin_id', 'academic_year', 'location', 'start_date', 'end_date', 'established_year', 'is_active'];
+    protected $fillable = ['name', 'admin_id', 'academic_year_id', 'location', 'start_date', 'end_date', 'established_year', 'is_active'];
 
     public function faculties(): HasMany
     {

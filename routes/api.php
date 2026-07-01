@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     require __DIR__.'/api/teachers.php';
     require __DIR__.'/api/students.php';
     require __DIR__.'/api/courses.php';
+    require __DIR__.'/api/course-sections.php';
 
     require __DIR__.'/api/teacher-departments.php';
     require __DIR__.'/api/course-teachers.php';
