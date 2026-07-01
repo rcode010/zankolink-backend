@@ -11,6 +11,7 @@ use App\Models\CourseSelection;
 use App\Models\Department;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -25,9 +26,36 @@ class DepartmentController extends Controller
     {
         $per_page = $request->query('per_page', 15);
 
-        $departments = QueryBuilder::for(Department::class)
+        $query = Department::query();
+
+        $scope = auth()->user()->userScopes()->first();;
+
+        if ($scope) {
+            match ($scope->scope_type) {
+                'UNIVERSITY' => $query->whereHas(
+                    'faculty',
+                    fn ($q) => $q->where(
+                        'university_id',
+                        $scope->scope_id
+                    )
+                ),
+
+                'FACULTY' => $query->where(
+                    'faculty_id',
+                    $scope->scope_id
+                ),
+
+                default => null,
+            };
+        }
+
+        $departments = QueryBuilder::for($query)
+            ->allowedFilters(
+                AllowedFilter::partial('name'),
+                AllowedFilter::exact('faculty_id'),
+                'is_active',
+            )
             ->with('faculty:id,name', 'admin:id,name')
-            ->allowedFilters('name', 'faculty_id', 'is_active')
             ->latest()
             ->paginate($per_page);
 

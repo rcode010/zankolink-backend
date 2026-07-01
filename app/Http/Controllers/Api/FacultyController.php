@@ -10,6 +10,7 @@ use App\Models\Faculty;
 use App\Models\University;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class FacultyController extends Controller
@@ -19,13 +20,34 @@ class FacultyController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function index(Request $request)
     {
-        $per_page = $request->query('per_page', 15);
+        $per_page = $request->input('per_page', 15);
 
-        $faculties = QueryBuilder::for(Faculty::class)
+        $query = Faculty::query();
+
+        $user = auth()->user();
+
+        $scope = $user->userScopes()
+            ->where('scope_type', 'UNIVERSITY')
+            ->first();
+
+        // Only restrict if the user belongs to a university
+        if ($scope) {
+            $query->where(
+                'university_id',
+                $scope->scope_id
+            );
+        }
+
+        $faculties = QueryBuilder::for($query)
+            ->allowedFilters(
+                AllowedFilter::partial('name'),
+                AllowedFilter::exact('university_id'),
+                'is_active',
+            )
             ->with('university:id,name', 'admin:id,name')
-            ->allowedFilters('name', 'is_active', 'university_id')
             ->latest()
             ->paginate($per_page);
 

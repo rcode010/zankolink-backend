@@ -9,6 +9,7 @@ use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class TeacherController extends Controller
@@ -22,13 +23,26 @@ class TeacherController extends Controller
     {
         $per_page = $request->query('per_page', 15);
 
+        $departmentId = auth()->user()
+            ->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->value('scope_id');
+
         $teachers = QueryBuilder::for(Teacher::class)
-            ->with('user:id,name')
+            ->whereHas('departments', function ($q) use ($departmentId) {
+                $q->where('departments.id', $departmentId);
+            })
             ->allowedFilters(
-                'title',
-                'speciality',
-                'user.name'
+                AllowedFilter::callback(
+                    'search',
+                    function ($query, $value) {
+                        $query->whereHas('user', function ($q) use ($value) {
+                            $q->where('name', 'like', "%{$value}%");
+                        });
+                    }
+                ),
             )
+            ->with('user:id,name')
             ->latest()
             ->paginate($per_page);
 
