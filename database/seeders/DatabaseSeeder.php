@@ -54,23 +54,32 @@ class DatabaseSeeder extends Seeder
             // Faculties
             'view faculties', 'create faculties', 'update faculties', 'delete faculties',
             // Departments
-            'view departments', 'create departments', 'update departments', 'delete departments',
+            'view departments', 'create departments', 'update departments', 'delete departments', 'update department seats',
             // Users
             'view users', 'create users', 'update users', 'delete users', 'activate users', 'deactivate users',
             // Teachers
             'view teachers', 'create teachers', 'update teachers', 'delete teachers', 'assign teachers',
             // Students
-            'view students', 'create students', 'update students', 'delete students', 'assign students',
+            'view students', 'create students', 'update students', 'delete students',
             // Courses
-            'view courses', 'create courses', 'update courses', 'delete courses', 'assign course teachers', 'assign course students',
+            'view courses', 'create courses', 'update courses', 'delete courses', 'assign course teachers',
+            'view course teachers', 'update course teachers', 'delete course teachers',
+            'assign course students', 'view course students', 'update course students', 'delete course students',
             // Letters
-            'view letters', 'create letters', 'update letters', 'raise letters',
+            'view letters', 'create letters', 'update letters', 'raise letters', 'approve letters', 'decline letters', 'forward letters',
             // Attachments
             'upload attachments', 'download attachments', 'delete attachments',
             // Signatures
             'view signatures', 'create signatures',
             // Reports
             'view reports',
+            // Academic Year
+            'update academic year',
+            // Letter Stamps
+            'create stamps', 'view stamps',
+            //Roles & Permissions
+            'view roles', 'create roles', 'update roles', 'delete roles',
+            'view permissions', 'view user roles', 'create user roles', 'delete user roles',
         ];
 
         foreach ($permissions as $permission) {
@@ -88,13 +97,15 @@ class DatabaseSeeder extends Seeder
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
+                'create stamps', 'view stamps',
+                'approve letters', 'decline letters', 'forward letters',
             ],
 
             'MINISTRY_ADMINISTRATION_HEAD' => [
                 'view letters', 'update letters', 'raise letters',
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
-                'view reports',
+                'view reports','forward letters',
             ],
 
             // University
@@ -105,28 +116,28 @@ class DatabaseSeeder extends Seeder
                 'view teachers', 'view students', 'view courses', 'view reports',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
-                'view signatures', 'create signatures',
+                'view signatures', 'create signatures', 'forward letters',
             ],
 
             'UNIVERSITY_ADMIN_ADMINISTRATION' => [
                 'view faculties', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
                 'view letters', 'create letters', 'raise letters',
-                'upload attachments', 'download attachments',
+                'upload attachments', 'download attachments', 'forward letters',
             ],
 
             'UNIVERSITY_ADMIN_STUDENTS' => [
                 'view faculties', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
                 'view letters', 'create letters', 'raise letters',
-                'upload attachments', 'download attachments',
+                'upload attachments', 'download attachments', 'forward letters',
             ],
 
             'UNIVERSITY_ADMIN_SCIENCE' => [
                 'view faculties', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
                 'view letters', 'create letters', 'raise letters',
-                'upload attachments', 'download attachments',
+                'upload attachments', 'download attachments','forward letters',
             ],
 
             // Faculty
@@ -136,17 +147,21 @@ class DatabaseSeeder extends Seeder
                 'view students', 'view courses', 'create courses', 'update courses',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
-                'view reports',
+                'view reports','forward letters',
             ],
 
             // Department
             'HEAD_OF_DEPARTMENT' => [
                 'view teachers', 'assign teachers',
-                'view students', 'assign students',
+                'view students',
                 'view courses', 'create courses', 'update courses',
-                'assign course teachers', 'assign course students',
+                'assign course teachers', 'view course teachers',
+                'update course teachers', 'delete course teachers',
+                'update department seats', 'assign course students',
+                'view course students',
+                'update course students', 'delete course students',
                 'view letters', 'create letters', 'raise letters',
-                'upload attachments', 'download attachments',
+                'upload attachments', 'download attachments', 'forward letters',
             ],
 
             'lecturer' => [
