@@ -17,8 +17,15 @@ class UniversityResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'admin_id' => $this->admin_id,
-            'academic_year' => $this->academic_year,
+
+            'admin' => $this->whenLoaded('admin', function () {
+                return [
+                    'id' => $this->admin->id,
+                    'name' => $this->admin->name,
+                ];
+            }),
+
+            'academic_year_id' => $this->academic_year_id,
             'location' => $this->location,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,

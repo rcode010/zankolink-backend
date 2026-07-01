@@ -24,7 +24,7 @@ class AssignStudentCourseRequest extends FormRequest
     {
         return [
             'student_id' => 'required|exists:students,id',
-            'academic_year' => 'required|string|max:50',
+            'academic_year_id' => 'nullable|exists:academic_years,id',
         ];
     }
 }

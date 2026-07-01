@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ class UserController extends Controller
 
         return $this->ok(
             'Users retrieved successfully.',
-            $users->toArray()
+           UserResource::collection($users->load(['userScopes.role:id,name','roles:id,name']))->resolve()
         );
     }
 
@@ -38,7 +39,7 @@ class UserController extends Controller
     {
         return $this->ok(
             'User retrieved successfully.',
-            $user->toArray()
+            (new UserResource($user->load(['userScopes.role:id,name','roles:id,name'])))->resolve()
         );
     }
 
@@ -53,10 +54,10 @@ class UserController extends Controller
         ]);
 
         $user->update($validated);
-
         return $this->ok(
             'Profile updated successfully',
-            $user->fresh()->toArray()
+            (new UserResource($user->fresh()))->resolve()
+
         );
     }
 
@@ -66,10 +67,9 @@ class UserController extends Controller
     public function activate(User $user)
     {
         $user->update(['is_active' => true]);
-
         return $this->ok(
             'User activated successfully',
-            $user->fresh()->toArray()
+            (new UserResource($user->fresh()))->resolve()
         );
     }
 
@@ -82,7 +82,7 @@ class UserController extends Controller
 
         return $this->ok(
             'User deactivated successfully',
-            $user->fresh()->toArray()
+            (new UserResource($user->fresh()))->resolve()
         );
     }
 }

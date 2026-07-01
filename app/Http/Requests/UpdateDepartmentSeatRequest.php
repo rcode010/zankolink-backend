@@ -23,7 +23,7 @@ class UpdateDepartmentSeatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'seat_available' => 'required|integer|min:0'
+            'seat_available' => 'required|integer|min:0',
         ];
     }
 }

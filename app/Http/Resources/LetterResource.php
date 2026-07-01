@@ -27,9 +27,10 @@ class LetterResource extends JsonResource
             'body' => $this->body,
 
             'is_read' => (bool) $this->is_read,
-            'academic_year' => $this->academic_year,
+            'academic_year_id' => $this->academic_year_id,
             'is_archived' => (bool) $this->is_archived,
             'status' => $this->status,
+            'qr_code_path'=>$this->qr_code_path,
 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

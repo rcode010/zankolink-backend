@@ -18,11 +18,14 @@ class LetterFactory extends Factory
     public function definition(): array
     {
         $type = $this->faker->randomElement([
-            'internal',
-            'directive',
-            'request',
-            'decision',
-            'appeal',
+            'hire_teacher',
+            'fire_teacher',
+            'create_department',
+            'close_department',
+            'open_faculty',
+            'close_faculty',
+            'open_university',
+            'close_university',
         ]);
 
         $status = $this->faker->randomElement([
@@ -39,6 +42,7 @@ class LetterFactory extends Factory
             'title' => $this->faker->sentence(),
             'body' => $this->faker->paragraphs(3, true),
             'academic_year_id' => null,
+            'verification_hash' => $this->faker->sha256(),
             'status' => $status,
         ];
     }

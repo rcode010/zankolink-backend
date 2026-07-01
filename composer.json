@@ -10,6 +10,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "chillerlan/php-qrcode": "^6.0",
+        "endroid/qr-code": "^6.1",
+        "fakerphp/faker": "^1.24",
         "laravel/framework": "^13.8",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
@@ -17,7 +20,6 @@
         "spatie/laravel-query-builder": "^7.3"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.29",
@@ -39,7 +41,7 @@
         }
     },
     "scripts": {
-        "format": "pint",
+        "format": "./vendor/bin/pint --dirty",
         "format:test": "pint --test",
         "setup": [
             "composer install",

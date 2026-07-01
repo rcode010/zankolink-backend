@@ -25,7 +25,7 @@ class UpdateUniversityRequest extends FormRequest
         return [
             'name' => 'sometimes|string|max:255',
             'admin_id' => 'nullable|exists:users,id',
-            'academic_year' => 'nullable|string|regex:/^\d{4}-\d{4}$/',
+            'academic_year_id' => 'nullable|exists:academic_years,id',
             'location' => 'sometimes|string',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after:start_date',

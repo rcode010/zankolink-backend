@@ -14,27 +14,36 @@ use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
 use App\Models\UserScope;
+use Faker\Factory as FakerFactory;
+use Faker\Generator;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
+    private Generator $faker;
+
+    private ?AcademicYear $activeAcademicYear = null;
+
     public function run(): void
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        $this->faker = FakerFactory::create();
         $this->seedRoles();
 
         $this->call(AcademicYearSeeder::class);
+        $this->activeAcademicYear = AcademicYear::where('is_active', true)->first();
 
         $this->seedMinistryAdmin();
         $this->seedUniversities();
 
         $this->seedLetters();
 
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+        Artisan::call('zankolink:seed-frontend-users');
     }
 
     private function seedRoles(): void
@@ -45,23 +54,32 @@ class DatabaseSeeder extends Seeder
             // Faculties
             'view faculties', 'create faculties', 'update faculties', 'delete faculties',
             // Departments
-            'view departments', 'create departments', 'update departments', 'delete departments',
+            'view departments', 'create departments', 'update departments', 'delete departments', 'update department seats',
             // Users
             'view users', 'create users', 'update users', 'delete users', 'activate users', 'deactivate users',
             // Teachers
             'view teachers', 'create teachers', 'update teachers', 'delete teachers', 'assign teachers',
             // Students
-            'view students', 'create students', 'update students', 'delete students', 'assign students',
+            'view students', 'create students', 'update students', 'delete students',
             // Courses
-            'view courses', 'create courses', 'update courses', 'delete courses', 'assign course teachers', 'assign course students',
+            'view courses', 'create courses', 'update courses', 'delete courses', 'assign course teachers',
+            'view course teachers', 'update course teachers', 'delete course teachers',
+            'assign course students', 'view course students', 'update course students', 'delete course students',
             // Letters
-            'view letters', 'create letters', 'update letters', 'raise letters',
+            'view letters', 'create letters', 'update letters', 'raise letters', 'approve letters', 'decline letters', 'forward letters',
             // Attachments
             'upload attachments', 'download attachments', 'delete attachments',
             // Signatures
             'view signatures', 'create signatures',
             // Reports
             'view reports',
+            // Academic Year
+            'update academic year',
+            // Letter Stamps
+            'create stamps', 'view stamps',
+            //Roles & Permissions
+            'view roles', 'create roles', 'update roles', 'delete roles',
+            'view permissions', 'view user roles', 'create user roles', 'delete user roles',
         ];
 
         foreach ($permissions as $permission) {
@@ -72,37 +90,95 @@ class DatabaseSeeder extends Seeder
         }
 
         $roles = [
+            // Ministry
             'MINISTRY_ADMIN' => $permissions,
-            'MINISTRY_STAFF' => [
-                'view universities', 'view faculties', 'view departments', 'view users', 'view reports',
-                'view letters', 'create letters', 'raise letters', 'upload attachments', 'download attachments',
+
+            'MINISTRY_IMPORT_EXPORT_STAFF' => [
+                'view letters', 'create letters', 'raise letters',
+                'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
+                'create stamps', 'view stamps',
+                'approve letters', 'decline letters', 'forward letters',
             ],
+
+            'MINISTRY_ADMINISTRATION_HEAD' => [
+                'view letters', 'update letters', 'raise letters',
+                'upload attachments', 'download attachments',
+                'view signatures', 'create signatures',
+                'view reports','forward letters',
+            ],
+
+            // University
             'UNIVERSITY_ADMIN' => [
-                'view faculties', 'create faculties', 'update faculties', 'view departments', 'create departments',
-                'update departments', 'view users', 'create users', 'update users', 'activate users', 'deactivate users',
-                'view teachers', 'view students', 'view courses', 'view reports', 'view letters', 'create letters',
-                'raise letters', 'upload attachments', 'download attachments', 'view signatures', 'create signatures',
+                'view faculties', 'create faculties', 'update faculties',
+                'view departments', 'create departments', 'update departments',
+                'view users', 'create users', 'update users', 'activate users', 'deactivate users',
+                'view teachers', 'view students', 'view courses', 'view reports',
+                'view letters', 'create letters', 'raise letters',
+                'upload attachments', 'download attachments',
+                'view signatures', 'create signatures', 'forward letters',
             ],
-            'UNIVERSITY_STAFF' => [
-                'view faculties', 'view departments', 'view users', 'view teachers', 'view students',
-                'view courses', 'view letters', 'create letters', 'raise letters', 'upload attachments', 'download attachments',
+
+            'UNIVERSITY_ADMIN_ADMINISTRATION' => [
+                'view faculties', 'view departments', 'view users',
+                'view teachers', 'view students', 'view courses',
+                'view letters', 'create letters', 'raise letters',
+                'upload attachments', 'download attachments', 'forward letters',
             ],
+
+            'UNIVERSITY_ADMIN_STUDENTS' => [
+                'view faculties', 'view departments', 'view users',
+                'view teachers', 'view students', 'view courses',
+                'view letters', 'create letters', 'raise letters',
+                'upload attachments', 'download attachments', 'forward letters',
+            ],
+
+            'UNIVERSITY_ADMIN_SCIENCE' => [
+                'view faculties', 'view departments', 'view users',
+                'view teachers', 'view students', 'view courses',
+                'view letters', 'create letters', 'raise letters',
+                'upload attachments', 'download attachments','forward letters',
+            ],
+
+            // Faculty
             'DEAN' => [
-                'view departments', 'create departments', 'update departments', 'view teachers', 'create teachers',
-                'update teachers', 'assign teachers', 'view students', 'view courses', 'create courses', 'update courses',
-                'view letters', 'create letters', 'raise letters', 'upload attachments', 'download attachments', 'view reports',
+                'view departments', 'create departments', 'update departments',
+                'view teachers', 'create teachers', 'update teachers', 'assign teachers',
+                'view students', 'view courses', 'create courses', 'update courses',
+                'view letters', 'create letters', 'raise letters',
+                'upload attachments', 'download attachments',
+                'view reports','forward letters',
             ],
-            'DEPARTMENT_HEAD' => [
-                'view teachers', 'assign teachers', 'view students', 'assign students', 'view courses', 'create courses',
-                'update courses', 'assign course teachers', 'assign course students', 'view letters', 'create letters',
-                'raise letters', 'upload attachments', 'download attachments',
+
+            // Department
+            'HEAD_OF_DEPARTMENT' => [
+                'view teachers', 'assign teachers',
+                'view students',
+                'view courses', 'create courses', 'update courses',
+                'assign course teachers', 'view course teachers',
+                'update course teachers', 'delete course teachers',
+                'update department seats', 'assign course students',
+                'view course students',
+                'update course students', 'delete course students',
+                'view letters', 'create letters', 'raise letters',
+                'upload attachments', 'download attachments', 'forward letters',
             ],
+
             'lecturer' => [
-                'view courses', 'view students', 'view letters', 'create letters', 'raise letters', 'upload attachments', 'download attachments',
+                'view courses', 'view students',
+                'view letters', 'create letters', 'raise letters',
+                'upload attachments', 'download attachments',
             ],
+
             'student' => [
-                'view courses', 'view letters', 'create letters', 'upload attachments', 'download attachments',
+                'view courses',
+                'view letters', 'create letters',
+                'upload attachments', 'download attachments',
+            ],
+
+            // Zankoline portal
+            'HIGH_SCHOOL_GRADUATE' => [
+                'view departments',
             ],
         ];
 
@@ -127,7 +203,7 @@ class DatabaseSeeder extends Seeder
         $user = User::factory()->create([
             'name' => $name,
             'email' => $email,
-            'phone' => $phone ?? fake()->phoneNumber(),
+            'phone' => $phone ?? $this->faker->phoneNumber(),
         ]);
 
         $role = Role::where('name', $roleName)->firstOrFail();
@@ -146,7 +222,7 @@ class DatabaseSeeder extends Seeder
     private function seedMinistryAdmin(): void
     {
         $this->createScopedUser(
-            name: fake()->name(),
+            name: $this->faker->name(),
             email: 'admin@ministry.gov',
             roleName: 'MINISTRY_ADMIN',
             scopeType: 'MINISTRY',
@@ -157,25 +233,19 @@ class DatabaseSeeder extends Seeder
 
     private function seedUniversities(): void
     {
-        $academicYear = AcademicYear::where('is_active', true)->first();
-
         University::factory()
             ->count(3)
-            ->create([
-                'academic_year_id' => $academicYear->id,
-            ])
+            ->create(['academic_year_id' => $this->activeAcademicYear->id])
             ->each(function (University $university) {
                 $admin = $this->createScopedUser(
-                    name: fake()->name(),
+                    name: $this->faker->name(),
                     email: "university-admin-{$university->id}@test.com",
                     roleName: 'UNIVERSITY_ADMIN',
                     scopeType: 'UNIVERSITY',
                     scopeId: $university->id
                 );
 
-                $university->update([
-                    'admin_id' => $admin->id,
-                ]);
+                $university->update(['admin_id' => $admin->id]);
 
                 $this->seedFaculties($university);
             });
@@ -189,16 +259,14 @@ class DatabaseSeeder extends Seeder
             ->create()
             ->each(function (Faculty $faculty) {
                 $admin = $this->createScopedUser(
-                    name: fake()->name(),
+                    name: $this->faker->name(),
                     email: "faculty-dean-{$faculty->id}@test.com",
                     roleName: 'DEAN',
                     scopeType: 'FACULTY',
                     scopeId: $faculty->id
                 );
 
-                $faculty->update([
-                    'admin_id' => $admin->id,
-                ]);
+                $faculty->update(['admin_id' => $admin->id]);
 
                 $this->seedDepartments($faculty);
             });
@@ -212,20 +280,17 @@ class DatabaseSeeder extends Seeder
             ->create()
             ->each(function (Department $department) {
                 $admin = $this->createScopedUser(
-                    name: fake()->name(),
+                    name: $this->faker->name(),
                     email: "department-head-{$department->id}@test.com",
-                    roleName: 'DEPARTMENT_HEAD',
+                    roleName: 'HEAD_OF_DEPARTMENT',
                     scopeType: 'DEPARTMENT',
                     scopeId: $department->id
                 );
 
-                $department->update([
-                    'admin_id' => $admin->id,
-                ]);
+                $department->update(['admin_id' => $admin->id]);
 
                 $this->seedTeachers($department);
                 $this->seedStudents($department);
-
                 $this->seedCourses($department);
             });
     }
@@ -240,11 +305,7 @@ class DatabaseSeeder extends Seeder
 
                 UserScope::create([
                     'user_id' => $teacher->user_id,
-                    'role_id' => Role::where(
-                        'name',
-                        'lecturer'
-                    )->firstOrFail()->id,
-
+                    'role_id' => Role::where('name', 'lecturer')->firstOrFail()->id,
                     'scope_type' => 'DEPARTMENT',
                     'scope_id' => $department->id,
                 ]);
@@ -257,20 +318,13 @@ class DatabaseSeeder extends Seeder
     {
         Student::factory()
             ->count(20)
-            ->create([
-                'department_id' => $department->id,
-            ])
+            ->create(['department_id' => $department->id])
             ->each(function (Student $student) use ($department) {
-
                 $student->user->assignRole('student');
 
                 UserScope::create([
                     'user_id' => $student->user_id,
-                    'role_id' => Role::where(
-                        'name',
-                        'student'
-                    )->firstOrFail()->id,
-
+                    'role_id' => Role::where('name', 'student')->firstOrFail()->id,
                     'scope_type' => 'DEPARTMENT',
                     'scope_id' => $department->id,
                 ]);
@@ -293,83 +347,56 @@ class DatabaseSeeder extends Seeder
     {
         $teachers = $department->teachers()
             ->inRandomOrder()
-            ->limit(fake()->numberBetween(1, 3))
+            ->limit($this->faker->numberBetween(1, 3))
             ->get();
 
         foreach ($teachers as $index => $teacher) {
-            $roles = [
-                'primary_lecturer',
-                'assistant_lecturer',
-                'lab_instructor',
-            ];
+            $roles = ['primary_lecturer', 'assistant_lecturer', 'lab_instructor'];
 
-            $course->teachers()->attach(
-                $teacher->id,
-                [
-                    'role' => $roles[$index],
-                ]
-            );
+            $course->teachers()->attach($teacher->id, ['role' => $roles[$index]]);
         }
     }
 
     private function seedCourseStudents(Course $course, Department $department): void
     {
-        $academicYear = AcademicYear::where('is_active', true)->first();
-
-        $students = Student::where(
-            'department_id',
-            $department->id
-        )
+        $students = Student::where('department_id', $department->id)
             ->inRandomOrder()
-            ->limit(fake()->numberBetween(8, 15))
+            ->limit($this->faker->numberBetween(8, 15))
             ->get();
 
         foreach ($students as $student) {
-
-            $course->students()->attach(
-                $student->id,
-                [
-                    'academic_year_id' => $academicYear->id,
-                    'grade' => fake()->optional()
-                        ->numberBetween(50, 100),
-
-                    'enrolled_at' => now(),
-                ]
-            );
+            $course->students()->attach($student->id, [
+                'academic_year_id' => $this->activeAcademicYear->id,
+                'grade' => $this->faker->optional()->numberBetween(50, 100),
+                'enrolled_at' => now(),
+            ]);
         }
     }
 
     private function seedLetters(): void
     {
         $users = User::all();
-        $academicYear = AcademicYear::where('is_active', true)->first();
 
         Letter::factory()
             ->count(30)
-            ->make([
-                'academic_year_id' => $academicYear->id,
-            ])
+            ->make(['academic_year_id' => $this->activeAcademicYear->id])
             ->each(function ($letter) use ($users) {
                 $sender = $users->random();
-
                 $receiver = $users->where('id', '!=', $sender->id)->random();
 
                 $letter->original_sender_id = $sender->id;
                 $letter->sender_id = $sender->id;
                 $letter->receiver_id = $receiver->id;
-
                 $letter->save();
 
                 Attachment::factory()
-                    ->count(fake()->numberBetween(0, 3))
-                    ->create([
-                        'letter_id' => $letter->id,
-                    ]);
+                    ->count($this->faker->numberBetween(0, 3))
+                    ->create(['letter_id' => $letter->id]);
 
                 $signers = $users
                     ->where('id', '!=', $sender->id)
                     ->shuffle()
-                    ->take(fake()->numberBetween(1, 2));
+                    ->take($this->faker->numberBetween(1, 2));
 
                 foreach ($signers as $signer) {
                     LetterSignature::factory()->create([

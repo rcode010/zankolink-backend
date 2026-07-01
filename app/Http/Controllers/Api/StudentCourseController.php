@@ -61,7 +61,7 @@ class StudentCourseController extends Controller
         $course->students()
             ->syncWithoutDetaching([
                 $student->id => [
-                    'academic_year' => $request->validated('academic_year'),
+                    'academic_year_id' => $request->validated('academic_year_id'),
                     'enrolled_at' => now(),
                 ],
             ]);

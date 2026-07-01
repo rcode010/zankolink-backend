@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\Enable2FARequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\VerifyRequest;
+use App\Http\Resources\UserResource;
+use App\Mail\TwoFactorCodeMail;
 use App\Models\User;
 use App\Models\UserScope;
 use App\Traits\ApiResponses;
@@ -15,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
@@ -44,20 +49,14 @@ class AuthController extends Controller
                 'scope_type' => $credentials['scope_type'],
                 'scope_id' => $credentials['scope_id'] ?? null,
             ]);
+            $user->refresh();
 
             return [$user, $role];
         });
 
         return $this->ok(
             'User registered successfully',
-            [
-                'name' => $user->name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'role' => $role->name,
-                'scope_type' => $credentials['scope_type'],
-                'scope_id' => $credentials['scope_id'] ?? null,
-            ]
+            (new UserResource($user->load(['userScopes.role:id,name', 'role:id,name'])))->resolve()
         );
     }
 
@@ -68,13 +67,15 @@ class AuthController extends Controller
         $credentials = $request->validated();
         $allowedRoles = [
             'MINISTRY_ADMIN',
-            'MINISTRY_STAFF',
+            'MINISTRY_IMPORT_EXPORT_STAFF',
+            'MINISTRY_ADMINISTRATION_HEAD',
             'UNIVERSITY_ADMIN',
-            'UNIVERSITY_STAFF',
+            'UNIVERSITY_ADMIN_ADMINISTRATION',
+            'UNIVERSITY_ADMIN_STUDENTS',
+            'UNIVERSITY_ADMIN_SCIENCE',
             'DEAN',
-            'DEPARTMENT_HEAD',
+            'HEAD_OF_DEPARTMENT',
         ];
-
 
         if (! Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
@@ -86,16 +87,145 @@ class AuthController extends Controller
             return $this->error('You are not allowed to access the admin panel.', 403);
         }
 
+        if ($user->is_two_factor_enabled) {
+            $otp = random_int(100000, 999999);
+            $user->update([
+                'two_factor_code' => Hash::make($otp),
+                'two_factor_expires_at' => now()->addMinutes(10),
+            ]);
+            Auth::logout();
+            //        $token = $user->createToken('api-token')->plainTextToken;
+            $challengeToken = Str::random(64);
+
+            cache()->put(
+                "2fa_challenge_{$challengeToken}",
+                $user->id,
+                now()->addMinutes(10)
+            );
+
+            Mail::to($user->email)->queue(new TwoFactorCodeMail($otp, $user));
+
+            return $this->ok('OTP sent to your email', [
+
+                'challenge_token' => $challengeToken,
+            ], 202);
+        }
         $token = $user->createToken('api-token')->plainTextToken;
 
         return $this->ok(
-            'User logged in successfully',
-            [
-                'name' => $user->name,
-                'email' => $user->email,
+            'User logged in successfully', [
                 'token' => $token,
-            ]
-        );
+                'user' => (new UserResource($user->load([
+                    'roles:id,name',
+                    'userScopes.role:id,name',
+                ])))
+                    ->resolve(),
+        ]);
+    }
+
+    public function verify(VerifyRequest $request)
+    {
+        $userId = cache()->get("2fa_challenge_{$request->challenge_token}");
+
+        if (! $userId) {
+            return $this->error('Invalid or expired challenge token', 401);
+        }
+
+        $user = User::findOrFail($userId);
+
+        // ↓ brute-force counter goes here, before any OTP check
+        $failKey = "2fa_fails_{$request->challenge_token}";
+        $fails = cache()->get($failKey, 0);
+
+        if ($fails >= 5) {
+            cache()->forget("2fa_challenge_{$request->challenge_token}");
+
+            return $this->error('Too many attempts, please login again', 429);
+        }
+
+        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+            cache()->put($failKey, $fails + 1, now()->addMinutes(10));
+
+            return $this->error('Invalid OTP', 401);
+        }
+
+        if (now()->isAfter($user->two_factor_expires_at)) {
+            return $this->error('OTP has expired, please login again', 401);
+        }
+
+        cache()->forget("2fa_challenge_{$request->challenge_token}");
+        cache()->forget($failKey);
+
+        $user->update([
+            'two_factor_code' => null,
+            'two_factor_expires_at' => null,
+        ]);
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return $this->ok(
+            'User logged in successfully', [
+            'token' => $token,
+            'user' => (new UserResource($user->load([
+                'roles:id,name',
+                'userScopes.role:id,name',
+            ])))
+                ->resolve(),
+        ]);
+    }
+
+    public function prepareTwoFactor(Request $request)
+    {
+        $user = Auth::user();
+
+        $otp = random_int(100000, 999999);
+        $user->update([
+            'two_factor_code' => Hash::make($otp),
+            'two_factor_expires_at' => now()->addMinutes(10),
+        ]);
+
+        Mail::to($user->email)->queue(new TwoFactorCodeMail($otp, $user));
+
+        return $this->ok('OTP sent to your email');
+    }
+
+    public function enableTwoFactor(Enable2FARequest $request)
+    {
+        $user = $request->user();
+
+        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+            return $this->error('Invalid OTP', 401);
+        }
+        if (now()->isAfter($user->two_factor_expires_at)) {
+            return $this->error('OTP has expired, please login again', 401);
+        }
+
+        $user->update([
+            'two_factor_code' => null,
+            'two_factor_expires_at' => null,
+            'is_two_factor_enabled' => true,
+        ]);
+
+        return $this->ok('Two factor authentication enabled');
+    }
+
+    public function disableTwoFactor(Request $request)
+    {
+        $user = $request->user();
+
+        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+            return $this->error('Invalid OTP', 401);
+        }
+        if (now()->isAfter($user->two_factor_expires_at)) {
+            return $this->error('OTP has expired, please login again', 401);
+        }
+        $user->update([
+            'two_factor_code' => null,
+            'two_factor_expires_at' => null,
+            'is_two_factor_enabled' => false,
+        ]);
+
+        return $this->ok('Two factor authentication disabled');
     }
 
     // Logout
@@ -164,28 +294,21 @@ class AuthController extends Controller
     }
 
     // Get Profile
-    public function profile(){
+    public function profile()
+    {
         $user = Auth::user();
         $user->load([
             'roles:id,name',
             'userScopes.role:id,name',
         ]);
 
-        return $this->ok('User profile', [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'roles' => $user->roles->pluck('name'),
-            'scopes' => $user->userScopes->map(function ($scope) {
-                return [
-                    'user_scope_id' => $scope->id,
-                    'role_id' => $scope->role_id,
-                    'role_name' => $scope->role->name,
-                    'scope_type' => $scope->scope_type,
-                    'scope_id' => $scope->scope_id,
-                ];
-            }),
+        return $this->ok(
+            'User profile', [
+            'user' => (new UserResource($user->load([
+                'roles:id,name',
+                'userScopes.role:id,name',
+            ])))
+                ->resolve(),
         ]);
     }
 }

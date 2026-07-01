@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone');
             $table->boolean('is_active')->default(true);
+            $table->string('two_factor_code')->nullable();
+            $table->timestamp('two_factor_expires_at')->nullable();
+            $table->boolean('is_two_factor_enabled')->default(false);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
