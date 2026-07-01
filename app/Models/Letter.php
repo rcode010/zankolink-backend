@@ -56,4 +56,15 @@ class Letter extends Model
     {
         return in_array($this->status, ['approved', 'rejected']);
     }
+    public function flows(){
+        return $this->hasMany(LetterFlow::class)
+            ->orderBy('created_at', 'asc');
+    }
+    public function signatures(){
+        return $this->hasMany(LetterSignature::class);
+    }
+    public function stamps(){
+        return $this->hasMany(LetterStamp::class);
+    }
+
 }
