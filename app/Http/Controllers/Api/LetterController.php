@@ -203,7 +203,6 @@ class LetterController extends Controller
 
         $letters = QueryBuilder::for(Letter::class)
             ->where('receiver_id', $user->id)
-            ->where('original_sender_id', $user->id)
             ->with(['sender:id,name', 'receiver:id,name'])
             ->allowedFilters(
                 AllowedFilter::exact('status')
@@ -218,6 +217,7 @@ class LetterController extends Controller
 
         $letters = QueryBuilder::for(Letter::class)
             ->where('sender_id', $user->id)
+            ->where('original_sender_id', $user->id)
             ->with(['sender:id,name', 'receiver:id,name'])
             ->allowedFilters(
                 AllowedFilter::exact('status')
