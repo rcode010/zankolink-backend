@@ -9,6 +9,7 @@ use App\Http\Resources\StudentResource;
 use App\Models\Student;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class StudentController extends Controller
@@ -20,27 +21,33 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->query('per_page', 15);
+        $per_page = $request->query('per_page', 15);
 
-        $student = QueryBuilder::for(Student::class)
-            ->with([
-                'user:id,name',
-                'department:id,name',
-            ])
+        $departmentId = auth()->user()
+            ->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->value('scope_id');
+
+        $students = QueryBuilder::for(Student::class)
+            ->where('department_id', $departmentId)
             ->allowedFilters(
-                'student_number',
-                'stage',
-                'status',
-                'department.name',
-                'user.name',
-                'enrollment_type'
+                AllowedFilter::callback(
+                    'search',
+                    function ($query, $value) {
+                        $query->whereHas('user', function ($q) use ($value) {
+                            $q->where('name', 'like', "%{$value}%");
+                        });
+                    }
+                ),
+                'is_active',
             )
-            ->Latest()
-            ->paginate($perPage);
+            ->with('user:id,name')
+            ->latest()
+            ->paginate($per_page);
 
         return $this->ok(
             'Student retrieved successfully.',
-            StudentResource::collection($student)
+            StudentResource::collection($students)
                 ->response()
                 ->getData(true)
         );

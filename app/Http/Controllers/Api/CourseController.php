@@ -9,6 +9,7 @@ use App\Http\Resources\CourseResource;
 use App\Models\Course;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class CourseController extends Controller
@@ -22,12 +23,45 @@ class CourseController extends Controller
     {
         $per_page = $request->query('per_page', 15);
 
-        $courses = QueryBuilder::for(Course::class)
+        $query = Course::query();
+
+        $scope = auth()->user()->userScopes()->first();
+
+        if ($scope) {
+            match ($scope->scope_type) {
+
+                'UNIVERSITY' => $query->whereHas(
+                    'department.faculty',
+                    fn ($q) => $q->where(
+                        'university_id',
+                        $scope->scope_id
+                    )
+                ),
+
+                'FACULTY' => $query->whereHas(
+                    'department',
+                    fn ($q) => $q->where(
+                        'faculty_id',
+                        $scope->scope_id
+                    )
+                ),
+
+                'DEPARTMENT' => $query->where(
+                    'department_id',
+                    $scope->scope_id
+                ),
+
+                default => null,
+            };
+        }
+
+        $courses = QueryBuilder::for($query)
             ->with('department:id,name')
             ->allowedFilters(
-                'name',
-                'code',
-                'department_id'
+                AllowedFilter::partial('name'),
+                AllowedFilter::partial('code'),
+                AllowedFilter::exact('department_id'),
+                'is_active',
             )
             ->latest()
             ->paginate($per_page);
