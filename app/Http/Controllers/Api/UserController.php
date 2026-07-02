@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\SuperiorRoleService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
@@ -28,7 +30,7 @@ class UserController extends Controller
 
         return $this->ok(
             'Users retrieved successfully.',
-           UserResource::collection($users->load(['userScopes.role:id,name','roles:id,name']))->resolve()
+            UserResource::collection($users->load(['userScopes.role:id,name', 'roles:id,name']))->resolve()
         );
     }
 
@@ -39,7 +41,7 @@ class UserController extends Controller
     {
         return $this->ok(
             'User retrieved successfully.',
-            (new UserResource($user->load(['userScopes.role:id,name','roles:id,name'])))->resolve()
+            (new UserResource($user->load(['userScopes.role:id,name', 'roles:id,name'])))->resolve()
         );
     }
 
@@ -54,6 +56,7 @@ class UserController extends Controller
         ]);
 
         $user->update($validated);
+
         return $this->ok(
             'Profile updated successfully',
             (new UserResource($user->fresh()))->resolve()
@@ -67,6 +70,7 @@ class UserController extends Controller
     public function activate(User $user)
     {
         $user->update(['is_active' => true]);
+
         return $this->ok(
             'User activated successfully',
             (new UserResource($user->fresh()))->resolve()
@@ -84,5 +88,19 @@ class UserController extends Controller
             'User deactivated successfully',
             (new UserResource($user->fresh()))->resolve()
         );
+    }
+
+    public function superiorRole(Request $request, SuperiorRoleService $superiorRoleService)
+    {
+        $user = $request->user();
+        $higherRoleUsers = DB::transaction(function () use ($user, $superiorRoleService) {
+
+            $higherRoleUsers = $superiorRoleService->execute($user);
+
+            return $higherRoleUsers;
+        });
+
+        return $this->ok('Higher Role Users retrieved successfully', $higherRoleUsers->toArray());
+
     }
 }
