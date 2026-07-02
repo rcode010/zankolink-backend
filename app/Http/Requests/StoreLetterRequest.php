@@ -34,11 +34,9 @@ class StoreLetterRequest extends FormRequest
                 open_university,
                 close_university,',
 
-            'receiver_id' => 'required|integer|exists:users,id', // Your controller will handle dynamic validation
+            'receiver_id' => 'required|integer|exists:users,id',
 
             'original_sender_id' => 'required|integer',
-
-            'status' => 'required|in:pending,approved,rejected',
 
             'academic_year_id' => 'required|integer|exists:academic_years,id',
 
