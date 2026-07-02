@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AssignStudentCourseRequest;
 use App\Http\Requests\UpdateStudentCourseRequest;
 use App\Http\Resources\StudentResource;
+use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Student;
@@ -58,10 +59,13 @@ class StudentCourseController extends Controller
                 400
             );
         }
+
+        $activeAcademicYearId = AcademicYear::where('is_active', true)->value('id');
+
         $course->students()
             ->syncWithoutDetaching([
                 $student->id => [
-                    'academic_year_id' => $request->validated('academic_year_id'),
+                    'academic_year_id' => $activeAcademicYearId,
                     'enrolled_at' => now(),
                 ],
             ]);
