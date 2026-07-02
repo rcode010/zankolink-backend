@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSectionSubmissionRequest;
 use App\Http\Requests\UpdateSectionSubmissionRequest;
+use App\Http\Resources\SectionSubmissionResource;
 use App\Models\CourseSection;
 use App\Models\SectionSubmission;
-use Illuminate\Http\Request;
+use App\Traits\ApiResponses;
+use Illuminate\Support\Facades\DB;
 
 class SectionSubmissionController extends Controller
 {
+    use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -24,7 +28,53 @@ class SectionSubmissionController extends Controller
      */
     public function store(StoreSectionSubmissionRequest $request, CourseSection $section)
     {
-        //
+        $data = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $submission = $section->submissions()->create([
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'deadline' => $data['deadline'],
+            ]);
+
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $path = $file->store('section-submission', 'public');
+                    $submission->attachments()->create([
+                        'file_name' => $file->getClientOriginalName(),
+                        'file_type' => $file->getClientMimeType(),
+                        'file_size' => $file->getSize(),
+                        'file_url' => $path,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return $this->success(
+                'Assignment created successfully',
+                (new SectionSubmissionResource(
+                    $submission->load([
+                        'section:id,title',
+                        'attachments',
+                    ])
+                ))->resolve(),
+                201
+            );
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            \Log::error(
+                'Assignment creation failed: '.$e->getMessage()
+            );
+
+            return $this->error(
+                'Failed to create assignment.',
+                500
+            );
+        }
     }
 
     /**
