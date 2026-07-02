@@ -10,6 +10,7 @@ use App\Models\Faculty;
 use App\Models\University;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -115,7 +116,12 @@ class FacultyController extends Controller
      */
     public function destroy(Faculty $faculty)
     {
-        $faculty->delete();
+        DB::transaction(function () use ($faculty) {
+            foreach ($faculty->departments as $department) {
+                $department->delete();
+            }
+                $faculty->delete();
+        });
 
         return $this->ok(
             'Faculty deleted successfully.',
