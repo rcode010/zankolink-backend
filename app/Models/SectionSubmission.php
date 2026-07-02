@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class SectionSubmission extends Model
+{
+    protected $fillable = ['section_id', 'title', 'description', 'deadline'];
+
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(CourseSection::class);
+    }
+
+    public function studentSubmissions(): HasMany
+    {
+        return $this->hasMany(StudentSubmission::class, 'submission_id');
+    }
+
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(SectionSubmissionAttachment::class);
+    }
+}
