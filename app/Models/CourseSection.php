@@ -25,7 +25,7 @@ class CourseSection extends Model
 
     public function materials(): HasMany
     {
-        return $this->hasMany(SectionMaterial::class);
+        return $this->hasMany(SectionItem::class);
     }
 
     public function submissions(): HasMany
