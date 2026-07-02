@@ -23,8 +23,15 @@ class StoreLetterBroadcastRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string',
-            'body' => 'required|string',
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['required', 'string'],
+
+            'files' => ['sometimes', 'array'],
+            'files.*' => [
+                'file',
+                'mimes:pdf,doc,docx,jpg,jpeg,png',
+                'max:5120',
+            ],
         ];
     }
 }
