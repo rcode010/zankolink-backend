@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Mail\AccountCreatedMail;
 use App\Models\AcademicYear;
 use App\Models\Department;
 use App\Models\Faculty;
@@ -12,6 +13,8 @@ use App\Models\User;
 use App\Models\UserScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use RuntimeException;
 use Spatie\Permission\Models\Role;
 
@@ -29,8 +32,6 @@ class LetterActionService
                 'close_department' => $this->closeDepartment($payload),
                 'open_faculty' => $this->openFaculty($payload),
                 'close_faculty' => $this->closeFaculty($payload),
-                'open_university' => $this->openUniversity($payload),
-                'close_university' => $this->closeUniversity($payload),
                 default => throw new RuntimeException("Unsupported letter action type: {$letter->type}"),
             };
 
@@ -42,12 +43,12 @@ class LetterActionService
         $department = Department::findOrFail($this->required($payload, 'department_id'));
 
         $role = $this->lecturerRole();
-
+        $plainPassword = Str::password(20, true, true, true, false);
         $user = User::create([
             'name' => $this->required($payload, 'name'),
             'email' => $this->required($payload, 'email'),
             'phone' => $payload['phone'] ?? null,
-            'password' => Hash::make($payload['password'] ?? 'password'),
+            'password' => Hash::make($plainPassword),
         ]);
 
         $user->assignRole($role);
@@ -68,6 +69,7 @@ class LetterActionService
         $department->teachers()->syncWithoutDetaching([
             $teacher->id,
         ]);
+        Mail::to($user->email)->afterCommit()->queue(new AccountCreatedMail($user, $plainPassword));
     }
 
     private function fireTeacher(array $payload): void
@@ -130,34 +132,13 @@ class LetterActionService
     {
         $faculty = Faculty::findOrFail($this->required($payload, 'faculty_id'));
 
-        $faculty->update([
-            'is_active' => false,
-        ]);
-    }
+            $faculty->departments()->update([
+                'is_active' => false,
+            ]);
 
-    private function openUniversity(array $payload): void
-    {
-        $academicYear = AcademicYear::findOrFail($this->required($payload, 'academic_year_id'));
-
-        University::create([
-            'name' => $this->required($payload, 'name'),
-            'admin_id' => $payload['admin_id'] ?? null,
-            'academic_year_id' => $academicYear->id,
-            'location' => $this->required($payload, 'location'),
-            'start_date' => $this->required($payload, 'start_date'),
-            'end_date' => $this->required($payload, 'end_date'),
-            'established_year' => $this->required($payload, 'established_year'),
-            'is_active' => true,
-        ]);
-    }
-
-    private function closeUniversity(array $payload): void
-    {
-        $university = University::findOrFail($this->required($payload, 'university_id'));
-
-        $university->update([
-            'is_active' => false,
-        ]);
+            $faculty->update([
+                'is_active' => false,
+            ]);
     }
 
     private function lecturerRole(): Role
