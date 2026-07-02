@@ -10,6 +10,7 @@ use App\Models\CourseSection;
 use App\Models\SectionSubmission;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class SectionSubmissionController extends Controller
 {
@@ -37,11 +38,7 @@ class SectionSubmissionController extends Controller
 
         DB::beginTransaction();
         try {
-            $submission = $section->submissions()->create([
-                'title' => $data['title'],
-                'description' => $data['description'],
-                'deadline' => $data['deadline'],
-            ]);
+            $submission = $section->submissions()->create($data);
 
             if ($request->hasFile('files')) {
                 foreach ($request->file('files') as $file) {
@@ -102,7 +99,41 @@ class SectionSubmissionController extends Controller
      */
     public function update(UpdateSectionSubmissionRequest $request, SectionSubmission $submission)
     {
-        //
+        $data = $request->validated();
+        DB::beginTransaction();
+        try{
+            $submission->update($data);
+
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $path = $file->store('section-submission', 'public');
+                    $submission->attachments()->create([
+                        'file_name' => $file->getClientOriginalName(),
+                        'file_type' => $file->getClientMimeType(),
+                        'file_size' => $file->getSize(),
+                        'file_url' => $path,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return $this->success(
+                'Assignment updated successfully.',
+                (new SectionSubmissionResource($submission->load([
+                    'section:id,title',
+                    'attachments',
+                ])))->resolve()
+            );
+        }catch (\Exception $e){
+            DB::rollBack();
+
+            \Log::error($e);
+
+            return $this->error(
+                'Failed to update assignment.',
+                500
+            );
+        }
     }
 
     /**
@@ -110,6 +141,13 @@ class SectionSubmissionController extends Controller
      */
     public function destroy(SectionSubmission $submission)
     {
-        //
+        foreach($submission->attachments() as $attachment){
+            Storage::disk('public')->delete($attachment->file_url);
+        }
+        $submission->delete();
+
+        return $this->success(
+            'Assignment deleted successfully.',
+        );
     }
 }
