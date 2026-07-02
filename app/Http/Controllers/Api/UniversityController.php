@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUniversityRequest;
 use App\Http\Requests\UpdateUniversityRequest;
 use App\Http\Resources\UniversityResource;
+use App\Models\Department;
+use App\Models\Faculty;
 use App\Models\University;
 use App\Services\CreateUniversityStructureService;
 use App\Traits\ApiResponses;
@@ -98,7 +100,14 @@ class UniversityController extends Controller
      */
     public function destroy(University $university)
     {
-        $university->delete();
+        DB::transaction(function () use ($university) {
+            foreach ($university->faculties as $faculty) {
+                $faculty->departments()->delete();
+                $faculty->delete();
+            }
+
+            $university->delete();
+        });
 
         return $this->ok(
             'University deleted successfully.'
