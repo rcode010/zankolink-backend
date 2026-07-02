@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreLetterRequest extends FormRequest
 {
@@ -18,27 +19,72 @@ class StoreLetterRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
-    public function rules()
+
+    public function rules(): array
     {
+        $type = $this->input('type');
+
         return [
-            'title' => 'required|string|min:5|max:255',
-            'body' => 'required|string|min:10',
-            'type' => 'required|in:hire_teacher,
-                fire_teacher,
-                create_department,
-                close_department,
-                open_faculty,
-                close_faculty,
-                open_university,
-                close_university,',
+            'receiver_id' => ['required', 'exists:users,id'],
+            'type' => [
+                'required',
+                Rule::in([
+                    'hire_teacher',
+                    'fire_teacher',
+                    'create_department',
+                    'close_department',
+                    'open_faculty',
+                    'close_faculty',
+                ]),
+            ],
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['required', 'string'],
+            'academic_year_id' => ['required', 'exists:academic_years,id'],
 
-            'receiver_id' => 'required|integer|exists:users,id', // Your controller will handle dynamic validation
+            'payload' => ['required', 'array'],
 
-            'original_sender_id' => 'required|integer',
-            'academic_year_id' => 'required|integer|exists:academic_years,id',
-            'payload' => 'sometimes|array',
+            ...$this->payloadRules($type),
         ];
     }
-}
+
+    private function payloadRules(?string $type): array
+    {
+        return match ($type) {
+            'hire_teacher' => [
+                'payload.name' => ['required', 'string', 'max:255'],
+                'payload.email' => ['required', 'email', 'unique:users,email'],
+                'payload.phone' => ['nullable', 'string', 'max:50'],
+                'payload.department_id' => ['required', 'exists:departments,id'],
+                'payload.title' => ['required', 'string', 'max:255'],
+                'payload.speciality' => ['required', 'string', 'max:255'],
+            ],
+
+            'fire_teacher' => [
+                'payload.teacher_id' => ['required', 'exists:teachers,id'],
+            ],
+
+            'create_department' => [
+                'payload.name' => ['required', 'string', 'max:255'],
+                'payload.faculty_id' => ['required', 'exists:faculties,id'],
+                'payload.admin_id' => ['nullable', 'exists:users,id'],
+            ],
+
+            'close_department' => [
+                'payload.department_id' => ['required', 'exists:departments,id'],
+            ],
+
+            'open_faculty' => [
+                'payload.name' => ['required', 'string', 'max:255'],
+                'payload.university_id' => ['required', 'exists:universities,id'],
+                'payload.admin_id' => ['nullable', 'exists:users,id'],
+            ],
+
+            'close_faculty' => [
+                'payload.faculty_id' => ['required', 'exists:faculties,id'],
+            ],
+
+            default => [],
+        };
+    }}
