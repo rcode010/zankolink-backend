@@ -15,9 +15,8 @@ class SuperiorRoleService
         $currentRole = $user->roles()->pluck('name')->first();
         $nextLevelRoles = match ($currentRole) {
             'HEAD_OF_DEPARTMENT' => ['DEAN'],
-            'DEAN' => ['UNIVERSITY_ADMIN'],
-            'UNIVERSITY_ADMIN' => ['MINISTRY_ADMIN'],
-
+            'DEAN' => ['UNIVERSITY_ADMIN','UNIVERSITY_ADMIN_ADMINISTRATION','UNIVERSITY_ADMIN_STUDENTS','UNIVERSITY_ADMIN_SCIENCE'],
+            'UNIVERSITY_ADMIN', 'UNIVERSITY_ADMIN_ADMINISTRATION','UNIVERSITY_ADMIN_STUDENTS','UNIVERSITY_ADMIN_SCIENCE' => ['MINISTRY_IMPORT_EXPORT_STAFF'],
             default => [],
         };
         if (empty($nextLevelRoles)) {
