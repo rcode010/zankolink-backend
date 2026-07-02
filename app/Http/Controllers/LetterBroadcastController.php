@@ -17,10 +17,13 @@ class LetterBroadcastController extends Controller
             ->get();
         return $this->ok("LetterBroadcasts fetched",$letterBroadcasts->toArray());
     }
+    public function show (LetterBroadcast $letterBroadcast){
+        return $this->ok("LetterBroadcast fetched",$letterBroadcast->toArray());
+    }
 
     public function store(StoreLetterBroadcastRequest $request){
         $credentials = $request->validated();
-        $letterBroadcast = LetterBroadcast::create($credentials);
+         $letterBroadcast = LetterBroadcast::create($credentials);
 
         return $this->created("LetterBroadcast created",$letterBroadcast->toArray());
     }
