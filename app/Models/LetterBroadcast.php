@@ -10,4 +10,9 @@ class LetterBroadcast extends Model
     /** @use HasFactory<\Database\Factories\LetterBroadcastFactory> */
     use HasFactory;
     protected $fillable = ['title','body','is_active','published_at'];
+
+
+    public function attachments(){
+        return $this->hasMany(LetterBroadcastAttachements::class);
+    }
 }
