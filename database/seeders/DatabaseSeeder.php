@@ -49,14 +49,16 @@ class DatabaseSeeder extends Seeder
     private function seedRoles(): void
     {
         $permissions = [
+            // Letter Broadcast
+            'view letter broadcast','create letter broadcast',
             // Universities
-            'view universities', 'create universities', 'update universities', 'delete universities',
+            'view universities', 'view university', 'create universities', 'update universities', 'delete universities',
             // Faculties
-            'view faculties', 'create faculties', 'update faculties', 'delete faculties',
+            'view faculties', 'view faculty', 'create faculties', 'update faculties', 'delete faculties',
             // Departments
-            'view departments', 'create departments', 'update departments', 'delete departments', 'update department seats',
+            'view departments', 'view department', 'create departments', 'update departments', 'delete departments', 'update department seats',
             // Users
-            'view users', 'create users', 'update users', 'delete users', 'activate users', 'deactivate users',
+            'view users', 'view user', 'create users', 'update users', 'delete users', 'activate users', 'deactivate users',
             // Teachers
             'view teachers', 'create teachers', 'update teachers', 'delete teachers', 'assign teachers',
             // Students
@@ -77,7 +79,7 @@ class DatabaseSeeder extends Seeder
             'update academic year',
             // Letter Stamps
             'create stamps', 'view stamps',
-            //Roles & Permissions
+            // Roles & Permissions
             'view roles', 'create roles', 'update roles', 'delete roles',
             'view permissions', 'view user roles', 'create user roles', 'delete user roles',
         ];
@@ -94,65 +96,65 @@ class DatabaseSeeder extends Seeder
             'MINISTRY_ADMIN' => $permissions,
 
             'MINISTRY_IMPORT_EXPORT_STAFF' => [
-                'view letters', 'create letters', 'raise letters',
+                'view user', 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
                 'create stamps', 'view stamps',
-                'approve letters', 'decline letters', 'forward letters',
+                'approve letters', 'decline letters', 'forward letters','view letter broadcast'
             ],
 
             'MINISTRY_ADMINISTRATION_HEAD' => [
-                'view letters', 'update letters', 'raise letters',
+                'view user', 'view letters', 'update letters', 'raise letters',
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
-                'view reports','forward letters',
+                'view reports', 'forward letters','view letter broadcast'
             ],
 
             // University
             'UNIVERSITY_ADMIN' => [
-                'view faculties', 'create faculties', 'update faculties',
+                'view user', 'view university', 'view faculties', 'create faculties', 'update faculties',
                 'view departments', 'create departments', 'update departments',
                 'view users', 'create users', 'update users', 'activate users', 'deactivate users',
                 'view teachers', 'view students', 'view courses', 'view reports',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
-                'view signatures', 'create signatures', 'forward letters',
+                'view signatures', 'create signatures', 'forward letters','view letter broadcast'
             ],
 
             'UNIVERSITY_ADMIN_ADMINISTRATION' => [
-                'view faculties', 'view departments', 'view users',
+                'view user', 'view university', 'view faculties', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
                 'view letters', 'create letters', 'raise letters',
-                'upload attachments', 'download attachments', 'forward letters',
+                'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
             ],
 
             'UNIVERSITY_ADMIN_STUDENTS' => [
-                'view faculties', 'view departments', 'view users',
+                'view user', 'view university', 'view faculties', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
                 'view letters', 'create letters', 'raise letters',
-                'upload attachments', 'download attachments', 'forward letters',
+                'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
             ],
 
             'UNIVERSITY_ADMIN_SCIENCE' => [
-                'view faculties', 'view departments', 'view users',
+                'view user', 'view university', 'view faculties', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
                 'view letters', 'create letters', 'raise letters',
-                'upload attachments', 'download attachments','forward letters',
+                'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
             ],
 
             // Faculty
             'DEAN' => [
-                'view departments', 'create departments', 'update departments',
+                'view user', 'view faculty', 'view departments', 'create departments', 'update departments',
                 'view teachers', 'create teachers', 'update teachers', 'assign teachers',
                 'view students', 'view courses', 'create courses', 'update courses',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
-                'view reports','forward letters',
+                'view reports','forward letters','view letter broadcast'
             ],
 
             // Department
             'HEAD_OF_DEPARTMENT' => [
-                'view teachers', 'assign teachers',
+                'view user', 'view department', 'view teachers', 'assign teachers',
                 'view students',
                 'view courses', 'create courses', 'update courses',
                 'assign course teachers', 'view course teachers',
@@ -161,17 +163,17 @@ class DatabaseSeeder extends Seeder
                 'view course students',
                 'update course students', 'delete course students',
                 'view letters', 'create letters', 'raise letters',
-                'upload attachments', 'download attachments', 'forward letters',
+                'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
             ],
 
             'lecturer' => [
-                'view courses', 'view students',
+                'view user', 'view courses', 'view students',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
             ],
 
             'student' => [
-                'view courses',
+                'view user', 'view courses',
                 'view letters', 'create letters',
                 'upload attachments', 'download attachments',
             ],
