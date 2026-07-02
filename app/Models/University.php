@@ -27,4 +27,13 @@ class University extends Model
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
+
+    public static function booted()
+    {
+        static::creating(function ($university) {
+            if (! $university->academic_year_id) {
+                $university->academic_year_id = AcademicYear::where('is_active', true)->value('id');
+            }
+        });
+    }
 }
