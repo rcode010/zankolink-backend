@@ -20,7 +20,12 @@ class SectionSubmissionController extends Controller
      */
     public function index(CourseSection $section)
     {
-        //
+        $submission = $section->submissions()->with(['attachments', 'section:id,title'])->get();
+
+        return $this->success(
+            'Assignments retrieved successfully.',
+            $submission ? (SectionSubmissionResource::collection($submission))->resolve() : null
+        );
     }
 
     /**
@@ -82,7 +87,14 @@ class SectionSubmissionController extends Controller
      */
     public function show(SectionSubmission $submission)
     {
-        //
+        return $this->success(
+            'Assignment retrieved successfully.',
+            (new SectionSubmissionResource($submission->load([
+                'attachments',
+                'section:id,title',
+            ])
+            ))->resolve()
+        );
     }
 
     /**
