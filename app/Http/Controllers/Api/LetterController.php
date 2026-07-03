@@ -10,6 +10,7 @@ use App\Http\Resources\LetterBroadcastResource;
 use App\Http\Resources\LetterResource;
 use App\Models\Letter;
 use App\Models\LetterBroadcast;
+use App\Models\LetterFlow;
 use App\Models\LetterSignature;
 use App\Services\QrCodeService;
 use App\Traits\ApiResponses;
@@ -193,6 +194,8 @@ class LetterController extends Controller
         }
 
         DB::transaction(function () use ($letter, $user, $credentials) {
+            $oldReceiverId = $letter->receiver_id;
+
             LetterSignature::create([
                 'letter_id' => $letter->id,
                 'user_id' => $user->id,
@@ -202,12 +205,18 @@ class LetterController extends Controller
                 'sender_id' => $user->id,
                 'receiver_id' => $credentials['receiver_id'],
             ]);
+
+            LetterFlow::create([
+                'letter_id' => $letter->id,
+                'action' => 'signed and raised',
+                'actor_id' => $user->id,
+                'from_recipient_id' => $oldReceiverId,
+                'to_recipient_id' => $credentials['receiver_id'],
+                'note' => $credentials['note'] ?? null,
+            ]);
         });
 
-        return $this->ok(
-            'Letter raised'
-        );
-
+        return $this->ok('Letter raised');
     }
 
     public function inbox(Request $request)
