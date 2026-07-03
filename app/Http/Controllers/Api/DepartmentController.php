@@ -104,6 +104,7 @@ class DepartmentController extends Controller
      */
     public function update(UpdateDepartmentRequest $request, Department $department)
     {
+        $this->authorize('update', $department);
         $department->update(
             $request->validated()
         );
