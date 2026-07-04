@@ -113,7 +113,7 @@ class DatabaseSeeder extends Seeder
 
             // University
             'UNIVERSITY_ADMIN' => [
-                'view user', 'view university', 'view faculties', 'create faculties', 'update faculties',
+                'view user', 'view university', 'view faculties','view faculty', 'create faculties', 'update faculties',
                 'view departments', 'create departments', 'update departments',
                 'view users', 'create users', 'update users', 'activate users', 'deactivate users',
                 'view teachers', 'view students', 'view courses', 'view reports',
@@ -124,7 +124,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             'UNIVERSITY_ADMIN_ADMINISTRATION' => [
-                'view user', 'view university', 'view faculties', 'view departments', 'view users',
+                'view user', 'view university', 'view faculties','view faculty', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
                 'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
                 'create signatures','view signatures',
@@ -133,7 +133,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             'UNIVERSITY_ADMIN_STUDENTS' => [
-                'view user', 'view university', 'view faculties', 'view departments', 'view users',
+                'view user', 'view university', 'view faculties','view faculty', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
                 'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
                 'create signatures','view signatures',
@@ -142,7 +142,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             'UNIVERSITY_ADMIN_SCIENCE' => [
-                'view user', 'view university', 'view faculties', 'view departments', 'view users',
+                'view user', 'view university', 'view faculties','view faculty', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
                 'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
                 'create signatures','view signatures',
