@@ -30,7 +30,7 @@ class UpdateUniversityRequest extends FormRequest
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after:start_date',
             'established_year' => 'sometimes|date',
-            'is_active' => 'sometimes|boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 }
