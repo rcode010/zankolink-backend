@@ -17,6 +17,11 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
             $table->enum('role', ['primary_lecturer', 'assistant_lecturer', 'lab_instructor']);
             $table->timestamps();
+
+            $table->unique(['teacher_id', 'course_id', 'role'], 'course_teacher_unique');
+
+            $table->index('course_id', 'course_teacher_course_id_idx');
+            $table->index(['teacher_id', 'role'], 'course_teacher_teacher_role_idx');
         });
     }
 

@@ -20,6 +20,10 @@ return new class extends Migration
             $table->bigInteger('seat_available')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+
+            $table->index(['faculty_id', 'is_active', 'deleted_at'], 'departments_faculty_active_deleted_idx');
+            $table->index('admin_id', 'departments_admin_id_idx');
         });
     }
 

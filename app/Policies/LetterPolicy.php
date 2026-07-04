@@ -37,7 +37,7 @@ class LetterPolicy
             return true;
         }
 
-        return DB::table('letter_flows')
+        return DB::table('letter_flow')
             ->where('letter_id', $letter->id)
             ->where(function ($query) use ($user) {
                 $query->where('actor_id', $user->id)

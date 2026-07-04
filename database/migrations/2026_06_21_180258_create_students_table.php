@@ -21,6 +21,10 @@ return new class extends Migration
             $table->enum('status', ['active', 'inactive', 'on_leave', 'suspended', 'graduated'])->default('active');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['department_id', 'status', 'deleted_at'], 'students_department_status_deleted_idx');
+            $table->index(['department_id', 'stage'], 'students_department_stage_idx');
+            $table->index('user_id', 'students_user_id_idx');
         });
     }
 

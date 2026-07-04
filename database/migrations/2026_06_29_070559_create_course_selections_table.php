@@ -20,6 +20,12 @@ return new class extends Migration
             $table->string('status')->default('pending');
 
             $table->timestamps();
+
+            $table->unique(['course_id', 'student_id', 'academic_year_id'], 'course_selections_unique');
+
+            $table->index(['student_id', 'academic_year_id', 'status'], 'course_selections_student_year_status_idx');
+            $table->index(['academic_year_id', 'status'], 'course_selections_year_status_idx');
+            $table->index(['course_id', 'academic_year_id'], 'course_selections_course_year_idx');
         });
     }
 

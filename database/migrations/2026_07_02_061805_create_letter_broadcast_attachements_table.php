@@ -19,6 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('file_size');
             $table->string('file_path');
             $table->timestamps();
+
+            $table->index('letter_broadcast_id', 'letter_broadcast_attachments_broadcast_id_idx');
+
         });
     }
 

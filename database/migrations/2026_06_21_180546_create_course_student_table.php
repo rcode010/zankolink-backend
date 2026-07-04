@@ -19,6 +19,11 @@ return new class extends Migration
             $table->timestamp('enrolled_at')->nullable();
             $table->foreignId('academic_year_id')->constrained('academic_years');
             $table->timestamps();
+
+            $table->unique(['course_id', 'student_id', 'academic_year_id'], 'course_student_unique');
+
+            $table->index(['student_id', 'academic_year_id'], 'course_student_student_year_idx');
+            $table->index(['course_id', 'academic_year_id'], 'course_student_course_year_idx');
         });
     }
 

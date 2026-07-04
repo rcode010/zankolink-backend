@@ -18,6 +18,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['is_active', 'deleted_at', 'created_at'], 'letter_broadcasts_active_deleted_created_idx');
         });
     }
 
