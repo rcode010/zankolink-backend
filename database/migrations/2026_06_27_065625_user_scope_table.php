@@ -18,6 +18,12 @@ return new class extends Migration
             $table->enum('scope_type', ['MINISTRY', 'FACULTY', 'UNIVERSITY', 'DEPARTMENT']);
             $table->foreignId('scope_id')->nullable();
             $table->timestamps();
+
+            $table->unique(['user_id', 'role_id', 'scope_type', 'scope_id'], 'user_scopes_unique');
+
+            $table->index(['user_id', 'scope_type', 'scope_id'], 'user_scopes_user_scope_scope_id_idx');
+            $table->index(['scope_type', 'scope_id'], 'user_scopes_scope_type_scope_id_idx');
+            $table->index(['role_id', 'scope_type', 'scope_id'], 'user_scopes_role_scope_idx');
         });
     }
 

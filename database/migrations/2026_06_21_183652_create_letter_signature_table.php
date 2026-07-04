@@ -27,6 +27,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['user_id', 'letter_id']);
+
+            $table->index('letter_id', 'letter_signature_letter_id_idx');
         });
     }
 

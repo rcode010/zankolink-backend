@@ -40,6 +40,14 @@ return new class extends Migration
 
             $table->unique(['letter_number', 'academic_year_id']);
 
+            $table->index(['receiver_id', 'status', 'created_at'], 'letters_receiver_status_created_idx');
+            $table->index(['receiver_id', 'is_read', 'created_at'], 'letters_receiver_read_created_idx');
+            $table->index(['sender_id', 'created_at'], 'letters_sender_created_idx');
+            $table->index(['original_sender_id', 'created_at'], 'letters_original_sender_created_idx');
+            $table->index(['academic_year_id', 'status'], 'letters_academic_year_status_idx');
+            $table->index(['status', 'type'], 'letters_status_type_idx');
+            $table->index('verification_hash', 'letters_verification_hash_idx');
+
         });
     }
 

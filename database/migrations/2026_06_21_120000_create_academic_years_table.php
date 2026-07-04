@@ -23,6 +23,9 @@ return new class extends Migration
             $table->boolean('is_active')->default(false);
 
             $table->timestamps();
+
+            $table->unique('year', 'academic_years_year_unique');
+            $table->index('is_active', 'academic_years_is_active_idx');
         });
     }
 

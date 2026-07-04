@@ -23,6 +23,9 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['academic_year_id', 'is_active', 'deleted_at'], 'universities_academic_year_active_deleted_idx');
+            $table->index('admin_id', 'universities_admin_id_idx');
         });
     }
 

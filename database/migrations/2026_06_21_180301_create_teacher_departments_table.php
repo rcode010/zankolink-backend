@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('teacher_id')->constrained('teachers')->onDelete('cascade');
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->timestamps();
+
+            $table->unique(['teacher_id', 'department_id'], 'teacher_department_unique');
+            $table->index('department_id', 'teacher_department_department_id_idx');
         });
     }
 
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teacher_departments');
+        Schema::dropIfExists('teacher_department');
     }
 };

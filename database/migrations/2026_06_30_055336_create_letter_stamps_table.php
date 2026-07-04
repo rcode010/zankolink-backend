@@ -20,6 +20,8 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->unique(['letter_id', 'user_id']);
+
+            $table->index('user_id', 'letter_stamps_user_id_idx');
         });
     }
 
