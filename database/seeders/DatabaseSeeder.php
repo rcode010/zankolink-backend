@@ -155,7 +155,7 @@ class DatabaseSeeder extends Seeder
                 'view university', 'view faculty', 'view departments', 'create departments', 'update departments',
                 'view teachers', 'view teacher', 'create teachers', 'update teachers', 'assign teachers',
                 'view students', 'view courses', 'create courses', 'update courses',
-                'view letters', 'create letters', 'raise letters',
+                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
                 'upload attachments', 'download attachments',
                 'create stamps', 'view stamps',
                 'view signatures','create signatures',
@@ -174,7 +174,7 @@ class DatabaseSeeder extends Seeder
                 'create stamps', 'view stamps',
                 'view signatures','create signatures',
                 'update course students', 'delete course students',
-                'view letters', 'create letters', 'raise letters',
+                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
                 'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
             ],
 
