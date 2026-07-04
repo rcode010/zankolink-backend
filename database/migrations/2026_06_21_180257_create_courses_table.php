@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('code');
             $table->bigInteger('credit_hours');
             $table->bigInteger('year_level');
-            $table->boolean('is_active');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

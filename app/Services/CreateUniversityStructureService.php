@@ -25,16 +25,20 @@ class CreateUniversityStructureService
             foreach ($data['faculties'] as $facultyData) {
                 $faculty = $university->faculties()->create([
                     'name' => $facultyData['name'],
-                    'is_active' => true,
+                    'admin_id' => $facultyData['admin_id'] ?? null,
+                    'is_active' => $facultyData['is_active'] ?? true,
                 ]);
+
+                $now = now();
 
                 $departments = collect($facultyData['departments'])
                     ->map(fn ($departmentData) => [
                         'faculty_id' => $faculty->id,
                         'name' => $departmentData['name'],
-                        'is_active' => true,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'admin_id' => $departmentData['admin_id'] ?? null,
+                        'is_active' => $departmentData['is_active'] ?? true,
+                        'created_at' => $now,
+                        'updated_at' => $now,
                     ])
                     ->toArray();
 

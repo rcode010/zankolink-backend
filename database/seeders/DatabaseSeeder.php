@@ -107,6 +107,7 @@ class DatabaseSeeder extends Seeder
                 'view user', 'view letters', 'update letters', 'raise letters',
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
+                'create stamps', 'view stamps',
                 'view reports', 'forward letters','view letter broadcast'
             ],
 
@@ -116,51 +117,60 @@ class DatabaseSeeder extends Seeder
                 'view departments', 'create departments', 'update departments',
                 'view users', 'create users', 'update users', 'activate users', 'deactivate users',
                 'view teachers', 'view students', 'view courses', 'view reports',
-                'view letters', 'create letters', 'raise letters',
+                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
                 'upload attachments', 'download attachments',
+                'create stamps', 'view stamps',
                 'view signatures', 'create signatures', 'forward letters','view letter broadcast'
             ],
 
             'UNIVERSITY_ADMIN_ADMINISTRATION' => [
                 'view user', 'view university', 'view faculties', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
-                'view letters', 'create letters', 'raise letters',
+                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
+                'create signatures','view signatures',
+                'create stamps', 'view stamps',
                 'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
             ],
 
             'UNIVERSITY_ADMIN_STUDENTS' => [
                 'view user', 'view university', 'view faculties', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
-                'view letters', 'create letters', 'raise letters',
+                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
+                'create signatures','view signatures',
+                'create stamps', 'view stamps',
                 'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
             ],
 
             'UNIVERSITY_ADMIN_SCIENCE' => [
                 'view user', 'view university', 'view faculties', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
-                'view letters', 'create letters', 'raise letters',
+                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
+                'create signatures','view signatures',
+                'create stamps', 'view stamps',
                 'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
             ],
 
             // Faculty
             'DEAN' => [
-                'view user', 'view faculty', 'view departments', 'create departments', 'update departments',
+                'view user','view university', 'view faculty', 'view departments', 'create departments', 'update departments',
                 'view teachers', 'create teachers', 'update teachers', 'assign teachers',
                 'view students', 'view courses', 'create courses', 'update courses',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
+                'create stamps', 'view stamps',
                 'view reports','forward letters','view letter broadcast'
             ],
 
             // Department
             'HEAD_OF_DEPARTMENT' => [
-                'view user', 'view department', 'view teachers', 'assign teachers',
+                'view user', 'view department','view faculty','view university', 'view teachers', 'assign teachers',
                 'view students',
                 'view courses', 'create courses', 'update courses',
                 'assign course teachers', 'view course teachers',
                 'update course teachers', 'delete course teachers',
                 'update department seats', 'assign course students',
                 'view course students',
+                'create stamps', 'view stamps',
                 'update course students', 'delete course students',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments', 'forward letters','view letter broadcast'

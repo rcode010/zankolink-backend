@@ -15,6 +15,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 require __DIR__.'/api/auth.php';
+require __DIR__.'/api/letter-verification.php';
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
