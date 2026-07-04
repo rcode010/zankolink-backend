@@ -20,6 +20,7 @@ class LetterWorkflowController extends Controller
      */
     public function approve(Letter $letter, Request $request, LetterActionService $letterActionService)
     {
+        $this->authorize('approve', $letter);
         $user = $request->user();
 
         if ($letter->status !== 'pending' || $letter->is_executed()) {
@@ -52,6 +53,7 @@ class LetterWorkflowController extends Controller
      */
     public function decline(Letter $letter, Request $request)
     {
+        $this->authorize('decline', $letter);
         $user = $request->user();
 
         if ($letter->status !== 'pending') {
@@ -85,6 +87,7 @@ class LetterWorkflowController extends Controller
      */
     public function forward(Letter $letter, Request $request)
     {
+        $this->authorize('forward', $letter);
         $user = $request->user();
 
         $request->validate([
@@ -120,43 +123,5 @@ class LetterWorkflowController extends Controller
         return $this->ok('Letter forwarded successfully.', (new LetterResource($letter->fresh()))->resolve());
     }
 
-    /**
-     * Raise a letter and log the from/to recipients.
-     */
-    public function raise(Letter $letter, Request $request)
-    {
-        $user = $request->user();
 
-        $request->validate([
-            'receiver_id' => 'required|exists:users,id',
-        ]);
-
-        if ($letter->receiver_id === (int) $request->receiver_id) {
-            return $this->error("New receiver can't be the same as current one.", 400);
-        }
-
-        $oldReceiverId = $letter->receiver_id;
-
-        DB::transaction(function () use ($letter, $user, $request, $oldReceiverId) {
-
-            $letter->update([
-                'sender_id' => $user->id,
-                'receiver_id' => $request->receiver_id,
-                'status' => 'pending',
-            ]);
-
-            LetterFlow::create([
-                'letter_id' => $letter->id,
-                'action' => 'raised',
-                'actor_id' => $user->id,
-                'from_recipient_id' => $oldReceiverId,
-                'to_recipient_id' => $request->receiver_id,
-                'note' => $request->input('note', 'Letter raised to a higher level.'),
-            ]);
-        });
-
-        $letter->refresh();
-
-        return $this->ok('Letter raised successfully.', (new LetterResource($letter->fresh()))->resolve());
-    }
 }

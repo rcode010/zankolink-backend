@@ -21,9 +21,9 @@ class FacultyController extends Controller
     /**
      * Display a listing of the resource.
      */
-
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Faculty::class);
         $per_page = $request->input('per_page', 15);
 
         $query = Faculty::query();
@@ -63,18 +63,23 @@ class FacultyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFacultyRequest $request, University $university)
+    public function store(StoreFacultyRequest $request)
     {
-        $faculty = Faculty::create(
-            $request->validated()
-        );
+        $this->authorize('create', Faculty::class);
 
-        $faculty->load('university:id,name');
+        $validated = $request->validated();
+
+        $university = University::findOrFail($validated['university_id']);
+
+        $this->authorize('createForUniversity', [Faculty::class, $university]);
+
+        $faculty = Faculty::create($validated);
+
+        $faculty->load('university:id,name', 'admin:id,name');
 
         return $this->success(
             'Faculty created successfully.',
-            (new FacultyResource($faculty))
-                ->toArray($request),
+            (new FacultyResource($faculty))->toArray($request),
             201
         );
     }
@@ -84,6 +89,7 @@ class FacultyController extends Controller
      */
     public function show(Faculty $faculty)
     {
+        $this->authorize('view', $faculty);
         $faculty->load('university:id,name', 'admin:id,name');
 
         return $this->ok(
@@ -99,6 +105,7 @@ class FacultyController extends Controller
      */
     public function update(UpdateFacultyRequest $request, Faculty $faculty)
     {
+        $this->authorize('update', $faculty);
         $faculty->update(
             $request->validated()
         );
@@ -116,11 +123,12 @@ class FacultyController extends Controller
      */
     public function destroy(Faculty $faculty)
     {
+        $this->authorize('delete', $faculty);
         DB::transaction(function () use ($faculty) {
             foreach ($faculty->departments as $department) {
                 $department->delete();
             }
-                $faculty->delete();
+            $faculty->delete();
         });
 
         return $this->ok(

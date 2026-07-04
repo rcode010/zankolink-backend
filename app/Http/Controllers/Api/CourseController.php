@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
 use App\Models\Course;
+use App\Models\Department;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -21,38 +22,20 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->query('per_page', 15);
+        $this->authorize('viewAny', Course::class);
+
+        $perPage = $request->query('per_page', 15);
 
         $query = Course::query();
 
-        $scope = auth()->user()->userScopes()->first();
+        $user = $request->user();
 
-        if ($scope) {
-            match ($scope->scope_type) {
+        if (! $user->hasRole('MINISTRY_ADMIN')) {
+            $scope = $user->userScopes()
+                ->where('scope_type', 'DEPARTMENT')
+                ->firstOrFail();
 
-                'UNIVERSITY' => $query->whereHas(
-                    'department.faculty',
-                    fn ($q) => $q->where(
-                        'university_id',
-                        $scope->scope_id
-                    )
-                ),
-
-                'FACULTY' => $query->whereHas(
-                    'department',
-                    fn ($q) => $q->where(
-                        'faculty_id',
-                        $scope->scope_id
-                    )
-                ),
-
-                'DEPARTMENT' => $query->where(
-                    'department_id',
-                    $scope->scope_id
-                ),
-
-                default => null,
-            };
+            $query->where('department_id', $scope->scope_id);
         }
 
         $courses = QueryBuilder::for($query)
@@ -64,7 +47,7 @@ class CourseController extends Controller
                 'is_active',
             )
             ->latest()
-            ->paginate($per_page);
+            ->paginate($perPage);
 
         return $this->ok(
             'Courses retrieved successfully.',
@@ -73,14 +56,18 @@ class CourseController extends Controller
                 ->getData(true)
         );
     }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreCourseRequest $request)
     {
+        $this->authorize('create', Course::class);
+        $validated = $request->validated();
+        $department = Department::findOrFail($validated['department_id']);
+
+        $this->authorize('createForDepartment', [Course::class, $department]);
         $course = Course::create(
-            $request->validated()
+            $validated
         );
 
         $course->load('department:id,name');
@@ -98,6 +85,7 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
+        $this->authorize('view', $course);
         $course->load(
             'department:id,name'
         );
@@ -114,9 +102,17 @@ class CourseController extends Controller
      */
     public function update(UpdateCourseRequest $request, Course $course)
     {
-        $course->update(
-            $request->validated()
-        );
+        $this->authorize('update', $course);
+
+        $validated = $request->validated();
+
+        if (isset($validated['department_id'])) {
+            $department = Department::findOrFail($validated['department_id']);
+
+            $this->authorize('createForDepartment', [Course::class, $department]);
+        }
+
+        $course->update($validated);
 
         return $this->ok(
             'Course updated successfully.',
@@ -125,12 +121,12 @@ class CourseController extends Controller
             ))->toArray($request)
         );
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Course $course)
     {
+        $this->authorize('delete', $course);
         $course->delete();
 
         return $this->ok(

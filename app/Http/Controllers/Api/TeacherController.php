@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTeacherRequest;
 use App\Http\Requests\UpdateTeacherRequest;
 use App\Http\Resources\TeacherResource;
+use App\Models\Department;
 use App\Models\Teacher;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -21,30 +22,39 @@ class TeacherController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->query('per_page', 15);
+        $this->authorize('viewAny', Teacher::class);
 
-        $departmentId = auth()->user()
-            ->userScopes()
-            ->where('scope_type', 'DEPARTMENT')
-            ->value('scope_id');
+        $perPage = $request->query('per_page', 15);
 
-        $teachers = QueryBuilder::for(Teacher::class)
-            ->whereHas('departments', function ($q) use ($departmentId) {
+        $query = Teacher::query();
+
+        $user = $request->user();
+
+        if (! $user->hasRole('MINISTRY_ADMIN')) {
+            $departmentId = $user->userScopes()
+                ->where('scope_type', 'DEPARTMENT')
+                ->value('scope_id');
+
+            if (! $departmentId) {
+                return $this->error('You are not assigned to a department.', 403);
+            }
+
+            $query->whereHas('departments', function ($q) use ($departmentId) {
                 $q->where('departments.id', $departmentId);
-            })
+            });
+        }
+
+        $teachers = QueryBuilder::for($query)
             ->allowedFilters(
-                AllowedFilter::callback(
-                    'search',
-                    function ($query, $value) {
-                        $query->whereHas('user', function ($q) use ($value) {
-                            $q->where('name', 'like', "%{$value}%");
-                        });
-                    }
-                ),
+                AllowedFilter::callback('search', function ($query, $value) {
+                    $query->whereHas('user', function ($q) use ($value) {
+                        $q->where('name', 'like', "%{$value}%");
+                    });
+                }),
             )
-            ->with('user:id,name')
+            ->with('user:id,name', 'departments:id,name')
             ->latest()
-            ->paginate($per_page);
+            ->paginate($perPage);
 
         return $this->ok(
             'Teachers retrieved successfully.',
@@ -59,8 +69,14 @@ class TeacherController extends Controller
      */
     public function store(StoreTeacherRequest $request)
     {
+        $this->authorize('create', Teacher::class);
+        $validated = $request->validated();
+
+        $department = Department::findOrFail($validated['department_id']);
+
+        $this->authorize('createForDepartment', [Teacher::class, $department]);
         $teacher = Teacher::create(
-            $request->validated()
+            $validated
         );
 
         return $this->success(
@@ -77,6 +93,7 @@ class TeacherController extends Controller
      */
     public function show(Teacher $teacher)
     {
+        $this->authorize('view', $teacher);
         $teacher->load('user:id,name');
 
         return $this->ok(
@@ -91,6 +108,7 @@ class TeacherController extends Controller
      */
     public function update(UpdateTeacherRequest $request, Teacher $teacher)
     {
+        $this->authorize('update', $teacher);
         $teacher->update(
             $request->validated()
         );
@@ -108,6 +126,7 @@ class TeacherController extends Controller
      */
     public function destroy(Teacher $teacher)
     {
+        $this->authorize('delete', $teacher);
         $teacher->delete();
 
         return $this->ok(

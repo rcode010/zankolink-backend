@@ -29,6 +29,7 @@ class LetterController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Letter::class);
         $per_page = $request->query('per_page', 15);
 
         $userId = auth()->id();
@@ -67,6 +68,7 @@ class LetterController extends Controller
      */
     public function store(StoreLetterRequest $request, QrCodeService $qrCodeService)
     {
+        $this->authorize('create', Letter::class);
         $data = $request->validated();
 
         $data['original_sender_id'] = auth()->id();
@@ -122,6 +124,7 @@ class LetterController extends Controller
      */
     public function show(Letter $letter)
     {
+        $this->authorize('view', $letter);
         return $this->ok(
             'Letter retrieved successfully',
             (new LetterResource(
@@ -146,6 +149,7 @@ class LetterController extends Controller
      */
     public function update(UpdateLetterRequest $request, Letter $letter)
     {
+        $this->authorize('update', $letter);
         $credentials = $request->validated();
 
         if ($letter->receiver_id === (int) $credentials['receiver_id']) {
@@ -167,6 +171,7 @@ class LetterController extends Controller
 
     public function recentLetters(Request $request)
     {
+        $this->authorize('viewAny', Letter::class);
         $user = auth()->user();
         $letters = Letter::with([
             'sender:id,name',
@@ -182,12 +187,11 @@ class LetterController extends Controller
 
     public function raiseLetter(Letter $letter, RaiseLetterRequest $request)
     {
+        $this->authorize('raise', $letter);
         $user = auth()->user();
         $credentials = $request->validated();
 
-        if ($letter->receiver_id !== $user->id) {
-            return $this->error('You are not allowed to raise this letter.', 403);
-        }
+
 
         if ($letter->receiver_id === (int) $credentials['receiver_id']) {
             return $this->error("New receiver can't be the same as current one.", 400);
@@ -221,6 +225,7 @@ class LetterController extends Controller
 
     public function inbox(Request $request)
     {
+        $this->authorize('viewAny', Letter::class);
         $user = $request->user();
 
         $letters = QueryBuilder::for(Letter::class)
@@ -263,6 +268,7 @@ class LetterController extends Controller
         );
     }
     public function outbox(Request $request){
+        $this->authorize('viewAny', Letter::class);
         $user = $request->user();
 
         $letters = QueryBuilder::for(Letter::class)
