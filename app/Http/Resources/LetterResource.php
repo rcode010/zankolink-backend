@@ -32,6 +32,9 @@ class LetterResource extends JsonResource
             'is_archived' => (bool) $this->is_archived,
             'status' => $this->status,
             'qr_code_path' => $this->qr_code_path,
+            'qr_code_url' => $this->qr_code_path
+                ? Storage::disk('public')->url($this->qr_code_path)
+                : null,
             'payload' => $this->payload,
 
             'created_at' => $this->created_at,
