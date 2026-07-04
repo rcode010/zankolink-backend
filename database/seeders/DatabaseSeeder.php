@@ -158,6 +158,7 @@ class DatabaseSeeder extends Seeder
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
                 'create stamps', 'view stamps',
+                'view signatures','create signatures',
                 'view reports','forward letters','view letter broadcast'
             ],
 
@@ -171,6 +172,7 @@ class DatabaseSeeder extends Seeder
                 'update department seats', 'assign course students',
                 'view course students',
                 'create stamps', 'view stamps',
+                'view signatures','create signatures',
                 'update course students', 'delete course students',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments', 'forward letters','view letter broadcast'

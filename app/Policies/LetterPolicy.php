@@ -136,7 +136,6 @@ class LetterPolicy
         if (! $user->hasPermissionTo('create stamps')) {
             return false;
         }
-
         return $letter->status === 'pending'
             && (int) $letter->receiver_id === (int) $user->id;
     }
