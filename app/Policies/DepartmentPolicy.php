@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use App\Models\Department;
+use App\Models\Faculty;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class DepartmentPolicy
 {
@@ -13,7 +13,8 @@ class DepartmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasPermissionTo('view departments');
+
     }
 
     /**
@@ -21,7 +22,36 @@ class DepartmentPolicy
      */
     public function view(User $user, Department $department): bool
     {
-        return false;
+        if ($user->hasRole('MINISTRY_ADMIN')) {
+            return true;
+        }
+
+        // Head of Department can view their own department
+        if ($user->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->where('scope_id', $department->id)
+            ->exists()
+        ) {
+            return true;
+        }
+
+        // Dean can view departments inside their faculty
+        if ($user->userScopes()
+            ->where('scope_type', 'FACULTY')
+            ->where('scope_id', $department->faculty_id)
+            ->exists()
+        ) {
+            return true;
+        }
+
+        $universityId = $department->faculty?->university_id
+            ?? $department->faculty()->value('university_id');
+
+        // University admins can view departments inside their university
+        return $user->userScopes()
+            ->where('scope_type', 'UNIVERSITY')
+            ->where('scope_id', $universityId)
+            ->exists();
     }
 
     /**
@@ -29,7 +59,13 @@ class DepartmentPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        if ($user->hasRole('MINISTRY_ADMIN')) {
+            return true;
+        }
+
+        return $user->userScopes()
+            ->whereIn('scope_type', ['FACULTY', 'UNIVERSITY'])
+            ->exists();
     }
 
     /**
@@ -37,17 +73,27 @@ class DepartmentPolicy
      */
     public function update(User $user, Department $department): bool
     {
-        // MINISTRY
-        if($user->hasRole('MINISTRY_ADMIN')){
+        if ($user->hasRole('MINISTRY_ADMIN')) {
             return true;
         }
 
-        return $user->userScopes()
-            ->where('scope_type', "FACULTY")
+        // Dean can update departments inside their faculty
+        if ($user->userScopes()
+            ->where('scope_type', 'FACULTY')
             ->where('scope_id', $department->faculty_id)
+            ->exists()
+        ) {
+            return true;
+        }
+
+        $universityId = $department->faculty?->university_id
+            ?? $department->faculty()->value('university_id');
+
+        // University admins can update departments inside their university
+        return $user->userScopes()
+            ->where('scope_type', 'UNIVERSITY')
+            ->where('scope_id', $universityId)
             ->exists();
-
-
     }
 
     /**
@@ -55,7 +101,7 @@ class DepartmentPolicy
      */
     public function delete(User $user, Department $department): bool
     {
-        return false;
+        return $user->hasRole('MINISTRY_ADMIN');
     }
 
     /**
@@ -72,5 +118,37 @@ class DepartmentPolicy
     public function forceDelete(User $user, Department $department): bool
     {
         return false;
+    }
+    public function createForFaculty(User $user, Faculty $faculty): bool
+    {
+        if ($user->hasRole('MINISTRY_ADMIN')) {
+            return true;
+        }
+
+        // Dean can create department inside their own faculty
+        if ($user->userScopes()
+            ->where('scope_type', 'FACULTY')
+            ->where('scope_id', $faculty->id)
+            ->exists()
+        ) {
+            return true;
+        }
+
+        // University admin can create department inside faculties of their own university
+        return $user->userScopes()
+            ->where('scope_type', 'UNIVERSITY')
+            ->where('scope_id', $faculty->university_id)
+            ->exists();
+    }
+    public function manageCourseSelections(User $user, Department $department): bool
+    {
+        if ($user->hasRole('MINISTRY_ADMIN')) {
+            return true;
+        }
+
+        return $user->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->where('scope_id', $department->id)
+            ->exists();
     }
 }

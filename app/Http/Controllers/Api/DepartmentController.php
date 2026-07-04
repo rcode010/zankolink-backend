@@ -9,6 +9,8 @@ use App\Http\Requests\UpdateDepartmentSeatRequest;
 use App\Http\Resources\DepartmentResource;
 use App\Models\CourseSelection;
 use App\Models\Department;
+use App\Models\Faculty;
+use App\Models\Student;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -24,11 +26,12 @@ class DepartmentController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Department::class);
         $per_page = $request->query('per_page', 15);
 
         $query = Department::query();
 
-        $scope = auth()->user()->userScopes()->first();;
+        $scope = auth()->user()->userScopes()->first();
 
         if ($scope) {
             match ($scope->scope_type) {
@@ -72,8 +75,14 @@ class DepartmentController extends Controller
      */
     public function store(StoreDepartmentRequest $request)
     {
+        $this->authorize('create', Department::class);
+        $validated = $request->validated();
+        $faculty = Faculty::findOrFail($validated['faculty_id']);
+
+        $this->authorize('createForFaculty', [Department::class, $faculty]);
+
         $department = Department::create(
-            $request->validated()
+            $validated
         );
 
         $department->load('faculty:id,name');
@@ -90,6 +99,7 @@ class DepartmentController extends Controller
      */
     public function show(Department $department)
     {
+        $this->authorize('view', $department);
         $department->load('faculty:id,name', 'admin:id,name');
 
         return $this->ok(
@@ -122,6 +132,7 @@ class DepartmentController extends Controller
      */
     public function destroy(Department $department)
     {
+        $this->authorize('delete', $department);
         $department->delete();
 
         return $this->ok(
@@ -134,6 +145,7 @@ class DepartmentController extends Controller
      */
     public function updateSeat(UpdateDepartmentSeatRequest $request, Department $department)
     {
+        $this->authorize('update', $department);
         $department->update($request->validated());
 
         return $this->success(
@@ -149,13 +161,18 @@ class DepartmentController extends Controller
      */
     public function approveStudentSelection(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'academic_year_id' => 'required|exists:academic_years,id',
         ]);
 
-        $studentId = $request->student_id;
-        $academicYearId = $request->academic_year_id;
+        $student = Student::findOrFail($validated['student_id']);
+        $department = Department::findOrFail($student->department_id);
+
+        $this->authorize('manageCourseSelections', $department);
+
+        $studentId = $validated['student_id'];
+        $academicYearId = $validated['academic_year_id'];
 
         $pendingSelections = CourseSelection::where('student_id', $studentId)
             ->where('academic_year_id', $academicYearId)
@@ -167,7 +184,6 @@ class DepartmentController extends Controller
         }
 
         DB::transaction(function () use ($studentId, $academicYearId, $pendingSelections) {
-
             CourseSelection::where('student_id', $studentId)
                 ->where('academic_year_id', $academicYearId)
                 ->where('status', 'pending')
@@ -177,6 +193,7 @@ class DepartmentController extends Controller
                 ]);
 
             $enrollmentData = [];
+
             foreach ($pendingSelections as $selection) {
                 $enrollmentData[] = [
                     'student_id' => $studentId,
@@ -204,36 +221,49 @@ class DepartmentController extends Controller
      */
     public function getStudentSelectedCourses(Request $request)
     {
-        // Validate incoming request. student_id is optional (sometimes) to allow fetching all records.
-        $request->validate([
+        $validated = $request->validate([
             'student_id' => 'sometimes|exists:students,id',
             'academic_year_id' => 'required|exists:academic_years,id',
         ]);
 
-        // Eager load both course and student relations for performance and details
-        $query = CourseSelection::with(['course', 'student:id,name,email'])
-            ->where('academic_year_id', $request->academic_year_id)
+        $user = $request->user();
+
+        $query = CourseSelection::with(['course', 'student:id,name,email,department_id'])
+            ->where('academic_year_id', $validated['academic_year_id'])
             ->where('status', 'pending');
 
-        // If student_id is provided, filter the query for that specific student
-        if ($request->has('student_id') && $request->student_id != '') {
-            $query->where('student_id', $request->student_id);
+        if (! empty($validated['student_id'])) {
+            $student = Student::findOrFail($validated['student_id']);
+            $department = Department::findOrFail($student->department_id);
+
+            $this->authorize('manageCourseSelections', $department);
+
+            $query->where('student_id', $student->id);
+        } elseif (! $user->hasRole('MINISTRY_ADMIN')) {
+            $scope = $user->userScopes()
+                ->where('scope_type', 'DEPARTMENT')
+                ->firstOrFail();
+
+            $department = Department::findOrFail($scope->scope_id);
+
+            $this->authorize('manageCourseSelections', $department);
+
+            $query->whereHas('student', function ($q) use ($department) {
+                $q->where('department_id', $department->id);
+            });
         }
 
-        // Fetch the newest records first
         $selections = $query->latest()->get();
 
-        // Return a 404 response if no pending selections match the criteria
         if ($selections->isEmpty()) {
             return $this->error('No pending course selections found.', 404);
         }
 
-        // Map and format the collection data into a clean structure
         $selectedCourses = $selections->map(function ($selection) {
             return [
                 'id' => $selection->id,
                 'student_id' => $selection->student_id,
-                'student_name' => $selection->student->name ?? 'N/A', // Useful when listing all students
+                'student_name' => $selection->student->name ?? 'N/A',
                 'course_id' => $selection->course->id,
                 'course_name' => $selection->course->name,
                 'course_code' => $selection->course->code,
@@ -241,7 +271,7 @@ class DepartmentController extends Controller
                 'status' => $selection->status,
                 'selected_at' => $selection->created_at,
             ];
-        })->all(); // Convert the collection to a plain PHP array for the API response trait
+        })->all();
 
         return $this->ok('Pending courses retrieved successfully.', $selectedCourses);
     }
