@@ -31,7 +31,7 @@ class StoreUniversityRequest extends FormRequest
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after:start_date'],
             'established_year' => ['required', 'date'],
-            'is_active' => ['required', 'boolean'],
+            'is_active' => ['nullable', 'boolean'],
 
             // Faculties array
             'faculties' => ['required', 'array', 'min:1'],

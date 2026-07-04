@@ -8,5 +8,6 @@ Route::prefix('students')->group(function () {
     Route::post('/', [StudentController::class, 'store'])->middleware('permission:create students');
     Route::get('/{student}', [StudentController::class, 'show'])->middleware('permission:view students');
     Route::patch('/{student}', [StudentController::class, 'update'])->middleware('permission:update students');
+    Route::delete('/{student}', [StudentController::class, 'destroy'])->middleware('permission:delete students');
     Route::post('/course-selection', [StudentSelectionController::class, 'saveCourseSelection']);
 });

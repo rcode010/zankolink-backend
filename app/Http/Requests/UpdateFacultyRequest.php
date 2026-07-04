@@ -25,7 +25,7 @@ class UpdateFacultyRequest extends FormRequest
         return [
             'name' => 'sometimes|string|max:255',
             'admin_id' => 'nullable|exists:users,id',
-            'is_active' => 'sometimes|boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 }

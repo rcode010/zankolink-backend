@@ -30,8 +30,9 @@ class UpdateDepartmentRequest extends FormRequest
 
         return [
             'name' => 'sometimes|required|string|max:255',
+            'admin_id' => 'nullable|exists:users,id',
             'faculty_id' => 'sometimes|required|exists:faculties,id',
-            'is_active' => 'sometimes|boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 }
