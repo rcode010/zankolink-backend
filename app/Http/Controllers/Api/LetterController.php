@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RaiseLetterRequest;
 use App\Http\Requests\StoreLetterRequest;
 use App\Http\Requests\UpdateLetterRequest;
+use App\Http\Resources\LetterBroadcastResource;
 use App\Http\Resources\LetterResource;
 use App\Models\Letter;
+use App\Models\LetterBroadcast;
+use App\Models\LetterFlow;
 use App\Models\LetterSignature;
 use App\Services\QrCodeService;
 use App\Traits\ApiResponses;
@@ -191,6 +194,8 @@ class LetterController extends Controller
         }
 
         DB::transaction(function () use ($letter, $user, $credentials) {
+            $oldReceiverId = $letter->receiver_id;
+
             LetterSignature::create([
                 'letter_id' => $letter->id,
                 'user_id' => $user->id,
@@ -200,12 +205,18 @@ class LetterController extends Controller
                 'sender_id' => $user->id,
                 'receiver_id' => $credentials['receiver_id'],
             ]);
+
+            LetterFlow::create([
+                'letter_id' => $letter->id,
+                'action' => 'signed and raised',
+                'actor_id' => $user->id,
+                'from_recipient_id' => $oldReceiverId,
+                'to_recipient_id' => $credentials['receiver_id'],
+                'note' => $credentials['note'] ?? null,
+            ]);
         });
 
-        return $this->ok(
-            'Letter raised'
-        );
-
+        return $this->ok('Letter raised');
     }
 
     public function inbox(Request $request)
@@ -216,12 +227,40 @@ class LetterController extends Controller
             ->where('receiver_id', $user->id)
             ->with(['sender:id,name', 'receiver:id,name'])
             ->allowedFilters(
-                AllowedFilter::exact('status')
-            )->defaultSort(
-                '-created_at',
-            )->get();
+                AllowedFilter::exact('status'),
+            )
+            ->defaultSort('-created_at')
+            ->get()
+            ->map(function ($letter) use ($request) {
+                return [
+                    'inbox_type' => 'letter',
+                    'created_at' => $letter->created_at,
+                    'data' => (new LetterResource($letter))->resolve($request),
+                ];
+            });
 
-        return $this->ok('Inbox letters successfully', LetterResource::collection($letters)->response()->getData(true));
+        $broadcasts = LetterBroadcast::query()
+            ->with('attachments')
+            ->where('is_active', true)
+            ->latest()
+            ->get()
+            ->map(function ($broadcast) use ($request) {
+                return [
+                    'inbox_type' => 'letter_broadcast',
+                    'created_at' => $broadcast->created_at,
+                    'data' => (new LetterBroadcastResource($broadcast))->resolve($request),
+                ];
+            });
+
+        $inbox = $letters
+            ->concat($broadcasts)
+            ->sortByDesc('created_at')
+            ->values();
+
+        return $this->ok(
+            'Inbox letters fetched successfully',
+            $inbox->toArray()
+        );
     }
     public function outbox(Request $request){
         $user = $request->user();

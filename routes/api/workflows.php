@@ -7,5 +7,4 @@ Route::prefix('letters/{letter}')->whereNumber('letter')->group(function () {
     Route::post('/approve', [LetterWorkflowController::class, 'approve'])->middleware('permission:approve letters');
     Route::post('/decline', [LetterWorkflowController::class, 'decline'])->middleware('permission:decline letters');
     Route::post('/forward', [LetterWorkflowController::class, 'forward'])->middleware('permission:forward letters');
-    Route::post('/raise', [LetterWorkflowController::class, 'raise'])->middleware('permission:raise letters');
 });

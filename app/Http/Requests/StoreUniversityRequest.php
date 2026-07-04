@@ -40,6 +40,8 @@ class StoreUniversityRequest extends FormRequest
             'faculties.*.name' => ['required', 'string', 'max:255', 'distinct'],
             'faculties.*.location' => ['nullable', 'string', 'max:255'],
             'faculties.*.is_active' => ['nullable', 'boolean'],
+            'faculties.*.admin_id' => ['nullable', 'exists:users,id'],
+
 
             // Departments inside each faculty
             'faculties.*.departments' => ['required', 'array', 'min:1'],
@@ -47,6 +49,7 @@ class StoreUniversityRequest extends FormRequest
             // Required fields inside each department
             'faculties.*.departments.*.name' => ['required', 'string', 'max:255'],
             'faculties.*.departments.*.is_active' => ['nullable', 'boolean'],
+            'faculties.*.departments.*.admin_id' => ['nullable', 'exists:users,id'],
         ];
     }
 }
