@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUniversityRequest;
 use App\Http\Requests\UpdateUniversityRequest;
 use App\Http\Resources\UniversityResource;
-use App\Models\Department;
-use App\Models\Faculty;
 use App\Models\University;
 use App\Services\CreateUniversityStructureService;
 use App\Traits\ApiResponses;
@@ -25,6 +23,7 @@ class UniversityController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', University::class);
         $per_page = $request->query('per_page', 15);
 
         $universities = QueryBuilder::for(University::class)
@@ -56,13 +55,13 @@ class UniversityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUniversityRequest $request,CreateUniversityStructureService $createUniversityService)
+    public function store(StoreUniversityRequest $request, CreateUniversityStructureService $createUniversityService)
     {
-        $university = DB::transaction(function () use ($request,$createUniversityService) {
+        $this->authorize('create', University::class);
 
-            return $createUniversityService->execute($request->validated());
-        });
-        return $this->created("University Created successfully",(new UniversityResource($university))->resolve());
+        $university = $createUniversityService->execute($request->validated());
+
+        return $this->created('University Created successfully', (new UniversityResource($university))->resolve());
     }
 
     /**
@@ -70,6 +69,7 @@ class UniversityController extends Controller
      */
     public function show(University $university)
     {
+        $this->authorize('view', $university);
         $university->load('admin:id,name');
 
         return $this->ok(
@@ -84,6 +84,7 @@ class UniversityController extends Controller
      */
     public function update(UpdateUniversityRequest $request, University $university)
     {
+        $this->authorize('update', $university);
         $university->update(
             $request->validated()
         );
@@ -100,6 +101,7 @@ class UniversityController extends Controller
      */
     public function destroy(University $university)
     {
+        $this->authorize('delete', $university);
         DB::transaction(function () use ($university) {
             foreach ($university->faculties as $faculty) {
                 $faculty->departments()->delete();
