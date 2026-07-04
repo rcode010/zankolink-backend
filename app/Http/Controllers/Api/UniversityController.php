@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUniversityRequest;
 use App\Http\Requests\UpdateUniversityRequest;
 use App\Http\Resources\UniversityResource;
+use App\Models\Department;
+use App\Models\Faculty;
 use App\Models\University;
+use App\Services\CreateUniversityStructureService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -31,7 +35,7 @@ class UniversityController extends Controller
                     function ($query, $value) {
                         $query->where(function ($q) use ($value) {
                             $q->where('name', 'like', "%{$value}%")
-                            ->orWhere('location', 'like', "%{$value}%");
+                                ->orWhere('location', 'like', "%{$value}%");
                         });
                     }
                 ),
@@ -52,17 +56,13 @@ class UniversityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUniversityRequest $request)
+    public function store(StoreUniversityRequest $request,CreateUniversityStructureService $createUniversityService)
     {
-        $university = University::create(
-            $request->validated()
-        );
+        $university = DB::transaction(function () use ($request,$createUniversityService) {
 
-        return $this->success(
-            'University created successfully.',
-            (new UniversityResource($university))->toArray($request),
-            201
-        );
+            return $createUniversityService->execute($request->validated());
+        });
+        return $this->created("University Created successfully",(new UniversityResource($university))->resolve());
     }
 
     /**
@@ -100,7 +100,14 @@ class UniversityController extends Controller
      */
     public function destroy(University $university)
     {
-        $university->delete();
+        DB::transaction(function () use ($university) {
+            foreach ($university->faculties as $faculty) {
+                $faculty->departments()->delete();
+                $faculty->delete();
+            }
+
+            $university->delete();
+        });
 
         return $this->ok(
             'University deleted successfully.'
