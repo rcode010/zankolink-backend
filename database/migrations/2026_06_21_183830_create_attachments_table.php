@@ -25,6 +25,8 @@ return new class extends Migration
             $table->text('file_url');
 
             $table->timestamps();
+
+            $table->index('letter_id', 'attachments_letter_id_idx');
         });
     }
 

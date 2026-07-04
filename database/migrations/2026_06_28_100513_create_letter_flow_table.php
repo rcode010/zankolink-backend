@@ -31,6 +31,13 @@ return new class extends Migration
             $table->unsignedBigInteger('to_recipient_id')->nullable();
 
             $table->timestamps();
+
+            $table->index(['letter_id', 'created_at'], 'letter_flow_letter_created_idx');
+            $table->index('actor_id', 'letter_flow_actor_id_idx');
+            $table->index('from_recipient_id', 'letter_flow_from_recipient_idx');
+            $table->index('to_recipient_id', 'letter_flow_to_recipient_idx');
+            $table->index(['scope_type', 'scope_id'], 'letter_flow_scope_idx');
+            $table->index('action', 'letter_flow_action_idx');
         });
     }
 

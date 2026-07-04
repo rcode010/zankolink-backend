@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('speciality');
             $table->softDeletes();
             $table->timestamps();
+
+            $table->index('user_id', 'teachers_user_id_idx');
         });
     }
 
