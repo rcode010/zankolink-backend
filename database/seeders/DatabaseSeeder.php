@@ -60,7 +60,7 @@ class DatabaseSeeder extends Seeder
             // Users
             'view users', 'view user', 'create users', 'update users', 'delete users', 'activate users', 'deactivate users',
             // Teachers
-            'view teachers', 'create teachers', 'update teachers', 'delete teachers', 'assign teachers',
+            'view teachers','view teacher', 'create teachers', 'update teachers', 'delete teachers', 'assign teachers',
             // Students
             'view students', 'create students', 'update students', 'delete students',
             // Courses
@@ -153,7 +153,7 @@ class DatabaseSeeder extends Seeder
             // Faculty
             'DEAN' => [
                 'view user','view university', 'view faculty', 'view departments', 'create departments', 'update departments',
-                'view teachers', 'create teachers', 'update teachers', 'assign teachers',
+                'view teachers','view teacher', 'create teachers', 'update teachers', 'assign teachers',
                 'view students', 'view courses', 'create courses', 'update courses',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
@@ -163,7 +163,7 @@ class DatabaseSeeder extends Seeder
 
             // Department
             'HEAD_OF_DEPARTMENT' => [
-                'view user', 'view department','view faculty','view university', 'view teachers', 'assign teachers',
+                'view user', 'view department','view faculty','view university', 'view teachers','view teacher', 'assign teachers',
                 'view students',
                 'view courses', 'create courses', 'update courses',
                 'assign course teachers', 'view course teachers',
