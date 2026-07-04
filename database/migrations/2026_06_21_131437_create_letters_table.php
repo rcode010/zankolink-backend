@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('letters', function (Blueprint $table) {
             $table->id();
-            $table->string('letter_number')->unique();
+            $table->string('letter_number');
             $table->foreignId('original_sender_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('sender_id')->constrained('users');
             $table->foreignId('receiver_id')->constrained('users');
@@ -37,6 +37,8 @@ return new class extends Migration
             $table->uuid('letter_uuid')->unique()->nullable();
             $table->string('verification_hash')->nullable();
             $table->timestamps();
+
+            $table->unique(['letter_number', 'academic_year_id']);
 
         });
     }
