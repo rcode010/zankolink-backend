@@ -11,8 +11,12 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\VerifyRequest;
 use App\Http\Resources\UserResource;
 use App\Mail\TwoFactorCodeMail;
+use App\Models\Department;
+use App\Models\Faculty;
+use App\Models\University;
 use App\Models\User;
 use App\Models\UserScope;
+use App\Services\UserScopeResolverService;
 use App\Traits\ApiResponses;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
@@ -61,7 +65,7 @@ class AuthController extends Controller
     }
 
     // Login
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, UserScopeResolverService $scopeResolver)
     {
 
         $credentials = $request->validated();
@@ -112,15 +116,18 @@ class AuthController extends Controller
         }
         $token = $user->createToken('api-token')->plainTextToken;
 
+        $user->load('roles:id,name');
+
+        $userData = (new UserResource($user))->resolve();
+
+        $userData['scopes'] = $scopeResolver->execute($user);
         return $this->ok(
-            'User logged in successfully', [
+            'User logged in successfully',
+            [
                 'token' => $token,
-                'user' => (new UserResource($user->load([
-                    'roles:id,name',
-                    'userScopes.role:id,name',
-                ])))
-                    ->resolve(),
-        ]);
+                'user' => $userData,
+            ]
+        );
     }
 
     public function verify(VerifyRequest $request)
