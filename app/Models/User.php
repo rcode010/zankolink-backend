@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AllowedRole;
+use App\Enums\AllowedRoles;
 use App\Notifications\QueuedResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -73,5 +74,8 @@ class User extends Authenticatable
     }
     public function sendPasswordResetNotification($token){
         $this->notify(new QueuedResetPasswordNotification($token));
+    }
+    public function isMinistryAdmin(): bool{
+        return $this->hasRole("MINISTRY_ADMIN");
     }
 }
