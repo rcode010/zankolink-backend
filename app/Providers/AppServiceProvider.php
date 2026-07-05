@@ -27,7 +27,10 @@ class AppServiceProvider extends ServiceProvider
         Letter::observe(LetterObserver::class);
         University::observe(UniversityObserver::class);
         ResetPassword::createUrlUsing(function ($user, string $token) {
-            return 'https://e-zanko.vercel.app/reset-password?token='.$token.'&email='.$user->email;
+            return 'https://e-zanko.vercel.app/reset-password?token='
+                .$token
+                .'&email='
+                .urlencode($user->email);
         });
     }
 }
