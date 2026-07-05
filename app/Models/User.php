@@ -67,9 +67,9 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function isProtected()
+    public function canAccessAdminPanel(): bool
     {
-        return $this->role && AllowedRole::tryFrom($this->role->name) == null;
+        return $this->hasAnyRole(AllowedRoles::values());
     }
     public function sendPasswordResetNotification($token){
         $this->notify(new QueuedResetPasswordNotification($token));
