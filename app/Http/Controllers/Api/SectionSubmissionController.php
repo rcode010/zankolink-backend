@@ -141,7 +141,7 @@ class SectionSubmissionController extends Controller
      */
     public function destroy(SectionSubmission $submission)
     {
-        foreach($submission->attachments() as $attachment){
+        foreach($submission->attachments as $attachment){
             Storage::disk('public')->delete($attachment->file_url);
         }
         $submission->delete();
