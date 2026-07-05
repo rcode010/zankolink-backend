@@ -75,6 +75,16 @@ class LetterPolicy
                 || (int) $letter->receiver_id === (int) $user->id
             );
     }
+    public function sign(User $user, Letter $letter): bool
+    {
+        if (! $user->hasPermissionTo('create signatures')) {
+            return false;
+        }
+
+        return $letter->status === 'pending'
+            && (int) $letter->receiver_id === (int) $user->id;
+    }
+
 
     /**
      * Determine whether the user can raise/sign a letter.
