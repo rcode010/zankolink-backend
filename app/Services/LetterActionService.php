@@ -69,7 +69,7 @@ class LetterActionService
         $department->teachers()->syncWithoutDetaching([
             $teacher->id,
         ]);
-        Mail::to($user->email)->afterCommit()->queue(new AccountCreatedMail($user, $plainPassword));
+        Mail::to($user->email)->queue((new AccountCreatedMail($user, $plainPassword))->afterCommit());
     }
 
     private function fireTeacher(array $payload): void
