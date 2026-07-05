@@ -270,7 +270,14 @@ class LetterController extends Controller
     public function outbox(Request $request){
         $this->authorize('viewAny', Letter::class);
         $user = $request->user();
+        if($user->isMinistryAdmin()){
+            $broadcasts = LetterBroadcast::query()
+                ->with('attachments')
+                ->latest()
+                ->get();
 
+            return $this->ok("Broadcast letters fetched successfully", $broadcasts->toArray());
+        }
         $letters = QueryBuilder::for(Letter::class)
             ->where('sender_id', $user->id)
             ->where('original_sender_id', $user->id)
