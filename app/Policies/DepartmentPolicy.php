@@ -95,6 +95,14 @@ class DepartmentPolicy
             ->where('scope_id', $universityId)
             ->exists();
     }
+    public function updateSeats(User $user, Department $department): bool{
+        if ($user->hasRole('MINISTRY_ADMIN')) {
+            return true;
+        }
+        return $user->userScopes()
+        ->where('scope_type', 'DEPARTMENT')
+        ->where('scope_id', $department->id)->exists();
+    }
 
     /**
      * Determine whether the user can delete the model.
