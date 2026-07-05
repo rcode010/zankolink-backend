@@ -60,6 +60,7 @@ class SignatureController extends Controller
         $validated = $request->validated();
 
         $letter = Letter::find($validated['letter_id']);
+        $this->authorize('sign', $letter);
         $user = $request->user();
 
         // Check if the letter is already approved or rejected
