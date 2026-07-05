@@ -65,23 +65,13 @@ class AuthController extends Controller
     {
 
         $credentials = $request->validated();
-        $allowedRoles = [
-            'MINISTRY_ADMIN',
-            'MINISTRY_IMPORT_EXPORT_STAFF',
-            'MINISTRY_ADMINISTRATION_HEAD',
-            'UNIVERSITY_ADMIN',
-            'UNIVERSITY_ADMIN_ADMINISTRATION',
-            'UNIVERSITY_ADMIN_STUDENTS',
-            'UNIVERSITY_ADMIN_SCIENCE',
-            'DEAN',
-            'HEAD_OF_DEPARTMENT',
-        ];
+
 
         if (! Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
         }
         $user = Auth::user();
-        if (! $user->hasAnyRole($allowedRoles)) {
+        if (! $user->canAccessAdminPanel()) {
             Auth::logout();
 
             return $this->error('You are not allowed to access the admin panel.', 403);

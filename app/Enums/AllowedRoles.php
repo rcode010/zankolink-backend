@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Enums;
+
+enum AllowedRoles: string
+{
+    case MINISTRY_ADMIN = 'MINISTRY_ADMIN';
+    case MINISTRY_IMPORT_EXPORT_STAFF = 'MINISTRY_IMPORT_EXPORT_STAFF';
+    case MINISTRY_ADMINISTRATION_HEAD = 'MINISTRY_ADMINISTRATION_HEAD';
+
+    case UNIVERSITY_ADMIN = 'UNIVERSITY_ADMIN';
+    case UNIVERSITY_ADMIN_ADMINISTRATION = 'UNIVERSITY_ADMIN_ADMINISTRATION';
+    case UNIVERSITY_ADMIN_STUDENTS = 'UNIVERSITY_ADMIN_STUDENTS';
+    case UNIVERSITY_ADMIN_SCIENCE = 'UNIVERSITY_ADMIN_SCIENCE';
+
+    case DEAN = 'DEAN';
+    case HEAD_OF_DEPARTMENT = 'HEAD_OF_DEPARTMENT';
+
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
+}

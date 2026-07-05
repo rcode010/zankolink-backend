@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\AdminPanelRole;
 use App\Enums\AllowedRole;
+use App\Enums\AllowedRoles;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -66,8 +68,8 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function isProtected()
+    public function canAccessAdminPanel(): bool
     {
-        return $this->role && AllowedRole::tryFrom($this->role->name) == null;
+        return $this->hasAnyRole(AllowedRoles::values());
     }
 }
