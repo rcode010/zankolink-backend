@@ -25,6 +25,8 @@ class CourseResource extends JsonResource
 
             'department' => new DepartmentResource($this->whenLoaded('department')),
 
+            'teachers' => TeacherResource::collection($this->whenLoaded('teachers')),
+
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
