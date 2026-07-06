@@ -249,18 +249,22 @@ class LetterController extends Controller
                 ];
             });
 
-        $broadcasts = LetterBroadcast::query()
-            ->with('attachments')
-            ->where('is_active', true)
-            ->latest()
-            ->get()
-            ->map(function ($broadcast) use ($request) {
-                return [
-                    'inbox_type' => 'letter_broadcast',
-                    'created_at' => $broadcast->created_at,
-                    'data' => (new LetterBroadcastResource($broadcast))->resolve($request),
-                ];
-            });
+        $broadcasts = collect();
+
+        if (! $user->isMinistryAdmin()) {
+            $broadcasts = LetterBroadcast::query()
+                ->with('attachments')
+                ->where('is_active', true)
+                ->latest()
+                ->get()
+                ->map(function ($broadcast) use ($request) {
+                    return [
+                        'inbox_type' => 'letter_broadcast',
+                        'created_at' => $broadcast->created_at,
+                        'data' => (new LetterBroadcastResource($broadcast))->resolve($request),
+                    ];
+                });
+        }
 
         $inbox = $letters
             ->concat($broadcasts)
