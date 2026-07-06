@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('submission_id')->constrained('section_submissions')->onDelete('cascade');
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
+            $table->string('file_name');
+            $table->string('file_type');
+            $table->unsignedBigInteger('file_size');
+            $table->text('file_path');
             $table->timestamps();
         });
     }
