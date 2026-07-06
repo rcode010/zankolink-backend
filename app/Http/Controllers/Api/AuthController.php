@@ -11,9 +11,6 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\VerifyRequest;
 use App\Http\Resources\UserResource;
 use App\Mail\TwoFactorCodeMail;
-use App\Models\Department;
-use App\Models\Faculty;
-use App\Models\University;
 use App\Models\User;
 use App\Models\UserScope;
 use App\Services\UserScopeResolverService;
@@ -70,7 +67,6 @@ class AuthController extends Controller
 
         $credentials = $request->validated();
 
-
         if (! Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
         }
@@ -111,6 +107,7 @@ class AuthController extends Controller
         $userData = (new UserResource($user))->resolve();
 
         $userData['scopes'] = $scopeResolver->execute($user);
+
         return $this->ok(
             'User logged in successfully',
             [
@@ -162,13 +159,13 @@ class AuthController extends Controller
 
         return $this->ok(
             'User logged in successfully', [
-            'token' => $token,
-            'user' => (new UserResource($user->load([
-                'roles:id,name',
-                'userScopes.role:id,name',
-            ])))
-                ->resolve(),
-        ]);
+                'token' => $token,
+                'user' => (new UserResource($user->load([
+                    'roles:id,name',
+                    'userScopes.role:id,name',
+                ])))
+                    ->resolve(),
+            ]);
     }
 
     public function prepareTwoFactor(Request $request)
@@ -291,21 +288,20 @@ class AuthController extends Controller
     }
 
     // Get Profile
-    public function profile()
+    public function profile(UserScopeResolverService $scopeResolver)
     {
         $user = Auth::user();
-        $user->load([
-            'roles:id,name',
-            'userScopes.role:id,name',
-        ]);
+
+        $user->load('roles:id,name');
+
+        $userData = (new UserResource($user))->resolve();
+
+        $userData['scopes'] = $scopeResolver->execute($user);
 
         return $this->ok(
-            'User profile', [
-            'user' => (new UserResource($user->load([
-                'roles:id,name',
-                'userScopes.role:id,name',
-            ])))
-                ->resolve(),
-        ]);
+            'User logged in successfully',
+            $userData
+
+        );
     }
 }
