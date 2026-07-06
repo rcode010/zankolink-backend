@@ -31,7 +31,7 @@ class TwoFactorAuthenticationService
             now()->addMinutes(10)
         );
 
-        //        Mail::to($user->email)->queue(new TwoFactorCodeMail($otp, $user));
+        Mail::to($user->email)->queue(new TwoFactorCodeMail($otp, $user));
 
         return $challengeToken;
     }
