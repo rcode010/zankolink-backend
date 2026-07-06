@@ -104,7 +104,7 @@ class DatabaseSeeder extends Seeder
             ],
 
             'MINISTRY_ADMINISTRATION_HEAD' => [
-                'view letters', 'update letters', 'raise letters',
+                'view letters', 'update letters', 'raise letters','create letters',
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
                 'create stamps', 'view stamps',

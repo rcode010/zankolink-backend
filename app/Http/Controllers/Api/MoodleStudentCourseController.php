@@ -8,27 +8,20 @@ use App\Models\Course;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
-/**
- * Class MoodleStudentCourseController
- * * Manages Moodle-centric academic course delivery, section hierarchies, 
- * learning materials, and contextualized student submission states.
- */
 class MoodleStudentCourseController extends Controller
 {
     use ApiResponses;
 
     /**
-     * Display a listing of all courses the authenticated student is enrolled in.
-     *
-     * @see \App\Http\Middleware\EnsureUserIsStudent Global profile guard handled at route layer.
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * GET /api/moodle/my-courses
+     * List all courses the authenticated student is enrolled in.
+     * Note: student-profile check will be handled by route middleware (not written yet).
      */
     public function myCourses(Request $request)
     {
         $student = $request->user()->student;
 
-        // Eager load only critical relations exposed by CourseResource to mitigate N+1 anomalies
+        // Only load what CourseResource actually exposes (department, teachers)
         $courses = $student->courses()
             ->with([
                 'department:id,name,faculty_id',
@@ -43,17 +36,15 @@ class MoodleStudentCourseController extends Controller
     }
 
     /**
-     * Display general metadata for a specific academic course.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Course  $course
-     * @return \Illuminate\Http\JsonResponse
+     * GET /api/moodle/my-courses/{course}
+     * Show course-level info only (name, code, department, teachers).
+     * Sections/materials/assignments are handled by the sections() endpoint below.
      */
     public function showCourse(Request $request, Course $course)
     {
         $student = $request->user()->student;
 
-        // Record-level access control: Enforce specific student enrollment mapping
+        // Per-record check: this student must be enrolled in THIS course
         if (! $this->studentIsEnrolled($student->id, $course)) {
             return $this->error('You are not enrolled in this course.', 403);
         }
@@ -69,12 +60,9 @@ class MoodleStudentCourseController extends Controller
     }
 
     /**
-     * Retrieve the hierarchical syllabus structure for a course, containing nested 
-     * learning materials, assignments, and localized student submission states.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Course  $course
-     * @return \Illuminate\Http\JsonResponse
+     * GET /api/moodle/my-courses/{course}/sections
+     * Show sections for the course, each with its materials, assignments,
+     * assignment attachments, and this student's own submission status.
      */
     public function sections(Request $request, Course $course)
     {
@@ -84,13 +72,13 @@ class MoodleStudentCourseController extends Controller
             return $this->error('You are not enrolled in this course.', 403);
         }
 
-        // Deep-nest relational data while applying constrained eager loading for privacy optimization
         $sections = $course->sections()
             ->with([
                 'teacher.user:id,name,email',
-                'items', 
-                'submissions.attachments', 
-                // Scope constraints ensure a student cannot view another peer's submission record
+                'items', // course materials
+                'submissions.attachments', // assignments + their attachments
+                // Only load THIS student's own submission per assignment,
+                // not every student's — keeps the response small and private
                 'submissions.studentSubmissions' => function ($query) use ($student) {
                     $query->where('student_id', $student->id);
                 },
@@ -98,7 +86,8 @@ class MoodleStudentCourseController extends Controller
             ->latest()
             ->get()
             ->map(function ($section) {
-                // Manual payload composition blocks accidental underlying DB schema exposure (Zero-leak policy)
+                // Build the response manually so we only expose the fields
+                // the client needs, not the raw model/DB columns
                 return [
                     'id' => $section->id,
                     'title' => $section->title,
@@ -106,7 +95,7 @@ class MoodleStudentCourseController extends Controller
                         'id' => $section->teacher->id,
                         'name' => $section->teacher->user?->name,
                         'email' => $section->teacher->user?->email,
-                    ] : null, // Gracefully handle unassigned sections without structural payload failure
+                    ] : null, // section may have no teacher assigned
                     'materials' => $section->items->map(function ($item) {
                         return [
                             'id' => $item->id,
@@ -116,7 +105,8 @@ class MoodleStudentCourseController extends Controller
                         ];
                     }),
                     'assignments' => $section->submissions->map(function ($submission) {
-                        // eagerLoaded hasMany relations guarantee a Collection response, protecting against null pointers
+                        // Already filtered to this student above,
+                        // so first() is either their submission or null
                         $studentSubmission = $submission->studentSubmissions->first();
 
                         return [
@@ -133,7 +123,6 @@ class MoodleStudentCourseController extends Controller
                                     'file_url' => $attachment->file_url,
                                 ];
                             }),
-                            // Contextual computation of data metrics to establish API contract requirements
                             'submission_status' => $studentSubmission ? 'submitted' : 'not_submitted',
                             'submitted_at' => $studentSubmission?->created_at?->toDateTimeString(),
                         ];
@@ -147,11 +136,8 @@ class MoodleStudentCourseController extends Controller
     }
 
     /**
-     * Assert relational integrity on the course_student pivot table to authorize access.
-     *
-     * @param  int  $studentId
-     * @param  \App\Models\Course  $course
-     * @return bool
+     * Confirm the student has a confirmed enrollment (course_student pivot)
+     * in this course before letting them view its details/sections.
      */
     private function studentIsEnrolled(int $studentId, Course $course): bool
     {

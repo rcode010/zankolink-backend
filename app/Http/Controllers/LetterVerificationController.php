@@ -38,7 +38,7 @@ class LetterVerificationController extends Controller
                             'id',
                             'letter_id',
                             'user_id',
-                            'role_at_time',
+                            'comment',
                             'created_at',
                         ])
                         ->oldest();
