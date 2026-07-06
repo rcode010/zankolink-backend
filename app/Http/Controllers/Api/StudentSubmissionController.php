@@ -72,4 +72,19 @@ class StudentSubmissionController extends Controller
             return $this->error('Failed to submit assignment', 500);
         }
     }
+
+    public function mySubmission(SectionSubmission $submission)
+    {
+        $student = auth()->user()->student;
+
+        $studentSubmissions = StudentSubmission::with('student.user')
+            ->where('submission_id', $submission->id)
+            ->where('student_id', $student->id)
+            ->get();
+
+        return $this->success(
+            'Submission retrieved successfully',
+            StudentSubmissionResource::collection($studentSubmissions)->resolve()
+        );
+    }
 }
