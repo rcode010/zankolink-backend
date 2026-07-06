@@ -11,11 +11,9 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\VerifyRequest;
 use App\Http\Resources\UserResource;
 use App\Mail\TwoFactorCodeMail;
-use App\Models\Department;
-use App\Models\Faculty;
-use App\Models\University;
 use App\Models\User;
 use App\Models\UserScope;
+use App\Services\TwoFactorAuthenticationService;
 use App\Services\UserScopeResolverService;
 use App\Traits\ApiResponses;
 use Illuminate\Auth\Events\PasswordReset;
@@ -65,11 +63,10 @@ class AuthController extends Controller
     }
 
     // Login
-    public function login(LoginRequest $request, UserScopeResolverService $scopeResolver)
+    public function login(LoginRequest $request, UserScopeResolverService $scopeResolver, TwoFactorAuthenticationService $twoFactorAuthenticationService)
     {
 
         $credentials = $request->validated();
-
 
         if (! Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
@@ -82,35 +79,21 @@ class AuthController extends Controller
         }
 
         if ($user->is_two_factor_enabled) {
-            $otp = random_int(100000, 999999);
-            $user->update([
-                'two_factor_code' => Hash::make($otp),
-                'two_factor_expires_at' => now()->addMinutes(10),
-            ]);
-            Auth::logout();
-            //        $token = $user->createToken('api-token')->plainTextToken;
-            $challengeToken = Str::random(64);
-
-            cache()->put(
-                "2fa_challenge_{$challengeToken}",
-                $user->id,
-                now()->addMinutes(10)
-            );
-
-            Mail::to($user->email)->queue(new TwoFactorCodeMail($otp, $user));
+            $challengeToken = $twoFactorAuthenticationService->execute($user);
 
             return $this->ok('OTP sent to your email', [
 
                 'challenge_token' => $challengeToken,
             ], 202);
         }
-        $token = $user->createToken('api-token')->plainTextToken;
+        $token = $user->createToken('api-token', ['admin'])->plainTextToken;
 
         $user->load('roles:id,name');
 
         $userData = (new UserResource($user))->resolve();
 
         $userData['scopes'] = $scopeResolver->execute($user);
+
         return $this->ok(
             'User logged in successfully',
             [
@@ -120,7 +103,47 @@ class AuthController extends Controller
         );
     }
 
-    public function verify(VerifyRequest $request)
+    public function moodleLogin(LoginRequest $request, UserScopeResolverService $scopeResolver, TwoFactorAuthenticationService $twoFactorAuthenticationService)
+    {
+        $credentials = $request->validated();
+
+        if (! Auth::attempt($credentials)) {
+            return $this->error('Invalid credentials', 401);
+        }
+
+        $user = Auth::user();
+        if (! $user->canAccessMoodlePanel()) {
+            Auth::logout();
+
+            return $this->error('You are not allowed to access the Moodle panel.', 403);
+        }
+        // TWO-FACTOR-AUTHENTICATION
+        //        if($user->is_two_factor_enabled){
+        //            $challengeToken = $twoFactorAuthenticationService->execute($user);
+        //            return $this->ok('OTP sent to your email', [
+        //                'challenge_token' => $challengeToken,
+        //            ], 202);
+        //        }
+
+        $token = $user->createToken('moodle-token', ['moodle'])->plainTextToken;
+
+        $user->load('roles:id,name');
+
+        $userData = (new UserResource($user))->resolve();
+
+        $userData['scopes'] = $scopeResolver->execute($user);
+
+        return $this->ok(
+            'User logged in successfully',
+            [
+                'token' => $token,
+                'user' => $userData,
+            ]
+        );
+
+    }
+
+    public function verify(VerifyRequest $request, UserScopeResolverService $scopeResolver)
     {
         $userId = cache()->get("2fa_challenge_{$request->challenge_token}");
 
@@ -158,17 +181,19 @@ class AuthController extends Controller
             'two_factor_expires_at' => null,
         ]);
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $token = $user->createToken('admin-token', ['admin'])->plainTextToken;
+
+        $userData = (new UserResource($user))->resolve();
+
+        $userData['scopes'] = $scopeResolver->execute($user);
 
         return $this->ok(
-            'User logged in successfully', [
-            'token' => $token,
-            'user' => (new UserResource($user->load([
-                'roles:id,name',
-                'userScopes.role:id,name',
-            ])))
-                ->resolve(),
-        ]);
+            'User logged in successfully',
+            [
+                'token' => $token,
+                'user' => $userData,
+            ]
+        );
     }
 
     public function prepareTwoFactor(Request $request)
@@ -301,11 +326,11 @@ class AuthController extends Controller
 
         return $this->ok(
             'User profile', [
-            'user' => (new UserResource($user->load([
-                'roles:id,name',
-                'userScopes.role:id,name',
-            ])))
-                ->resolve(),
-        ]);
+                'user' => (new UserResource($user->load([
+                    'roles:id,name',
+                    'userScopes.role:id,name',
+                ])))
+                    ->resolve(),
+            ]);
     }
 }
