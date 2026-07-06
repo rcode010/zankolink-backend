@@ -96,4 +96,13 @@ class StudentSubmissionController extends Controller
             $studentSubmission->file_name
         );
     }
+
+    public function destroy(StudentSubmission $studentSubmission)
+    {
+        Storage::disk('public')->delete($studentSubmission->file_url);
+
+        $studentSubmission->delete();
+
+        return $this->success('Submission deleted successfully.');
+    }
 }
