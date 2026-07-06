@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\SectionItemController;
 use Illuminate\Support\Facades\Route;
 
 
-// Route::prefix('moodle')->group(function () {
+Route::prefix('moodle')->group(function () {
 
     // Material operations bounded tightly to a specific parent course section
     Route::prefix('course-sections/{section}')->group(function () {
@@ -20,4 +20,4 @@ use Illuminate\Support\Facades\Route;
         Route::delete('/{item}', [SectionItemController::class, 'destroy']);
     });
 
-// });
+});

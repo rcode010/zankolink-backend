@@ -75,11 +75,11 @@ class AuthController extends Controller
             return $this->error('Invalid credentials', 401);
         }
         $user = Auth::user();
-        // if (! $user->canAccessAdminPanel()) {
-        //     Auth::logout();
+         if (! $user->canAccessAdminPanel()) {
+             Auth::logout();
 
-        //     return $this->error('You are not allowed to access the admin panel.', 403);
-        // }
+             return $this->error('You are not allowed to access the admin panel.', 403);
+         }
 
         if ($user->is_two_factor_enabled) {
             $otp = random_int(100000, 999999);
