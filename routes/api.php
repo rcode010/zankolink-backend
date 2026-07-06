@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     require __DIR__.'/api/section-submission.php';
     require __DIR__.'/api/student-submissions.php';
     require __DIR__.'/api/section_items.php';
+    require __DIR__.'/api/lecturer-moodle.php';
     require __DIR__.'/api/dashboard.php';
 
     require __DIR__.'/api/teacher-departments.php';
