@@ -69,14 +69,15 @@ class LetterController extends Controller
     public function store(StoreLetterRequest $request, QrCodeService $qrCodeService)
     {
         $this->authorize('create', Letter::class);
+        $user = $request->user();
         $data = $request->validated();
 
-        $data['original_sender_id'] = auth()->id();
-        $data['sender_id'] = auth()->id();
+        $data['original_sender_id'] = $user->id;
+        $data['sender_id'] = $user->id;
         $data['status'] = 'pending';
 
         $data['letter_uuid'] = Str::uuid();
-        $letter = DB::transaction(function () use ($data, $qrCodeService) {
+        $letter = DB::transaction(function () use ($data, $qrCodeService,$user) {
 
             $letter = Letter::create($data);
 
@@ -99,6 +100,10 @@ class LetterController extends Controller
             $letter->update([
                 'verification_hash' => $hashData,
                 'qr_code_path' => $qrCodePath,
+            ]);
+            LetterSignature::create([
+                'letter_id' => $letter->id,
+                'user_id' => $user->id,
             ]);
 
             return $letter;
