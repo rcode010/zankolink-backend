@@ -316,21 +316,20 @@ class AuthController extends Controller
     }
 
     // Get Profile
-    public function profile()
+    public function profile(UserScopeResolverService $scopeResolver)
     {
         $user = Auth::user();
-        $user->load([
-            'roles:id,name',
-            'userScopes.role:id,name',
-        ]);
+
+        $user->load('roles:id,name');
+
+        $userData = (new UserResource($user))->resolve();
+
+        $userData['scopes'] = $scopeResolver->execute($user);
 
         return $this->ok(
-            'User profile', [
-                'user' => (new UserResource($user->load([
-                    'roles:id,name',
-                    'userScopes.role:id,name',
-                ])))
-                    ->resolve(),
-            ]);
+            'User logged in successfully',
+            $userData
+
+        );
     }
 }

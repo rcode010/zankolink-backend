@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('course_section_id')->constrained('course_sections')->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->timestamp('deadline');
+            $table->dateTime('deadline');
             $table->timestamps();
         });
     }
