@@ -9,6 +9,7 @@ use App\Models\SectionSubmission;
 use App\Models\StudentSubmission;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class StudentSubmissionController extends Controller
 {
@@ -85,6 +86,14 @@ class StudentSubmissionController extends Controller
         return $this->success(
             'Submission retrieved successfully',
             StudentSubmissionResource::collection($studentSubmissions)->resolve()
+        );
+    }
+
+    public function download(StudentSubmission $studentSubmission)
+    {
+        return Storage::disk('public')->download(
+            $studentSubmission->file_url,
+            $studentSubmission->file_name
         );
     }
 }
