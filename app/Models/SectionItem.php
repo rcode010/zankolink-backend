@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SectionItem extends Model
 {
-    use SoftDeletes;
+   
 
     protected $fillable = [
         'section_id',
