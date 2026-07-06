@@ -12,7 +12,7 @@ class SectionSubmission extends Model
 
     public function section(): BelongsTo
     {
-        return $this->belongsTo(CourseSection::class);
+        return $this->belongsTo(CourseSection::class, 'course_section_id');
     }
 
     public function studentSubmissions(): HasMany

@@ -111,6 +111,7 @@ class SectionItemController extends Controller
         }
 
         $item->delete();
+    
 
         return $this->ok('Section item deleted successfully.');
     }
