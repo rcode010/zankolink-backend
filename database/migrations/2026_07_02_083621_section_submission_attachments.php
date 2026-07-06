@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('file_name');
             $table->string('file_type');
             $table->unsignedBigInteger('file_size');
-            $table->text('file_path');
+            $table->text('file_url');
 
             $table->timestamps();
         });

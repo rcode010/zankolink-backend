@@ -47,7 +47,7 @@ class StudentSubmissionController extends Controller
                     'file_name' => $file->getClientOriginalName(),
                     'file_type' => $file->getClientMimeType(),
                     'file_size' => $file->getSize(),
-                    'file_path' => $path,
+                    'file_url' => $path,
                 ]);
             }
             DB::commit();

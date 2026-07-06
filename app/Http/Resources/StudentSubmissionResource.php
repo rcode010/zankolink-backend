@@ -29,7 +29,7 @@ class StudentSubmissionResource extends JsonResource
             'file_name' => $this->file_name,
             'file_type' => $this->file_type,
             'file_size' => $this->file_size,
-            'file_path' => $this->file_path,
+            'file_url' => $this->file_url,
 
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
