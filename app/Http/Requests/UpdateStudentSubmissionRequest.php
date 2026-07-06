@@ -5,14 +5,14 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSectionSubmissionRequest extends FormRequest
+class UpdateStudentSubmissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -23,12 +23,8 @@ class StoreSectionSubmissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'deadline' => 'required|date|after:now',
-
-            'files' => 'nullable|array',
-            'files.*' => 'file|max:10240|mimes:doc,docx,pdf,ppt,pptx',
+            'files' => 'required|array|min:1',
+            'files.*' => 'file|max:1024|mimes:doc,docx,pdf,jpg,jpeg,png,ppt,pptx',
         ];
     }
 }
