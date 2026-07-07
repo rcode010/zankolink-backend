@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('letter_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->string('comment')->nullable();
+            $table->enum('scope_type', ['MINISTRY', 'FACULTY', 'UNIVERSITY', 'DEPARTMENT']);
             $table->timestamps();
             $table->softDeletes();
 

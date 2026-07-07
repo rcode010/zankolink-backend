@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\sameRoleService;
 use App\Services\SuperiorRoleService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -101,6 +102,15 @@ class UserController extends Controller
         });
 
         return $this->ok('Higher Role Users retrieved successfully', $higherRoleUsers->toArray());
+
+    }
+    public function sameLevel(Request $request, sameRoleService $sameRoleService)
+    {
+        $user = $request->user();
+
+        $users = $sameRoleService->execute($user);
+
+        return $this->ok("same roles retrieved successfully", $users->toArray());
 
     }
 }

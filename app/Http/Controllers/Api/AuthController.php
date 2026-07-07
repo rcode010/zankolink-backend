@@ -180,6 +180,8 @@ class AuthController extends Controller
             'two_factor_code' => null,
             'two_factor_expires_at' => null,
         ]);
+        $user->load('roles:id,name');
+
 
         $token = $user->createToken('admin-token', ['admin'])->plainTextToken;
 
