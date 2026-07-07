@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('material_file_name');
             $table->string('material_file_url');
             $table->timestamps();
-           
 
-            $table->index(['section_id', 'deleted_at'], 'section_items_section_deleted_idx');
+
+            $table->index(['section_id'], 'section_items_section_idx');
         });
     }
 
