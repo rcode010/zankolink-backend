@@ -77,7 +77,7 @@ class LetterController extends Controller
         $data['status'] = 'pending';
 
         $data['letter_uuid'] = Str::uuid();
-        $letter = DB::transaction(function () use ($data, $qrCodeService,$user) {
+        $letter = DB::transaction(function () use ($data, $qrCodeService, $user) {
 
             $letter = Letter::create($data);
 
@@ -130,6 +130,7 @@ class LetterController extends Controller
     public function show(Letter $letter)
     {
         $this->authorize('view', $letter);
+
         return $this->ok(
             'Letter retrieved successfully',
             (new LetterResource(
@@ -196,8 +197,6 @@ class LetterController extends Controller
         $user = auth()->user();
         $credentials = $request->validated();
 
-
-
         if ($letter->receiver_id === (int) $credentials['receiver_id']) {
             return $this->error("New receiver can't be the same as current one.", 400);
         }
@@ -235,7 +234,12 @@ class LetterController extends Controller
 
         $letters = QueryBuilder::for(Letter::class)
             ->where('receiver_id', $user->id)
-            ->with(['sender:id,name', 'receiver:id,name'])
+            ->with([
+                'sender:id,name',
+                'receiver:id,name',
+                'attachments',
+                'signatures',
+            ])
             ->allowedFilters(
                 AllowedFilter::exact('status'),
             )
@@ -276,16 +280,18 @@ class LetterController extends Controller
             $inbox->toArray()
         );
     }
-    public function outbox(Request $request){
+
+    public function outbox(Request $request)
+    {
         $this->authorize('viewAny', Letter::class);
         $user = $request->user();
-        if($user->isMinistryAdmin()){
+        if ($user->isMinistryAdmin()) {
             $broadcasts = LetterBroadcast::query()
                 ->with('attachments')
                 ->latest()
                 ->get();
 
-            return $this->ok("Broadcast letters fetched successfully", $broadcasts->toArray());
+            return $this->ok('Broadcast letters fetched successfully', $broadcasts->toArray());
         }
         $letters = QueryBuilder::for(Letter::class)
             ->where('sender_id', $user->id)
