@@ -14,9 +14,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -29,15 +30,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"id":1,"name":"Albin Herzog IV","email":"admin@ministry.gov","phone":"07701234567","is_active":1,"two_factor_code":null,"two_factor_expires_at":null,"is_two_factor_enabled":0,"created_at":"2026-07-07T15:12:49.000000Z","updated_at":"2026-07-07T15:12:49.000000Z","deleted_at":null}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -54,9 +58,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -92,7 +97,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -109,9 +117,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -147,7 +156,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -164,9 +176,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -214,7 +227,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -231,9 +247,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -257,7 +274,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -274,9 +294,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -312,7 +333,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -329,9 +353,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -410,7 +435,7 @@ endpoints:
         name: scope_type
         description: ''
         required: true
-        example: FACULTY
+        example: UNIVERSITY
         type: string
         enumValues:
           - MINISTRY
@@ -427,11 +452,14 @@ endpoints:
       phone: '07564255931'
       role: architecto
       scope_id: 16
-      scope_type: FACULTY
+      scope_type: UNIVERSITY
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -448,9 +476,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -462,7 +491,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -479,9 +511,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -505,7 +538,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -522,9 +558,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -536,7 +573,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -553,9 +593,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -567,7 +608,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -584,9 +628,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -622,7 +667,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -639,9 +687,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -654,15 +703,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"User logged in successfully","data":{"id":1,"name":"Albin Herzog IV","email":"admin@ministry.gov","phone":"07701234567","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":1,"name":"MINISTRY_ADMIN"}],"created_at":"2026-07-07T15:12:49.000000Z","updated_at":"2026-07-07T15:12:49.000000Z","scopes":[{"id":1,"role":{"id":1,"name":"MINISTRY_ADMIN"},"scope_type":"MINISTRY","scope_id":null,"scope":{"id":null,"name":"Ministry"}}]}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -679,9 +731,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -729,7 +782,10 @@ endpoints:
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -746,9 +802,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display a listing of the resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -761,15 +818,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Universities retrieved successfully.","data":{"data":[{"id":4,"name":"West LarryUniversity","admin":{"id":482,"name":"University Admin"},"academic_year_id":1,"location":"Batzhaven","start_date":"2024-08-30","end_date":"2028-11-17","established_year":"2009-02-15","is_active":1,"created_at":"2026-07-07 18:13:01","updated_at":"2026-07-07 18:13:02"},{"id":1,"name":"AlycelandUniversity","admin":{"id":2,"name":"Pete Thompson"},"academic_year_id":1,"location":"Lubowitzberg","start_date":"2024-09-01","end_date":null,"established_year":"2008-07-28","is_active":1,"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":2,"name":"ElenormouthUniversity","admin":{"id":161,"name":"Mrs. Amie Kertzmann PhD"},"academic_year_id":1,"location":"Port Mustafaside","start_date":"2025-01-20","end_date":"2027-12-03","established_year":"1972-03-21","is_active":1,"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:53"},{"id":3,"name":"West KamilleUniversity","admin":{"id":320,"name":"Paul Murphy III"},"academic_year_id":1,"location":"Gladyceshire","start_date":"2024-07-19","end_date":"2029-03-02","established_year":"1987-04-21","is_active":1,"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:56"}],"links":{"first":"http:\/\/localhost:8000\/api\/universities?page=1","last":"http:\/\/localhost:8000\/api\/universities?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/universities?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"path":"http:\/\/localhost:8000\/api\/universities","per_page":15,"to":4,"total":4}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -786,9 +846,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a newly created resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -845,7 +906,7 @@ endpoints:
         name: start_date
         description: 'Must be a valid date.'
         required: false
-        example: '2026-07-07T22:13:14'
+        example: '2026-07-07T22:48:29'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -867,7 +928,7 @@ endpoints:
         name: established_year
         description: 'Must be a valid date.'
         required: true
-        example: '2026-07-07T22:13:14'
+        example: '2026-07-07T22:48:29'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -878,7 +939,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -988,10 +1049,10 @@ endpoints:
     cleanBodyParameters:
       name: b
       location: 'n'
-      start_date: '2026-07-07T22:13:14'
+      start_date: '2026-07-07T22:48:29'
       end_date: '2052-07-30'
-      established_year: '2026-07-07T22:13:14'
-      is_active: true
+      established_year: '2026-07-07T22:48:29'
+      is_active: false
       faculties:
         -
           name: b
@@ -1003,7 +1064,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1020,9 +1084,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1047,15 +1112,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"University retrieved successfully.","data":{"id":1,"name":"AlycelandUniversity","admin":{"id":2,"name":"Pete Thompson"},"academic_year_id":1,"location":"Lubowitzberg","start_date":"2024-09-01","end_date":null,"established_year":"2008-07-28","is_active":1,"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1072,9 +1140,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1143,7 +1212,7 @@ endpoints:
         name: start_date
         description: 'Must be a valid date.'
         required: false
-        example: '2026-07-07T22:13:14'
+        example: '2026-07-07T22:48:29'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1165,7 +1234,7 @@ endpoints:
         name: established_year
         description: 'Must be a valid date.'
         required: false
-        example: '2026-07-07T22:13:14'
+        example: '2026-07-07T22:48:29'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1185,14 +1254,17 @@ endpoints:
     cleanBodyParameters:
       name: b
       location: architecto
-      start_date: '2026-07-07T22:13:14'
+      start_date: '2026-07-07T22:48:29'
       end_date: '2052-07-30'
-      established_year: '2026-07-07T22:13:14'
+      established_year: '2026-07-07T22:48:29'
       is_active: true
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1209,9 +1281,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Remove the specified resource from storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1235,7 +1308,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1252,9 +1328,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the current academic year and create a new one.'
       description: 'Route: POST /api/academic-year/update'
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1278,7 +1355,7 @@ endpoints:
         name: start_date
         description: 'e.g., "2026-2027". Must be a valid date.'
         required: true
-        example: '2026-07-07T22:13:14'
+        example: '2026-07-07T22:48:29'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1289,7 +1366,7 @@ endpoints:
         name: end_date
         description: 'Must be a valid date.'
         required: true
-        example: '2026-07-07T22:13:14'
+        example: '2026-07-07T22:48:29'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1297,12 +1374,15 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       year: architecto
-      start_date: '2026-07-07T22:13:14'
-      end_date: '2026-07-07T22:13:14'
+      start_date: '2026-07-07T22:48:29'
+      end_date: '2026-07-07T22:48:29'
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1319,9 +1399,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display a listing of the resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1334,15 +1415,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Faculties retrieved successfully","data":{"data":[{"id":7,"name":"College of Languages","admin":{"id":486,"name":"Dean"},"is_active":1,"university_id":4,"university":{"id":4,"name":"West LarryUniversity","academic_year_id":null,"location":null,"start_date":null,"end_date":null,"established_year":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:13:03","updated_at":"2026-07-07 18:13:03"},{"id":5,"name":"College of Law and Politics","admin":{"id":321,"name":"Dominique Beahan"},"is_active":1,"university_id":3,"university":{"id":3,"name":"West KamilleUniversity","academic_year_id":null,"location":null,"start_date":null,"end_date":null,"established_year":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:56","updated_at":"2026-07-07 18:12:56"},{"id":6,"name":"College of Engineering","admin":{"id":400,"name":"Sasha Kulas"},"is_active":1,"university_id":3,"university":{"id":3,"name":"West KamilleUniversity","academic_year_id":null,"location":null,"start_date":null,"end_date":null,"established_year":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:56","updated_at":"2026-07-07 18:12:58"},{"id":3,"name":"College of Humanities","admin":{"id":162,"name":"Mollie Becker"},"is_active":1,"university_id":2,"university":{"id":2,"name":"ElenormouthUniversity","academic_year_id":null,"location":null,"start_date":null,"end_date":null,"established_year":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:53","updated_at":"2026-07-07 18:12:53"},{"id":4,"name":"College of Humanities","admin":{"id":241,"name":"Justine Green"},"is_active":1,"university_id":2,"university":{"id":2,"name":"ElenormouthUniversity","academic_year_id":null,"location":null,"start_date":null,"end_date":null,"established_year":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:53","updated_at":"2026-07-07 18:12:55"},{"id":1,"name":"College of Fine Arts","admin":{"id":3,"name":"Noel Herzog MD"},"is_active":1,"university_id":1,"university":{"id":1,"name":"AlycelandUniversity","academic_year_id":null,"location":null,"start_date":null,"end_date":null,"established_year":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":2,"name":"College of Dentistry","admin":{"id":82,"name":"Dr. Alayna Hermiston"},"is_active":1,"university_id":1,"university":{"id":1,"name":"AlycelandUniversity","academic_year_id":null,"location":null,"start_date":null,"end_date":null,"established_year":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:51"}],"links":{"first":"http:\/\/localhost:8000\/api\/faculties?page=1","last":"http:\/\/localhost:8000\/api\/faculties?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/faculties?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"path":"http:\/\/localhost:8000\/api\/faculties","per_page":15,"to":7,"total":7}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1359,9 +1443,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a newly created resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1420,7 +1505,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1437,9 +1525,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1464,15 +1553,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Faculty retrieved successfully","data":{"id":1,"name":"College of Fine Arts","admin":{"id":3,"name":"Noel Herzog MD"},"is_active":1,"university_id":1,"university":{"id":1,"name":"AlycelandUniversity","academic_year_id":null,"location":null,"start_date":null,"end_date":null,"established_year":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1489,9 +1581,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1550,7 +1643,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1567,9 +1663,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Remove the specified resource from storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1593,7 +1690,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1610,9 +1710,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display a listing of the resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1625,15 +1726,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Departments retrieved successfully.","data":{"data":[{"id":19,"name":"Architectural Engineering","code":null,"faculty_id":7,"admin":{"id":487,"name":"Head of Department"},"is_active":1,"faculty":{"id":7,"name":"College of Languages","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:13:03","updated_at":"2026-07-07 18:13:03"},{"id":16,"name":"Medicine and General Surgery","code":null,"faculty_id":6,"admin":{"id":401,"name":"Adriana Carter"},"is_active":1,"faculty":{"id":6,"name":"College of Engineering","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:58","updated_at":"2026-07-07 18:12:58"},{"id":17,"name":"Medicine and General Surgery","code":null,"faculty_id":6,"admin":{"id":427,"name":"Evert Hackett"},"is_active":1,"faculty":{"id":6,"name":"College of Engineering","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:58","updated_at":"2026-07-07 18:12:59"},{"id":18,"name":"Fine Arts and Design","code":null,"faculty_id":6,"admin":{"id":453,"name":"Thelma Bosco"},"is_active":1,"faculty":{"id":6,"name":"College of Engineering","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:58","updated_at":"2026-07-07 18:12:59"},{"id":13,"name":"Clinical Pharmacy","code":null,"faculty_id":5,"admin":{"id":322,"name":"Cristopher Metz III"},"is_active":1,"faculty":{"id":5,"name":"College of Law and Politics","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:56","updated_at":"2026-07-07 18:12:56"},{"id":14,"name":"Clinical Pharmacy","code":null,"faculty_id":5,"admin":{"id":348,"name":"Candelario Miller II"},"is_active":1,"faculty":{"id":5,"name":"College of Law and Politics","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:56","updated_at":"2026-07-07 18:12:57"},{"id":15,"name":"Soil and Water Science","code":null,"faculty_id":5,"admin":{"id":374,"name":"Mrs. Margarita Romaguera II"},"is_active":1,"faculty":{"id":5,"name":"College of Law and Politics","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:56","updated_at":"2026-07-07 18:12:58"},{"id":10,"name":"English Translation","code":null,"faculty_id":4,"admin":{"id":242,"name":"Ludwig Homenick"},"is_active":1,"faculty":{"id":4,"name":"College of Humanities","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:55","updated_at":"2026-07-07 18:12:55"},{"id":11,"name":"Kurdish Literature","code":null,"faculty_id":4,"admin":{"id":268,"name":"Prof. Mekhi Monahan"},"is_active":1,"faculty":{"id":4,"name":"College of Humanities","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:55","updated_at":"2026-07-07 18:12:55"},{"id":12,"name":"Medicine and General Surgery","code":null,"faculty_id":4,"admin":{"id":294,"name":"Emmett Powlowski DVM"},"is_active":1,"faculty":{"id":4,"name":"College of Humanities","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:55","updated_at":"2026-07-07 18:12:56"},{"id":7,"name":"Medicine and General Surgery","code":null,"faculty_id":3,"admin":{"id":163,"name":"Nicola Dicki"},"is_active":1,"faculty":{"id":3,"name":"College of Humanities","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:53","updated_at":"2026-07-07 18:12:53"},{"id":8,"name":"Mechanical Engineering","code":null,"faculty_id":3,"admin":{"id":189,"name":"Larue Reynolds"},"is_active":1,"faculty":{"id":3,"name":"College of Humanities","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:53","updated_at":"2026-07-07 18:12:54"},{"id":9,"name":"Medicine and General Surgery","code":null,"faculty_id":3,"admin":{"id":215,"name":"Raegan Kohler"},"is_active":1,"faculty":{"id":3,"name":"College of Humanities","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:53","updated_at":"2026-07-07 18:12:54"},{"id":4,"name":"Public Law","code":null,"faculty_id":2,"admin":{"id":83,"name":"Orpha Wyman V"},"is_active":1,"faculty":{"id":2,"name":"College of Dentistry","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:51","updated_at":"2026-07-07 18:12:51"},{"id":5,"name":"Political Science","code":null,"faculty_id":2,"admin":{"id":109,"name":"Mrs. Roxane Hettinger"},"is_active":1,"faculty":{"id":2,"name":"College of Dentistry","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:51","updated_at":"2026-07-07 18:12:52"}],"links":{"first":"http:\/\/localhost:8000\/api\/departments?page=1","last":"http:\/\/localhost:8000\/api\/departments?page=2","prev":null,"next":"http:\/\/localhost:8000\/api\/departments?page=2"},"meta":{"current_page":1,"from":1,"last_page":2,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/departments?page=1","label":"1","page":1,"active":true},{"url":"http:\/\/localhost:8000\/api\/departments?page=2","label":"2","page":2,"active":false},{"url":"http:\/\/localhost:8000\/api\/departments?page=2","label":"Next &raquo;","page":2,"active":false}],"path":"http:\/\/localhost:8000\/api\/departments","per_page":15,"to":15,"total":19}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1650,9 +1754,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a newly created resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1698,7 +1803,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1707,11 +1812,14 @@ endpoints:
     cleanBodyParameters:
       name: b
       faculty_id: architecto
-      is_active: false
+      is_active: true
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1728,9 +1836,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1755,15 +1864,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Department retrieved successfully.","data":{"id":1,"name":"Architectural Engineering","code":null,"faculty_id":1,"admin":{"id":4,"name":"Gabriella Bailey"},"is_active":1,"faculty":{"id":1,"name":"College of Fine Arts","is_active":null,"university_id":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1780,9 +1892,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1840,7 +1953,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1848,11 +1961,14 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       name: b
-      is_active: true
+      is_active: false
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1869,9 +1985,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Remove the specified resource from storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1895,7 +2012,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1912,9 +2032,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update department seats.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1950,7 +2071,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -1967,9 +2091,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Get the list of pending course selections (for all students or a specific student).'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -2005,15 +2130,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\Department] student-selected-courses"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2030,9 +2161,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Approve student course selections and enroll them into the final table.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -2068,7 +2200,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2085,9 +2220,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display a listing of the resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -2100,15 +2236,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Teachers retrieved successfully.","data":{"data":[{"id":81,"title":"prof","speciality":"Artificial Intelligence","user":{"id":428,"name":"Sarai Denesik"},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":82,"title":"assoc_prof","speciality":"Networks","user":{"id":429,"name":"Mario Collins"},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":83,"title":"dr","speciality":"Artificial Intelligence","user":{"id":430,"name":"Kaci Morissette"},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":84,"title":"mr","speciality":"Cyber Security","user":{"id":431,"name":"Mrs. Lizzie O''Connell Jr."},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":85,"title":"mr","speciality":"Cyber Security","user":{"id":432,"name":"Prof. Hugh Rippin"},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":86,"title":"dr","speciality":"Artificial Intelligence","user":{"id":454,"name":"Dr. Meda Cummings"},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":87,"title":"asst_prof","speciality":"Artificial Intelligence","user":{"id":455,"name":"Mr. Adan Kshlerin"},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":88,"title":"prof","speciality":"Software Engineering","user":{"id":456,"name":"Lacey Lockman"},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":89,"title":"ms","speciality":"Cyber Security","user":{"id":457,"name":"Sharon Johns"},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":90,"title":"ms","speciality":"Networks","user":{"id":458,"name":"Jaqueline DuBuque Jr."},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":71,"title":"mr","speciality":"Software Engineering","user":{"id":375,"name":"Ms. Olga Conroy"},"created_at":"2026-07-07 18:12:58","updated_at":"2026-07-07 18:12:58"},{"id":72,"title":"dr","speciality":"Artificial Intelligence","user":{"id":376,"name":"Eulalia Schmitt"},"created_at":"2026-07-07 18:12:58","updated_at":"2026-07-07 18:12:58"},{"id":73,"title":"asst_prof","speciality":"Software Engineering","user":{"id":377,"name":"Sam Konopelski IV"},"created_at":"2026-07-07 18:12:58","updated_at":"2026-07-07 18:12:58"},{"id":74,"title":"mr","speciality":"Software Engineering","user":{"id":378,"name":"Mrs. Libbie Borer"},"created_at":"2026-07-07 18:12:58","updated_at":"2026-07-07 18:12:58"},{"id":75,"title":"assoc_prof","speciality":"Networks","user":{"id":379,"name":"Prof. Jamir Quitzon DDS"},"created_at":"2026-07-07 18:12:58","updated_at":"2026-07-07 18:12:58"}],"links":{"first":"http:\/\/localhost:8000\/api\/teachers?page=1","last":"http:\/\/localhost:8000\/api\/teachers?page=6","prev":null,"next":"http:\/\/localhost:8000\/api\/teachers?page=2"},"meta":{"current_page":1,"from":1,"last_page":6,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/teachers?page=1","label":"1","page":1,"active":true},{"url":"http:\/\/localhost:8000\/api\/teachers?page=2","label":"2","page":2,"active":false},{"url":"http:\/\/localhost:8000\/api\/teachers?page=3","label":"3","page":3,"active":false},{"url":"http:\/\/localhost:8000\/api\/teachers?page=4","label":"4","page":4,"active":false},{"url":"http:\/\/localhost:8000\/api\/teachers?page=5","label":"5","page":5,"active":false},{"url":"http:\/\/localhost:8000\/api\/teachers?page=6","label":"6","page":6,"active":false},{"url":"http:\/\/localhost:8000\/api\/teachers?page=2","label":"Next &raquo;","page":2,"active":false}],"path":"http:\/\/localhost:8000\/api\/teachers","per_page":15,"to":15,"total":90}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2125,9 +2264,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a newly created resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -2151,7 +2291,7 @@ endpoints:
         name: title
         description: ''
         required: true
-        example: ms
+        example: dr
         type: string
         enumValues:
           - prof
@@ -2177,12 +2317,15 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       user_id: architecto
-      title: ms
+      title: dr
       speciality: 'n'
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2199,9 +2342,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -2226,15 +2370,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Teacher retrieved successfully.","data":{"id":1,"title":"assoc_prof","speciality":"Networks","user":{"id":5,"name":"Dr. Julio Stroman"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2251,9 +2398,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -2289,7 +2437,7 @@ endpoints:
         name: title
         description: ''
         required: false
-        example: dr
+        example: prof
         type: string
         enumValues:
           - prof
@@ -2314,12 +2462,15 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: dr
+      title: prof
       speciality: b
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2336,9 +2487,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Remove the specified resource from storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -2362,7 +2514,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2379,9 +2534,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display a listing of the resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -2394,15 +2550,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Student retrieved successfully.","data":{"data":[],"links":{"first":"http:\/\/localhost:8000\/api\/students?page=1","last":"http:\/\/localhost:8000\/api\/students?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/students?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"path":"http:\/\/localhost:8000\/api\/students","per_page":15,"to":null,"total":0}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2419,9 +2578,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a newly created resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -2456,7 +2616,7 @@ endpoints:
         name: enrollment_type
         description: ''
         required: true
-        example: evening
+        example: morning
         type: string
         enumValues:
           - morning
@@ -2492,7 +2652,7 @@ endpoints:
         name: status
         description: ''
         required: true
-        example: active
+        example: on_leave
         type: string
         enumValues:
           - active
@@ -2506,14 +2666,17 @@ endpoints:
     cleanBodyParameters:
       user_id: architecto
       department_id: architecto
-      enrollment_type: evening
+      enrollment_type: morning
       stage: 16
       student_number: 'n'
-      status: active
+      status: on_leave
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2530,9 +2693,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -2557,15 +2721,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Student retrieved successfully.","data":{"id":1,"enrollment_type":"parallel","stage":3,"student_number":"ST31258","status":"active","user":{"id":10,"name":"Christina Quigley"},"department":{"id":1,"name":"Architectural Engineering","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2582,9 +2749,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -2667,7 +2835,7 @@ endpoints:
         name: status
         description: ''
         required: false
-        example: inactive
+        example: suspended
         type: string
         enumValues:
           - active
@@ -2682,11 +2850,14 @@ endpoints:
       enrollment_type: morning
       stage: 16
       student_number: 'n'
-      status: inactive
+      status: suspended
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2703,9 +2874,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Remove the specified resource from storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -2729,7 +2901,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2746,9 +2921,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -2783,7 +2959,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2800,9 +2979,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display a listing of the resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -2815,15 +2995,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Courses retrieved successfully.","data":{"data":[{"id":86,"name":"Artificial Intelligence","code":"SUE64031","credit_hours":3,"year_level":3,"is_active":1,"department_id":18,"department":{"id":18,"name":"Fine Arts and Design","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:13:00","updated_at":"2026-07-07 18:13:00"},{"id":87,"name":"Software Architecture","code":"SUE78579","credit_hours":3,"year_level":1,"is_active":1,"department_id":18,"department":{"id":18,"name":"Fine Arts and Design","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:13:00","updated_at":"2026-07-07 18:13:00"},{"id":88,"name":"Operating Systems","code":"UOS72481","credit_hours":3,"year_level":1,"is_active":0,"department_id":18,"department":{"id":18,"name":"Fine Arts and Design","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:13:00","updated_at":"2026-07-07 18:13:00"},{"id":89,"name":"Web Development","code":"SUE67813","credit_hours":4,"year_level":1,"is_active":0,"department_id":18,"department":{"id":18,"name":"Fine Arts and Design","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:13:00","updated_at":"2026-07-07 18:13:00"},{"id":90,"name":"Introduction to IT","code":"KOU97064","credit_hours":4,"year_level":1,"is_active":0,"department_id":18,"department":{"id":18,"name":"Fine Arts and Design","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:13:00","updated_at":"2026-07-07 18:13:00"},{"id":76,"name":"Computer Networks","code":"SUE19847","credit_hours":2,"year_level":1,"is_active":0,"department_id":16,"department":{"id":16,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":77,"name":"Web Development","code":"KOU11886","credit_hours":4,"year_level":4,"is_active":1,"department_id":16,"department":{"id":16,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":78,"name":"Artificial Intelligence","code":"UOS60499","credit_hours":2,"year_level":1,"is_active":0,"department_id":16,"department":{"id":16,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":79,"name":"Operating Systems","code":"UOS25996","credit_hours":4,"year_level":3,"is_active":1,"department_id":16,"department":{"id":16,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":80,"name":"Software Architecture","code":"UOS70231","credit_hours":4,"year_level":3,"is_active":1,"department_id":16,"department":{"id":16,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":81,"name":"Database Systems","code":"KOU26068","credit_hours":3,"year_level":1,"is_active":0,"department_id":17,"department":{"id":17,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":82,"name":"Operating Systems","code":"SUE40108","credit_hours":4,"year_level":2,"is_active":0,"department_id":17,"department":{"id":17,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":83,"name":"Data Structures","code":"UOS05167","credit_hours":4,"year_level":3,"is_active":1,"department_id":17,"department":{"id":17,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":84,"name":"Data Structures","code":"SUE31305","credit_hours":4,"year_level":2,"is_active":1,"department_id":17,"department":{"id":17,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"},{"id":85,"name":"Computer Networks","code":"KOU59590","credit_hours":3,"year_level":2,"is_active":0,"department_id":17,"department":{"id":17,"name":"Medicine and General Surgery","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:59","updated_at":"2026-07-07 18:12:59"}],"links":{"first":"http:\/\/localhost:8000\/api\/courses?page=1","last":"http:\/\/localhost:8000\/api\/courses?page=6","prev":null,"next":"http:\/\/localhost:8000\/api\/courses?page=2"},"meta":{"current_page":1,"from":1,"last_page":6,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/courses?page=1","label":"1","page":1,"active":true},{"url":"http:\/\/localhost:8000\/api\/courses?page=2","label":"2","page":2,"active":false},{"url":"http:\/\/localhost:8000\/api\/courses?page=3","label":"3","page":3,"active":false},{"url":"http:\/\/localhost:8000\/api\/courses?page=4","label":"4","page":4,"active":false},{"url":"http:\/\/localhost:8000\/api\/courses?page=5","label":"5","page":5,"active":false},{"url":"http:\/\/localhost:8000\/api\/courses?page=6","label":"6","page":6,"active":false},{"url":"http:\/\/localhost:8000\/api\/courses?page=2","label":"Next &raquo;","page":2,"active":false}],"path":"http:\/\/localhost:8000\/api\/courses","per_page":15,"to":15,"total":90}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2840,9 +3023,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a newly created resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -2910,7 +3094,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -2922,11 +3106,14 @@ endpoints:
       code: g
       credit_hours: 66
       year_level: 27
-      is_active: true
+      is_active: false
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2943,9 +3130,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -2970,15 +3158,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Course retrieved successfully.","data":{"id":1,"name":"Software Architecture","code":"UOS92046","credit_hours":4,"year_level":2,"is_active":0,"department_id":1,"department":{"id":1,"name":"Architectural Engineering","code":null,"faculty_id":null,"is_active":null,"created_at":null,"updated_at":null},"created_at":"2026-07-07 18:12:50","updated_at":"2026-07-07 18:12:50"}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -2995,9 +3186,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3092,7 +3284,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3109,9 +3304,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Remove the specified resource from storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3135,7 +3331,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3152,9 +3351,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3179,15 +3379,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Course sections retrieved successfully","data":{"data":[],"links":{"first":"http:\/\/localhost:8000\/api\/courses\/1\/sections?page=1","last":"http:\/\/localhost:8000\/api\/courses\/1\/sections?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/courses\/1\/sections?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"path":"http:\/\/localhost:8000\/api\/courses\/1\/sections","per_page":15,"to":null,"total":0}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3204,9 +3407,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a newly created resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3254,7 +3458,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3271,9 +3478,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified section.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3298,15 +3506,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\CourseSection] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3323,9 +3537,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified section in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3383,7 +3598,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3400,9 +3618,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Remove the specified section from storage (Soft Delete).'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3426,7 +3645,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3443,9 +3665,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display a listing of the resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3470,15 +3693,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\CourseSection] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3495,9 +3724,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a newly created resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: multipart/form-data
       Accept: application/json
     urlParameters:
@@ -3571,7 +3801,10 @@ endpoints:
         - null
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3588,9 +3821,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3615,15 +3849,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\SectionSubmission] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3640,9 +3880,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: multipart/form-data
       Accept: application/json
     urlParameters:
@@ -3716,7 +3957,10 @@ endpoints:
         - null
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3733,9 +3977,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Remove the specified resource from storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3759,7 +4004,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3776,9 +4024,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3803,15 +4052,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\SectionSubmissionAttachment] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3828,9 +4083,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3854,7 +4110,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3871,9 +4130,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: multipart/form-data
       Accept: application/json
     urlParameters:
@@ -3911,7 +4171,10 @@ endpoints:
         - null
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3928,9 +4191,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -3955,15 +4219,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\SectionSubmission] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -3980,9 +4250,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4007,15 +4278,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\StudentSubmission] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4032,9 +4309,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4058,7 +4336,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4075,9 +4356,10 @@ endpoints:
       subgroupDescription: ''
       title: 'GET /api/course-sections/{section}/items'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4102,15 +4384,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\CourseSection] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4127,9 +4415,10 @@ endpoints:
       subgroupDescription: ''
       title: 'POST /api/course-sections/{section}/items'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: multipart/form-data
       Accept: application/json
     urlParameters:
@@ -4189,7 +4478,10 @@ endpoints:
       file: null
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4206,9 +4498,10 @@ endpoints:
       subgroupDescription: ''
       title: 'GET /api/section-items/{item}'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4233,15 +4526,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\SectionItem] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4258,9 +4557,10 @@ endpoints:
       subgroupDescription: ''
       title: 'GET /api/section-items/{item}/download'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4285,15 +4585,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\SectionItem] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4311,9 +4617,10 @@ endpoints:
       subgroupDescription: ''
       title: 'PUT/PATCH /api/section-items/{item}'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4349,7 +4656,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4366,9 +4676,10 @@ endpoints:
       subgroupDescription: ''
       title: 'DELETE /api/section-items/{item}'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4392,7 +4703,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4409,9 +4723,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4447,7 +4762,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4464,9 +4782,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4491,15 +4810,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Department teachers retrieved successfully.","data":{"data":[{"id":1,"title":"assoc_prof","speciality":"Networks","user":{"id":5,"name":"Dr. Julio Stroman"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":2,"title":"lecturer","speciality":"Networks","user":{"id":6,"name":"Stella Lemke"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":3,"title":"prof","speciality":"Networks","user":{"id":7,"name":"Jadyn Ratke DVM"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":4,"title":"mr","speciality":"Artificial Intelligence","user":{"id":8,"name":"Evan Feest"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":5,"title":"lecturer","speciality":"Artificial Intelligence","user":{"id":9,"name":"Dr. Roderick Nikolaus"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"}],"links":{"first":"http:\/\/localhost:8000\/api\/departments\/1\/teachers?page=1","last":"http:\/\/localhost:8000\/api\/departments\/1\/teachers?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/departments\/1\/teachers?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"path":"http:\/\/localhost:8000\/api\/departments\/1\/teachers","per_page":15,"to":5,"total":5}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4516,9 +4838,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4554,7 +4877,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4571,9 +4897,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4609,7 +4936,7 @@ endpoints:
         name: role
         description: ''
         required: true
-        example: assistant_lecturer
+        example: primary_lecturer
         type: string
         enumValues:
           - primary_lecturer
@@ -4620,11 +4947,14 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       teacher_id: architecto
-      role: assistant_lecturer
+      role: primary_lecturer
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4641,9 +4971,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4668,15 +4999,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Course teachers retrieved successfully.","data":{"data":[{"id":4,"title":"mr","speciality":"Artificial Intelligence","user":{"id":8,"name":"Evan Feest"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":1,"title":"assoc_prof","speciality":"Networks","user":{"id":5,"name":"Dr. Julio Stroman"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":5,"title":"lecturer","speciality":"Artificial Intelligence","user":{"id":9,"name":"Dr. Roderick Nikolaus"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"}],"links":{"first":"http:\/\/localhost:8000\/api\/courses\/1\/teachers?page=1","last":"http:\/\/localhost:8000\/api\/courses\/1\/teachers?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/courses\/1\/teachers?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"path":"http:\/\/localhost:8000\/api\/courses\/1\/teachers","per_page":15,"to":3,"total":3}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4693,9 +5027,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4746,7 +5081,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4763,9 +5101,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4801,7 +5140,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4818,9 +5160,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4845,15 +5188,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Department students retrieved successfully.","data":{"data":[{"id":6,"enrollment_type":"parallel","stage":1,"student_number":"ST52318","status":"active","user":{"id":15,"name":"Mekhi Kertzmann"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":7,"enrollment_type":"morning","stage":1,"student_number":"ST85267","status":"active","user":{"id":16,"name":"Devon Robel Jr."},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":14,"enrollment_type":"morning","stage":1,"student_number":"ST47593","status":"active","user":{"id":23,"name":"Isobel Brown"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":15,"enrollment_type":"evening","stage":1,"student_number":"ST93748","status":"active","user":{"id":24,"name":"Jesse Dicki"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":2,"enrollment_type":"evening","stage":2,"student_number":"ST13277","status":"active","user":{"id":11,"name":"Miss Pamela Braun"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":4,"enrollment_type":"parallel","stage":2,"student_number":"ST95677","status":"active","user":{"id":13,"name":"Marjory Renner"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":5,"enrollment_type":"parallel","stage":2,"student_number":"ST61937","status":"active","user":{"id":14,"name":"Tate Lowe"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":16,"enrollment_type":"evening","stage":2,"student_number":"ST67294","status":"active","user":{"id":25,"name":"Wilfrid Deckow"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":18,"enrollment_type":"evening","stage":2,"student_number":"ST91217","status":"active","user":{"id":27,"name":"Devon Hoppe"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":19,"enrollment_type":"morning","stage":2,"student_number":"ST83749","status":"active","user":{"id":28,"name":"Brandi Schoen I"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":20,"enrollment_type":"parallel","stage":2,"student_number":"ST45679","status":"active","user":{"id":29,"name":"Miss Kasey Cremin"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":1,"enrollment_type":"parallel","stage":3,"student_number":"ST31258","status":"active","user":{"id":10,"name":"Christina Quigley"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":9,"enrollment_type":"morning","stage":3,"student_number":"ST88507","status":"active","user":{"id":18,"name":"Demario Murazik IV"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":10,"enrollment_type":"evening","stage":3,"student_number":"ST59788","status":"active","user":{"id":19,"name":"Meda Walker"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":13,"enrollment_type":"morning","stage":3,"student_number":"ST43141","status":"active","user":{"id":22,"name":"Dr. Cloyd Howe V"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"}],"links":{"first":"http:\/\/localhost:8000\/api\/departments\/1\/students?page=1","last":"http:\/\/localhost:8000\/api\/departments\/1\/students?page=2","prev":null,"next":"http:\/\/localhost:8000\/api\/departments\/1\/students?page=2"},"meta":{"current_page":1,"from":1,"last_page":2,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/departments\/1\/students?page=1","label":"1","page":1,"active":true},{"url":"http:\/\/localhost:8000\/api\/departments\/1\/students?page=2","label":"2","page":2,"active":false},{"url":"http:\/\/localhost:8000\/api\/departments\/1\/students?page=2","label":"Next &raquo;","page":2,"active":false}],"path":"http:\/\/localhost:8000\/api\/departments\/1\/students","per_page":15,"to":15,"total":20}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4870,9 +5216,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4897,15 +5244,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Course students retrieved successfully.","data":{"data":[{"id":6,"enrollment_type":"parallel","stage":1,"student_number":"ST52318","status":"active","user":{"id":15,"name":"Mekhi Kertzmann"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":20,"enrollment_type":"parallel","stage":2,"student_number":"ST45679","status":"active","user":{"id":29,"name":"Miss Kasey Cremin"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":13,"enrollment_type":"morning","stage":3,"student_number":"ST43141","status":"active","user":{"id":22,"name":"Dr. Cloyd Howe V"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":7,"enrollment_type":"morning","stage":1,"student_number":"ST85267","status":"active","user":{"id":16,"name":"Devon Robel Jr."},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":1,"enrollment_type":"parallel","stage":3,"student_number":"ST31258","status":"active","user":{"id":10,"name":"Christina Quigley"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":10,"enrollment_type":"evening","stage":3,"student_number":"ST59788","status":"active","user":{"id":19,"name":"Meda Walker"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":15,"enrollment_type":"evening","stage":1,"student_number":"ST93748","status":"active","user":{"id":24,"name":"Jesse Dicki"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":5,"enrollment_type":"parallel","stage":2,"student_number":"ST61937","status":"active","user":{"id":14,"name":"Tate Lowe"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":14,"enrollment_type":"morning","stage":1,"student_number":"ST47593","status":"active","user":{"id":23,"name":"Isobel Brown"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":3,"enrollment_type":"evening","stage":4,"student_number":"ST76969","status":"active","user":{"id":12,"name":"Art Schuster"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":19,"enrollment_type":"morning","stage":2,"student_number":"ST83749","status":"active","user":{"id":28,"name":"Brandi Schoen I"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":9,"enrollment_type":"morning","stage":3,"student_number":"ST88507","status":"active","user":{"id":18,"name":"Demario Murazik IV"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"},{"id":11,"enrollment_type":"parallel","stage":4,"student_number":"ST35637","status":"active","user":{"id":20,"name":"Miss Laura Lind V"},"created_at":"2026-07-07 18:12:49","updated_at":"2026-07-07 18:12:49"}],"links":{"first":"http:\/\/localhost:8000\/api\/courses\/1\/students?page=1","last":"http:\/\/localhost:8000\/api\/courses\/1\/students?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":1,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/courses\/1\/students?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"path":"http:\/\/localhost:8000\/api\/courses\/1\/students","per_page":15,"to":13,"total":13}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4922,9 +5272,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -4971,7 +5322,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -4988,9 +5342,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5049,7 +5404,7 @@ endpoints:
         name: enrolled_at
         description: 'Must be a valid date.'
         required: false
-        example: '2026-07-07T22:13:14'
+        example: '2026-07-07T22:48:29'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -5057,11 +5412,14 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       grade: 1
-      enrolled_at: '2026-07-07T22:13:14'
+      enrolled_at: '2026-07-07T22:48:29'
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5078,9 +5436,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5116,7 +5475,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5133,9 +5495,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a newly created resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -5159,7 +5522,7 @@ endpoints:
         name: type
         description: ''
         required: true
-        example: close_faculty
+        example: create_department
         type: string
         enumValues:
           - hire_teacher
@@ -5217,7 +5580,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       receiver_id: architecto
-      type: close_faculty
+      type: create_department
       title: 'n'
       body: architecto
       academic_year_id: architecto
@@ -5225,7 +5588,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5242,9 +5608,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display a listing of the resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -5257,15 +5624,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Letters retrieved successfully","data":{"data":[],"links":{"first":"http:\/\/localhost:8000\/api\/letters?page=1","last":"http:\/\/localhost:8000\/api\/letters?page=1","prev":null,"next":null},"meta":{"current_page":1,"from":null,"last_page":1,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/letters?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"path":"http:\/\/localhost:8000\/api\/letters","per_page":15,"to":null,"total":0}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5282,9 +5652,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -5297,15 +5668,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Letters retrieved successfully","data":[]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5322,9 +5696,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5349,15 +5724,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Letter retrieved successfully","data":{"id":1,"letter_number":"2d2f3508-81ff-419b-9778-d7df00d9aaaf","original_sender_id":54,"sender_id":54,"receiver_id":107,"type":"open_faculty","title":"Commodi id in inventore sint accusamus sunt commodi.","body":"Dolor rerum iusto repellat dicta dolorem quo. Eveniet vel velit et eos pariatur. Iusto qui officiis dolor deserunt rerum praesentium.\n\nNeque aliquid inventore sequi accusantium. Sunt fugiat qui eveniet enim aut quidem. Ut possimus quae est ipsa quam facilis. Ut sit illum incidunt sit nam ducimus.\n\nQuidem sequi accusamus culpa quia praesentium. Aut corrupti labore minima repellat. Delectus reiciendis animi et eos excepturi. Et impedit alias qui et non voluptatum.","is_read":false,"academic_year_id":1,"is_archived":false,"status":"rejected","qr_code_path":null,"qr_code_url":null,"payload":null,"created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","sender":{"id":54,"name":"Noel Morissette"},"receiver":{"id":107,"name":"Conrad Pacocha"}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5374,9 +5752,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5412,7 +5791,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5429,9 +5811,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5479,7 +5862,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5496,9 +5882,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -5511,15 +5898,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Inbox letters fetched successfully","data":[]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5536,9 +5926,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -5551,15 +5942,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Broadcast letters fetched successfully","data":[]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5576,9 +5970,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Approve a letter and log the activity.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5602,7 +5997,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5619,9 +6017,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Decline a letter and log the activity.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5645,7 +6044,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5662,9 +6064,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Forward a letter and log the from/to recipients.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5700,7 +6103,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5717,9 +6123,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Upload attachment to a letter.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: multipart/form-data
       Accept: application/json
     urlParameters:
@@ -5757,7 +6164,10 @@ endpoints:
         - null
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5774,9 +6184,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Download attachment.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5813,15 +6224,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: '{"success":false,"message":"Attachment not found."}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5838,9 +6252,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Delete attachment.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5876,7 +6291,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5893,9 +6311,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Store a new signature and approve the letter.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -5931,7 +6350,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -5948,9 +6370,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Get a specific signature by ID.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -5975,15 +6398,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 500
+        content: |-
+          {
+              "message": "Server Error"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6000,9 +6429,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Get a paginated list of signatures.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6015,15 +6445,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Signatures retrieved successfully.","data":{"data":[{"id":41,"letter_id":26,"user_id":462,"role_at_time":null,"comment":"Ea voluptate deserunt nulla.","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","letter":{"id":26,"letter_number":"f72162ae-bd41-45cb-b514-9ee60d8f3a05","original_sender_id":375,"sender_id":375,"receiver_id":339,"type":"hire_teacher","title":"Voluptas quas voluptas dolor rerum fuga ea veniam.","body":"Repudiandae earum nostrum pariatur et quibusdam. Nemo tempora facere consequatur ad pariatur. Accusamus accusantium recusandae qui illo. Rem voluptatibus incidunt alias architecto eius est saepe. Hic qui impedit ea alias et.\n\nMagnam voluptatibus molestiae esse aliquam. Exercitationem quis quibusdam voluptatem deserunt voluptas repellat. Cumque harum corrupti ex iure molestiae.\n\nImpedit perspiciatis voluptate odit et. Omnis ullam minima tempore enim. Quia dolorem voluptas incidunt fuga voluptates saepe voluptatem magnam.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"rejected","qr_code_path":null,"letter_uuid":null,"verification_hash":"42a0fcc4ce5d91e3a031e7f5ee12542a8a84ae3ca8683446dcad557df7e37c34","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","payload":null,"executed_at":null},"user":{"id":462,"name":"Jane Kreiger"}},{"id":42,"letter_id":26,"user_id":39,"role_at_time":null,"comment":null,"created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","letter":{"id":26,"letter_number":"f72162ae-bd41-45cb-b514-9ee60d8f3a05","original_sender_id":375,"sender_id":375,"receiver_id":339,"type":"hire_teacher","title":"Voluptas quas voluptas dolor rerum fuga ea veniam.","body":"Repudiandae earum nostrum pariatur et quibusdam. Nemo tempora facere consequatur ad pariatur. Accusamus accusantium recusandae qui illo. Rem voluptatibus incidunt alias architecto eius est saepe. Hic qui impedit ea alias et.\n\nMagnam voluptatibus molestiae esse aliquam. Exercitationem quis quibusdam voluptatem deserunt voluptas repellat. Cumque harum corrupti ex iure molestiae.\n\nImpedit perspiciatis voluptate odit et. Omnis ullam minima tempore enim. Quia dolorem voluptas incidunt fuga voluptates saepe voluptatem magnam.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"rejected","qr_code_path":null,"letter_uuid":null,"verification_hash":"42a0fcc4ce5d91e3a031e7f5ee12542a8a84ae3ca8683446dcad557df7e37c34","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","payload":null,"executed_at":null},"user":{"id":39,"name":"Augustine Howell"}},{"id":43,"letter_id":27,"user_id":80,"role_at_time":null,"comment":"Dolores veritatis eos error reiciendis quo dolor nostrum.","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","letter":{"id":27,"letter_number":"7244f044-f25f-4d00-8a08-98c247b4b698","original_sender_id":384,"sender_id":384,"receiver_id":58,"type":"close_faculty","title":"Vero ducimus non expedita.","body":"Atque et ipsum consequuntur aliquid aut excepturi. Qui suscipit enim quisquam dolores. Sit similique vitae sequi expedita laboriosam et cum. Nihil omnis laudantium autem a incidunt.\n\nConsequuntur in magni asperiores voluptatum ipsa modi. Iure saepe quisquam molestiae et cupiditate. Vitae veritatis fuga voluptatem consequatur. Ea pariatur quis vero ut omnis assumenda. Sequi quia similique corporis.\n\nIn blanditiis culpa nostrum praesentium nostrum omnis. Minima beatae aut quia et. Quos nihil ullam deserunt odio eius consequatur vitae veniam. Laboriosam vel porro natus perferendis voluptatum id magni.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"approved","qr_code_path":null,"letter_uuid":null,"verification_hash":"fc75037f6725e3bbebbf602a2f7e89d86733216a1e35ff5d5e04e7126b5c3a5e","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","payload":null,"executed_at":null},"user":{"id":80,"name":"Johathan Schamberger"}},{"id":44,"letter_id":28,"user_id":214,"role_at_time":null,"comment":null,"created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","letter":{"id":28,"letter_number":"8713854b-67e1-4684-81e0-e2a086dd5bfe","original_sender_id":69,"sender_id":69,"receiver_id":139,"type":"create_department","title":"Qui et nemo quia ea error animi.","body":"Porro minima maiores ullam vel dicta. Odit laudantium enim veritatis ipsa fugit. Quos sit distinctio cupiditate animi.\n\nSed voluptatum quam repellendus ut ad. Possimus debitis reprehenderit facilis nihil omnis recusandae enim ducimus. Sit saepe cupiditate aut praesentium et ut. Rerum et esse veniam nihil.\n\nSunt quam et et explicabo necessitatibus. Adipisci eius illum illum voluptatem sed. Iure alias error adipisci expedita.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"approved","qr_code_path":null,"letter_uuid":null,"verification_hash":"089a56bcb0524f3534be15599468f24ab94465cf9c3cede69eecfb7923725a16","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","payload":null,"executed_at":null},"user":{"id":214,"name":"Khalil Macejkovic"}},{"id":45,"letter_id":28,"user_id":16,"role_at_time":null,"comment":null,"created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","letter":{"id":28,"letter_number":"8713854b-67e1-4684-81e0-e2a086dd5bfe","original_sender_id":69,"sender_id":69,"receiver_id":139,"type":"create_department","title":"Qui et nemo quia ea error animi.","body":"Porro minima maiores ullam vel dicta. Odit laudantium enim veritatis ipsa fugit. Quos sit distinctio cupiditate animi.\n\nSed voluptatum quam repellendus ut ad. Possimus debitis reprehenderit facilis nihil omnis recusandae enim ducimus. Sit saepe cupiditate aut praesentium et ut. Rerum et esse veniam nihil.\n\nSunt quam et et explicabo necessitatibus. Adipisci eius illum illum voluptatem sed. Iure alias error adipisci expedita.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"approved","qr_code_path":null,"letter_uuid":null,"verification_hash":"089a56bcb0524f3534be15599468f24ab94465cf9c3cede69eecfb7923725a16","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","payload":null,"executed_at":null},"user":{"id":16,"name":"Devon Robel Jr."}},{"id":46,"letter_id":29,"user_id":286,"role_at_time":null,"comment":null,"created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","letter":{"id":29,"letter_number":"e1585ee4-a987-4002-83e2-1d949fd26f0f","original_sender_id":342,"sender_id":342,"receiver_id":49,"type":"close_faculty","title":"Molestias officiis laboriosam sit enim magnam consectetur.","body":"Suscipit sequi vitae dolores nulla sit voluptate. Eius dolore officiis sequi tempore itaque autem dolorem eius. Perspiciatis quaerat voluptatibus aut totam consequatur odio.\n\nNihil hic officiis placeat et aut. Eveniet laborum consequatur voluptatem omnis velit. Consequatur numquam ex beatae odit dolorem voluptatibus. Nisi pariatur est repellendus consectetur ut necessitatibus fugit.\n\nQui distinctio voluptatem dolores iusto et. Excepturi reprehenderit totam nisi sunt quibusdam.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"rejected","qr_code_path":null,"letter_uuid":null,"verification_hash":"3e0fd313c00e341dfd38b1c711b3151d6cabb49b9f32da1a56877bd54e46cf24","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","payload":null,"executed_at":null},"user":{"id":286,"name":"Ms. Pat Marvin MD"}},{"id":47,"letter_id":29,"user_id":434,"role_at_time":null,"comment":"Et velit nobis eum tempore quidem id aliquam.","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","letter":{"id":29,"letter_number":"e1585ee4-a987-4002-83e2-1d949fd26f0f","original_sender_id":342,"sender_id":342,"receiver_id":49,"type":"close_faculty","title":"Molestias officiis laboriosam sit enim magnam consectetur.","body":"Suscipit sequi vitae dolores nulla sit voluptate. Eius dolore officiis sequi tempore itaque autem dolorem eius. Perspiciatis quaerat voluptatibus aut totam consequatur odio.\n\nNihil hic officiis placeat et aut. Eveniet laborum consequatur voluptatem omnis velit. Consequatur numquam ex beatae odit dolorem voluptatibus. Nisi pariatur est repellendus consectetur ut necessitatibus fugit.\n\nQui distinctio voluptatem dolores iusto et. Excepturi reprehenderit totam nisi sunt quibusdam.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"rejected","qr_code_path":null,"letter_uuid":null,"verification_hash":"3e0fd313c00e341dfd38b1c711b3151d6cabb49b9f32da1a56877bd54e46cf24","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","payload":null,"executed_at":null},"user":{"id":434,"name":"Prof. Zora Lindgren"}},{"id":48,"letter_id":30,"user_id":394,"role_at_time":null,"comment":null,"created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","letter":{"id":30,"letter_number":"23fb7b9a-20c0-48a2-8746-92ac127f8ed7","original_sender_id":345,"sender_id":345,"receiver_id":386,"type":"open_university","title":"Necessitatibus esse consequuntur alias sit ea ex.","body":"Ducimus vel laboriosam itaque ea voluptatem repellendus. Aspernatur voluptatum corrupti occaecati sequi minus. Cum eaque eaque consequatur in.\n\nDelectus soluta molestiae eos est est voluptate omnis repellat. Vel neque sunt quam dolor maxime. Voluptatum ut optio ab deleniti id excepturi. Quia quia atque et magnam optio sit.\n\nUllam quas placeat molestiae quasi qui voluptatibus. Aliquam nihil nulla occaecati voluptatem deserunt deleniti. Beatae voluptatem sit beatae. Sint quae id nostrum.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"approved","qr_code_path":null,"letter_uuid":null,"verification_hash":"4ee6e8cb7dbb98a0daa968cbfadc350d3b1b19e7707ff6b9ebb8ba5f7a99dbb9","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","payload":null,"executed_at":null},"user":{"id":394,"name":"Ms. Amya Ratke II"}},{"id":49,"letter_id":30,"user_id":406,"role_at_time":null,"comment":"Consequuntur voluptatem aliquam vitae sit quod tempora.","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","letter":{"id":30,"letter_number":"23fb7b9a-20c0-48a2-8746-92ac127f8ed7","original_sender_id":345,"sender_id":345,"receiver_id":386,"type":"open_university","title":"Necessitatibus esse consequuntur alias sit ea ex.","body":"Ducimus vel laboriosam itaque ea voluptatem repellendus. Aspernatur voluptatum corrupti occaecati sequi minus. Cum eaque eaque consequatur in.\n\nDelectus soluta molestiae eos est est voluptate omnis repellat. Vel neque sunt quam dolor maxime. Voluptatum ut optio ab deleniti id excepturi. Quia quia atque et magnam optio sit.\n\nUllam quas placeat molestiae quasi qui voluptatibus. Aliquam nihil nulla occaecati voluptatem deserunt deleniti. Beatae voluptatem sit beatae. Sint quae id nostrum.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"approved","qr_code_path":null,"letter_uuid":null,"verification_hash":"4ee6e8cb7dbb98a0daa968cbfadc350d3b1b19e7707ff6b9ebb8ba5f7a99dbb9","created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z","payload":null,"executed_at":null},"user":{"id":406,"name":"Prof. Toney Beatty"}},{"id":1,"letter_id":1,"user_id":17,"role_at_time":null,"comment":"Voluptatem cupiditate quisquam consectetur quae.","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","letter":{"id":1,"letter_number":"2d2f3508-81ff-419b-9778-d7df00d9aaaf","original_sender_id":54,"sender_id":54,"receiver_id":107,"type":"open_faculty","title":"Commodi id in inventore sint accusamus sunt commodi.","body":"Dolor rerum iusto repellat dicta dolorem quo. Eveniet vel velit et eos pariatur. Iusto qui officiis dolor deserunt rerum praesentium.\n\nNeque aliquid inventore sequi accusantium. Sunt fugiat qui eveniet enim aut quidem. Ut possimus quae est ipsa quam facilis. Ut sit illum incidunt sit nam ducimus.\n\nQuidem sequi accusamus culpa quia praesentium. Aut corrupti labore minima repellat. Delectus reiciendis animi et eos excepturi. Et impedit alias qui et non voluptatum.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"rejected","qr_code_path":null,"letter_uuid":null,"verification_hash":"86852a30e299e66e855e88f38b921f3a40e9058eacbab3546c8d3df87c912688","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","payload":null,"executed_at":null},"user":{"id":17,"name":"Marie Heller"}},{"id":2,"letter_id":2,"user_id":373,"role_at_time":null,"comment":null,"created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","letter":{"id":2,"letter_number":"961c363f-c122-4814-8d58-9db840613065","original_sender_id":397,"sender_id":397,"receiver_id":86,"type":"close_faculty","title":"Cupiditate ullam repellat enim adipisci porro non omnis ut.","body":"Minus et doloremque dolor odit. Quia inventore voluptatibus dolor. Impedit voluptatum cum dolor qui.\n\nAt rerum quia impedit velit perspiciatis sed ratione illo. Eligendi consequatur vero expedita molestiae quas recusandae molestiae. Laborum iste quo sint reiciendis.\n\nNecessitatibus ab asperiores quo sit vel culpa. Deleniti architecto quis minus eveniet fuga labore consectetur quia. Possimus assumenda ipsam reprehenderit dolor culpa vel. Modi sint cum numquam nesciunt incidunt dolor fugiat.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"pending","qr_code_path":null,"letter_uuid":null,"verification_hash":"c53b44aa1be81958a20870ca15fbcd9eed82e56b3142d6afb12834792fb8a83a","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","payload":null,"executed_at":null},"user":{"id":373,"name":"Cassie Orn"}},{"id":3,"letter_id":3,"user_id":167,"role_at_time":null,"comment":"Velit accusantium minus nihil.","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","letter":{"id":3,"letter_number":"5514fc9e-aa2b-4728-923a-83157235a8b0","original_sender_id":261,"sender_id":261,"receiver_id":419,"type":"close_university","title":"Quis aliquam aut quisquam ab magnam nihil ullam.","body":"Explicabo a maiores aperiam excepturi rerum sequi. Ipsa officiis corrupti recusandae possimus. Vel qui nostrum repudiandae animi fugit. Ipsam repellat facilis aut ea dolor sunt qui voluptatem.\n\nAut provident tempora et cupiditate vero eaque. Iusto veritatis impedit velit ipsa aut. Earum fugit maiores amet quasi ut et. Rerum laboriosam non labore eos architecto est et.\n\nNihil aut omnis soluta delectus eum. Impedit consequatur et ut aut. Sunt sed consequatur architecto qui culpa quam.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"pending","qr_code_path":null,"letter_uuid":null,"verification_hash":"84d37a3d56bc78053d3d24b3fcd45fad54dadee03eee68f047c7909bc81bb109","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","payload":null,"executed_at":null},"user":{"id":167,"name":"Mr. Alfonzo Hamill"}},{"id":4,"letter_id":3,"user_id":169,"role_at_time":null,"comment":"Quam impedit quisquam eius odit et hic qui.","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","letter":{"id":3,"letter_number":"5514fc9e-aa2b-4728-923a-83157235a8b0","original_sender_id":261,"sender_id":261,"receiver_id":419,"type":"close_university","title":"Quis aliquam aut quisquam ab magnam nihil ullam.","body":"Explicabo a maiores aperiam excepturi rerum sequi. Ipsa officiis corrupti recusandae possimus. Vel qui nostrum repudiandae animi fugit. Ipsam repellat facilis aut ea dolor sunt qui voluptatem.\n\nAut provident tempora et cupiditate vero eaque. Iusto veritatis impedit velit ipsa aut. Earum fugit maiores amet quasi ut et. Rerum laboriosam non labore eos architecto est et.\n\nNihil aut omnis soluta delectus eum. Impedit consequatur et ut aut. Sunt sed consequatur architecto qui culpa quam.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"pending","qr_code_path":null,"letter_uuid":null,"verification_hash":"84d37a3d56bc78053d3d24b3fcd45fad54dadee03eee68f047c7909bc81bb109","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","payload":null,"executed_at":null},"user":{"id":169,"name":"Alejandrin Jones"}},{"id":5,"letter_id":4,"user_id":32,"role_at_time":null,"comment":null,"created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","letter":{"id":4,"letter_number":"f2177176-84fd-4638-b089-25e79e4d5196","original_sender_id":415,"sender_id":415,"receiver_id":170,"type":"close_university","title":"Et quia fugiat quia in.","body":"Amet accusantium officia qui impedit autem. Inventore aut dolores ad recusandae fugiat. Nisi commodi nihil est eos consequatur. Eum quis exercitationem maxime sequi.\n\nConsequatur nisi ut est numquam aut ut et. Saepe voluptatibus omnis doloribus soluta. Quas omnis delectus eius ut. Nisi non aut eos rerum dolor.\n\nNon asperiores aut similique autem ut aut. Commodi ea at est consequuntur corrupti inventore nihil. Iste asperiores qui fuga quo animi. Omnis ut sunt sint aperiam temporibus.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"pending","qr_code_path":null,"letter_uuid":null,"verification_hash":"e1c4ce2eeb68a61b999a0a3de132c038b309c15852f7f20ed94be13cc8f211df","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","payload":null,"executed_at":null},"user":{"id":32,"name":"Prof. Raoul Hyatt"}},{"id":6,"letter_id":4,"user_id":37,"role_at_time":null,"comment":null,"created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","letter":{"id":4,"letter_number":"f2177176-84fd-4638-b089-25e79e4d5196","original_sender_id":415,"sender_id":415,"receiver_id":170,"type":"close_university","title":"Et quia fugiat quia in.","body":"Amet accusantium officia qui impedit autem. Inventore aut dolores ad recusandae fugiat. Nisi commodi nihil est eos consequatur. Eum quis exercitationem maxime sequi.\n\nConsequatur nisi ut est numquam aut ut et. Saepe voluptatibus omnis doloribus soluta. Quas omnis delectus eius ut. Nisi non aut eos rerum dolor.\n\nNon asperiores aut similique autem ut aut. Commodi ea at est consequuntur corrupti inventore nihil. Iste asperiores qui fuga quo animi. Omnis ut sunt sint aperiam temporibus.","is_read":0,"academic_year_id":1,"is_archived":0,"status":"pending","qr_code_path":null,"letter_uuid":null,"verification_hash":"e1c4ce2eeb68a61b999a0a3de132c038b309c15852f7f20ed94be13cc8f211df","created_at":"2026-07-07T15:13:00.000000Z","updated_at":"2026-07-07T15:13:00.000000Z","payload":null,"executed_at":null},"user":{"id":37,"name":"Blair Hirthe"}}],"links":{"first":"http:\/\/localhost:8000\/api\/signatures?page=1","last":"http:\/\/localhost:8000\/api\/signatures?page=4","prev":null,"next":"http:\/\/localhost:8000\/api\/signatures?page=2"},"meta":{"current_page":1,"from":1,"last_page":4,"links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/signatures?page=1","label":"1","page":1,"active":true},{"url":"http:\/\/localhost:8000\/api\/signatures?page=2","label":"2","page":2,"active":false},{"url":"http:\/\/localhost:8000\/api\/signatures?page=3","label":"3","page":3,"active":false},{"url":"http:\/\/localhost:8000\/api\/signatures?page=4","label":"4","page":4,"active":false},{"url":"http:\/\/localhost:8000\/api\/signatures?page=2","label":"Next &raquo;","page":2,"active":false}],"path":"http:\/\/localhost:8000\/api\/signatures","per_page":15,"to":15,"total":49}}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6040,9 +6473,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display a listing of the resource with filters and pagination.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6055,15 +6489,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Users retrieved successfully.","data":[{"id":489,"name":"Student","email":"student@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":11,"name":"student"}],"scopes":[{"user_scope_id":489,"role_id":11,"role_name":"student","scope_type":"DEPARTMENT","scope_id":19}],"created_at":"2026-07-07T15:13:04.000000Z","updated_at":"2026-07-07T15:13:04.000000Z"},{"id":490,"name":"High School Graduate","email":"HIGH.SCHOOL.GRADUATE@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":12,"name":"HIGH_SCHOOL_GRADUATE"}],"scopes":[{"user_scope_id":490,"role_id":12,"role_name":"HIGH_SCHOOL_GRADUATE","scope_type":"MINISTRY","scope_id":null}],"created_at":"2026-07-07T15:13:04.000000Z","updated_at":"2026-07-07T15:13:04.000000Z"},{"id":485,"name":"University Admin Science","email":"UNIVERSITY.ADMIN.SCIENCE@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":7,"name":"UNIVERSITY_ADMIN_SCIENCE"}],"scopes":[{"user_scope_id":485,"role_id":7,"role_name":"UNIVERSITY_ADMIN_SCIENCE","scope_type":"UNIVERSITY","scope_id":4}],"created_at":"2026-07-07T15:13:03.000000Z","updated_at":"2026-07-07T15:13:03.000000Z"},{"id":486,"name":"Dean","email":"DEAN@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":8,"name":"DEAN"}],"scopes":[{"user_scope_id":486,"role_id":8,"role_name":"DEAN","scope_type":"FACULTY","scope_id":7}],"created_at":"2026-07-07T15:13:03.000000Z","updated_at":"2026-07-07T15:13:03.000000Z"},{"id":487,"name":"Head of Department","email":"HEAD.OF.DEPARTMENT@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":9,"name":"HEAD_OF_DEPARTMENT"}],"scopes":[{"user_scope_id":487,"role_id":9,"role_name":"HEAD_OF_DEPARTMENT","scope_type":"DEPARTMENT","scope_id":19}],"created_at":"2026-07-07T15:13:03.000000Z","updated_at":"2026-07-07T15:13:03.000000Z"},{"id":488,"name":"Lecturer","email":"lecturer@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":10,"name":"lecturer"}],"scopes":[{"user_scope_id":488,"role_id":10,"role_name":"lecturer","scope_type":"DEPARTMENT","scope_id":19}],"created_at":"2026-07-07T15:13:03.000000Z","updated_at":"2026-07-07T15:13:03.000000Z"},{"id":482,"name":"University Admin","email":"UNIVERSITY.ADMIN@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":4,"name":"UNIVERSITY_ADMIN"}],"scopes":[{"user_scope_id":482,"role_id":4,"role_name":"UNIVERSITY_ADMIN","scope_type":"UNIVERSITY","scope_id":4}],"created_at":"2026-07-07T15:13:02.000000Z","updated_at":"2026-07-07T15:13:02.000000Z"},{"id":483,"name":"University Admin Administration","email":"UNIVERSITY.ADMIN.ADMINISTRATION@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":5,"name":"UNIVERSITY_ADMIN_ADMINISTRATION"}],"scopes":[{"user_scope_id":483,"role_id":5,"role_name":"UNIVERSITY_ADMIN_ADMINISTRATION","scope_type":"UNIVERSITY","scope_id":4}],"created_at":"2026-07-07T15:13:02.000000Z","updated_at":"2026-07-07T15:13:02.000000Z"},{"id":484,"name":"University Admin Students","email":"UNIVERSITY.ADMIN.STUDENTS@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":6,"name":"UNIVERSITY_ADMIN_STUDENTS"}],"scopes":[{"user_scope_id":484,"role_id":6,"role_name":"UNIVERSITY_ADMIN_STUDENTS","scope_type":"UNIVERSITY","scope_id":4}],"created_at":"2026-07-07T15:13:02.000000Z","updated_at":"2026-07-07T15:13:02.000000Z"},{"id":479,"name":"Ministry Admin","email":"MINISTRY.ADMIN@zankolink.test","phone":"07700000000","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":1,"name":"MINISTRY_ADMIN"}],"scopes":[{"user_scope_id":479,"role_id":1,"role_name":"MINISTRY_ADMIN","scope_type":"MINISTRY","scope_id":null}],"created_at":"2026-07-07T15:13:01.000000Z","updated_at":"2026-07-07T15:13:01.000000Z"}]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6080,9 +6517,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6095,15 +6533,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Higher Role Users retrieved successfully","data":[{"user_id":479,"name":"Ministry Admin","role":"MINISTRY_ADMIN"},{"user_id":481,"name":"Ministry Administration Head","role":"MINISTRY_ADMINISTRATION_HEAD"},{"user_id":480,"name":"Ministry Import Export Staff","role":"MINISTRY_IMPORT_EXPORT_STAFF"}]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6120,9 +6561,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6135,15 +6577,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"same roles retrieved successfully","data":[{"user_id":479,"name":"Ministry Admin","email":"MINISTRY.ADMIN@zankolink.test","role_id":1,"role":"MINISTRY_ADMIN","scope_type":"MINISTRY","scope_id":null},{"user_id":481,"name":"Ministry Administration Head","email":"MINISTRY.ADMINISTRATION.HEAD@zankolink.test","role_id":3,"role":"MINISTRY_ADMINISTRATION_HEAD","scope_type":"MINISTRY","scope_id":null},{"user_id":480,"name":"Ministry Import Export Staff","email":"MINISTRY.IMPORT.EXPORT.STAFF@zankolink.test","role_id":2,"role":"MINISTRY_IMPORT_EXPORT_STAFF","scope_type":"MINISTRY","scope_id":null}]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6160,9 +6605,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Display the specified resource.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6187,15 +6633,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"User retrieved successfully.","data":{"id":1,"name":"Albin Herzog IV","email":"admin@ministry.gov","phone":"07701234567","is_active":1,"is_two_factor_enabled":0,"roles":[{"id":1,"name":"MINISTRY_ADMIN"}],"scopes":[{"user_scope_id":1,"role_id":1,"role_name":"MINISTRY_ADMIN","scope_type":"MINISTRY","scope_id":null}],"created_at":"2026-07-07T15:12:49.000000Z","updated_at":"2026-07-07T15:12:49.000000Z"}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6212,9 +6661,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Update the specified resource in storage.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6262,7 +6712,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6279,9 +6732,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Activate a user account.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6305,7 +6759,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6322,9 +6779,10 @@ endpoints:
       subgroupDescription: ''
       title: 'Deactivate a user account.'
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6348,7 +6806,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6365,9 +6826,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6380,15 +6842,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Roles retrieved successfully.","data":[{"id":1,"name":"MINISTRY_ADMIN","permissions":["view letter broadcast","create letter broadcast","view universities","view university","create universities","update universities","delete universities","view faculties","view faculty","create faculties","update faculties","delete faculties","view departments","view department","create departments","update departments","delete departments","update department seats","view users","view user","create users","update users","delete users","activate users","deactivate users","view teachers","view teacher","create teachers","update teachers","delete teachers","assign teachers","unassign teachers","view students","create students","update students","delete students","view courses","create courses","update courses","delete courses","assign course teachers","view course teachers","update course teachers","delete course teachers","assign course students","view course students","update course students","delete course students","view letters","create letters","update letters","raise letters","approve letters","decline letters","forward letters","upload attachments","download attachments","delete attachments","view signatures","create signatures","view reports","update academic year","create stamps","view stamps","view roles","create roles","update roles","delete roles","view permissions","view user roles","create user roles","delete user roles"]},{"id":2,"name":"MINISTRY_IMPORT_EXPORT_STAFF","permissions":["view letters","create letters","raise letters","upload attachments","download attachments","view signatures","create signatures","create stamps","view stamps","approve letters","decline letters","forward letters","view letter broadcast"]},{"id":3,"name":"MINISTRY_ADMINISTRATION_HEAD","permissions":["view letters","update letters","raise letters","create letters","upload attachments","download attachments","view signatures","create signatures","create stamps","view stamps","view reports","forward letters","view letter broadcast"]},{"id":4,"name":"UNIVERSITY_ADMIN","permissions":["view university","view faculties","view faculty","create faculties","update faculties","view departments","view department","create departments","update departments","view users","create users","update users","activate users","deactivate users","view teachers","view students","view courses","view reports","view letters","create letters","raise letters","approve letters","decline letters","upload attachments","download attachments","create stamps","view stamps","view signatures","create signatures","forward letters","view letter broadcast"]},{"id":5,"name":"UNIVERSITY_ADMIN_ADMINISTRATION","permissions":["view university","view faculties","view faculty","view departments","view users","view teachers","view students","view courses","view letters","create letters","raise letters","approve letters","decline letters","create signatures","view signatures","create stamps","view stamps","upload attachments","download attachments","forward letters","view letter broadcast"]},{"id":6,"name":"UNIVERSITY_ADMIN_STUDENTS","permissions":["view university","view faculties","view faculty","view departments","view users","view teachers","view students","view courses","view letters","create letters","raise letters","approve letters","decline letters","create signatures","view signatures","create stamps","view stamps","upload attachments","download attachments","forward letters","view letter broadcast"]},{"id":7,"name":"UNIVERSITY_ADMIN_SCIENCE","permissions":["view university","view faculties","view faculty","view departments","view users","view teachers","view students","view courses","view letters","create letters","raise letters","approve letters","decline letters","create signatures","view signatures","create stamps","view stamps","upload attachments","download attachments","forward letters","view letter broadcast"]},{"id":8,"name":"DEAN","permissions":["view university","view faculty","view departments","create departments","update departments","view teachers","view teacher","create teachers","update teachers","assign teachers","view students","view courses","create courses","update courses","view letters","create letters","raise letters","approve letters","decline letters","upload attachments","download attachments","create stamps","view stamps","view signatures","create signatures","view reports","forward letters","view letter broadcast"]},{"id":9,"name":"HEAD_OF_DEPARTMENT","permissions":["view department","view faculty","view university","view teachers","view teacher","assign teachers","unassign teachers","view students","view courses","create courses","update courses","assign course teachers","view course teachers","update course teachers","delete course teachers","update department seats","assign course students","view course students","create stamps","view stamps","view signatures","create signatures","update course students","delete course students","view letters","create letters","raise letters","approve letters","decline letters","upload attachments","download attachments","forward letters","view letter broadcast"]},{"id":10,"name":"lecturer","permissions":["view courses","view students","view letters","create letters","raise letters","upload attachments","download attachments"]},{"id":11,"name":"student","permissions":["view courses","view letters","create letters","upload attachments","download attachments"]},{"id":12,"name":"HIGH_SCHOOL_GRADUATE","permissions":["view departments"]}]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6405,9 +6870,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6445,7 +6911,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6462,9 +6931,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6514,7 +6984,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6531,9 +7004,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6557,7 +7031,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6574,9 +7051,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6589,15 +7067,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Permissions retrieved successfully.","data":[{"id":24,"name":"activate users"},{"id":53,"name":"approve letters"},{"id":45,"name":"assign course students"},{"id":41,"name":"assign course teachers"},{"id":31,"name":"assign teachers"},{"id":38,"name":"create courses"},{"id":15,"name":"create departments"},{"id":10,"name":"create faculties"},{"id":2,"name":"create letter broadcast"},{"id":50,"name":"create letters"},{"id":66,"name":"create roles"},{"id":60,"name":"create signatures"},{"id":63,"name":"create stamps"},{"id":34,"name":"create students"},{"id":28,"name":"create teachers"},{"id":5,"name":"create universities"},{"id":71,"name":"create user roles"},{"id":21,"name":"create users"},{"id":25,"name":"deactivate users"},{"id":54,"name":"decline letters"},{"id":58,"name":"delete attachments"},{"id":48,"name":"delete course students"},{"id":44,"name":"delete course teachers"},{"id":40,"name":"delete courses"},{"id":17,"name":"delete departments"},{"id":12,"name":"delete faculties"},{"id":68,"name":"delete roles"},{"id":36,"name":"delete students"},{"id":30,"name":"delete teachers"},{"id":7,"name":"delete universities"},{"id":72,"name":"delete user roles"},{"id":23,"name":"delete users"},{"id":57,"name":"download attachments"},{"id":55,"name":"forward letters"},{"id":52,"name":"raise letters"},{"id":32,"name":"unassign teachers"},{"id":62,"name":"update academic year"},{"id":47,"name":"update course students"},{"id":43,"name":"update course teachers"},{"id":39,"name":"update courses"},{"id":18,"name":"update department seats"},{"id":16,"name":"update departments"},{"id":11,"name":"update faculties"},{"id":51,"name":"update letters"},{"id":67,"name":"update roles"},{"id":35,"name":"update students"},{"id":29,"name":"update teachers"},{"id":6,"name":"update universities"},{"id":22,"name":"update users"},{"id":56,"name":"upload attachments"},{"id":46,"name":"view course students"},{"id":42,"name":"view course teachers"},{"id":37,"name":"view courses"},{"id":14,"name":"view department"},{"id":13,"name":"view departments"},{"id":8,"name":"view faculties"},{"id":9,"name":"view faculty"},{"id":1,"name":"view letter broadcast"},{"id":49,"name":"view letters"},{"id":69,"name":"view permissions"},{"id":61,"name":"view reports"},{"id":65,"name":"view roles"},{"id":59,"name":"view signatures"},{"id":64,"name":"view stamps"},{"id":33,"name":"view students"},{"id":27,"name":"view teacher"},{"id":26,"name":"view teachers"},{"id":3,"name":"view universities"},{"id":4,"name":"view university"},{"id":20,"name":"view user"},{"id":70,"name":"view user roles"},{"id":19,"name":"view users"}]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6614,9 +7095,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6641,15 +7123,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"User roles retrieved successfully.","data":[{"user_scope_id":1,"role_id":1,"role_name":"MINISTRY_ADMIN","scope_type":"MINISTRY","scope_id":null}]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6666,9 +7151,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6704,7 +7190,7 @@ endpoints:
         name: scope_type
         description: ''
         required: true
-        example: DEPARTMENT
+        example: FACULTY
         type: string
         enumValues:
           - MINISTRY
@@ -6727,12 +7213,15 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       role_id: architecto
-      scope_type: DEPARTMENT
+      scope_type: FACULTY
       scope_id: 16
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6749,9 +7238,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6787,7 +7277,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6804,9 +7297,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -6842,7 +7336,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6859,9 +7356,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6897,7 +7395,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6914,9 +7415,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6929,15 +7431,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"Letter stamps retrieved successfully","data":{"current_page":1,"data":[],"first_page_url":"http:\/\/localhost:8000\/api\/stamps?page=1","from":null,"last_page":1,"last_page_url":"http:\/\/localhost:8000\/api\/stamps?page=1","links":[{"url":null,"label":"&laquo; Previous","page":null,"active":false},{"url":"http:\/\/localhost:8000\/api\/stamps?page=1","label":"1","page":1,"active":true},{"url":null,"label":"Next &raquo;","page":null,"active":false}],"next_page_url":null,"path":"http:\/\/localhost:8000\/api\/stamps","per_page":15,"prev_page_url":null,"to":null,"total":0}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6954,9 +7459,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -6969,15 +7475,18 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 200
+        content: '{"success":true,"message":"LetterBroadcasts fetched","data":[]}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -6994,9 +7503,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -7021,15 +7531,21 @@ endpoints:
     responses:
       -
         custom: []
-        status: 401
-        content: '{"message":"Unauthenticated."}'
+        status: 404
+        content: |-
+          {
+              "message": "No query results for model [App\\Models\\LetterBroadcast] 16"
+          }
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null
@@ -7046,9 +7562,10 @@ endpoints:
       subgroupDescription: ''
       title: ''
       description: ''
-      authenticated: false
+      authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: multipart/form-data
       Accept: application/json
     urlParameters: []
@@ -7098,7 +7615,10 @@ endpoints:
         - null
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
     controller: null
     method: null
     route: null

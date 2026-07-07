@@ -462,7 +462,9 @@
 You can switch the language used with the tabs at the top right (or from the nav menu at the top left on mobile).&lt;/aside&gt;</code></pre>
 
         <h1 id="authenticating-requests">Authenticating requests</h1>
-<p>This API is not authenticated.</p>
+<p>To authenticate requests, include an <strong><code>Authorization</code></strong> header with the value <strong><code>"Bearer {ACCESS_TOKEN}"</code></strong>.</p>
+<p>All authenticated endpoints are marked with a <code>requires authentication</code> badge in the documentation below.</p>
+<p>Use the Bearer token returned from the login endpoint.</p>
 
         <h1 id="endpoints">Endpoints</h1>
 
@@ -471,6 +473,7 @@ You can switch the language used with the tabs at the top right (or from the nav
                                 <h2 id="endpoints-GETapi-user">GET api/user</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -482,6 +485,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/user" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -492,6 +496,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -506,7 +511,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-user">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -518,7 +523,17 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;id&quot;: 1,
+    &quot;name&quot;: &quot;Albin Herzog IV&quot;,
+    &quot;email&quot;: &quot;admin@ministry.gov&quot;,
+    &quot;phone&quot;: &quot;07701234567&quot;,
+    &quot;is_active&quot;: 1,
+    &quot;two_factor_code&quot;: null,
+    &quot;two_factor_expires_at&quot;: null,
+    &quot;is_two_factor_enabled&quot;: 0,
+    &quot;created_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
+    &quot;updated_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
+    &quot;deleted_at&quot;: null
 }</code>
  </pre>
     </span>
@@ -539,7 +554,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-user" data-method="GET"
       data-path="api/user"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -570,6 +585,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-user"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -598,6 +625,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-login">POST api/auth/login</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -609,6 +637,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/login" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -624,6 +653,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -660,7 +690,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-login" data-method="POST"
       data-path="api/auth/login"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -690,6 +720,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/auth/login</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-login"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -744,6 +786,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-moodle-login">POST api/auth/moodle/login</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -755,6 +798,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/moodle/login" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -770,6 +814,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -806,7 +851,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-moodle-login" data-method="POST"
       data-path="api/auth/moodle/login"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -836,6 +881,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/auth/moodle/login</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-moodle-login"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -890,6 +947,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-reset-password">POST api/auth/reset-password</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -901,6 +959,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/reset-password" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -917,6 +976,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -954,7 +1014,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-reset-password" data-method="POST"
       data-path="api/auth/reset-password"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -984,6 +1044,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/auth/reset-password</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-reset-password"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -1050,6 +1122,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-forget-password">POST api/auth/forget-password</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -1061,6 +1134,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/forget-password" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1075,6 +1149,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -1110,7 +1185,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-forget-password" data-method="POST"
       data-path="api/auth/forget-password"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -1140,6 +1215,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/auth/forget-password</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-forget-password"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -1182,6 +1269,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-verify">POST api/auth/verify</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -1193,6 +1281,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/verify" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1208,6 +1297,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -1244,7 +1334,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-verify" data-method="POST"
       data-path="api/auth/verify"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -1274,6 +1364,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/auth/verify</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-verify"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -1328,6 +1430,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-register">POST api/auth/register</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -1339,6 +1442,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/register" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1348,7 +1452,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"phone\": \"07564255931\",
     \"role\": \"architecto\",
     \"scope_id\": 16,
-    \"scope_type\": \"FACULTY\"
+    \"scope_type\": \"UNIVERSITY\"
 }"
 </code></pre></div>
 
@@ -1359,6 +1463,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -1370,7 +1475,7 @@ let body = {
     "phone": "07564255931",
     "role": "architecto",
     "scope_id": 16,
-    "scope_type": "FACULTY"
+    "scope_type": "UNIVERSITY"
 };
 
 fetch(url, {
@@ -1400,7 +1505,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-register" data-method="POST"
       data-path="api/auth/register"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -1430,6 +1535,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/auth/register</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-register"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -1534,10 +1651,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="scope_type"                data-endpoint="POSTapi-auth-register"
-               value="FACULTY"
+               value="UNIVERSITY"
                data-component="body">
     <br>
-<p>Example: <code>FACULTY</code></p>
+<p>Example: <code>UNIVERSITY</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>MINISTRY</code></li> <li><code>UNIVERSITY</code></li> <li><code>FACULTY</code></li> <li><code>DEPARTMENT</code></li></ul>
         </div>
@@ -1546,6 +1663,7 @@ Must be one of:
                     <h2 id="endpoints-POSTapi-auth-two-factor-prepare">POST api/auth/two-factor/prepare</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -1557,6 +1675,7 @@ Must be one of:
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/two-factor/prepare" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -1567,6 +1686,7 @@ Must be one of:
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -1598,7 +1718,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-two-factor-prepare" data-method="POST"
       data-path="api/auth/two-factor/prepare"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -1629,6 +1749,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-two-factor-prepare"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -1657,6 +1789,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-two-factor-enable">POST api/auth/two-factor/enable</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -1668,6 +1801,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/two-factor/enable" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1682,6 +1816,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -1717,7 +1852,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-two-factor-enable" data-method="POST"
       data-path="api/auth/two-factor/enable"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -1747,6 +1882,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/auth/two-factor/enable</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-two-factor-enable"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -1789,6 +1936,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-two-factor-disable">POST api/auth/two-factor/disable</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -1800,6 +1948,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/two-factor/disable" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -1810,6 +1959,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -1841,7 +1991,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-two-factor-disable" data-method="POST"
       data-path="api/auth/two-factor/disable"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -1872,6 +2022,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-two-factor-disable"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -1900,6 +2062,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-logout">POST api/auth/logout</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -1911,6 +2074,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/logout" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -1921,6 +2085,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -1952,7 +2117,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-logout" data-method="POST"
       data-path="api/auth/logout"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -1983,6 +2148,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-logout"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -2011,6 +2188,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-auth-change-password">POST api/auth/change-password</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -2022,6 +2200,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/auth/change-password" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -2037,6 +2216,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -2073,7 +2253,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-auth-change-password" data-method="POST"
       data-path="api/auth/change-password"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -2103,6 +2283,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/auth/change-password</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-auth-change-password"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -2157,6 +2349,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-auth-me">GET api/auth/me</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -2168,6 +2361,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/auth/me" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -2178,6 +2372,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -2192,7 +2387,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-auth-me">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -2204,7 +2399,39 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;User logged in successfully&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;Albin Herzog IV&quot;,
+        &quot;email&quot;: &quot;admin@ministry.gov&quot;,
+        &quot;phone&quot;: &quot;07701234567&quot;,
+        &quot;is_active&quot;: 1,
+        &quot;is_two_factor_enabled&quot;: 0,
+        &quot;roles&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;
+            }
+        ],
+        &quot;created_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
+        &quot;scopes&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;role&quot;: {
+                    &quot;id&quot;: 1,
+                    &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;
+                },
+                &quot;scope_type&quot;: &quot;MINISTRY&quot;,
+                &quot;scope_id&quot;: null,
+                &quot;scope&quot;: {
+                    &quot;id&quot;: null,
+                    &quot;name&quot;: &quot;Ministry&quot;
+                }
+            }
+        ]
+    }
 }</code>
  </pre>
     </span>
@@ -2225,7 +2452,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-auth-me" data-method="GET"
       data-path="api/auth/me"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -2256,6 +2483,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-auth-me"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -2284,6 +2523,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-verify--letter_uuid-">GET api/verify/{letter_uuid}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -2295,6 +2535,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/verify/6ff8f7f6-1eb3-3525-be4a-3932c805afed" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -2309,6 +2550,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -2360,7 +2602,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-verify--letter_uuid-" data-method="GET"
       data-path="api/verify/{letter_uuid}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -2390,6 +2632,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/verify/{letter_uuid}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-verify--letter_uuid-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -2445,6 +2699,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-universities">Display a listing of the resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -2456,6 +2711,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/universities" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -2466,6 +2722,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -2480,7 +2737,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-universities">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -2492,7 +2749,111 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Universities retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 4,
+                &quot;name&quot;: &quot;West LarryUniversity&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 482,
+                    &quot;name&quot;: &quot;University Admin&quot;
+                },
+                &quot;academic_year_id&quot;: 1,
+                &quot;location&quot;: &quot;Batzhaven&quot;,
+                &quot;start_date&quot;: &quot;2024-08-30&quot;,
+                &quot;end_date&quot;: &quot;2028-11-17&quot;,
+                &quot;established_year&quot;: &quot;2009-02-15&quot;,
+                &quot;is_active&quot;: 1,
+                &quot;created_at&quot;: &quot;2026-07-07 18:13:01&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:13:02&quot;
+            },
+            {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;AlycelandUniversity&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 2,
+                    &quot;name&quot;: &quot;Pete Thompson&quot;
+                },
+                &quot;academic_year_id&quot;: 1,
+                &quot;location&quot;: &quot;Lubowitzberg&quot;,
+                &quot;start_date&quot;: &quot;2024-09-01&quot;,
+                &quot;end_date&quot;: null,
+                &quot;established_year&quot;: &quot;2008-07-28&quot;,
+                &quot;is_active&quot;: 1,
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 2,
+                &quot;name&quot;: &quot;ElenormouthUniversity&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 161,
+                    &quot;name&quot;: &quot;Mrs. Amie Kertzmann PhD&quot;
+                },
+                &quot;academic_year_id&quot;: 1,
+                &quot;location&quot;: &quot;Port Mustafaside&quot;,
+                &quot;start_date&quot;: &quot;2025-01-20&quot;,
+                &quot;end_date&quot;: &quot;2027-12-03&quot;,
+                &quot;established_year&quot;: &quot;1972-03-21&quot;,
+                &quot;is_active&quot;: 1,
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:53&quot;
+            },
+            {
+                &quot;id&quot;: 3,
+                &quot;name&quot;: &quot;West KamilleUniversity&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 320,
+                    &quot;name&quot;: &quot;Paul Murphy III&quot;
+                },
+                &quot;academic_year_id&quot;: 1,
+                &quot;location&quot;: &quot;Gladyceshire&quot;,
+                &quot;start_date&quot;: &quot;2024-07-19&quot;,
+                &quot;end_date&quot;: &quot;2029-03-02&quot;,
+                &quot;established_year&quot;: &quot;1987-04-21&quot;,
+                &quot;is_active&quot;: 1,
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:56&quot;
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/universities?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/universities?page=1&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: null
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 1,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/universities?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/universities&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 4,
+            &quot;total&quot;: 4
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -2513,7 +2874,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-universities" data-method="GET"
       data-path="api/universities"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -2544,6 +2905,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-universities"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -2572,6 +2945,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-universities">Store a newly created resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -2583,15 +2957,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/universities" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"name\": \"b\",
     \"location\": \"n\",
-    \"start_date\": \"2026-07-07T22:13:14\",
+    \"start_date\": \"2026-07-07T22:48:29\",
     \"end_date\": \"2052-07-30\",
-    \"established_year\": \"2026-07-07T22:13:14\",
-    \"is_active\": true,
+    \"established_year\": \"2026-07-07T22:48:29\",
+    \"is_active\": false,
     \"faculties\": [
         {
             \"name\": \"b\",
@@ -2615,6 +2990,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -2622,10 +2998,10 @@ const headers = {
 let body = {
     "name": "b",
     "location": "n",
-    "start_date": "2026-07-07T22:13:14",
+    "start_date": "2026-07-07T22:48:29",
     "end_date": "2052-07-30",
-    "established_year": "2026-07-07T22:13:14",
-    "is_active": true,
+    "established_year": "2026-07-07T22:48:29",
+    "is_active": false,
     "faculties": [
         {
             "name": "b",
@@ -2668,7 +3044,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-universities" data-method="POST"
       data-path="api/universities"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -2698,6 +3074,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/universities</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-universities"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -2778,10 +3166,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="POSTapi-universities"
-               value="2026-07-07T22:13:14"
+               value="2026-07-07T22:48:29"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:13:14</code></p>
+<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -2802,10 +3190,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="established_year"                data-endpoint="POSTapi-universities"
-               value="2026-07-07T22:13:14"
+               value="2026-07-07T22:48:29"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:13:14</code></p>
+<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>is_active</code></b>&nbsp;&nbsp;
@@ -2827,7 +3215,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
         <details>
@@ -2962,6 +3350,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-universities--university_id-">Display the specified resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -2973,6 +3362,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/universities/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -2983,6 +3373,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -2997,7 +3388,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-universities--university_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -3009,7 +3400,24 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;University retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;AlycelandUniversity&quot;,
+        &quot;admin&quot;: {
+            &quot;id&quot;: 2,
+            &quot;name&quot;: &quot;Pete Thompson&quot;
+        },
+        &quot;academic_year_id&quot;: 1,
+        &quot;location&quot;: &quot;Lubowitzberg&quot;,
+        &quot;start_date&quot;: &quot;2024-09-01&quot;,
+        &quot;end_date&quot;: null,
+        &quot;established_year&quot;: &quot;2008-07-28&quot;,
+        &quot;is_active&quot;: 1,
+        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+    }
 }</code>
  </pre>
     </span>
@@ -3030,7 +3438,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-universities--university_id-" data-method="GET"
       data-path="api/universities/{university_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -3060,6 +3468,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/universities/{university_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-universities--university_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -3102,6 +3522,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PATCHapi-universities--university_id-">Update the specified resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -3113,14 +3534,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
     "http://localhost:8000/api/universities/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"name\": \"b\",
     \"location\": \"architecto\",
-    \"start_date\": \"2026-07-07T22:13:14\",
+    \"start_date\": \"2026-07-07T22:48:29\",
     \"end_date\": \"2052-07-30\",
-    \"established_year\": \"2026-07-07T22:13:14\",
+    \"established_year\": \"2026-07-07T22:48:29\",
     \"is_active\": true
 }"
 </code></pre></div>
@@ -3132,6 +3554,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -3139,9 +3562,9 @@ const headers = {
 let body = {
     "name": "b",
     "location": "architecto",
-    "start_date": "2026-07-07T22:13:14",
+    "start_date": "2026-07-07T22:48:29",
     "end_date": "2052-07-30",
-    "established_year": "2026-07-07T22:13:14",
+    "established_year": "2026-07-07T22:48:29",
     "is_active": true
 };
 
@@ -3172,7 +3595,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PATCHapi-universities--university_id-" data-method="PATCH"
       data-path="api/universities/{university_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -3202,6 +3625,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/universities/{university_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-universities--university_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -3295,10 +3730,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="PATCHapi-universities--university_id-"
-               value="2026-07-07T22:13:14"
+               value="2026-07-07T22:48:29"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:13:14</code></p>
+<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -3319,10 +3754,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="established_year"                data-endpoint="PATCHapi-universities--university_id-"
-               value="2026-07-07T22:13:14"
+               value="2026-07-07T22:48:29"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:13:14</code></p>
+<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>is_active</code></b>&nbsp;&nbsp;
@@ -3351,6 +3786,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-universities--university_id-">Remove the specified resource from storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -3362,6 +3798,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/universities/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -3372,6 +3809,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -3403,7 +3841,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-universities--university_id-" data-method="DELETE"
       data-path="api/universities/{university_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -3433,6 +3871,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/universities/{university_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-universities--university_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -3475,6 +3925,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-academic-year-update">Update the current academic year and create a new one.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 <p>Route: POST /api/academic-year/update</p>
@@ -3486,12 +3937,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/academic-year/update" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"year\": \"architecto\",
-    \"start_date\": \"2026-07-07T22:13:14\",
-    \"end_date\": \"2026-07-07T22:13:14\"
+    \"start_date\": \"2026-07-07T22:48:29\",
+    \"end_date\": \"2026-07-07T22:48:29\"
 }"
 </code></pre></div>
 
@@ -3502,14 +3954,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
 let body = {
     "year": "architecto",
-    "start_date": "2026-07-07T22:13:14",
-    "end_date": "2026-07-07T22:13:14"
+    "start_date": "2026-07-07T22:48:29",
+    "end_date": "2026-07-07T22:48:29"
 };
 
 fetch(url, {
@@ -3539,7 +3992,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-academic-year-update" data-method="POST"
       data-path="api/academic-year/update"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -3569,6 +4022,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/academic-year/update</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-academic-year-update"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -3613,10 +4078,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="POSTapi-academic-year-update"
-               value="2026-07-07T22:13:14"
+               value="2026-07-07T22:48:29"
                data-component="body">
     <br>
-<p>e.g., "2026-2027". Must be a valid date. Example: <code>2026-07-07T22:13:14</code></p>
+<p>e.g., "2026-2027". Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -3625,16 +4090,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="end_date"                data-endpoint="POSTapi-academic-year-update"
-               value="2026-07-07T22:13:14"
+               value="2026-07-07T22:48:29"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:13:14</code></p>
+<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
         </div>
         </form>
 
                     <h2 id="endpoints-GETapi-faculties">Display a listing of the resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -3646,6 +4112,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/faculties" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -3656,6 +4123,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -3670,7 +4138,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-faculties">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -3682,7 +4150,215 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Faculties retrieved successfully&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 7,
+                &quot;name&quot;: &quot;College of Languages&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 486,
+                    &quot;name&quot;: &quot;Dean&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;university_id&quot;: 4,
+                &quot;university&quot;: {
+                    &quot;id&quot;: 4,
+                    &quot;name&quot;: &quot;West LarryUniversity&quot;,
+                    &quot;academic_year_id&quot;: null,
+                    &quot;location&quot;: null,
+                    &quot;start_date&quot;: null,
+                    &quot;end_date&quot;: null,
+                    &quot;established_year&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:13:03&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:13:03&quot;
+            },
+            {
+                &quot;id&quot;: 5,
+                &quot;name&quot;: &quot;College of Law and Politics&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 321,
+                    &quot;name&quot;: &quot;Dominique Beahan&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;university_id&quot;: 3,
+                &quot;university&quot;: {
+                    &quot;id&quot;: 3,
+                    &quot;name&quot;: &quot;West KamilleUniversity&quot;,
+                    &quot;academic_year_id&quot;: null,
+                    &quot;location&quot;: null,
+                    &quot;start_date&quot;: null,
+                    &quot;end_date&quot;: null,
+                    &quot;established_year&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:56&quot;
+            },
+            {
+                &quot;id&quot;: 6,
+                &quot;name&quot;: &quot;College of Engineering&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 400,
+                    &quot;name&quot;: &quot;Sasha Kulas&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;university_id&quot;: 3,
+                &quot;university&quot;: {
+                    &quot;id&quot;: 3,
+                    &quot;name&quot;: &quot;West KamilleUniversity&quot;,
+                    &quot;academic_year_id&quot;: null,
+                    &quot;location&quot;: null,
+                    &quot;start_date&quot;: null,
+                    &quot;end_date&quot;: null,
+                    &quot;established_year&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
+            },
+            {
+                &quot;id&quot;: 3,
+                &quot;name&quot;: &quot;College of Humanities&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 162,
+                    &quot;name&quot;: &quot;Mollie Becker&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;university_id&quot;: 2,
+                &quot;university&quot;: {
+                    &quot;id&quot;: 2,
+                    &quot;name&quot;: &quot;ElenormouthUniversity&quot;,
+                    &quot;academic_year_id&quot;: null,
+                    &quot;location&quot;: null,
+                    &quot;start_date&quot;: null,
+                    &quot;end_date&quot;: null,
+                    &quot;established_year&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:53&quot;
+            },
+            {
+                &quot;id&quot;: 4,
+                &quot;name&quot;: &quot;College of Humanities&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 241,
+                    &quot;name&quot;: &quot;Justine Green&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;university_id&quot;: 2,
+                &quot;university&quot;: {
+                    &quot;id&quot;: 2,
+                    &quot;name&quot;: &quot;ElenormouthUniversity&quot;,
+                    &quot;academic_year_id&quot;: null,
+                    &quot;location&quot;: null,
+                    &quot;start_date&quot;: null,
+                    &quot;end_date&quot;: null,
+                    &quot;established_year&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:55&quot;
+            },
+            {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;College of Fine Arts&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 3,
+                    &quot;name&quot;: &quot;Noel Herzog MD&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;university_id&quot;: 1,
+                &quot;university&quot;: {
+                    &quot;id&quot;: 1,
+                    &quot;name&quot;: &quot;AlycelandUniversity&quot;,
+                    &quot;academic_year_id&quot;: null,
+                    &quot;location&quot;: null,
+                    &quot;start_date&quot;: null,
+                    &quot;end_date&quot;: null,
+                    &quot;established_year&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 2,
+                &quot;name&quot;: &quot;College of Dentistry&quot;,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 82,
+                    &quot;name&quot;: &quot;Dr. Alayna Hermiston&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;university_id&quot;: 1,
+                &quot;university&quot;: {
+                    &quot;id&quot;: 1,
+                    &quot;name&quot;: &quot;AlycelandUniversity&quot;,
+                    &quot;academic_year_id&quot;: null,
+                    &quot;location&quot;: null,
+                    &quot;start_date&quot;: null,
+                    &quot;end_date&quot;: null,
+                    &quot;established_year&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:51&quot;
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/faculties?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/faculties?page=1&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: null
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 1,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/faculties?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/faculties&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 7,
+            &quot;total&quot;: 7
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -3703,7 +4379,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-faculties" data-method="GET"
       data-path="api/faculties"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -3734,6 +4410,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-faculties"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -3762,6 +4450,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-faculties">Store a newly created resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -3773,6 +4462,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/faculties" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -3789,6 +4479,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -3826,7 +4517,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-faculties" data-method="POST"
       data-path="api/faculties"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -3856,6 +4547,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/faculties</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-faculties"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -3944,6 +4647,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-faculties--faculty_id-">Display the specified resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -3955,6 +4659,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/faculties/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -3965,6 +4670,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -3979,7 +4685,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-faculties--faculty_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -3991,7 +4697,32 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Faculty retrieved successfully&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;College of Fine Arts&quot;,
+        &quot;admin&quot;: {
+            &quot;id&quot;: 3,
+            &quot;name&quot;: &quot;Noel Herzog MD&quot;
+        },
+        &quot;is_active&quot;: 1,
+        &quot;university_id&quot;: 1,
+        &quot;university&quot;: {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;AlycelandUniversity&quot;,
+            &quot;academic_year_id&quot;: null,
+            &quot;location&quot;: null,
+            &quot;start_date&quot;: null,
+            &quot;end_date&quot;: null,
+            &quot;established_year&quot;: null,
+            &quot;is_active&quot;: null,
+            &quot;created_at&quot;: null,
+            &quot;updated_at&quot;: null
+        },
+        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+    }
 }</code>
  </pre>
     </span>
@@ -4012,7 +4743,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-faculties--faculty_id-" data-method="GET"
       data-path="api/faculties/{faculty_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -4042,6 +4773,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/faculties/{faculty_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-faculties--faculty_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -4084,6 +4827,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PATCHapi-faculties--faculty_id-">Update the specified resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -4095,6 +4839,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
     "http://localhost:8000/api/faculties/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -4110,6 +4855,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -4146,7 +4892,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PATCHapi-faculties--faculty_id-" data-method="PATCH"
       data-path="api/faculties/{faculty_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -4176,6 +4922,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/faculties/{faculty_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-faculties--faculty_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -4265,6 +5023,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-faculties--faculty_id-">Remove the specified resource from storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -4276,6 +5035,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/faculties/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -4286,6 +5046,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -4317,7 +5078,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-faculties--faculty_id-" data-method="DELETE"
       data-path="api/faculties/{faculty_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -4347,6 +5108,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/faculties/{faculty_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-faculties--faculty_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -4389,6 +5162,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-departments">Display a listing of the resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -4400,6 +5174,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/departments" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -4410,6 +5185,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -4424,7 +5200,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -4436,7 +5212,368 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Departments retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 19,
+                &quot;name&quot;: &quot;Architectural Engineering&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 7,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 487,
+                    &quot;name&quot;: &quot;Head of Department&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 7,
+                    &quot;name&quot;: &quot;College of Languages&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:13:03&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:13:03&quot;
+            },
+            {
+                &quot;id&quot;: 16,
+                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 6,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 401,
+                    &quot;name&quot;: &quot;Adriana Carter&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 6,
+                    &quot;name&quot;: &quot;College of Engineering&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
+            },
+            {
+                &quot;id&quot;: 17,
+                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 6,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 427,
+                    &quot;name&quot;: &quot;Evert Hackett&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 6,
+                    &quot;name&quot;: &quot;College of Engineering&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 18,
+                &quot;name&quot;: &quot;Fine Arts and Design&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 6,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 453,
+                    &quot;name&quot;: &quot;Thelma Bosco&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 6,
+                    &quot;name&quot;: &quot;College of Engineering&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 13,
+                &quot;name&quot;: &quot;Clinical Pharmacy&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 5,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 322,
+                    &quot;name&quot;: &quot;Cristopher Metz III&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 5,
+                    &quot;name&quot;: &quot;College of Law and Politics&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:56&quot;
+            },
+            {
+                &quot;id&quot;: 14,
+                &quot;name&quot;: &quot;Clinical Pharmacy&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 5,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 348,
+                    &quot;name&quot;: &quot;Candelario Miller II&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 5,
+                    &quot;name&quot;: &quot;College of Law and Politics&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:57&quot;
+            },
+            {
+                &quot;id&quot;: 15,
+                &quot;name&quot;: &quot;Soil and Water Science&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 5,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 374,
+                    &quot;name&quot;: &quot;Mrs. Margarita Romaguera II&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 5,
+                    &quot;name&quot;: &quot;College of Law and Politics&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
+            },
+            {
+                &quot;id&quot;: 10,
+                &quot;name&quot;: &quot;English Translation&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 4,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 242,
+                    &quot;name&quot;: &quot;Ludwig Homenick&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 4,
+                    &quot;name&quot;: &quot;College of Humanities&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:55&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:55&quot;
+            },
+            {
+                &quot;id&quot;: 11,
+                &quot;name&quot;: &quot;Kurdish Literature&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 4,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 268,
+                    &quot;name&quot;: &quot;Prof. Mekhi Monahan&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 4,
+                    &quot;name&quot;: &quot;College of Humanities&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:55&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:55&quot;
+            },
+            {
+                &quot;id&quot;: 12,
+                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 4,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 294,
+                    &quot;name&quot;: &quot;Emmett Powlowski DVM&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 4,
+                    &quot;name&quot;: &quot;College of Humanities&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:55&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:56&quot;
+            },
+            {
+                &quot;id&quot;: 7,
+                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 3,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 163,
+                    &quot;name&quot;: &quot;Nicola Dicki&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 3,
+                    &quot;name&quot;: &quot;College of Humanities&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:53&quot;
+            },
+            {
+                &quot;id&quot;: 8,
+                &quot;name&quot;: &quot;Mechanical Engineering&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 3,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 189,
+                    &quot;name&quot;: &quot;Larue Reynolds&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 3,
+                    &quot;name&quot;: &quot;College of Humanities&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:54&quot;
+            },
+            {
+                &quot;id&quot;: 9,
+                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 3,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 215,
+                    &quot;name&quot;: &quot;Raegan Kohler&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 3,
+                    &quot;name&quot;: &quot;College of Humanities&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:54&quot;
+            },
+            {
+                &quot;id&quot;: 4,
+                &quot;name&quot;: &quot;Public Law&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 2,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 83,
+                    &quot;name&quot;: &quot;Orpha Wyman V&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 2,
+                    &quot;name&quot;: &quot;College of Dentistry&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:51&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:51&quot;
+            },
+            {
+                &quot;id&quot;: 5,
+                &quot;name&quot;: &quot;Political Science&quot;,
+                &quot;code&quot;: null,
+                &quot;faculty_id&quot;: 2,
+                &quot;admin&quot;: {
+                    &quot;id&quot;: 109,
+                    &quot;name&quot;: &quot;Mrs. Roxane Hettinger&quot;
+                },
+                &quot;is_active&quot;: 1,
+                &quot;faculty&quot;: {
+                    &quot;id&quot;: 2,
+                    &quot;name&quot;: &quot;College of Dentistry&quot;,
+                    &quot;is_active&quot;: null,
+                    &quot;university_id&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:51&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:52&quot;
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/departments?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/departments?page=2&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: &quot;http://localhost:8000/api/departments?page=2&quot;
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 2,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/departments?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/departments?page=2&quot;,
+                    &quot;label&quot;: &quot;2&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/departments?page=2&quot;,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/departments&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 15,
+            &quot;total&quot;: 19
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -4457,7 +5594,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-departments" data-method="GET"
       data-path="api/departments"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -4488,6 +5625,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-departments"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -4516,6 +5665,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-departments">Store a newly created resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -4527,12 +5677,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/departments" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"name\": \"b\",
     \"faculty_id\": \"architecto\",
-    \"is_active\": false
+    \"is_active\": true
 }"
 </code></pre></div>
 
@@ -4543,6 +5694,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -4550,7 +5702,7 @@ const headers = {
 let body = {
     "name": "b",
     "faculty_id": "architecto",
-    "is_active": false
+    "is_active": true
 };
 
 fetch(url, {
@@ -4580,7 +5732,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-departments" data-method="POST"
       data-path="api/departments"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -4610,6 +5762,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-departments"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -4691,13 +5855,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
         </div>
         </form>
 
                     <h2 id="endpoints-GETapi-departments--department_id-">Display the specified resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -4709,6 +5874,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/departments/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -4719,6 +5885,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -4733,7 +5900,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments--department_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -4745,7 +5912,29 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Department retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;Architectural Engineering&quot;,
+        &quot;code&quot;: null,
+        &quot;faculty_id&quot;: 1,
+        &quot;admin&quot;: {
+            &quot;id&quot;: 4,
+            &quot;name&quot;: &quot;Gabriella Bailey&quot;
+        },
+        &quot;is_active&quot;: 1,
+        &quot;faculty&quot;: {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;College of Fine Arts&quot;,
+            &quot;is_active&quot;: null,
+            &quot;university_id&quot;: null,
+            &quot;created_at&quot;: null,
+            &quot;updated_at&quot;: null
+        },
+        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+    }
 }</code>
  </pre>
     </span>
@@ -4766,7 +5955,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-departments--department_id-" data-method="GET"
       data-path="api/departments/{department_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -4796,6 +5985,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/{department_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-departments--department_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -4838,6 +6039,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PATCHapi-departments--department_id-">Update the specified resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -4849,11 +6051,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
     "http://localhost:8000/api/departments/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"name\": \"b\",
-    \"is_active\": true
+    \"is_active\": false
 }"
 </code></pre></div>
 
@@ -4864,13 +6067,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
 let body = {
     "name": "b",
-    "is_active": true
+    "is_active": false
 };
 
 fetch(url, {
@@ -4900,7 +6104,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PATCHapi-departments--department_id-" data-method="PATCH"
       data-path="api/departments/{department_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -4930,6 +6134,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/{department_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-departments--department_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -5024,13 +6240,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
         </form>
 
                     <h2 id="endpoints-DELETEapi-departments--department_id-">Remove the specified resource from storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -5042,6 +6259,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/departments/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -5052,6 +6270,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -5083,7 +6302,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-departments--department_id-" data-method="DELETE"
       data-path="api/departments/{department_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -5113,6 +6332,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/{department_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-departments--department_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -5155,6 +6386,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PATCHapi-departments--department_id--seat">Update department seats.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -5166,6 +6398,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
     "http://localhost:8000/api/departments/1/seat" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -5180,6 +6413,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -5215,7 +6449,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PATCHapi-departments--department_id--seat" data-method="PATCH"
       data-path="api/departments/{department_id}/seat"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -5245,6 +6479,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/{department_id}/seat</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-departments--department_id--seat"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -5300,6 +6546,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-departments-student-selected-courses">Get the list of pending course selections (for all students or a specific student).</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -5311,6 +6558,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/departments/student-selected-courses" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -5325,6 +6573,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -5343,7 +6592,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments-student-selected-courses">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -5355,7 +6604,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\Department] student-selected-courses&quot;
 }</code>
  </pre>
     </span>
@@ -5376,7 +6625,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-departments-student-selected-courses" data-method="GET"
       data-path="api/departments/student-selected-courses"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -5406,6 +6655,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/student-selected-courses</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-departments-student-selected-courses"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -5460,6 +6721,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-departments-approve-selection">Approve student course selections and enroll them into the final table.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -5471,6 +6733,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/departments/approve-selection" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -5486,6 +6749,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -5522,7 +6786,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-departments-approve-selection" data-method="POST"
       data-path="api/departments/approve-selection"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -5552,6 +6816,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/approve-selection</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-departments-approve-selection"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -5606,6 +6882,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-teachers">Display a listing of the resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -5617,6 +6894,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/teachers" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -5627,6 +6905,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -5641,7 +6920,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-teachers">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -5653,7 +6932,242 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Teachers retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 81,
+                &quot;title&quot;: &quot;prof&quot;,
+                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 428,
+                    &quot;name&quot;: &quot;Sarai Denesik&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 82,
+                &quot;title&quot;: &quot;assoc_prof&quot;,
+                &quot;speciality&quot;: &quot;Networks&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 429,
+                    &quot;name&quot;: &quot;Mario Collins&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 83,
+                &quot;title&quot;: &quot;dr&quot;,
+                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 430,
+                    &quot;name&quot;: &quot;Kaci Morissette&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 84,
+                &quot;title&quot;: &quot;mr&quot;,
+                &quot;speciality&quot;: &quot;Cyber Security&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 431,
+                    &quot;name&quot;: &quot;Mrs. Lizzie O&#039;Connell Jr.&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 85,
+                &quot;title&quot;: &quot;mr&quot;,
+                &quot;speciality&quot;: &quot;Cyber Security&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 432,
+                    &quot;name&quot;: &quot;Prof. Hugh Rippin&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 86,
+                &quot;title&quot;: &quot;dr&quot;,
+                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 454,
+                    &quot;name&quot;: &quot;Dr. Meda Cummings&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 87,
+                &quot;title&quot;: &quot;asst_prof&quot;,
+                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 455,
+                    &quot;name&quot;: &quot;Mr. Adan Kshlerin&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 88,
+                &quot;title&quot;: &quot;prof&quot;,
+                &quot;speciality&quot;: &quot;Software Engineering&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 456,
+                    &quot;name&quot;: &quot;Lacey Lockman&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 89,
+                &quot;title&quot;: &quot;ms&quot;,
+                &quot;speciality&quot;: &quot;Cyber Security&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 457,
+                    &quot;name&quot;: &quot;Sharon Johns&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 90,
+                &quot;title&quot;: &quot;ms&quot;,
+                &quot;speciality&quot;: &quot;Networks&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 458,
+                    &quot;name&quot;: &quot;Jaqueline DuBuque Jr.&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 71,
+                &quot;title&quot;: &quot;mr&quot;,
+                &quot;speciality&quot;: &quot;Software Engineering&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 375,
+                    &quot;name&quot;: &quot;Ms. Olga Conroy&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
+            },
+            {
+                &quot;id&quot;: 72,
+                &quot;title&quot;: &quot;dr&quot;,
+                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 376,
+                    &quot;name&quot;: &quot;Eulalia Schmitt&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
+            },
+            {
+                &quot;id&quot;: 73,
+                &quot;title&quot;: &quot;asst_prof&quot;,
+                &quot;speciality&quot;: &quot;Software Engineering&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 377,
+                    &quot;name&quot;: &quot;Sam Konopelski IV&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
+            },
+            {
+                &quot;id&quot;: 74,
+                &quot;title&quot;: &quot;mr&quot;,
+                &quot;speciality&quot;: &quot;Software Engineering&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 378,
+                    &quot;name&quot;: &quot;Mrs. Libbie Borer&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
+            },
+            {
+                &quot;id&quot;: 75,
+                &quot;title&quot;: &quot;assoc_prof&quot;,
+                &quot;speciality&quot;: &quot;Networks&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 379,
+                    &quot;name&quot;: &quot;Prof. Jamir Quitzon DDS&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/teachers?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/teachers?page=6&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: &quot;http://localhost:8000/api/teachers?page=2&quot;
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 6,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=2&quot;,
+                    &quot;label&quot;: &quot;2&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=3&quot;,
+                    &quot;label&quot;: &quot;3&quot;,
+                    &quot;page&quot;: 3,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=4&quot;,
+                    &quot;label&quot;: &quot;4&quot;,
+                    &quot;page&quot;: 4,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=5&quot;,
+                    &quot;label&quot;: &quot;5&quot;,
+                    &quot;page&quot;: 5,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=6&quot;,
+                    &quot;label&quot;: &quot;6&quot;,
+                    &quot;page&quot;: 6,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=2&quot;,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/teachers&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 15,
+            &quot;total&quot;: 90
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -5674,7 +7188,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-teachers" data-method="GET"
       data-path="api/teachers"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -5705,6 +7219,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-teachers"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -5733,6 +7259,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-teachers">Store a newly created resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -5744,11 +7271,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/teachers" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"user_id\": \"architecto\",
-    \"title\": \"ms\",
+    \"title\": \"dr\",
     \"speciality\": \"n\"
 }"
 </code></pre></div>
@@ -5760,13 +7288,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
 let body = {
     "user_id": "architecto",
-    "title": "ms",
+    "title": "dr",
     "speciality": "n"
 };
 
@@ -5797,7 +7326,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-teachers" data-method="POST"
       data-path="api/teachers"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -5827,6 +7356,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/teachers</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-teachers"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -5871,10 +7412,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="title"                data-endpoint="POSTapi-teachers"
-               value="ms"
+               value="dr"
                data-component="body">
     <br>
-<p>Example: <code>ms</code></p>
+<p>Example: <code>dr</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>prof</code></li> <li><code>assoc_prof</code></li> <li><code>asst_prof</code></li> <li><code>lecturer</code></li> <li><code>dr</code></li> <li><code>mr</code></li> <li><code>ms</code></li></ul>
         </div>
@@ -5895,6 +7436,7 @@ Must be one of:
                     <h2 id="endpoints-GETapi-teachers--teacher_id-">Display the specified resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -5906,6 +7448,7 @@ Must be one of:
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/teachers/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -5916,6 +7459,7 @@ Must be one of:
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -5930,7 +7474,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-teachers--teacher_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -5942,7 +7486,19 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Teacher retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;title&quot;: &quot;assoc_prof&quot;,
+        &quot;speciality&quot;: &quot;Networks&quot;,
+        &quot;user&quot;: {
+            &quot;id&quot;: 5,
+            &quot;name&quot;: &quot;Dr. Julio Stroman&quot;
+        },
+        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+    }
 }</code>
  </pre>
     </span>
@@ -5963,7 +7519,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-teachers--teacher_id-" data-method="GET"
       data-path="api/teachers/{teacher_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -5993,6 +7549,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/teachers/{teacher_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-teachers--teacher_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -6035,6 +7603,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PATCHapi-teachers--teacher_id-">Update the specified resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -6046,10 +7615,11 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
     "http://localhost:8000/api/teachers/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"title\": \"dr\",
+    \"title\": \"prof\",
     \"speciality\": \"b\"
 }"
 </code></pre></div>
@@ -6061,12 +7631,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
 let body = {
-    "title": "dr",
+    "title": "prof",
     "speciality": "b"
 };
 
@@ -6097,7 +7668,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PATCHapi-teachers--teacher_id-" data-method="PATCH"
       data-path="api/teachers/{teacher_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -6127,6 +7698,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/teachers/{teacher_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-teachers--teacher_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -6184,10 +7767,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="title"                data-endpoint="PATCHapi-teachers--teacher_id-"
-               value="dr"
+               value="prof"
                data-component="body">
     <br>
-<p>Example: <code>dr</code></p>
+<p>Example: <code>prof</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>prof</code></li> <li><code>assoc_prof</code></li> <li><code>asst_prof</code></li> <li><code>lecturer</code></li> <li><code>dr</code></li> <li><code>mr</code></li> <li><code>ms</code></li></ul>
         </div>
@@ -6208,6 +7791,7 @@ Must be one of:
                     <h2 id="endpoints-DELETEapi-teachers--teacher_id-">Remove the specified resource from storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -6219,6 +7803,7 @@ Must be one of:
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/teachers/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -6229,6 +7814,7 @@ Must be one of:
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -6260,7 +7846,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-teachers--teacher_id-" data-method="DELETE"
       data-path="api/teachers/{teacher_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -6290,6 +7876,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/teachers/{teacher_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-teachers--teacher_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -6332,6 +7930,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-students">Display a listing of the resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -6343,6 +7942,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/students" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -6353,6 +7953,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -6367,7 +7968,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-students">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -6379,7 +7980,46 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Student retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/students?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/students?page=1&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: null
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: null,
+            &quot;last_page&quot;: 1,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/students?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/students&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: null,
+            &quot;total&quot;: 0
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -6400,7 +8040,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-students" data-method="GET"
       data-path="api/students"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -6431,6 +8071,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-students"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -6459,6 +8111,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-students">Store a newly created resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -6470,15 +8123,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/students" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"user_id\": \"architecto\",
     \"department_id\": \"architecto\",
-    \"enrollment_type\": \"evening\",
+    \"enrollment_type\": \"morning\",
     \"stage\": 16,
     \"student_number\": \"n\",
-    \"status\": \"active\"
+    \"status\": \"on_leave\"
 }"
 </code></pre></div>
 
@@ -6489,6 +8143,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -6496,10 +8151,10 @@ const headers = {
 let body = {
     "user_id": "architecto",
     "department_id": "architecto",
-    "enrollment_type": "evening",
+    "enrollment_type": "morning",
     "stage": 16,
     "student_number": "n",
-    "status": "active"
+    "status": "on_leave"
 };
 
 fetch(url, {
@@ -6529,7 +8184,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-students" data-method="POST"
       data-path="api/students"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -6559,6 +8214,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/students</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-students"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -6615,10 +8282,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="enrollment_type"                data-endpoint="POSTapi-students"
-               value="evening"
+               value="morning"
                data-component="body">
     <br>
-<p>Example: <code>evening</code></p>
+<p>Example: <code>morning</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>morning</code></li> <li><code>parallel</code></li> <li><code>evening</code></li></ul>
         </div>
@@ -6653,10 +8320,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="POSTapi-students"
-               value="active"
+               value="on_leave"
                data-component="body">
     <br>
-<p>Example: <code>active</code></p>
+<p>Example: <code>on_leave</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>active</code></li> <li><code>inactive</code></li> <li><code>on_leave</code></li> <li><code>suspended</code></li> <li><code>graduated</code></li></ul>
         </div>
@@ -6665,6 +8332,7 @@ Must be one of:
                     <h2 id="endpoints-GETapi-students--student_id-">Display the specified resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -6676,6 +8344,7 @@ Must be one of:
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/students/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -6686,6 +8355,7 @@ Must be one of:
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -6700,7 +8370,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-students--student_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -6712,7 +8382,30 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Student retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;enrollment_type&quot;: &quot;parallel&quot;,
+        &quot;stage&quot;: 3,
+        &quot;student_number&quot;: &quot;ST31258&quot;,
+        &quot;status&quot;: &quot;active&quot;,
+        &quot;user&quot;: {
+            &quot;id&quot;: 10,
+            &quot;name&quot;: &quot;Christina Quigley&quot;
+        },
+        &quot;department&quot;: {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;Architectural Engineering&quot;,
+            &quot;code&quot;: null,
+            &quot;faculty_id&quot;: null,
+            &quot;is_active&quot;: null,
+            &quot;created_at&quot;: null,
+            &quot;updated_at&quot;: null
+        },
+        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+    }
 }</code>
  </pre>
     </span>
@@ -6733,7 +8426,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-students--student_id-" data-method="GET"
       data-path="api/students/{student_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -6763,6 +8456,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/students/{student_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-students--student_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -6805,6 +8510,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PATCHapi-students--student_id-">Update the specified resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -6816,13 +8522,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
     "http://localhost:8000/api/students/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"enrollment_type\": \"morning\",
     \"stage\": 16,
     \"student_number\": \"n\",
-    \"status\": \"inactive\"
+    \"status\": \"suspended\"
 }"
 </code></pre></div>
 
@@ -6833,6 +8540,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -6841,7 +8549,7 @@ let body = {
     "enrollment_type": "morning",
     "stage": 16,
     "student_number": "n",
-    "status": "inactive"
+    "status": "suspended"
 };
 
 fetch(url, {
@@ -6871,7 +8579,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PATCHapi-students--student_id-" data-method="PATCH"
       data-path="api/students/{student_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -6901,6 +8609,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/students/{student_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-students--student_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -7008,10 +8728,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="PATCHapi-students--student_id-"
-               value="inactive"
+               value="suspended"
                data-component="body">
     <br>
-<p>Example: <code>inactive</code></p>
+<p>Example: <code>suspended</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>active</code></li> <li><code>inactive</code></li> <li><code>on_leave</code></li> <li><code>suspended</code></li> <li><code>graduated</code></li></ul>
         </div>
@@ -7020,6 +8740,7 @@ Must be one of:
                     <h2 id="endpoints-DELETEapi-students--student_id-">Remove the specified resource from storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -7031,6 +8752,7 @@ Must be one of:
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/students/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -7041,6 +8763,7 @@ Must be one of:
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -7072,7 +8795,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-students--student_id-" data-method="DELETE"
       data-path="api/students/{student_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -7102,6 +8825,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/students/{student_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-students--student_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -7144,6 +8879,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-students-course-selection">POST api/students/course-selection</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -7155,6 +8891,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/students/course-selection" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -7169,6 +8906,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -7204,7 +8942,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-students-course-selection" data-method="POST"
       data-path="api/students/course-selection"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -7234,6 +8972,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/students/course-selection</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-students-course-selection"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -7290,6 +9040,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-courses">Display a listing of the resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -7301,6 +9052,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/courses" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -7311,6 +9063,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -7325,7 +9078,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-courses">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -7337,7 +9090,377 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Courses retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 86,
+                &quot;name&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;code&quot;: &quot;SUE64031&quot;,
+                &quot;credit_hours&quot;: 3,
+                &quot;year_level&quot;: 3,
+                &quot;is_active&quot;: 1,
+                &quot;department_id&quot;: 18,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 18,
+                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
+            },
+            {
+                &quot;id&quot;: 87,
+                &quot;name&quot;: &quot;Software Architecture&quot;,
+                &quot;code&quot;: &quot;SUE78579&quot;,
+                &quot;credit_hours&quot;: 3,
+                &quot;year_level&quot;: 1,
+                &quot;is_active&quot;: 1,
+                &quot;department_id&quot;: 18,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 18,
+                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
+            },
+            {
+                &quot;id&quot;: 88,
+                &quot;name&quot;: &quot;Operating Systems&quot;,
+                &quot;code&quot;: &quot;UOS72481&quot;,
+                &quot;credit_hours&quot;: 3,
+                &quot;year_level&quot;: 1,
+                &quot;is_active&quot;: 0,
+                &quot;department_id&quot;: 18,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 18,
+                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
+            },
+            {
+                &quot;id&quot;: 89,
+                &quot;name&quot;: &quot;Web Development&quot;,
+                &quot;code&quot;: &quot;SUE67813&quot;,
+                &quot;credit_hours&quot;: 4,
+                &quot;year_level&quot;: 1,
+                &quot;is_active&quot;: 0,
+                &quot;department_id&quot;: 18,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 18,
+                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
+            },
+            {
+                &quot;id&quot;: 90,
+                &quot;name&quot;: &quot;Introduction to IT&quot;,
+                &quot;code&quot;: &quot;KOU97064&quot;,
+                &quot;credit_hours&quot;: 4,
+                &quot;year_level&quot;: 1,
+                &quot;is_active&quot;: 0,
+                &quot;department_id&quot;: 18,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 18,
+                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
+            },
+            {
+                &quot;id&quot;: 76,
+                &quot;name&quot;: &quot;Computer Networks&quot;,
+                &quot;code&quot;: &quot;SUE19847&quot;,
+                &quot;credit_hours&quot;: 2,
+                &quot;year_level&quot;: 1,
+                &quot;is_active&quot;: 0,
+                &quot;department_id&quot;: 16,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 16,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 77,
+                &quot;name&quot;: &quot;Web Development&quot;,
+                &quot;code&quot;: &quot;KOU11886&quot;,
+                &quot;credit_hours&quot;: 4,
+                &quot;year_level&quot;: 4,
+                &quot;is_active&quot;: 1,
+                &quot;department_id&quot;: 16,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 16,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 78,
+                &quot;name&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;code&quot;: &quot;UOS60499&quot;,
+                &quot;credit_hours&quot;: 2,
+                &quot;year_level&quot;: 1,
+                &quot;is_active&quot;: 0,
+                &quot;department_id&quot;: 16,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 16,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 79,
+                &quot;name&quot;: &quot;Operating Systems&quot;,
+                &quot;code&quot;: &quot;UOS25996&quot;,
+                &quot;credit_hours&quot;: 4,
+                &quot;year_level&quot;: 3,
+                &quot;is_active&quot;: 1,
+                &quot;department_id&quot;: 16,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 16,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 80,
+                &quot;name&quot;: &quot;Software Architecture&quot;,
+                &quot;code&quot;: &quot;UOS70231&quot;,
+                &quot;credit_hours&quot;: 4,
+                &quot;year_level&quot;: 3,
+                &quot;is_active&quot;: 1,
+                &quot;department_id&quot;: 16,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 16,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 81,
+                &quot;name&quot;: &quot;Database Systems&quot;,
+                &quot;code&quot;: &quot;KOU26068&quot;,
+                &quot;credit_hours&quot;: 3,
+                &quot;year_level&quot;: 1,
+                &quot;is_active&quot;: 0,
+                &quot;department_id&quot;: 17,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 17,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 82,
+                &quot;name&quot;: &quot;Operating Systems&quot;,
+                &quot;code&quot;: &quot;SUE40108&quot;,
+                &quot;credit_hours&quot;: 4,
+                &quot;year_level&quot;: 2,
+                &quot;is_active&quot;: 0,
+                &quot;department_id&quot;: 17,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 17,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 83,
+                &quot;name&quot;: &quot;Data Structures&quot;,
+                &quot;code&quot;: &quot;UOS05167&quot;,
+                &quot;credit_hours&quot;: 4,
+                &quot;year_level&quot;: 3,
+                &quot;is_active&quot;: 1,
+                &quot;department_id&quot;: 17,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 17,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 84,
+                &quot;name&quot;: &quot;Data Structures&quot;,
+                &quot;code&quot;: &quot;SUE31305&quot;,
+                &quot;credit_hours&quot;: 4,
+                &quot;year_level&quot;: 2,
+                &quot;is_active&quot;: 1,
+                &quot;department_id&quot;: 17,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 17,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            },
+            {
+                &quot;id&quot;: 85,
+                &quot;name&quot;: &quot;Computer Networks&quot;,
+                &quot;code&quot;: &quot;KOU59590&quot;,
+                &quot;credit_hours&quot;: 3,
+                &quot;year_level&quot;: 2,
+                &quot;is_active&quot;: 0,
+                &quot;department_id&quot;: 17,
+                &quot;department&quot;: {
+                    &quot;id&quot;: 17,
+                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
+                    &quot;code&quot;: null,
+                    &quot;faculty_id&quot;: null,
+                    &quot;is_active&quot;: null,
+                    &quot;created_at&quot;: null,
+                    &quot;updated_at&quot;: null
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/courses?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/courses?page=6&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: &quot;http://localhost:8000/api/courses?page=2&quot;
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 6,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=2&quot;,
+                    &quot;label&quot;: &quot;2&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=3&quot;,
+                    &quot;label&quot;: &quot;3&quot;,
+                    &quot;page&quot;: 3,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=4&quot;,
+                    &quot;label&quot;: &quot;4&quot;,
+                    &quot;page&quot;: 4,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=5&quot;,
+                    &quot;label&quot;: &quot;5&quot;,
+                    &quot;page&quot;: 5,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=6&quot;,
+                    &quot;label&quot;: &quot;6&quot;,
+                    &quot;page&quot;: 6,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=2&quot;,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/courses&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 15,
+            &quot;total&quot;: 90
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -7358,7 +9481,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-courses" data-method="GET"
       data-path="api/courses"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -7389,6 +9512,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-courses"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -7417,6 +9552,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-courses">Store a newly created resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -7428,6 +9564,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/courses" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -7436,7 +9573,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"code\": \"g\",
     \"credit_hours\": 66,
     \"year_level\": 27,
-    \"is_active\": true
+    \"is_active\": false
 }"
 </code></pre></div>
 
@@ -7447,6 +9584,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -7457,7 +9595,7 @@ let body = {
     "code": "g",
     "credit_hours": 66,
     "year_level": 27,
-    "is_active": true
+    "is_active": false
 };
 
 fetch(url, {
@@ -7487,7 +9625,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-courses" data-method="POST"
       data-path="api/courses"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -7517,6 +9655,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-courses"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -7622,13 +9772,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
         </form>
 
                     <h2 id="endpoints-GETapi-courses--course_id-">Display the specified resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -7640,6 +9791,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/courses/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -7650,6 +9802,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -7664,7 +9817,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-courses--course_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -7676,7 +9829,28 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Course retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;Software Architecture&quot;,
+        &quot;code&quot;: &quot;UOS92046&quot;,
+        &quot;credit_hours&quot;: 4,
+        &quot;year_level&quot;: 2,
+        &quot;is_active&quot;: 0,
+        &quot;department_id&quot;: 1,
+        &quot;department&quot;: {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;Architectural Engineering&quot;,
+            &quot;code&quot;: null,
+            &quot;faculty_id&quot;: null,
+            &quot;is_active&quot;: null,
+            &quot;created_at&quot;: null,
+            &quot;updated_at&quot;: null
+        },
+        &quot;created_at&quot;: &quot;2026-07-07 18:12:50&quot;,
+        &quot;updated_at&quot;: &quot;2026-07-07 18:12:50&quot;
+    }
 }</code>
  </pre>
     </span>
@@ -7697,7 +9871,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-courses--course_id-" data-method="GET"
       data-path="api/courses/{course_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -7727,6 +9901,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-courses--course_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -7769,6 +9955,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PATCHapi-courses--course_id-">Update the specified resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -7780,6 +9967,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
     "http://localhost:8000/api/courses/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -7798,6 +9986,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -7837,7 +10026,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PATCHapi-courses--course_id-" data-method="PATCH"
       data-path="api/courses/{course_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -7867,6 +10056,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-courses--course_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -7992,6 +10193,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-courses--course_id-">Remove the specified resource from storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -8003,6 +10205,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/courses/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -8013,6 +10216,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -8044,7 +10248,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-courses--course_id-" data-method="DELETE"
       data-path="api/courses/{course_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -8074,6 +10278,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-courses--course_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -8116,6 +10332,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-courses--course_id--sections">GET api/courses/{course_id}/sections</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -8127,6 +10344,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/courses/1/sections" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -8137,6 +10355,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -8151,7 +10370,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-courses--course_id--sections">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -8163,7 +10382,46 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Course sections retrieved successfully&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/courses/1/sections?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/courses/1/sections?page=1&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: null
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: null,
+            &quot;last_page&quot;: 1,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses/1/sections?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/courses/1/sections&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: null,
+            &quot;total&quot;: 0
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -8184,7 +10442,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-courses--course_id--sections" data-method="GET"
       data-path="api/courses/{course_id}/sections"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -8214,6 +10472,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/sections</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-courses--course_id--sections"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -8256,6 +10526,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-courses--course_id--sections">Store a newly created resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -8267,6 +10538,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/courses/1/sections" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -8282,6 +10554,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -8318,7 +10591,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-courses--course_id--sections" data-method="POST"
       data-path="api/courses/{course_id}/sections"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -8348,6 +10621,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/sections</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-courses--course_id--sections"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -8415,6 +10700,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-course-sections--section_id-">Display the specified section.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -8426,6 +10712,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/course-sections/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -8436,6 +10723,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -8450,7 +10738,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-course-sections--section_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -8462,7 +10750,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\CourseSection] 16&quot;
 }</code>
  </pre>
     </span>
@@ -8483,7 +10771,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-course-sections--section_id-" data-method="GET"
       data-path="api/course-sections/{section_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -8513,6 +10801,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/course-sections/{section_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-course-sections--section_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -8555,6 +10855,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PUTapi-course-sections--section_id-">Update the specified section in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -8566,6 +10867,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/course-sections/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -8580,6 +10882,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -8615,7 +10918,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PUTapi-course-sections--section_id-" data-method="PUT"
       data-path="api/course-sections/{section_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -8645,6 +10948,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/course-sections/{section_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-course-sections--section_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -8724,6 +11039,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-course-sections--section_id-">Remove the specified section from storage (Soft Delete).</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -8735,6 +11051,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/course-sections/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -8745,6 +11062,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -8776,7 +11094,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-course-sections--section_id-" data-method="DELETE"
       data-path="api/course-sections/{section_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -8806,6 +11124,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/course-sections/{section_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-course-sections--section_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -8848,6 +11178,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-course-sections--section_id--submissions">Display a listing of the resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -8859,6 +11190,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/course-sections/16/submissions" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -8869,6 +11201,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -8883,7 +11216,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-course-sections--section_id--submissions">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -8895,7 +11228,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\CourseSection] 16&quot;
 }</code>
  </pre>
     </span>
@@ -8916,7 +11249,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-course-sections--section_id--submissions" data-method="GET"
       data-path="api/course-sections/{section_id}/submissions"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -8946,6 +11279,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/course-sections/{section_id}/submissions</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-course-sections--section_id--submissions"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -8988,6 +11333,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-course-sections--section_id--submissions">Store a newly created resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -8999,12 +11345,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/course-sections/16/submissions" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "title=b"\
     --form "description=Eius et animi quos velit et."\
     --form "deadline=2052-07-31"\
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE845.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\php2D8F.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -9013,6 +11360,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -9050,7 +11398,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-course-sections--section_id--submissions" data-method="POST"
       data-path="api/course-sections/{section_id}/submissions"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="1"
       data-isarraybody="0"
       autocomplete="off"
@@ -9080,6 +11428,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/course-sections/{section_id}/submissions</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-course-sections--section_id--submissions"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -9173,6 +11533,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-section-submissions--submission_id-">Display the specified resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -9184,6 +11545,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/section-submissions/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -9194,6 +11556,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -9208,7 +11571,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-submissions--submission_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -9220,7 +11583,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionSubmission] 16&quot;
 }</code>
  </pre>
     </span>
@@ -9241,7 +11604,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-section-submissions--submission_id-" data-method="GET"
       data-path="api/section-submissions/{submission_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -9271,6 +11634,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-submissions/{submission_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-section-submissions--submission_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -9313,6 +11688,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PUTapi-section-submissions--submission_id-">Update the specified resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -9324,12 +11700,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/section-submissions/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "title=b"\
     --form "description=Eius et animi quos velit et."\
     --form "deadline=2052-07-31"\
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE855.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\php2DA0.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -9338,6 +11715,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -9375,7 +11753,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PUTapi-section-submissions--submission_id-" data-method="PUT"
       data-path="api/section-submissions/{submission_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="1"
       data-isarraybody="0"
       autocomplete="off"
@@ -9405,6 +11783,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-submissions/{submission_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-section-submissions--submission_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -9498,6 +11888,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-section-submissions--submission_id-">Remove the specified resource from storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -9509,6 +11900,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/section-submissions/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -9519,6 +11911,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -9550,7 +11943,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-section-submissions--submission_id-" data-method="DELETE"
       data-path="api/section-submissions/{submission_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -9580,6 +11973,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-submissions/{submission_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-section-submissions--submission_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -9622,6 +12027,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-section-submission-attachments--attachment_id--download">GET api/section-submission-attachments/{attachment_id}/download</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -9633,6 +12039,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/section-submission-attachments/16/download" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -9643,6 +12050,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -9657,7 +12065,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-submission-attachments--attachment_id--download">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -9669,7 +12077,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionSubmissionAttachment] 16&quot;
 }</code>
  </pre>
     </span>
@@ -9690,7 +12098,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-section-submission-attachments--attachment_id--download" data-method="GET"
       data-path="api/section-submission-attachments/{attachment_id}/download"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -9720,6 +12128,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-submission-attachments/{attachment_id}/download</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-section-submission-attachments--attachment_id--download"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -9762,6 +12182,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-section-submission-attachments--attachment_id-">DELETE api/section-submission-attachments/{attachment_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -9773,6 +12194,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/section-submission-attachments/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -9783,6 +12205,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -9814,7 +12237,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-section-submission-attachments--attachment_id-" data-method="DELETE"
       data-path="api/section-submission-attachments/{attachment_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -9844,6 +12267,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-submission-attachments/{attachment_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-section-submission-attachments--attachment_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -9886,6 +12321,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-section-submissions--submission_id--submit">POST api/section-submissions/{submission_id}/submit</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -9897,9 +12333,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/section-submissions/16/submit" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE866.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\php2DB1.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -9908,6 +12345,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -9942,7 +12380,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-section-submissions--submission_id--submit" data-method="POST"
       data-path="api/section-submissions/{submission_id}/submit"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="1"
       data-isarraybody="0"
       autocomplete="off"
@@ -9972,6 +12410,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-submissions/{submission_id}/submit</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-section-submissions--submission_id--submit"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -10029,6 +12479,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-section-submissions--submission_id--my-submission">GET api/section-submissions/{submission_id}/my-submission</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -10040,6 +12491,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/section-submissions/16/my-submission" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -10050,6 +12502,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -10064,7 +12517,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-submissions--submission_id--my-submission">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -10076,7 +12529,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionSubmission] 16&quot;
 }</code>
  </pre>
     </span>
@@ -10097,7 +12550,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-section-submissions--submission_id--my-submission" data-method="GET"
       data-path="api/section-submissions/{submission_id}/my-submission"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -10127,6 +12580,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-submissions/{submission_id}/my-submission</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-section-submissions--submission_id--my-submission"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -10169,6 +12634,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-student-submissions--studentSubmission_id--download">GET api/student-submissions/{studentSubmission_id}/download</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -10180,6 +12646,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/student-submissions/16/download" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -10190,6 +12657,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -10204,7 +12672,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-student-submissions--studentSubmission_id--download">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -10216,7 +12684,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\StudentSubmission] 16&quot;
 }</code>
  </pre>
     </span>
@@ -10237,7 +12705,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-student-submissions--studentSubmission_id--download" data-method="GET"
       data-path="api/student-submissions/{studentSubmission_id}/download"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -10267,6 +12735,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/student-submissions/{studentSubmission_id}/download</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-student-submissions--studentSubmission_id--download"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -10309,6 +12789,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-student-submissions--studentSubmission_id-">DELETE api/student-submissions/{studentSubmission_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -10320,6 +12801,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/student-submissions/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -10330,6 +12812,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -10361,7 +12844,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-student-submissions--studentSubmission_id-" data-method="DELETE"
       data-path="api/student-submissions/{studentSubmission_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -10391,6 +12874,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/student-submissions/{studentSubmission_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-student-submissions--studentSubmission_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -10433,6 +12928,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-course-sections--section_id--items">GET /api/course-sections/{section}/items</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -10444,6 +12940,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/course-sections/16/items" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -10454,6 +12951,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -10468,7 +12966,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-course-sections--section_id--items">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -10480,7 +12978,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\CourseSection] 16&quot;
 }</code>
  </pre>
     </span>
@@ -10501,7 +12999,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-course-sections--section_id--items" data-method="GET"
       data-path="api/course-sections/{section_id}/items"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -10531,6 +13029,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/course-sections/{section_id}/items</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-course-sections--section_id--items"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -10573,6 +13083,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-course-sections--section_id--items">POST /api/course-sections/{section}/items</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -10584,11 +13095,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/course-sections/16/items" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "url=http://www.bailey.biz/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html"\
     --form "material_file_name=i"\
-    --form "file=@C:\Users\Raman\AppData\Local\Temp\phpE877.tmp" </code></pre></div>
+    --form "file=@C:\Users\Raman\AppData\Local\Temp\php2DC1.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -10597,6 +13109,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -10633,7 +13146,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-course-sections--section_id--items" data-method="POST"
       data-path="api/course-sections/{section_id}/items"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="1"
       data-isarraybody="0"
       autocomplete="off"
@@ -10663,6 +13176,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/course-sections/{section_id}/items</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-course-sections--section_id--items"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -10711,7 +13236,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>This field is required when <code>url</code> is not present. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>C:\Users\Raman\AppData\Local\Temp\phpE877.tmp</code></p>
+<p>This field is required when <code>url</code> is not present. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>C:\Users\Raman\AppData\Local\Temp\php2DC1.tmp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>url</code></b>&nbsp;&nbsp;
@@ -10742,6 +13267,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-section-items--item_id-">GET /api/section-items/{item}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -10753,6 +13279,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/section-items/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -10763,6 +13290,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -10777,7 +13305,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-items--item_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -10789,7 +13317,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionItem] 16&quot;
 }</code>
  </pre>
     </span>
@@ -10810,7 +13338,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-section-items--item_id-" data-method="GET"
       data-path="api/section-items/{item_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -10840,6 +13368,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-items/{item_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-section-items--item_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -10882,6 +13422,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-section-items--item_id--download">GET /api/section-items/{item}/download</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -10893,6 +13434,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/section-items/16/download" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -10903,6 +13445,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -10917,7 +13460,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-items--item_id--download">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -10929,7 +13472,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionItem] 16&quot;
 }</code>
  </pre>
     </span>
@@ -10950,7 +13493,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-section-items--item_id--download" data-method="GET"
       data-path="api/section-items/{item_id}/download"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -10980,6 +13523,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-items/{item_id}/download</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-section-items--item_id--download"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -11022,6 +13577,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PUTapi-section-items--item_id-">PUT/PATCH /api/section-items/{item}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -11033,6 +13589,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/section-items/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -11047,6 +13604,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11082,7 +13640,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PUTapi-section-items--item_id-" data-method="PUT"
       data-path="api/section-items/{item_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -11116,6 +13674,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-items/{item_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-section-items--item_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -11171,6 +13741,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-section-items--item_id-">DELETE /api/section-items/{item}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -11182,6 +13753,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/section-items/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -11192,6 +13764,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11223,7 +13796,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-section-items--item_id-" data-method="DELETE"
       data-path="api/section-items/{item_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -11253,6 +13826,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/section-items/{item_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-section-items--item_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -11295,6 +13880,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-departments--department_id--assign-teacher">POST api/departments/{department_id}/assign-teacher</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -11306,6 +13892,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/departments/1/assign-teacher" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -11320,6 +13907,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11355,7 +13943,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-departments--department_id--assign-teacher" data-method="POST"
       data-path="api/departments/{department_id}/assign-teacher"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -11385,6 +13973,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/{department_id}/assign-teacher</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-departments--department_id--assign-teacher"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -11440,6 +14040,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-departments--department_id--teachers">GET api/departments/{department_id}/teachers</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -11451,6 +14052,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/departments/1/teachers" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -11461,6 +14063,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11475,7 +14078,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments--department_id--teachers">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -11487,7 +14090,102 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Department teachers retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;title&quot;: &quot;assoc_prof&quot;,
+                &quot;speciality&quot;: &quot;Networks&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 5,
+                    &quot;name&quot;: &quot;Dr. Julio Stroman&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 2,
+                &quot;title&quot;: &quot;lecturer&quot;,
+                &quot;speciality&quot;: &quot;Networks&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 6,
+                    &quot;name&quot;: &quot;Stella Lemke&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 3,
+                &quot;title&quot;: &quot;prof&quot;,
+                &quot;speciality&quot;: &quot;Networks&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 7,
+                    &quot;name&quot;: &quot;Jadyn Ratke DVM&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 4,
+                &quot;title&quot;: &quot;mr&quot;,
+                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 8,
+                    &quot;name&quot;: &quot;Evan Feest&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 5,
+                &quot;title&quot;: &quot;lecturer&quot;,
+                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 9,
+                    &quot;name&quot;: &quot;Dr. Roderick Nikolaus&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/departments/1/teachers?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/departments/1/teachers?page=1&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: null
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 1,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/departments/1/teachers?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/departments/1/teachers&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 5,
+            &quot;total&quot;: 5
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -11508,7 +14206,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-departments--department_id--teachers" data-method="GET"
       data-path="api/departments/{department_id}/teachers"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -11538,6 +14236,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/{department_id}/teachers</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-departments--department_id--teachers"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -11580,6 +14290,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-departments--department_id--teachers--teacher_id-">DELETE api/departments/{department_id}/teachers/{teacher_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -11591,6 +14302,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/departments/1/teachers/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -11601,6 +14313,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11632,7 +14345,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-departments--department_id--teachers--teacher_id-" data-method="DELETE"
       data-path="api/departments/{department_id}/teachers/{teacher_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -11662,6 +14375,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/{department_id}/teachers/{teacher_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-departments--department_id--teachers--teacher_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -11716,6 +14441,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-courses--course_id--assign-teacher">POST api/courses/{course_id}/assign-teacher</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -11727,11 +14453,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/courses/1/assign-teacher" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"teacher_id\": \"architecto\",
-    \"role\": \"assistant_lecturer\"
+    \"role\": \"primary_lecturer\"
 }"
 </code></pre></div>
 
@@ -11742,13 +14469,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
 let body = {
     "teacher_id": "architecto",
-    "role": "assistant_lecturer"
+    "role": "primary_lecturer"
 };
 
 fetch(url, {
@@ -11778,7 +14506,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-courses--course_id--assign-teacher" data-method="POST"
       data-path="api/courses/{course_id}/assign-teacher"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -11808,6 +14536,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/assign-teacher</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-courses--course_id--assign-teacher"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -11865,10 +14605,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="role"                data-endpoint="POSTapi-courses--course_id--assign-teacher"
-               value="assistant_lecturer"
+               value="primary_lecturer"
                data-component="body">
     <br>
-<p>Example: <code>assistant_lecturer</code></p>
+<p>Example: <code>primary_lecturer</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>primary_lecturer</code></li> <li><code>assistant_lecturer</code></li> <li><code>lab_instructor</code></li></ul>
         </div>
@@ -11877,6 +14617,7 @@ Must be one of:
                     <h2 id="endpoints-GETapi-courses--course_id--teachers">GET api/courses/{course_id}/teachers</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -11888,6 +14629,7 @@ Must be one of:
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/courses/1/teachers" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -11898,6 +14640,7 @@ Must be one of:
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11912,7 +14655,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-courses--course_id--teachers">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -11924,7 +14667,80 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Course teachers retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 4,
+                &quot;title&quot;: &quot;mr&quot;,
+                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 8,
+                    &quot;name&quot;: &quot;Evan Feest&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 1,
+                &quot;title&quot;: &quot;assoc_prof&quot;,
+                &quot;speciality&quot;: &quot;Networks&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 5,
+                    &quot;name&quot;: &quot;Dr. Julio Stroman&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 5,
+                &quot;title&quot;: &quot;lecturer&quot;,
+                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 9,
+                    &quot;name&quot;: &quot;Dr. Roderick Nikolaus&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/courses/1/teachers?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/courses/1/teachers?page=1&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: null
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 1,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses/1/teachers?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/courses/1/teachers&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 3,
+            &quot;total&quot;: 3
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -11945,7 +14761,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-courses--course_id--teachers" data-method="GET"
       data-path="api/courses/{course_id}/teachers"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -11975,6 +14791,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/teachers</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-courses--course_id--teachers"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -12017,6 +14845,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PUTapi-courses--course_id--teachers--teacher_id-">PUT api/courses/{course_id}/teachers/{teacher_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -12028,6 +14857,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/courses/1/teachers/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -12042,6 +14872,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12077,7 +14908,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PUTapi-courses--course_id--teachers--teacher_id-" data-method="PUT"
       data-path="api/courses/{course_id}/teachers/{teacher_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -12107,6 +14938,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/teachers/{teacher_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-courses--course_id--teachers--teacher_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -12176,6 +15019,7 @@ Must be one of:
                     <h2 id="endpoints-DELETEapi-courses--course_id--teachers--teacher_id-">DELETE api/courses/{course_id}/teachers/{teacher_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -12187,6 +15031,7 @@ Must be one of:
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/courses/1/teachers/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -12197,6 +15042,7 @@ Must be one of:
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12228,7 +15074,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-courses--course_id--teachers--teacher_id-" data-method="DELETE"
       data-path="api/courses/{course_id}/teachers/{teacher_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -12258,6 +15104,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/teachers/{teacher_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-courses--course_id--teachers--teacher_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -12312,6 +15170,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-departments--department_id--students">GET api/departments/{department_id}/students</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -12323,6 +15182,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/departments/1/students" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -12333,6 +15193,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12347,7 +15208,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments--department_id--students">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -12359,7 +15220,248 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Department students retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 6,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 1,
+                &quot;student_number&quot;: &quot;ST52318&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 15,
+                    &quot;name&quot;: &quot;Mekhi Kertzmann&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 7,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 1,
+                &quot;student_number&quot;: &quot;ST85267&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 16,
+                    &quot;name&quot;: &quot;Devon Robel Jr.&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 14,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 1,
+                &quot;student_number&quot;: &quot;ST47593&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 23,
+                    &quot;name&quot;: &quot;Isobel Brown&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 15,
+                &quot;enrollment_type&quot;: &quot;evening&quot;,
+                &quot;stage&quot;: 1,
+                &quot;student_number&quot;: &quot;ST93748&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 24,
+                    &quot;name&quot;: &quot;Jesse Dicki&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 2,
+                &quot;enrollment_type&quot;: &quot;evening&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST13277&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 11,
+                    &quot;name&quot;: &quot;Miss Pamela Braun&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 4,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST95677&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 13,
+                    &quot;name&quot;: &quot;Marjory Renner&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 5,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST61937&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 14,
+                    &quot;name&quot;: &quot;Tate Lowe&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 16,
+                &quot;enrollment_type&quot;: &quot;evening&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST67294&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 25,
+                    &quot;name&quot;: &quot;Wilfrid Deckow&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 18,
+                &quot;enrollment_type&quot;: &quot;evening&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST91217&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 27,
+                    &quot;name&quot;: &quot;Devon Hoppe&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 19,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST83749&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 28,
+                    &quot;name&quot;: &quot;Brandi Schoen I&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 20,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST45679&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 29,
+                    &quot;name&quot;: &quot;Miss Kasey Cremin&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 1,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 3,
+                &quot;student_number&quot;: &quot;ST31258&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 10,
+                    &quot;name&quot;: &quot;Christina Quigley&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 9,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 3,
+                &quot;student_number&quot;: &quot;ST88507&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 18,
+                    &quot;name&quot;: &quot;Demario Murazik IV&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 10,
+                &quot;enrollment_type&quot;: &quot;evening&quot;,
+                &quot;stage&quot;: 3,
+                &quot;student_number&quot;: &quot;ST59788&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 19,
+                    &quot;name&quot;: &quot;Meda Walker&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 13,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 3,
+                &quot;student_number&quot;: &quot;ST43141&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 22,
+                    &quot;name&quot;: &quot;Dr. Cloyd Howe V&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/departments/1/students?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/departments/1/students?page=2&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: &quot;http://localhost:8000/api/departments/1/students?page=2&quot;
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 2,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/departments/1/students?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/departments/1/students?page=2&quot;,
+                    &quot;label&quot;: &quot;2&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/departments/1/students?page=2&quot;,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/departments/1/students&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 15,
+            &quot;total&quot;: 20
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -12380,7 +15482,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-departments--department_id--students" data-method="GET"
       data-path="api/departments/{department_id}/students"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -12410,6 +15512,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/departments/{department_id}/students</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-departments--department_id--students"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -12452,6 +15566,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-courses--course_id--students">GET api/courses/{course_id}/students</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -12463,6 +15578,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/courses/1/students" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -12473,6 +15589,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12487,7 +15604,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-courses--course_id--students">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -12499,7 +15616,216 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Course students retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 6,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 1,
+                &quot;student_number&quot;: &quot;ST52318&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 15,
+                    &quot;name&quot;: &quot;Mekhi Kertzmann&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 20,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST45679&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 29,
+                    &quot;name&quot;: &quot;Miss Kasey Cremin&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 13,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 3,
+                &quot;student_number&quot;: &quot;ST43141&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 22,
+                    &quot;name&quot;: &quot;Dr. Cloyd Howe V&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 7,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 1,
+                &quot;student_number&quot;: &quot;ST85267&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 16,
+                    &quot;name&quot;: &quot;Devon Robel Jr.&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 1,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 3,
+                &quot;student_number&quot;: &quot;ST31258&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 10,
+                    &quot;name&quot;: &quot;Christina Quigley&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 10,
+                &quot;enrollment_type&quot;: &quot;evening&quot;,
+                &quot;stage&quot;: 3,
+                &quot;student_number&quot;: &quot;ST59788&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 19,
+                    &quot;name&quot;: &quot;Meda Walker&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 15,
+                &quot;enrollment_type&quot;: &quot;evening&quot;,
+                &quot;stage&quot;: 1,
+                &quot;student_number&quot;: &quot;ST93748&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 24,
+                    &quot;name&quot;: &quot;Jesse Dicki&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 5,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST61937&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 14,
+                    &quot;name&quot;: &quot;Tate Lowe&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 14,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 1,
+                &quot;student_number&quot;: &quot;ST47593&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 23,
+                    &quot;name&quot;: &quot;Isobel Brown&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 3,
+                &quot;enrollment_type&quot;: &quot;evening&quot;,
+                &quot;stage&quot;: 4,
+                &quot;student_number&quot;: &quot;ST76969&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 12,
+                    &quot;name&quot;: &quot;Art Schuster&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 19,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 2,
+                &quot;student_number&quot;: &quot;ST83749&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 28,
+                    &quot;name&quot;: &quot;Brandi Schoen I&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 9,
+                &quot;enrollment_type&quot;: &quot;morning&quot;,
+                &quot;stage&quot;: 3,
+                &quot;student_number&quot;: &quot;ST88507&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 18,
+                    &quot;name&quot;: &quot;Demario Murazik IV&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            },
+            {
+                &quot;id&quot;: 11,
+                &quot;enrollment_type&quot;: &quot;parallel&quot;,
+                &quot;stage&quot;: 4,
+                &quot;student_number&quot;: &quot;ST35637&quot;,
+                &quot;status&quot;: &quot;active&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 20,
+                    &quot;name&quot;: &quot;Miss Laura Lind V&quot;
+                },
+                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/courses/1/students?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/courses/1/students?page=1&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: null
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 1,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/courses/1/students?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/courses/1/students&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 13,
+            &quot;total&quot;: 13
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -12520,7 +15846,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-courses--course_id--students" data-method="GET"
       data-path="api/courses/{course_id}/students"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -12550,6 +15876,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/students</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-courses--course_id--students"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -12592,6 +15930,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-courses--course_id--assign-student">POST api/courses/{course_id}/assign-student</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -12603,6 +15942,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/courses/1/assign-student" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -12617,6 +15957,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12652,7 +15993,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-courses--course_id--assign-student" data-method="POST"
       data-path="api/courses/{course_id}/assign-student"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -12682,6 +16023,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/assign-student</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-courses--course_id--assign-student"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -12749,6 +16102,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PUTapi-courses--course_id--students--student_id-">PUT api/courses/{course_id}/students/{student_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -12760,11 +16114,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/courses/1/students/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"grade\": 1,
-    \"enrolled_at\": \"2026-07-07T22:13:14\"
+    \"enrolled_at\": \"2026-07-07T22:48:29\"
 }"
 </code></pre></div>
 
@@ -12775,13 +16130,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
 let body = {
     "grade": 1,
-    "enrolled_at": "2026-07-07T22:13:14"
+    "enrolled_at": "2026-07-07T22:48:29"
 };
 
 fetch(url, {
@@ -12811,7 +16167,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PUTapi-courses--course_id--students--student_id-" data-method="PUT"
       data-path="api/courses/{course_id}/students/{student_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -12841,6 +16197,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/students/{student_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-courses--course_id--students--student_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -12922,16 +16290,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="enrolled_at"                data-endpoint="PUTapi-courses--course_id--students--student_id-"
-               value="2026-07-07T22:13:14"
+               value="2026-07-07T22:48:29"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:13:14</code></p>
+<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
         </div>
         </form>
 
                     <h2 id="endpoints-DELETEapi-courses--course_id--students--student_id-">DELETE api/courses/{course_id}/students/{student_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -12943,6 +16312,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/courses/1/students/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -12953,6 +16323,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12984,7 +16355,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-courses--course_id--students--student_id-" data-method="DELETE"
       data-path="api/courses/{course_id}/students/{student_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -13014,6 +16385,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/courses/{course_id}/students/{student_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-courses--course_id--students--student_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -13068,6 +16451,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-letters">Store a newly created resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -13079,11 +16463,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/letters" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"receiver_id\": \"architecto\",
-    \"type\": \"close_faculty\",
+    \"type\": \"create_department\",
     \"title\": \"n\",
     \"body\": \"architecto\",
     \"academic_year_id\": \"architecto\",
@@ -13098,13 +16483,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
 let body = {
     "receiver_id": "architecto",
-    "type": "close_faculty",
+    "type": "create_department",
     "title": "n",
     "body": "architecto",
     "academic_year_id": "architecto",
@@ -13138,7 +16524,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-letters" data-method="POST"
       data-path="api/letters"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -13168,6 +16554,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-letters"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -13212,10 +16610,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="type"                data-endpoint="POSTapi-letters"
-               value="close_faculty"
+               value="create_department"
                data-component="body">
     <br>
-<p>Example: <code>close_faculty</code></p>
+<p>Example: <code>create_department</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>hire_teacher</code></li> <li><code>fire_teacher</code></li> <li><code>create_department</code></li> <li><code>close_department</code></li> <li><code>open_faculty</code></li> <li><code>close_faculty</code></li></ul>
         </div>
@@ -13272,6 +16670,7 @@ Must be one of:
                     <h2 id="endpoints-GETapi-letters">Display a listing of the resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -13283,6 +16682,7 @@ Must be one of:
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/letters" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -13293,6 +16693,7 @@ Must be one of:
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -13307,7 +16708,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -13319,7 +16720,46 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Letters retrieved successfully&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/letters?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/letters?page=1&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: null
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: null,
+            &quot;last_page&quot;: 1,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/letters?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/letters&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: null,
+            &quot;total&quot;: 0
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -13340,7 +16780,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-letters" data-method="GET"
       data-path="api/letters"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -13371,6 +16811,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-letters"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -13399,6 +16851,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-letters-recents">GET api/letters/recents</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -13410,6 +16863,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/letters/recents" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -13420,6 +16874,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -13434,7 +16889,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters-recents">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -13446,7 +16901,9 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Letters retrieved successfully&quot;,
+    &quot;data&quot;: []
 }</code>
  </pre>
     </span>
@@ -13467,7 +16924,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-letters-recents" data-method="GET"
       data-path="api/letters/recents"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -13498,6 +16955,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-letters-recents"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -13526,6 +16995,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-letters--letter_id-">Display the specified resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -13537,6 +17007,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/letters/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -13547,6 +17018,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -13561,7 +17033,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters--letter_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -13573,7 +17045,35 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Letter retrieved successfully&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;letter_number&quot;: &quot;2d2f3508-81ff-419b-9778-d7df00d9aaaf&quot;,
+        &quot;original_sender_id&quot;: 54,
+        &quot;sender_id&quot;: 54,
+        &quot;receiver_id&quot;: 107,
+        &quot;type&quot;: &quot;open_faculty&quot;,
+        &quot;title&quot;: &quot;Commodi id in inventore sint accusamus sunt commodi.&quot;,
+        &quot;body&quot;: &quot;Dolor rerum iusto repellat dicta dolorem quo. Eveniet vel velit et eos pariatur. Iusto qui officiis dolor deserunt rerum praesentium.\n\nNeque aliquid inventore sequi accusantium. Sunt fugiat qui eveniet enim aut quidem. Ut possimus quae est ipsa quam facilis. Ut sit illum incidunt sit nam ducimus.\n\nQuidem sequi accusamus culpa quia praesentium. Aut corrupti labore minima repellat. Delectus reiciendis animi et eos excepturi. Et impedit alias qui et non voluptatum.&quot;,
+        &quot;is_read&quot;: false,
+        &quot;academic_year_id&quot;: 1,
+        &quot;is_archived&quot;: false,
+        &quot;status&quot;: &quot;rejected&quot;,
+        &quot;qr_code_path&quot;: null,
+        &quot;qr_code_url&quot;: null,
+        &quot;payload&quot;: null,
+        &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+        &quot;sender&quot;: {
+            &quot;id&quot;: 54,
+            &quot;name&quot;: &quot;Noel Morissette&quot;
+        },
+        &quot;receiver&quot;: {
+            &quot;id&quot;: 107,
+            &quot;name&quot;: &quot;Conrad Pacocha&quot;
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -13594,7 +17094,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-letters--letter_id-" data-method="GET"
       data-path="api/letters/{letter_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -13624,6 +17124,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters/{letter_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-letters--letter_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -13666,6 +17178,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PATCHapi-letters--letter_id-">Update the specified resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -13677,6 +17190,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
     "http://localhost:8000/api/letters/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -13691,6 +17205,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -13726,7 +17241,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PATCHapi-letters--letter_id-" data-method="PATCH"
       data-path="api/letters/{letter_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -13756,6 +17271,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters/{letter_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-letters--letter_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -13811,6 +17338,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-letters--letter_id--raise">POST api/letters/{letter_id}/raise</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -13822,6 +17350,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/letters/1/raise" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -13837,6 +17366,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -13873,7 +17403,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-letters--letter_id--raise" data-method="POST"
       data-path="api/letters/{letter_id}/raise"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -13903,6 +17433,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters/{letter_id}/raise</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-letters--letter_id--raise"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -13970,6 +17512,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-letters-inbox">GET api/letters/inbox</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -13981,6 +17524,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/letters/inbox" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -13991,6 +17535,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -14005,7 +17550,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters-inbox">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -14017,7 +17562,9 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Inbox letters fetched successfully&quot;,
+    &quot;data&quot;: []
 }</code>
  </pre>
     </span>
@@ -14038,7 +17585,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-letters-inbox" data-method="GET"
       data-path="api/letters/inbox"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -14069,6 +17616,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-letters-inbox"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -14097,6 +17656,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-letters-outbox">GET api/letters/outbox</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -14108,6 +17668,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/letters/outbox" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -14118,6 +17679,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -14132,7 +17694,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters-outbox">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -14144,7 +17706,9 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Broadcast letters fetched successfully&quot;,
+    &quot;data&quot;: []
 }</code>
  </pre>
     </span>
@@ -14165,7 +17729,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-letters-outbox" data-method="GET"
       data-path="api/letters/outbox"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -14196,6 +17760,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-letters-outbox"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -14224,6 +17800,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-letters--letter_id--approve">Approve a letter and log the activity.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -14235,6 +17812,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/letters/1/approve" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -14245,6 +17823,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -14276,7 +17855,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-letters--letter_id--approve" data-method="POST"
       data-path="api/letters/{letter_id}/approve"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -14306,6 +17885,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters/{letter_id}/approve</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-letters--letter_id--approve"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -14348,6 +17939,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-letters--letter_id--decline">Decline a letter and log the activity.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -14359,6 +17951,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/letters/1/decline" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -14369,6 +17962,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -14400,7 +17994,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-letters--letter_id--decline" data-method="POST"
       data-path="api/letters/{letter_id}/decline"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -14430,6 +18024,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters/{letter_id}/decline</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-letters--letter_id--decline"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -14472,6 +18078,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-letters--letter_id--forward">Forward a letter and log the from/to recipients.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -14483,6 +18090,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/letters/1/forward" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -14497,6 +18105,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -14532,7 +18141,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-letters--letter_id--forward" data-method="POST"
       data-path="api/letters/{letter_id}/forward"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -14562,6 +18171,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters/{letter_id}/forward</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-letters--letter_id--forward"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -14617,6 +18238,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-letters--letter_id--attachments">Upload attachment to a letter.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -14628,9 +18250,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/letters/1/attachments" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "file[]=@C:\Users\Raman\AppData\Local\Temp\phpE8C6.tmp" </code></pre></div>
+    --form "file[]=@C:\Users\Raman\AppData\Local\Temp\php2E20.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14639,6 +18262,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -14673,7 +18297,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-letters--letter_id--attachments" data-method="POST"
       data-path="api/letters/{letter_id}/attachments"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="1"
       data-isarraybody="0"
       autocomplete="off"
@@ -14703,6 +18327,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters/{letter_id}/attachments</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-letters--letter_id--attachments"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -14760,6 +18396,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-letters--letter_id--attachments--attachment_id--download">Download attachment.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -14771,6 +18408,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/letters/1/attachments/1/download" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -14781,6 +18419,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -14795,7 +18434,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters--letter_id--attachments--attachment_id--download">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -14807,7 +18446,8 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: false,
+    &quot;message&quot;: &quot;Attachment not found.&quot;
 }</code>
  </pre>
     </span>
@@ -14828,7 +18468,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-letters--letter_id--attachments--attachment_id--download" data-method="GET"
       data-path="api/letters/{letter_id}/attachments/{attachment_id}/download"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -14858,6 +18498,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters/{letter_id}/attachments/{attachment_id}/download</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-letters--letter_id--attachments--attachment_id--download"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -14912,6 +18564,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-letters--letter_id--attachments--attachment_id-">Delete attachment.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -14923,6 +18576,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/letters/1/attachments/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -14933,6 +18587,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -14964,7 +18619,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-letters--letter_id--attachments--attachment_id-" data-method="DELETE"
       data-path="api/letters/{letter_id}/attachments/{attachment_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -14994,6 +18649,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letters/{letter_id}/attachments/{attachment_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-letters--letter_id--attachments--attachment_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -15048,6 +18715,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-signatures">Store a new signature and approve the letter.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -15059,6 +18727,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/signatures" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -15074,6 +18743,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15110,7 +18780,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-signatures" data-method="POST"
       data-path="api/signatures"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -15140,6 +18810,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/signatures</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-signatures"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -15194,6 +18876,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-signatures--id-">Get a specific signature by ID.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -15205,6 +18888,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/signatures/architecto" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -15215,6 +18899,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15229,7 +18914,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-signatures--id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (500):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -15241,7 +18926,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;Server Error&quot;
 }</code>
  </pre>
     </span>
@@ -15262,7 +18947,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-signatures--id-" data-method="GET"
       data-path="api/signatures/{id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -15292,6 +18977,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/signatures/{id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-signatures--id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -15334,6 +19031,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-signatures">Get a paginated list of signatures.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -15345,6 +19043,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/signatures" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -15355,6 +19054,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15369,7 +19069,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-signatures">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -15381,7 +19081,575 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Signatures retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 41,
+                &quot;letter_id&quot;: 26,
+                &quot;user_id&quot;: 462,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: &quot;Ea voluptate deserunt nulla.&quot;,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 26,
+                    &quot;letter_number&quot;: &quot;f72162ae-bd41-45cb-b514-9ee60d8f3a05&quot;,
+                    &quot;original_sender_id&quot;: 375,
+                    &quot;sender_id&quot;: 375,
+                    &quot;receiver_id&quot;: 339,
+                    &quot;type&quot;: &quot;hire_teacher&quot;,
+                    &quot;title&quot;: &quot;Voluptas quas voluptas dolor rerum fuga ea veniam.&quot;,
+                    &quot;body&quot;: &quot;Repudiandae earum nostrum pariatur et quibusdam. Nemo tempora facere consequatur ad pariatur. Accusamus accusantium recusandae qui illo. Rem voluptatibus incidunt alias architecto eius est saepe. Hic qui impedit ea alias et.\n\nMagnam voluptatibus molestiae esse aliquam. Exercitationem quis quibusdam voluptatem deserunt voluptas repellat. Cumque harum corrupti ex iure molestiae.\n\nImpedit perspiciatis voluptate odit et. Omnis ullam minima tempore enim. Quia dolorem voluptas incidunt fuga voluptates saepe voluptatem magnam.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;rejected&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;42a0fcc4ce5d91e3a031e7f5ee12542a8a84ae3ca8683446dcad557df7e37c34&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 462,
+                    &quot;name&quot;: &quot;Jane Kreiger&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 42,
+                &quot;letter_id&quot;: 26,
+                &quot;user_id&quot;: 39,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: null,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 26,
+                    &quot;letter_number&quot;: &quot;f72162ae-bd41-45cb-b514-9ee60d8f3a05&quot;,
+                    &quot;original_sender_id&quot;: 375,
+                    &quot;sender_id&quot;: 375,
+                    &quot;receiver_id&quot;: 339,
+                    &quot;type&quot;: &quot;hire_teacher&quot;,
+                    &quot;title&quot;: &quot;Voluptas quas voluptas dolor rerum fuga ea veniam.&quot;,
+                    &quot;body&quot;: &quot;Repudiandae earum nostrum pariatur et quibusdam. Nemo tempora facere consequatur ad pariatur. Accusamus accusantium recusandae qui illo. Rem voluptatibus incidunt alias architecto eius est saepe. Hic qui impedit ea alias et.\n\nMagnam voluptatibus molestiae esse aliquam. Exercitationem quis quibusdam voluptatem deserunt voluptas repellat. Cumque harum corrupti ex iure molestiae.\n\nImpedit perspiciatis voluptate odit et. Omnis ullam minima tempore enim. Quia dolorem voluptas incidunt fuga voluptates saepe voluptatem magnam.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;rejected&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;42a0fcc4ce5d91e3a031e7f5ee12542a8a84ae3ca8683446dcad557df7e37c34&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 39,
+                    &quot;name&quot;: &quot;Augustine Howell&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 43,
+                &quot;letter_id&quot;: 27,
+                &quot;user_id&quot;: 80,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: &quot;Dolores veritatis eos error reiciendis quo dolor nostrum.&quot;,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 27,
+                    &quot;letter_number&quot;: &quot;7244f044-f25f-4d00-8a08-98c247b4b698&quot;,
+                    &quot;original_sender_id&quot;: 384,
+                    &quot;sender_id&quot;: 384,
+                    &quot;receiver_id&quot;: 58,
+                    &quot;type&quot;: &quot;close_faculty&quot;,
+                    &quot;title&quot;: &quot;Vero ducimus non expedita.&quot;,
+                    &quot;body&quot;: &quot;Atque et ipsum consequuntur aliquid aut excepturi. Qui suscipit enim quisquam dolores. Sit similique vitae sequi expedita laboriosam et cum. Nihil omnis laudantium autem a incidunt.\n\nConsequuntur in magni asperiores voluptatum ipsa modi. Iure saepe quisquam molestiae et cupiditate. Vitae veritatis fuga voluptatem consequatur. Ea pariatur quis vero ut omnis assumenda. Sequi quia similique corporis.\n\nIn blanditiis culpa nostrum praesentium nostrum omnis. Minima beatae aut quia et. Quos nihil ullam deserunt odio eius consequatur vitae veniam. Laboriosam vel porro natus perferendis voluptatum id magni.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;approved&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;fc75037f6725e3bbebbf602a2f7e89d86733216a1e35ff5d5e04e7126b5c3a5e&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 80,
+                    &quot;name&quot;: &quot;Johathan Schamberger&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 44,
+                &quot;letter_id&quot;: 28,
+                &quot;user_id&quot;: 214,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: null,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 28,
+                    &quot;letter_number&quot;: &quot;8713854b-67e1-4684-81e0-e2a086dd5bfe&quot;,
+                    &quot;original_sender_id&quot;: 69,
+                    &quot;sender_id&quot;: 69,
+                    &quot;receiver_id&quot;: 139,
+                    &quot;type&quot;: &quot;create_department&quot;,
+                    &quot;title&quot;: &quot;Qui et nemo quia ea error animi.&quot;,
+                    &quot;body&quot;: &quot;Porro minima maiores ullam vel dicta. Odit laudantium enim veritatis ipsa fugit. Quos sit distinctio cupiditate animi.\n\nSed voluptatum quam repellendus ut ad. Possimus debitis reprehenderit facilis nihil omnis recusandae enim ducimus. Sit saepe cupiditate aut praesentium et ut. Rerum et esse veniam nihil.\n\nSunt quam et et explicabo necessitatibus. Adipisci eius illum illum voluptatem sed. Iure alias error adipisci expedita.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;approved&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;089a56bcb0524f3534be15599468f24ab94465cf9c3cede69eecfb7923725a16&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 214,
+                    &quot;name&quot;: &quot;Khalil Macejkovic&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 45,
+                &quot;letter_id&quot;: 28,
+                &quot;user_id&quot;: 16,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: null,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 28,
+                    &quot;letter_number&quot;: &quot;8713854b-67e1-4684-81e0-e2a086dd5bfe&quot;,
+                    &quot;original_sender_id&quot;: 69,
+                    &quot;sender_id&quot;: 69,
+                    &quot;receiver_id&quot;: 139,
+                    &quot;type&quot;: &quot;create_department&quot;,
+                    &quot;title&quot;: &quot;Qui et nemo quia ea error animi.&quot;,
+                    &quot;body&quot;: &quot;Porro minima maiores ullam vel dicta. Odit laudantium enim veritatis ipsa fugit. Quos sit distinctio cupiditate animi.\n\nSed voluptatum quam repellendus ut ad. Possimus debitis reprehenderit facilis nihil omnis recusandae enim ducimus. Sit saepe cupiditate aut praesentium et ut. Rerum et esse veniam nihil.\n\nSunt quam et et explicabo necessitatibus. Adipisci eius illum illum voluptatem sed. Iure alias error adipisci expedita.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;approved&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;089a56bcb0524f3534be15599468f24ab94465cf9c3cede69eecfb7923725a16&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 16,
+                    &quot;name&quot;: &quot;Devon Robel Jr.&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 46,
+                &quot;letter_id&quot;: 29,
+                &quot;user_id&quot;: 286,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: null,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 29,
+                    &quot;letter_number&quot;: &quot;e1585ee4-a987-4002-83e2-1d949fd26f0f&quot;,
+                    &quot;original_sender_id&quot;: 342,
+                    &quot;sender_id&quot;: 342,
+                    &quot;receiver_id&quot;: 49,
+                    &quot;type&quot;: &quot;close_faculty&quot;,
+                    &quot;title&quot;: &quot;Molestias officiis laboriosam sit enim magnam consectetur.&quot;,
+                    &quot;body&quot;: &quot;Suscipit sequi vitae dolores nulla sit voluptate. Eius dolore officiis sequi tempore itaque autem dolorem eius. Perspiciatis quaerat voluptatibus aut totam consequatur odio.\n\nNihil hic officiis placeat et aut. Eveniet laborum consequatur voluptatem omnis velit. Consequatur numquam ex beatae odit dolorem voluptatibus. Nisi pariatur est repellendus consectetur ut necessitatibus fugit.\n\nQui distinctio voluptatem dolores iusto et. Excepturi reprehenderit totam nisi sunt quibusdam.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;rejected&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;3e0fd313c00e341dfd38b1c711b3151d6cabb49b9f32da1a56877bd54e46cf24&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 286,
+                    &quot;name&quot;: &quot;Ms. Pat Marvin MD&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 47,
+                &quot;letter_id&quot;: 29,
+                &quot;user_id&quot;: 434,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: &quot;Et velit nobis eum tempore quidem id aliquam.&quot;,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 29,
+                    &quot;letter_number&quot;: &quot;e1585ee4-a987-4002-83e2-1d949fd26f0f&quot;,
+                    &quot;original_sender_id&quot;: 342,
+                    &quot;sender_id&quot;: 342,
+                    &quot;receiver_id&quot;: 49,
+                    &quot;type&quot;: &quot;close_faculty&quot;,
+                    &quot;title&quot;: &quot;Molestias officiis laboriosam sit enim magnam consectetur.&quot;,
+                    &quot;body&quot;: &quot;Suscipit sequi vitae dolores nulla sit voluptate. Eius dolore officiis sequi tempore itaque autem dolorem eius. Perspiciatis quaerat voluptatibus aut totam consequatur odio.\n\nNihil hic officiis placeat et aut. Eveniet laborum consequatur voluptatem omnis velit. Consequatur numquam ex beatae odit dolorem voluptatibus. Nisi pariatur est repellendus consectetur ut necessitatibus fugit.\n\nQui distinctio voluptatem dolores iusto et. Excepturi reprehenderit totam nisi sunt quibusdam.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;rejected&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;3e0fd313c00e341dfd38b1c711b3151d6cabb49b9f32da1a56877bd54e46cf24&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 434,
+                    &quot;name&quot;: &quot;Prof. Zora Lindgren&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 48,
+                &quot;letter_id&quot;: 30,
+                &quot;user_id&quot;: 394,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: null,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 30,
+                    &quot;letter_number&quot;: &quot;23fb7b9a-20c0-48a2-8746-92ac127f8ed7&quot;,
+                    &quot;original_sender_id&quot;: 345,
+                    &quot;sender_id&quot;: 345,
+                    &quot;receiver_id&quot;: 386,
+                    &quot;type&quot;: &quot;open_university&quot;,
+                    &quot;title&quot;: &quot;Necessitatibus esse consequuntur alias sit ea ex.&quot;,
+                    &quot;body&quot;: &quot;Ducimus vel laboriosam itaque ea voluptatem repellendus. Aspernatur voluptatum corrupti occaecati sequi minus. Cum eaque eaque consequatur in.\n\nDelectus soluta molestiae eos est est voluptate omnis repellat. Vel neque sunt quam dolor maxime. Voluptatum ut optio ab deleniti id excepturi. Quia quia atque et magnam optio sit.\n\nUllam quas placeat molestiae quasi qui voluptatibus. Aliquam nihil nulla occaecati voluptatem deserunt deleniti. Beatae voluptatem sit beatae. Sint quae id nostrum.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;approved&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;4ee6e8cb7dbb98a0daa968cbfadc350d3b1b19e7707ff6b9ebb8ba5f7a99dbb9&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 394,
+                    &quot;name&quot;: &quot;Ms. Amya Ratke II&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 49,
+                &quot;letter_id&quot;: 30,
+                &quot;user_id&quot;: 406,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: &quot;Consequuntur voluptatem aliquam vitae sit quod tempora.&quot;,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 30,
+                    &quot;letter_number&quot;: &quot;23fb7b9a-20c0-48a2-8746-92ac127f8ed7&quot;,
+                    &quot;original_sender_id&quot;: 345,
+                    &quot;sender_id&quot;: 345,
+                    &quot;receiver_id&quot;: 386,
+                    &quot;type&quot;: &quot;open_university&quot;,
+                    &quot;title&quot;: &quot;Necessitatibus esse consequuntur alias sit ea ex.&quot;,
+                    &quot;body&quot;: &quot;Ducimus vel laboriosam itaque ea voluptatem repellendus. Aspernatur voluptatum corrupti occaecati sequi minus. Cum eaque eaque consequatur in.\n\nDelectus soluta molestiae eos est est voluptate omnis repellat. Vel neque sunt quam dolor maxime. Voluptatum ut optio ab deleniti id excepturi. Quia quia atque et magnam optio sit.\n\nUllam quas placeat molestiae quasi qui voluptatibus. Aliquam nihil nulla occaecati voluptatem deserunt deleniti. Beatae voluptatem sit beatae. Sint quae id nostrum.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;approved&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;4ee6e8cb7dbb98a0daa968cbfadc350d3b1b19e7707ff6b9ebb8ba5f7a99dbb9&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 406,
+                    &quot;name&quot;: &quot;Prof. Toney Beatty&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 1,
+                &quot;letter_id&quot;: 1,
+                &quot;user_id&quot;: 17,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: &quot;Voluptatem cupiditate quisquam consectetur quae.&quot;,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 1,
+                    &quot;letter_number&quot;: &quot;2d2f3508-81ff-419b-9778-d7df00d9aaaf&quot;,
+                    &quot;original_sender_id&quot;: 54,
+                    &quot;sender_id&quot;: 54,
+                    &quot;receiver_id&quot;: 107,
+                    &quot;type&quot;: &quot;open_faculty&quot;,
+                    &quot;title&quot;: &quot;Commodi id in inventore sint accusamus sunt commodi.&quot;,
+                    &quot;body&quot;: &quot;Dolor rerum iusto repellat dicta dolorem quo. Eveniet vel velit et eos pariatur. Iusto qui officiis dolor deserunt rerum praesentium.\n\nNeque aliquid inventore sequi accusantium. Sunt fugiat qui eveniet enim aut quidem. Ut possimus quae est ipsa quam facilis. Ut sit illum incidunt sit nam ducimus.\n\nQuidem sequi accusamus culpa quia praesentium. Aut corrupti labore minima repellat. Delectus reiciendis animi et eos excepturi. Et impedit alias qui et non voluptatum.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;rejected&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;86852a30e299e66e855e88f38b921f3a40e9058eacbab3546c8d3df87c912688&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 17,
+                    &quot;name&quot;: &quot;Marie Heller&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 2,
+                &quot;letter_id&quot;: 2,
+                &quot;user_id&quot;: 373,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: null,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 2,
+                    &quot;letter_number&quot;: &quot;961c363f-c122-4814-8d58-9db840613065&quot;,
+                    &quot;original_sender_id&quot;: 397,
+                    &quot;sender_id&quot;: 397,
+                    &quot;receiver_id&quot;: 86,
+                    &quot;type&quot;: &quot;close_faculty&quot;,
+                    &quot;title&quot;: &quot;Cupiditate ullam repellat enim adipisci porro non omnis ut.&quot;,
+                    &quot;body&quot;: &quot;Minus et doloremque dolor odit. Quia inventore voluptatibus dolor. Impedit voluptatum cum dolor qui.\n\nAt rerum quia impedit velit perspiciatis sed ratione illo. Eligendi consequatur vero expedita molestiae quas recusandae molestiae. Laborum iste quo sint reiciendis.\n\nNecessitatibus ab asperiores quo sit vel culpa. Deleniti architecto quis minus eveniet fuga labore consectetur quia. Possimus assumenda ipsam reprehenderit dolor culpa vel. Modi sint cum numquam nesciunt incidunt dolor fugiat.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;pending&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;c53b44aa1be81958a20870ca15fbcd9eed82e56b3142d6afb12834792fb8a83a&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 373,
+                    &quot;name&quot;: &quot;Cassie Orn&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 3,
+                &quot;letter_id&quot;: 3,
+                &quot;user_id&quot;: 167,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: &quot;Velit accusantium minus nihil.&quot;,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 3,
+                    &quot;letter_number&quot;: &quot;5514fc9e-aa2b-4728-923a-83157235a8b0&quot;,
+                    &quot;original_sender_id&quot;: 261,
+                    &quot;sender_id&quot;: 261,
+                    &quot;receiver_id&quot;: 419,
+                    &quot;type&quot;: &quot;close_university&quot;,
+                    &quot;title&quot;: &quot;Quis aliquam aut quisquam ab magnam nihil ullam.&quot;,
+                    &quot;body&quot;: &quot;Explicabo a maiores aperiam excepturi rerum sequi. Ipsa officiis corrupti recusandae possimus. Vel qui nostrum repudiandae animi fugit. Ipsam repellat facilis aut ea dolor sunt qui voluptatem.\n\nAut provident tempora et cupiditate vero eaque. Iusto veritatis impedit velit ipsa aut. Earum fugit maiores amet quasi ut et. Rerum laboriosam non labore eos architecto est et.\n\nNihil aut omnis soluta delectus eum. Impedit consequatur et ut aut. Sunt sed consequatur architecto qui culpa quam.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;pending&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;84d37a3d56bc78053d3d24b3fcd45fad54dadee03eee68f047c7909bc81bb109&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 167,
+                    &quot;name&quot;: &quot;Mr. Alfonzo Hamill&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 4,
+                &quot;letter_id&quot;: 3,
+                &quot;user_id&quot;: 169,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: &quot;Quam impedit quisquam eius odit et hic qui.&quot;,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 3,
+                    &quot;letter_number&quot;: &quot;5514fc9e-aa2b-4728-923a-83157235a8b0&quot;,
+                    &quot;original_sender_id&quot;: 261,
+                    &quot;sender_id&quot;: 261,
+                    &quot;receiver_id&quot;: 419,
+                    &quot;type&quot;: &quot;close_university&quot;,
+                    &quot;title&quot;: &quot;Quis aliquam aut quisquam ab magnam nihil ullam.&quot;,
+                    &quot;body&quot;: &quot;Explicabo a maiores aperiam excepturi rerum sequi. Ipsa officiis corrupti recusandae possimus. Vel qui nostrum repudiandae animi fugit. Ipsam repellat facilis aut ea dolor sunt qui voluptatem.\n\nAut provident tempora et cupiditate vero eaque. Iusto veritatis impedit velit ipsa aut. Earum fugit maiores amet quasi ut et. Rerum laboriosam non labore eos architecto est et.\n\nNihil aut omnis soluta delectus eum. Impedit consequatur et ut aut. Sunt sed consequatur architecto qui culpa quam.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;pending&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;84d37a3d56bc78053d3d24b3fcd45fad54dadee03eee68f047c7909bc81bb109&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 169,
+                    &quot;name&quot;: &quot;Alejandrin Jones&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 5,
+                &quot;letter_id&quot;: 4,
+                &quot;user_id&quot;: 32,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: null,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 4,
+                    &quot;letter_number&quot;: &quot;f2177176-84fd-4638-b089-25e79e4d5196&quot;,
+                    &quot;original_sender_id&quot;: 415,
+                    &quot;sender_id&quot;: 415,
+                    &quot;receiver_id&quot;: 170,
+                    &quot;type&quot;: &quot;close_university&quot;,
+                    &quot;title&quot;: &quot;Et quia fugiat quia in.&quot;,
+                    &quot;body&quot;: &quot;Amet accusantium officia qui impedit autem. Inventore aut dolores ad recusandae fugiat. Nisi commodi nihil est eos consequatur. Eum quis exercitationem maxime sequi.\n\nConsequatur nisi ut est numquam aut ut et. Saepe voluptatibus omnis doloribus soluta. Quas omnis delectus eius ut. Nisi non aut eos rerum dolor.\n\nNon asperiores aut similique autem ut aut. Commodi ea at est consequuntur corrupti inventore nihil. Iste asperiores qui fuga quo animi. Omnis ut sunt sint aperiam temporibus.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;pending&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;e1c4ce2eeb68a61b999a0a3de132c038b309c15852f7f20ed94be13cc8f211df&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 32,
+                    &quot;name&quot;: &quot;Prof. Raoul Hyatt&quot;
+                }
+            },
+            {
+                &quot;id&quot;: 6,
+                &quot;letter_id&quot;: 4,
+                &quot;user_id&quot;: 37,
+                &quot;role_at_time&quot;: null,
+                &quot;comment&quot;: null,
+                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                &quot;letter&quot;: {
+                    &quot;id&quot;: 4,
+                    &quot;letter_number&quot;: &quot;f2177176-84fd-4638-b089-25e79e4d5196&quot;,
+                    &quot;original_sender_id&quot;: 415,
+                    &quot;sender_id&quot;: 415,
+                    &quot;receiver_id&quot;: 170,
+                    &quot;type&quot;: &quot;close_university&quot;,
+                    &quot;title&quot;: &quot;Et quia fugiat quia in.&quot;,
+                    &quot;body&quot;: &quot;Amet accusantium officia qui impedit autem. Inventore aut dolores ad recusandae fugiat. Nisi commodi nihil est eos consequatur. Eum quis exercitationem maxime sequi.\n\nConsequatur nisi ut est numquam aut ut et. Saepe voluptatibus omnis doloribus soluta. Quas omnis delectus eius ut. Nisi non aut eos rerum dolor.\n\nNon asperiores aut similique autem ut aut. Commodi ea at est consequuntur corrupti inventore nihil. Iste asperiores qui fuga quo animi. Omnis ut sunt sint aperiam temporibus.&quot;,
+                    &quot;is_read&quot;: 0,
+                    &quot;academic_year_id&quot;: 1,
+                    &quot;is_archived&quot;: 0,
+                    &quot;status&quot;: &quot;pending&quot;,
+                    &quot;qr_code_path&quot;: null,
+                    &quot;letter_uuid&quot;: null,
+                    &quot;verification_hash&quot;: &quot;e1c4ce2eeb68a61b999a0a3de132c038b309c15852f7f20ed94be13cc8f211df&quot;,
+                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
+                    &quot;payload&quot;: null,
+                    &quot;executed_at&quot;: null
+                },
+                &quot;user&quot;: {
+                    &quot;id&quot;: 37,
+                    &quot;name&quot;: &quot;Blair Hirthe&quot;
+                }
+            }
+        ],
+        &quot;links&quot;: {
+            &quot;first&quot;: &quot;http://localhost:8000/api/signatures?page=1&quot;,
+            &quot;last&quot;: &quot;http://localhost:8000/api/signatures?page=4&quot;,
+            &quot;prev&quot;: null,
+            &quot;next&quot;: &quot;http://localhost:8000/api/signatures?page=2&quot;
+        },
+        &quot;meta&quot;: {
+            &quot;current_page&quot;: 1,
+            &quot;from&quot;: 1,
+            &quot;last_page&quot;: 4,
+            &quot;links&quot;: [
+                {
+                    &quot;url&quot;: null,
+                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                    &quot;page&quot;: null,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=1&quot;,
+                    &quot;label&quot;: &quot;1&quot;,
+                    &quot;page&quot;: 1,
+                    &quot;active&quot;: true
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=2&quot;,
+                    &quot;label&quot;: &quot;2&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=3&quot;,
+                    &quot;label&quot;: &quot;3&quot;,
+                    &quot;page&quot;: 3,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=4&quot;,
+                    &quot;label&quot;: &quot;4&quot;,
+                    &quot;page&quot;: 4,
+                    &quot;active&quot;: false
+                },
+                {
+                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=2&quot;,
+                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                    &quot;page&quot;: 2,
+                    &quot;active&quot;: false
+                }
+            ],
+            &quot;path&quot;: &quot;http://localhost:8000/api/signatures&quot;,
+            &quot;per_page&quot;: 15,
+            &quot;to&quot;: 15,
+            &quot;total&quot;: 49
+        }
+    }
 }</code>
  </pre>
     </span>
@@ -15402,7 +19670,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-signatures" data-method="GET"
       data-path="api/signatures"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -15433,6 +19701,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-signatures"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -15461,6 +19741,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-users">Display a listing of the resource with filters and pagination.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -15472,6 +19753,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/users" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -15482,6 +19764,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15496,7 +19779,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -15508,7 +19791,260 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Users retrieved successfully.&quot;,
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: 489,
+            &quot;name&quot;: &quot;Student&quot;,
+            &quot;email&quot;: &quot;student@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 11,
+                    &quot;name&quot;: &quot;student&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 489,
+                    &quot;role_id&quot;: 11,
+                    &quot;role_name&quot;: &quot;student&quot;,
+                    &quot;scope_type&quot;: &quot;DEPARTMENT&quot;,
+                    &quot;scope_id&quot;: 19
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:04.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:04.000000Z&quot;
+        },
+        {
+            &quot;id&quot;: 490,
+            &quot;name&quot;: &quot;High School Graduate&quot;,
+            &quot;email&quot;: &quot;HIGH.SCHOOL.GRADUATE@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 12,
+                    &quot;name&quot;: &quot;HIGH_SCHOOL_GRADUATE&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 490,
+                    &quot;role_id&quot;: 12,
+                    &quot;role_name&quot;: &quot;HIGH_SCHOOL_GRADUATE&quot;,
+                    &quot;scope_type&quot;: &quot;MINISTRY&quot;,
+                    &quot;scope_id&quot;: null
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:04.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:04.000000Z&quot;
+        },
+        {
+            &quot;id&quot;: 485,
+            &quot;name&quot;: &quot;University Admin Science&quot;,
+            &quot;email&quot;: &quot;UNIVERSITY.ADMIN.SCIENCE@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 7,
+                    &quot;name&quot;: &quot;UNIVERSITY_ADMIN_SCIENCE&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 485,
+                    &quot;role_id&quot;: 7,
+                    &quot;role_name&quot;: &quot;UNIVERSITY_ADMIN_SCIENCE&quot;,
+                    &quot;scope_type&quot;: &quot;UNIVERSITY&quot;,
+                    &quot;scope_id&quot;: 4
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;
+        },
+        {
+            &quot;id&quot;: 486,
+            &quot;name&quot;: &quot;Dean&quot;,
+            &quot;email&quot;: &quot;DEAN@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 8,
+                    &quot;name&quot;: &quot;DEAN&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 486,
+                    &quot;role_id&quot;: 8,
+                    &quot;role_name&quot;: &quot;DEAN&quot;,
+                    &quot;scope_type&quot;: &quot;FACULTY&quot;,
+                    &quot;scope_id&quot;: 7
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;
+        },
+        {
+            &quot;id&quot;: 487,
+            &quot;name&quot;: &quot;Head of Department&quot;,
+            &quot;email&quot;: &quot;HEAD.OF.DEPARTMENT@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 9,
+                    &quot;name&quot;: &quot;HEAD_OF_DEPARTMENT&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 487,
+                    &quot;role_id&quot;: 9,
+                    &quot;role_name&quot;: &quot;HEAD_OF_DEPARTMENT&quot;,
+                    &quot;scope_type&quot;: &quot;DEPARTMENT&quot;,
+                    &quot;scope_id&quot;: 19
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;
+        },
+        {
+            &quot;id&quot;: 488,
+            &quot;name&quot;: &quot;Lecturer&quot;,
+            &quot;email&quot;: &quot;lecturer@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 10,
+                    &quot;name&quot;: &quot;lecturer&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 488,
+                    &quot;role_id&quot;: 10,
+                    &quot;role_name&quot;: &quot;lecturer&quot;,
+                    &quot;scope_type&quot;: &quot;DEPARTMENT&quot;,
+                    &quot;scope_id&quot;: 19
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;
+        },
+        {
+            &quot;id&quot;: 482,
+            &quot;name&quot;: &quot;University Admin&quot;,
+            &quot;email&quot;: &quot;UNIVERSITY.ADMIN@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 4,
+                    &quot;name&quot;: &quot;UNIVERSITY_ADMIN&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 482,
+                    &quot;role_id&quot;: 4,
+                    &quot;role_name&quot;: &quot;UNIVERSITY_ADMIN&quot;,
+                    &quot;scope_type&quot;: &quot;UNIVERSITY&quot;,
+                    &quot;scope_id&quot;: 4
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;
+        },
+        {
+            &quot;id&quot;: 483,
+            &quot;name&quot;: &quot;University Admin Administration&quot;,
+            &quot;email&quot;: &quot;UNIVERSITY.ADMIN.ADMINISTRATION@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 5,
+                    &quot;name&quot;: &quot;UNIVERSITY_ADMIN_ADMINISTRATION&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 483,
+                    &quot;role_id&quot;: 5,
+                    &quot;role_name&quot;: &quot;UNIVERSITY_ADMIN_ADMINISTRATION&quot;,
+                    &quot;scope_type&quot;: &quot;UNIVERSITY&quot;,
+                    &quot;scope_id&quot;: 4
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;
+        },
+        {
+            &quot;id&quot;: 484,
+            &quot;name&quot;: &quot;University Admin Students&quot;,
+            &quot;email&quot;: &quot;UNIVERSITY.ADMIN.STUDENTS@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 6,
+                    &quot;name&quot;: &quot;UNIVERSITY_ADMIN_STUDENTS&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 484,
+                    &quot;role_id&quot;: 6,
+                    &quot;role_name&quot;: &quot;UNIVERSITY_ADMIN_STUDENTS&quot;,
+                    &quot;scope_type&quot;: &quot;UNIVERSITY&quot;,
+                    &quot;scope_id&quot;: 4
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;
+        },
+        {
+            &quot;id&quot;: 479,
+            &quot;name&quot;: &quot;Ministry Admin&quot;,
+            &quot;email&quot;: &quot;MINISTRY.ADMIN@zankolink.test&quot;,
+            &quot;phone&quot;: &quot;07700000000&quot;,
+            &quot;is_active&quot;: 1,
+            &quot;is_two_factor_enabled&quot;: 0,
+            &quot;roles&quot;: [
+                {
+                    &quot;id&quot;: 1,
+                    &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;
+                }
+            ],
+            &quot;scopes&quot;: [
+                {
+                    &quot;user_scope_id&quot;: 479,
+                    &quot;role_id&quot;: 1,
+                    &quot;role_name&quot;: &quot;MINISTRY_ADMIN&quot;,
+                    &quot;scope_type&quot;: &quot;MINISTRY&quot;,
+                    &quot;scope_id&quot;: null
+                }
+            ],
+            &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;
+        }
+    ]
 }</code>
  </pre>
     </span>
@@ -15529,7 +20065,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-users" data-method="GET"
       data-path="api/users"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -15560,6 +20096,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-users"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -15588,6 +20136,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-users-superior-roles">GET api/users/superior-roles</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -15599,6 +20148,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/users/superior-roles" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -15609,6 +20159,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15623,7 +20174,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users-superior-roles">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -15635,7 +20186,25 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Higher Role Users retrieved successfully&quot;,
+    &quot;data&quot;: [
+        {
+            &quot;user_id&quot;: 479,
+            &quot;name&quot;: &quot;Ministry Admin&quot;,
+            &quot;role&quot;: &quot;MINISTRY_ADMIN&quot;
+        },
+        {
+            &quot;user_id&quot;: 481,
+            &quot;name&quot;: &quot;Ministry Administration Head&quot;,
+            &quot;role&quot;: &quot;MINISTRY_ADMINISTRATION_HEAD&quot;
+        },
+        {
+            &quot;user_id&quot;: 480,
+            &quot;name&quot;: &quot;Ministry Import Export Staff&quot;,
+            &quot;role&quot;: &quot;MINISTRY_IMPORT_EXPORT_STAFF&quot;
+        }
+    ]
 }</code>
  </pre>
     </span>
@@ -15656,7 +20225,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-users-superior-roles" data-method="GET"
       data-path="api/users/superior-roles"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -15687,6 +20256,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-users-superior-roles"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -15715,6 +20296,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-users-same-level">GET api/users/same-level</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -15726,6 +20308,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/users/same-level" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -15736,6 +20319,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15750,7 +20334,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users-same-level">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -15762,7 +20346,37 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;same roles retrieved successfully&quot;,
+    &quot;data&quot;: [
+        {
+            &quot;user_id&quot;: 479,
+            &quot;name&quot;: &quot;Ministry Admin&quot;,
+            &quot;email&quot;: &quot;MINISTRY.ADMIN@zankolink.test&quot;,
+            &quot;role_id&quot;: 1,
+            &quot;role&quot;: &quot;MINISTRY_ADMIN&quot;,
+            &quot;scope_type&quot;: &quot;MINISTRY&quot;,
+            &quot;scope_id&quot;: null
+        },
+        {
+            &quot;user_id&quot;: 481,
+            &quot;name&quot;: &quot;Ministry Administration Head&quot;,
+            &quot;email&quot;: &quot;MINISTRY.ADMINISTRATION.HEAD@zankolink.test&quot;,
+            &quot;role_id&quot;: 3,
+            &quot;role&quot;: &quot;MINISTRY_ADMINISTRATION_HEAD&quot;,
+            &quot;scope_type&quot;: &quot;MINISTRY&quot;,
+            &quot;scope_id&quot;: null
+        },
+        {
+            &quot;user_id&quot;: 480,
+            &quot;name&quot;: &quot;Ministry Import Export Staff&quot;,
+            &quot;email&quot;: &quot;MINISTRY.IMPORT.EXPORT.STAFF@zankolink.test&quot;,
+            &quot;role_id&quot;: 2,
+            &quot;role&quot;: &quot;MINISTRY_IMPORT_EXPORT_STAFF&quot;,
+            &quot;scope_type&quot;: &quot;MINISTRY&quot;,
+            &quot;scope_id&quot;: null
+        }
+    ]
 }</code>
  </pre>
     </span>
@@ -15783,7 +20397,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-users-same-level" data-method="GET"
       data-path="api/users/same-level"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -15814,6 +20428,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-users-same-level"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -15842,6 +20468,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-users--user_id-">Display the specified resource.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -15853,6 +20480,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/users/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -15863,6 +20491,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15877,7 +20506,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users--user_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -15889,7 +20518,33 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;User retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;Albin Herzog IV&quot;,
+        &quot;email&quot;: &quot;admin@ministry.gov&quot;,
+        &quot;phone&quot;: &quot;07701234567&quot;,
+        &quot;is_active&quot;: 1,
+        &quot;is_two_factor_enabled&quot;: 0,
+        &quot;roles&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;
+            }
+        ],
+        &quot;scopes&quot;: [
+            {
+                &quot;user_scope_id&quot;: 1,
+                &quot;role_id&quot;: 1,
+                &quot;role_name&quot;: &quot;MINISTRY_ADMIN&quot;,
+                &quot;scope_type&quot;: &quot;MINISTRY&quot;,
+                &quot;scope_id&quot;: null
+            }
+        ],
+        &quot;created_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;
+    }
 }</code>
  </pre>
     </span>
@@ -15910,7 +20565,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-users--user_id-" data-method="GET"
       data-path="api/users/{user_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -15940,6 +20595,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/users/{user_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-users--user_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -15982,6 +20649,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PATCHapi-users--user_id-">Update the specified resource in storage.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -15993,6 +20661,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
     "http://localhost:8000/api/users/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -16008,6 +20677,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16044,7 +20714,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PATCHapi-users--user_id-" data-method="PATCH"
       data-path="api/users/{user_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -16074,6 +20744,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/users/{user_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PATCHapi-users--user_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -16141,6 +20823,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-users--user_id--activate">Activate a user account.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -16152,6 +20835,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/users/1/activate" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -16162,6 +20846,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16193,7 +20878,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-users--user_id--activate" data-method="POST"
       data-path="api/users/{user_id}/activate"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -16223,6 +20908,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/users/{user_id}/activate</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-users--user_id--activate"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -16265,6 +20962,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-users--user_id--deactivate">Deactivate a user account.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -16276,6 +20974,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/users/1/deactivate" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -16286,6 +20985,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16317,7 +21017,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-users--user_id--deactivate" data-method="POST"
       data-path="api/users/{user_id}/deactivate"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -16347,6 +21047,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/users/{user_id}/deactivate</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-users--user_id--deactivate"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -16389,6 +21101,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-roles">GET api/roles</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -16400,6 +21113,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/roles" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -16410,6 +21124,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16424,7 +21139,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-roles">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -16436,7 +21151,348 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Roles retrieved successfully.&quot;,
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;,
+            &quot;permissions&quot;: [
+                &quot;view letter broadcast&quot;,
+                &quot;create letter broadcast&quot;,
+                &quot;view universities&quot;,
+                &quot;view university&quot;,
+                &quot;create universities&quot;,
+                &quot;update universities&quot;,
+                &quot;delete universities&quot;,
+                &quot;view faculties&quot;,
+                &quot;view faculty&quot;,
+                &quot;create faculties&quot;,
+                &quot;update faculties&quot;,
+                &quot;delete faculties&quot;,
+                &quot;view departments&quot;,
+                &quot;view department&quot;,
+                &quot;create departments&quot;,
+                &quot;update departments&quot;,
+                &quot;delete departments&quot;,
+                &quot;update department seats&quot;,
+                &quot;view users&quot;,
+                &quot;view user&quot;,
+                &quot;create users&quot;,
+                &quot;update users&quot;,
+                &quot;delete users&quot;,
+                &quot;activate users&quot;,
+                &quot;deactivate users&quot;,
+                &quot;view teachers&quot;,
+                &quot;view teacher&quot;,
+                &quot;create teachers&quot;,
+                &quot;update teachers&quot;,
+                &quot;delete teachers&quot;,
+                &quot;assign teachers&quot;,
+                &quot;unassign teachers&quot;,
+                &quot;view students&quot;,
+                &quot;create students&quot;,
+                &quot;update students&quot;,
+                &quot;delete students&quot;,
+                &quot;view courses&quot;,
+                &quot;create courses&quot;,
+                &quot;update courses&quot;,
+                &quot;delete courses&quot;,
+                &quot;assign course teachers&quot;,
+                &quot;view course teachers&quot;,
+                &quot;update course teachers&quot;,
+                &quot;delete course teachers&quot;,
+                &quot;assign course students&quot;,
+                &quot;view course students&quot;,
+                &quot;update course students&quot;,
+                &quot;delete course students&quot;,
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;update letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;approve letters&quot;,
+                &quot;decline letters&quot;,
+                &quot;forward letters&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;,
+                &quot;delete attachments&quot;,
+                &quot;view signatures&quot;,
+                &quot;create signatures&quot;,
+                &quot;view reports&quot;,
+                &quot;update academic year&quot;,
+                &quot;create stamps&quot;,
+                &quot;view stamps&quot;,
+                &quot;view roles&quot;,
+                &quot;create roles&quot;,
+                &quot;update roles&quot;,
+                &quot;delete roles&quot;,
+                &quot;view permissions&quot;,
+                &quot;view user roles&quot;,
+                &quot;create user roles&quot;,
+                &quot;delete user roles&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 2,
+            &quot;name&quot;: &quot;MINISTRY_IMPORT_EXPORT_STAFF&quot;,
+            &quot;permissions&quot;: [
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;,
+                &quot;view signatures&quot;,
+                &quot;create signatures&quot;,
+                &quot;create stamps&quot;,
+                &quot;view stamps&quot;,
+                &quot;approve letters&quot;,
+                &quot;decline letters&quot;,
+                &quot;forward letters&quot;,
+                &quot;view letter broadcast&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 3,
+            &quot;name&quot;: &quot;MINISTRY_ADMINISTRATION_HEAD&quot;,
+            &quot;permissions&quot;: [
+                &quot;view letters&quot;,
+                &quot;update letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;create letters&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;,
+                &quot;view signatures&quot;,
+                &quot;create signatures&quot;,
+                &quot;create stamps&quot;,
+                &quot;view stamps&quot;,
+                &quot;view reports&quot;,
+                &quot;forward letters&quot;,
+                &quot;view letter broadcast&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 4,
+            &quot;name&quot;: &quot;UNIVERSITY_ADMIN&quot;,
+            &quot;permissions&quot;: [
+                &quot;view university&quot;,
+                &quot;view faculties&quot;,
+                &quot;view faculty&quot;,
+                &quot;create faculties&quot;,
+                &quot;update faculties&quot;,
+                &quot;view departments&quot;,
+                &quot;view department&quot;,
+                &quot;create departments&quot;,
+                &quot;update departments&quot;,
+                &quot;view users&quot;,
+                &quot;create users&quot;,
+                &quot;update users&quot;,
+                &quot;activate users&quot;,
+                &quot;deactivate users&quot;,
+                &quot;view teachers&quot;,
+                &quot;view students&quot;,
+                &quot;view courses&quot;,
+                &quot;view reports&quot;,
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;approve letters&quot;,
+                &quot;decline letters&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;,
+                &quot;create stamps&quot;,
+                &quot;view stamps&quot;,
+                &quot;view signatures&quot;,
+                &quot;create signatures&quot;,
+                &quot;forward letters&quot;,
+                &quot;view letter broadcast&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 5,
+            &quot;name&quot;: &quot;UNIVERSITY_ADMIN_ADMINISTRATION&quot;,
+            &quot;permissions&quot;: [
+                &quot;view university&quot;,
+                &quot;view faculties&quot;,
+                &quot;view faculty&quot;,
+                &quot;view departments&quot;,
+                &quot;view users&quot;,
+                &quot;view teachers&quot;,
+                &quot;view students&quot;,
+                &quot;view courses&quot;,
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;approve letters&quot;,
+                &quot;decline letters&quot;,
+                &quot;create signatures&quot;,
+                &quot;view signatures&quot;,
+                &quot;create stamps&quot;,
+                &quot;view stamps&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;,
+                &quot;forward letters&quot;,
+                &quot;view letter broadcast&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 6,
+            &quot;name&quot;: &quot;UNIVERSITY_ADMIN_STUDENTS&quot;,
+            &quot;permissions&quot;: [
+                &quot;view university&quot;,
+                &quot;view faculties&quot;,
+                &quot;view faculty&quot;,
+                &quot;view departments&quot;,
+                &quot;view users&quot;,
+                &quot;view teachers&quot;,
+                &quot;view students&quot;,
+                &quot;view courses&quot;,
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;approve letters&quot;,
+                &quot;decline letters&quot;,
+                &quot;create signatures&quot;,
+                &quot;view signatures&quot;,
+                &quot;create stamps&quot;,
+                &quot;view stamps&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;,
+                &quot;forward letters&quot;,
+                &quot;view letter broadcast&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 7,
+            &quot;name&quot;: &quot;UNIVERSITY_ADMIN_SCIENCE&quot;,
+            &quot;permissions&quot;: [
+                &quot;view university&quot;,
+                &quot;view faculties&quot;,
+                &quot;view faculty&quot;,
+                &quot;view departments&quot;,
+                &quot;view users&quot;,
+                &quot;view teachers&quot;,
+                &quot;view students&quot;,
+                &quot;view courses&quot;,
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;approve letters&quot;,
+                &quot;decline letters&quot;,
+                &quot;create signatures&quot;,
+                &quot;view signatures&quot;,
+                &quot;create stamps&quot;,
+                &quot;view stamps&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;,
+                &quot;forward letters&quot;,
+                &quot;view letter broadcast&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 8,
+            &quot;name&quot;: &quot;DEAN&quot;,
+            &quot;permissions&quot;: [
+                &quot;view university&quot;,
+                &quot;view faculty&quot;,
+                &quot;view departments&quot;,
+                &quot;create departments&quot;,
+                &quot;update departments&quot;,
+                &quot;view teachers&quot;,
+                &quot;view teacher&quot;,
+                &quot;create teachers&quot;,
+                &quot;update teachers&quot;,
+                &quot;assign teachers&quot;,
+                &quot;view students&quot;,
+                &quot;view courses&quot;,
+                &quot;create courses&quot;,
+                &quot;update courses&quot;,
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;approve letters&quot;,
+                &quot;decline letters&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;,
+                &quot;create stamps&quot;,
+                &quot;view stamps&quot;,
+                &quot;view signatures&quot;,
+                &quot;create signatures&quot;,
+                &quot;view reports&quot;,
+                &quot;forward letters&quot;,
+                &quot;view letter broadcast&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 9,
+            &quot;name&quot;: &quot;HEAD_OF_DEPARTMENT&quot;,
+            &quot;permissions&quot;: [
+                &quot;view department&quot;,
+                &quot;view faculty&quot;,
+                &quot;view university&quot;,
+                &quot;view teachers&quot;,
+                &quot;view teacher&quot;,
+                &quot;assign teachers&quot;,
+                &quot;unassign teachers&quot;,
+                &quot;view students&quot;,
+                &quot;view courses&quot;,
+                &quot;create courses&quot;,
+                &quot;update courses&quot;,
+                &quot;assign course teachers&quot;,
+                &quot;view course teachers&quot;,
+                &quot;update course teachers&quot;,
+                &quot;delete course teachers&quot;,
+                &quot;update department seats&quot;,
+                &quot;assign course students&quot;,
+                &quot;view course students&quot;,
+                &quot;create stamps&quot;,
+                &quot;view stamps&quot;,
+                &quot;view signatures&quot;,
+                &quot;create signatures&quot;,
+                &quot;update course students&quot;,
+                &quot;delete course students&quot;,
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;approve letters&quot;,
+                &quot;decline letters&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;,
+                &quot;forward letters&quot;,
+                &quot;view letter broadcast&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 10,
+            &quot;name&quot;: &quot;lecturer&quot;,
+            &quot;permissions&quot;: [
+                &quot;view courses&quot;,
+                &quot;view students&quot;,
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;raise letters&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 11,
+            &quot;name&quot;: &quot;student&quot;,
+            &quot;permissions&quot;: [
+                &quot;view courses&quot;,
+                &quot;view letters&quot;,
+                &quot;create letters&quot;,
+                &quot;upload attachments&quot;,
+                &quot;download attachments&quot;
+            ]
+        },
+        {
+            &quot;id&quot;: 12,
+            &quot;name&quot;: &quot;HIGH_SCHOOL_GRADUATE&quot;,
+            &quot;permissions&quot;: [
+                &quot;view departments&quot;
+            ]
+        }
+    ]
 }</code>
  </pre>
     </span>
@@ -16457,7 +21513,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-roles" data-method="GET"
       data-path="api/roles"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -16488,6 +21544,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-roles"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -16516,6 +21584,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-roles">POST api/roles</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -16527,6 +21596,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/roles" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -16544,6 +21614,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16582,7 +21653,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-roles" data-method="POST"
       data-path="api/roles"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -16612,6 +21683,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/roles</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-roles"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -16668,6 +21751,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-PUTapi-roles--role_id-">PUT api/roles/{role_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -16679,6 +21763,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/roles/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -16696,6 +21781,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16734,7 +21820,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PUTapi-roles--role_id-" data-method="PUT"
       data-path="api/roles/{role_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -16764,6 +21850,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/roles/{role_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-roles--role_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -16833,6 +21931,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-roles--role_id-">DELETE api/roles/{role_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -16844,6 +21943,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/roles/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -16854,6 +21954,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16885,7 +21986,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-roles--role_id-" data-method="DELETE"
       data-path="api/roles/{role_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -16915,6 +22016,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/roles/{role_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-roles--role_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -16957,6 +22070,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-permissions">GET api/permissions</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -16968,6 +22082,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/permissions" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -16978,6 +22093,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16992,7 +22108,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-permissions">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -17004,7 +22120,298 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Permissions retrieved successfully.&quot;,
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: 24,
+            &quot;name&quot;: &quot;activate users&quot;
+        },
+        {
+            &quot;id&quot;: 53,
+            &quot;name&quot;: &quot;approve letters&quot;
+        },
+        {
+            &quot;id&quot;: 45,
+            &quot;name&quot;: &quot;assign course students&quot;
+        },
+        {
+            &quot;id&quot;: 41,
+            &quot;name&quot;: &quot;assign course teachers&quot;
+        },
+        {
+            &quot;id&quot;: 31,
+            &quot;name&quot;: &quot;assign teachers&quot;
+        },
+        {
+            &quot;id&quot;: 38,
+            &quot;name&quot;: &quot;create courses&quot;
+        },
+        {
+            &quot;id&quot;: 15,
+            &quot;name&quot;: &quot;create departments&quot;
+        },
+        {
+            &quot;id&quot;: 10,
+            &quot;name&quot;: &quot;create faculties&quot;
+        },
+        {
+            &quot;id&quot;: 2,
+            &quot;name&quot;: &quot;create letter broadcast&quot;
+        },
+        {
+            &quot;id&quot;: 50,
+            &quot;name&quot;: &quot;create letters&quot;
+        },
+        {
+            &quot;id&quot;: 66,
+            &quot;name&quot;: &quot;create roles&quot;
+        },
+        {
+            &quot;id&quot;: 60,
+            &quot;name&quot;: &quot;create signatures&quot;
+        },
+        {
+            &quot;id&quot;: 63,
+            &quot;name&quot;: &quot;create stamps&quot;
+        },
+        {
+            &quot;id&quot;: 34,
+            &quot;name&quot;: &quot;create students&quot;
+        },
+        {
+            &quot;id&quot;: 28,
+            &quot;name&quot;: &quot;create teachers&quot;
+        },
+        {
+            &quot;id&quot;: 5,
+            &quot;name&quot;: &quot;create universities&quot;
+        },
+        {
+            &quot;id&quot;: 71,
+            &quot;name&quot;: &quot;create user roles&quot;
+        },
+        {
+            &quot;id&quot;: 21,
+            &quot;name&quot;: &quot;create users&quot;
+        },
+        {
+            &quot;id&quot;: 25,
+            &quot;name&quot;: &quot;deactivate users&quot;
+        },
+        {
+            &quot;id&quot;: 54,
+            &quot;name&quot;: &quot;decline letters&quot;
+        },
+        {
+            &quot;id&quot;: 58,
+            &quot;name&quot;: &quot;delete attachments&quot;
+        },
+        {
+            &quot;id&quot;: 48,
+            &quot;name&quot;: &quot;delete course students&quot;
+        },
+        {
+            &quot;id&quot;: 44,
+            &quot;name&quot;: &quot;delete course teachers&quot;
+        },
+        {
+            &quot;id&quot;: 40,
+            &quot;name&quot;: &quot;delete courses&quot;
+        },
+        {
+            &quot;id&quot;: 17,
+            &quot;name&quot;: &quot;delete departments&quot;
+        },
+        {
+            &quot;id&quot;: 12,
+            &quot;name&quot;: &quot;delete faculties&quot;
+        },
+        {
+            &quot;id&quot;: 68,
+            &quot;name&quot;: &quot;delete roles&quot;
+        },
+        {
+            &quot;id&quot;: 36,
+            &quot;name&quot;: &quot;delete students&quot;
+        },
+        {
+            &quot;id&quot;: 30,
+            &quot;name&quot;: &quot;delete teachers&quot;
+        },
+        {
+            &quot;id&quot;: 7,
+            &quot;name&quot;: &quot;delete universities&quot;
+        },
+        {
+            &quot;id&quot;: 72,
+            &quot;name&quot;: &quot;delete user roles&quot;
+        },
+        {
+            &quot;id&quot;: 23,
+            &quot;name&quot;: &quot;delete users&quot;
+        },
+        {
+            &quot;id&quot;: 57,
+            &quot;name&quot;: &quot;download attachments&quot;
+        },
+        {
+            &quot;id&quot;: 55,
+            &quot;name&quot;: &quot;forward letters&quot;
+        },
+        {
+            &quot;id&quot;: 52,
+            &quot;name&quot;: &quot;raise letters&quot;
+        },
+        {
+            &quot;id&quot;: 32,
+            &quot;name&quot;: &quot;unassign teachers&quot;
+        },
+        {
+            &quot;id&quot;: 62,
+            &quot;name&quot;: &quot;update academic year&quot;
+        },
+        {
+            &quot;id&quot;: 47,
+            &quot;name&quot;: &quot;update course students&quot;
+        },
+        {
+            &quot;id&quot;: 43,
+            &quot;name&quot;: &quot;update course teachers&quot;
+        },
+        {
+            &quot;id&quot;: 39,
+            &quot;name&quot;: &quot;update courses&quot;
+        },
+        {
+            &quot;id&quot;: 18,
+            &quot;name&quot;: &quot;update department seats&quot;
+        },
+        {
+            &quot;id&quot;: 16,
+            &quot;name&quot;: &quot;update departments&quot;
+        },
+        {
+            &quot;id&quot;: 11,
+            &quot;name&quot;: &quot;update faculties&quot;
+        },
+        {
+            &quot;id&quot;: 51,
+            &quot;name&quot;: &quot;update letters&quot;
+        },
+        {
+            &quot;id&quot;: 67,
+            &quot;name&quot;: &quot;update roles&quot;
+        },
+        {
+            &quot;id&quot;: 35,
+            &quot;name&quot;: &quot;update students&quot;
+        },
+        {
+            &quot;id&quot;: 29,
+            &quot;name&quot;: &quot;update teachers&quot;
+        },
+        {
+            &quot;id&quot;: 6,
+            &quot;name&quot;: &quot;update universities&quot;
+        },
+        {
+            &quot;id&quot;: 22,
+            &quot;name&quot;: &quot;update users&quot;
+        },
+        {
+            &quot;id&quot;: 56,
+            &quot;name&quot;: &quot;upload attachments&quot;
+        },
+        {
+            &quot;id&quot;: 46,
+            &quot;name&quot;: &quot;view course students&quot;
+        },
+        {
+            &quot;id&quot;: 42,
+            &quot;name&quot;: &quot;view course teachers&quot;
+        },
+        {
+            &quot;id&quot;: 37,
+            &quot;name&quot;: &quot;view courses&quot;
+        },
+        {
+            &quot;id&quot;: 14,
+            &quot;name&quot;: &quot;view department&quot;
+        },
+        {
+            &quot;id&quot;: 13,
+            &quot;name&quot;: &quot;view departments&quot;
+        },
+        {
+            &quot;id&quot;: 8,
+            &quot;name&quot;: &quot;view faculties&quot;
+        },
+        {
+            &quot;id&quot;: 9,
+            &quot;name&quot;: &quot;view faculty&quot;
+        },
+        {
+            &quot;id&quot;: 1,
+            &quot;name&quot;: &quot;view letter broadcast&quot;
+        },
+        {
+            &quot;id&quot;: 49,
+            &quot;name&quot;: &quot;view letters&quot;
+        },
+        {
+            &quot;id&quot;: 69,
+            &quot;name&quot;: &quot;view permissions&quot;
+        },
+        {
+            &quot;id&quot;: 61,
+            &quot;name&quot;: &quot;view reports&quot;
+        },
+        {
+            &quot;id&quot;: 65,
+            &quot;name&quot;: &quot;view roles&quot;
+        },
+        {
+            &quot;id&quot;: 59,
+            &quot;name&quot;: &quot;view signatures&quot;
+        },
+        {
+            &quot;id&quot;: 64,
+            &quot;name&quot;: &quot;view stamps&quot;
+        },
+        {
+            &quot;id&quot;: 33,
+            &quot;name&quot;: &quot;view students&quot;
+        },
+        {
+            &quot;id&quot;: 27,
+            &quot;name&quot;: &quot;view teacher&quot;
+        },
+        {
+            &quot;id&quot;: 26,
+            &quot;name&quot;: &quot;view teachers&quot;
+        },
+        {
+            &quot;id&quot;: 3,
+            &quot;name&quot;: &quot;view universities&quot;
+        },
+        {
+            &quot;id&quot;: 4,
+            &quot;name&quot;: &quot;view university&quot;
+        },
+        {
+            &quot;id&quot;: 20,
+            &quot;name&quot;: &quot;view user&quot;
+        },
+        {
+            &quot;id&quot;: 70,
+            &quot;name&quot;: &quot;view user roles&quot;
+        },
+        {
+            &quot;id&quot;: 19,
+            &quot;name&quot;: &quot;view users&quot;
+        }
+    ]
 }</code>
  </pre>
     </span>
@@ -17025,7 +22432,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-permissions" data-method="GET"
       data-path="api/permissions"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -17056,6 +22463,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-permissions"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -17084,6 +22503,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-users--user_id--roles">GET api/users/{user_id}/roles</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -17095,6 +22515,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/users/1/roles" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -17105,6 +22526,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -17119,7 +22541,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users--user_id--roles">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -17131,7 +22553,17 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;User roles retrieved successfully.&quot;,
+    &quot;data&quot;: [
+        {
+            &quot;user_scope_id&quot;: 1,
+            &quot;role_id&quot;: 1,
+            &quot;role_name&quot;: &quot;MINISTRY_ADMIN&quot;,
+            &quot;scope_type&quot;: &quot;MINISTRY&quot;,
+            &quot;scope_id&quot;: null
+        }
+    ]
 }</code>
  </pre>
     </span>
@@ -17152,7 +22584,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-users--user_id--roles" data-method="GET"
       data-path="api/users/{user_id}/roles"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -17182,6 +22614,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/users/{user_id}/roles</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-users--user_id--roles"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -17224,6 +22668,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-users--user_id--roles">POST api/users/{user_id}/roles</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -17235,11 +22680,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/users/1/roles" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"role_id\": \"architecto\",
-    \"scope_type\": \"DEPARTMENT\",
+    \"scope_type\": \"FACULTY\",
     \"scope_id\": 16
 }"
 </code></pre></div>
@@ -17251,13 +22697,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
 let body = {
     "role_id": "architecto",
-    "scope_type": "DEPARTMENT",
+    "scope_type": "FACULTY",
     "scope_id": 16
 };
 
@@ -17288,7 +22735,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-users--user_id--roles" data-method="POST"
       data-path="api/users/{user_id}/roles"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -17318,6 +22765,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/users/{user_id}/roles</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-users--user_id--roles"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -17375,10 +22834,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="scope_type"                data-endpoint="POSTapi-users--user_id--roles"
-               value="DEPARTMENT"
+               value="FACULTY"
                data-component="body">
     <br>
-<p>Example: <code>DEPARTMENT</code></p>
+<p>Example: <code>FACULTY</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>MINISTRY</code></li> <li><code>UNIVERSITY</code></li> <li><code>FACULTY</code></li> <li><code>DEPARTMENT</code></li></ul>
         </div>
@@ -17399,6 +22858,7 @@ Must be one of:
                     <h2 id="endpoints-DELETEapi-users--user_id--roles--userScope_id-">DELETE api/users/{user_id}/roles/{userScope_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -17410,6 +22870,7 @@ Must be one of:
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/users/1/roles/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -17420,6 +22881,7 @@ Must be one of:
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -17451,7 +22913,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-users--user_id--roles--userScope_id-" data-method="DELETE"
       data-path="api/users/{user_id}/roles/{userScope_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -17481,6 +22943,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/users/{user_id}/roles/{userScope_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-users--user_id--roles--userScope_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -17535,6 +23009,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-DELETEapi-users--user_id--roles-by-role--role_id-">DELETE api/users/{user_id}/roles/by-role/{role_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -17546,6 +23021,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/users/1/roles/by-role/1" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -17556,6 +23032,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -17587,7 +23064,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-DELETEapi-users--user_id--roles-by-role--role_id-" data-method="DELETE"
       data-path="api/users/{user_id}/roles/by-role/{role_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -17617,6 +23094,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/users/{user_id}/roles/by-role/{role_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-users--user_id--roles-by-role--role_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -17671,6 +23160,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-stamps">POST api/stamps</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -17682,6 +23172,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/stamps" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -17697,6 +23188,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -17733,7 +23225,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-stamps" data-method="POST"
       data-path="api/stamps"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -17763,6 +23255,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/stamps</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-stamps"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -17817,6 +23321,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-stamps">GET api/stamps</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -17828,6 +23333,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/stamps" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -17838,6 +23344,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -17852,7 +23359,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-stamps">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -17864,7 +23371,42 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Letter stamps retrieved successfully&quot;,
+    &quot;data&quot;: {
+        &quot;current_page&quot;: 1,
+        &quot;data&quot;: [],
+        &quot;first_page_url&quot;: &quot;http://localhost:8000/api/stamps?page=1&quot;,
+        &quot;from&quot;: null,
+        &quot;last_page&quot;: 1,
+        &quot;last_page_url&quot;: &quot;http://localhost:8000/api/stamps?page=1&quot;,
+        &quot;links&quot;: [
+            {
+                &quot;url&quot;: null,
+                &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
+                &quot;page&quot;: null,
+                &quot;active&quot;: false
+            },
+            {
+                &quot;url&quot;: &quot;http://localhost:8000/api/stamps?page=1&quot;,
+                &quot;label&quot;: &quot;1&quot;,
+                &quot;page&quot;: 1,
+                &quot;active&quot;: true
+            },
+            {
+                &quot;url&quot;: null,
+                &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
+                &quot;page&quot;: null,
+                &quot;active&quot;: false
+            }
+        ],
+        &quot;next_page_url&quot;: null,
+        &quot;path&quot;: &quot;http://localhost:8000/api/stamps&quot;,
+        &quot;per_page&quot;: 15,
+        &quot;prev_page_url&quot;: null,
+        &quot;to&quot;: null,
+        &quot;total&quot;: 0
+    }
 }</code>
  </pre>
     </span>
@@ -17885,7 +23427,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-stamps" data-method="GET"
       data-path="api/stamps"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -17916,6 +23458,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-stamps"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -17944,6 +23498,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-letter-broadcast">GET api/letter-broadcast</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -17955,6 +23510,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/letter-broadcast" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -17965,6 +23521,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -17979,7 +23536,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letter-broadcast">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (200):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -17991,7 +23548,9 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;LetterBroadcasts fetched&quot;,
+    &quot;data&quot;: []
 }</code>
  </pre>
     </span>
@@ -18012,7 +23571,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-letter-broadcast" data-method="GET"
       data-path="api/letter-broadcast"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -18043,6 +23602,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-letter-broadcast"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -18071,6 +23642,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-GETapi-letter-broadcast--letterBroadcast_id-">GET api/letter-broadcast/{letterBroadcast_id}</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -18082,6 +23654,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/letter-broadcast/16" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -18092,6 +23665,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -18106,7 +23680,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letter-broadcast--letterBroadcast_id-">
             <blockquote>
-            <p>Example response (401):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -18118,7 +23692,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Unauthenticated.&quot;
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\LetterBroadcast] 16&quot;
 }</code>
  </pre>
     </span>
@@ -18139,7 +23713,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-GETapi-letter-broadcast--letterBroadcast_id-" data-method="GET"
       data-path="api/letter-broadcast/{letterBroadcast_id}"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
@@ -18169,6 +23743,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letter-broadcast/{letterBroadcast_id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-letter-broadcast--letterBroadcast_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -18211,6 +23797,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                     <h2 id="endpoints-POSTapi-letter-broadcast">POST api/letter-broadcast</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
 
@@ -18222,11 +23809,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/letter-broadcast" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "title=b"\
     --form "body=architecto"\
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE915.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\php2E9E.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -18235,6 +23823,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -18271,7 +23860,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-POSTapi-letter-broadcast" data-method="POST"
       data-path="api/letter-broadcast"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="1"
       data-isarraybody="0"
       autocomplete="off"
@@ -18301,6 +23890,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/letter-broadcast</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-letter-broadcast"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
