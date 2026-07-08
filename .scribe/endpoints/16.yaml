@@ -1,0 +1,276 @@
+name: Course-Teacher
+description: |-
+
+  APIs for course-teacher CRUD.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/courses/{course_id}/assign-teacher'
+    metadata:
+      custom: []
+      groupName: Course-Teacher
+      groupDescription: |-
+
+        APIs for course-teacher CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      teacher_id:
+        custom: []
+        name: teacher_id
+        description: 'Must match an existing stored value.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      role:
+        custom: []
+        name: role
+        description: ''
+        required: true
+        example: primary_lecturer
+        type: string
+        enumValues:
+          - primary_lecturer
+          - assistant_lecturer
+          - lab_instructor
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      teacher_id: architecto
+      role: primary_lecturer
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/courses/{course_id}/teachers'
+    metadata:
+      custom: []
+      groupName: Course-Teacher
+      groupDescription: |-
+
+        APIs for course-teacher CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: 'api/courses/{course_id}/teachers/{teacher_id}'
+    metadata:
+      custom: []
+      groupName: Course-Teacher
+      groupDescription: |-
+
+        APIs for course-teacher CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      teacher_id:
+        custom: []
+        name: teacher_id
+        description: 'The ID of the teacher.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+      teacher_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      role:
+        custom: []
+        name: role
+        description: ''
+        required: true
+        example: lab_instructor
+        type: string
+        enumValues:
+          - primary_lecturer
+          - assistant_lecturer
+          - lab_instructor
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      role: lab_instructor
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/courses/{course_id}/teachers/{teacher_id}'
+    metadata:
+      custom: []
+      groupName: Course-Teacher
+      groupDescription: |-
+
+        APIs for course-teacher CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      teacher_id:
+        custom: []
+        name: teacher_id
+        description: 'The ID of the teacher.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+      teacher_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null

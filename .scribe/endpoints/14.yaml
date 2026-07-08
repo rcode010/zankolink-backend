@@ -1,0 +1,375 @@
+name: Section-Item
+description: |-
+
+  APIs for section-item CRUD.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/course-sections/{section_id}/items'
+    metadata:
+      custom: []
+      groupName: Section-Item
+      groupDescription: |-
+
+        APIs for section-item CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'GET /api/course-sections/{section}/items'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      section_id:
+        custom: []
+        name: section_id
+        description: 'The ID of the section.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      section_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/course-sections/{section_id}/items'
+    metadata:
+      custom: []
+      groupName: Section-Item
+      groupDescription: |-
+
+        APIs for section-item CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'POST /api/course-sections/{section}/items'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters:
+      section_id:
+        custom: []
+        name: section_id
+        description: 'The ID of the section.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      section_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      file:
+        custom: []
+        name: file
+        description: 'This field is required when <code>url</code> is not present. Must be a file. Must not be greater than 51200 kilobytes.'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      url:
+        custom: []
+        name: url
+        description: 'This field is required when <code>file</code> is not present. Must be a valid URL.'
+        required: false
+        example: 'http://www.bailey.biz/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      material_file_name:
+        custom: []
+        name: material_file_name
+        description: 'This field is required when <code>file</code> is not present. Must not be greater than 255 characters.'
+        required: false
+        example: i
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      url: 'http://www.bailey.biz/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html'
+      material_file_name: i
+    fileParameters:
+      file: null
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/section-items/{item_id}'
+    metadata:
+      custom: []
+      groupName: Section-Item
+      groupDescription: |-
+
+        APIs for section-item CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'GET /api/section-items/{item}'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      item_id:
+        custom: []
+        name: item_id
+        description: 'The ID of the item.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      item_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/section-items/{item_id}/download'
+    metadata:
+      custom: []
+      groupName: Section-Item
+      groupDescription: |-
+
+        APIs for section-item CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'GET /api/section-items/{item}/download'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      item_id:
+        custom: []
+        name: item_id
+        description: 'The ID of the item.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      item_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+      - PATCH
+    uri: 'api/section-items/{item_id}'
+    metadata:
+      custom: []
+      groupName: Section-Item
+      groupDescription: |-
+
+        APIs for section-item CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'PUT/PATCH /api/section-items/{item}'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      item_id:
+        custom: []
+        name: item_id
+        description: 'The ID of the item.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      item_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      material_file_name:
+        custom: []
+        name: material_file_name
+        description: 'Must not be greater than 255 characters.'
+        required: false
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      material_file_name: b
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/section-items/{item_id}'
+    metadata:
+      custom: []
+      groupName: Section-Item
+      groupDescription: |-
+
+        APIs for section-item CRUD.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'DELETE /api/section-items/{item}'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      item_id:
+        custom: []
+        name: item_id
+        description: 'The ID of the item.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      item_id: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
