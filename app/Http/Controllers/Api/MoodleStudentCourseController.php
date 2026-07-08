@@ -4,25 +4,54 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseResource;
+use App\Http\Resources\SectionItemResource;
+use App\Http\Resources\SectionSubmissionResource;
 use App\Models\Course;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
+/**
+ * @group Moodle Student Dashboard
+ *
+ * Read-only endpoints for a student viewing their own enrolled courses,
+ * course details, and section content (materials + assignments).
+ *
+ * --- ACCESS CONTROL ---
+ * Every method here checks two things before returning data:
+ * 1. The authenticated user has a `student` profile at all
+ * (guarded here defensively — TODO: move to route middleware once written).
+ * 2. For course-scoped endpoints, that student is actually enrolled in
+ * the requested course (via the `course_student` pivot), so a student
+ * can never view another course's content by guessing its ID.
+ *
+ * --- RESOURCE USAGE NOTE ---
+ * No new Resource classes were added for this feature. Where an existing
+ * Resource already covers a shape (CourseResource, SectionItemResource,
+ * SectionSubmissionResource), it's reused directly via ->resolve(). Where
+ * the student view needs extra fields those Resources don't provide
+ * (teacher's flattened name/email, per-student submission status, the
+ * student's own submitted file), that logic is written inline below
+ * instead of creating another Resource file.
+ */
 class MoodleStudentCourseController extends Controller
 {
     use ApiResponses;
 
     /**
-     * GET /api/moodle/my-courses
+     * List My Enrolled Courses
+     *
      * List all courses the authenticated student is enrolled in.
-     * Note: student-profile check will be handled by route middleware (not written yet).
+     *
+     * @authenticated
+     * @responseFromApiResource App\Http\Resources\CourseResource collection
      */
     public function myCourses(Request $request)
     {
-        $student = $request->user()->student;
+        $student = $this->resolveStudent($request);
 
-        // Only load what CourseResource actually exposes (department, teachers)
+        // Only load what CourseResource actually exposes (department, teachers).
         $courses = $student->courses()
+        ->withCount(['students', 'sections'])
             ->with([
                 'department:id,name,faculty_id',
                 'teachers.user:id,name,email',
@@ -36,15 +65,24 @@ class MoodleStudentCourseController extends Controller
     }
 
     /**
-     * GET /api/moodle/my-courses/{course}
+     * Show My Course Details
+     *
      * Show course-level info only (name, code, department, teachers).
      * Sections/materials/assignments are handled by the sections() endpoint below.
+     *
+     * @authenticated
+     * @urlParam course integer required The ID of the course. Example: 3
+     * @responseFromApiResource App\Http\Resources\CourseResource
+     * @response status=403 scenario="not enrolled" {
+     * "status": "error",
+     * "message": "You are not enrolled in this course.",
+     * "data": null
+     * }
      */
     public function showCourse(Request $request, Course $course)
     {
-        $student = $request->user()->student;
+        $student = $this->resolveStudent($request);
 
-        // Per-record check: this student must be enrolled in THIS course
         if (! $this->studentIsEnrolled($student->id, $course)) {
             return $this->error('You are not enrolled in this course.', 403);
         }
@@ -60,13 +98,23 @@ class MoodleStudentCourseController extends Controller
     }
 
     /**
-     * GET /api/moodle/my-courses/{course}/sections
+     * List My Course Sections
+     *
      * Show sections for the course, each with its materials, assignments,
-     * assignment attachments, and this student's own submission status.
+     * assignment attachments, and this student's own submission status
+     * (including their submitted file, if any).
+     *
+     * @authenticated
+     * @urlParam course integer required The ID of the course. Example: 3
+     * @response status=403 scenario="not enrolled" {
+     * "status": "error",
+     * "message": "You are not enrolled in this course.",
+     * "data": null
+     * }
      */
     public function sections(Request $request, Course $course)
     {
-        $student = $request->user()->student;
+        $student = $this->resolveStudent($request);
 
         if (! $this->studentIsEnrolled($student->id, $course)) {
             return $this->error('You are not enrolled in this course.', 403);
@@ -78,7 +126,7 @@ class MoodleStudentCourseController extends Controller
                 'items', // course materials
                 'submissions.attachments', // assignments + their attachments
                 // Only load THIS student's own submission per assignment,
-                // not every student's — keeps the response small and private
+                // not every student's — keeps the response small and private.
                 'submissions.studentSubmissions' => function ($query) use ($student) {
                     $query->where('student_id', $student->id);
                 },
@@ -86,46 +134,49 @@ class MoodleStudentCourseController extends Controller
             ->latest()
             ->get()
             ->map(function ($section) {
-                // Build the response manually so we only expose the fields
-                // the client needs, not the raw model/DB columns
                 return [
-                    'id' => $section->id,
+                    'id'    => $section->id,
                     'title' => $section->title,
-                    'teacher' => $section->teacher ? [
-                        'id' => $section->teacher->id,
-                        'name' => $section->teacher->user?->name,
-                        'email' => $section->teacher->user?->email,
-                    ] : null, // section may have no teacher assigned
-                    'materials' => $section->items->map(function ($item) {
-                        return [
-                            'id' => $item->id,
-                            'file_type' => $item->material_file_type,
-                            'file_name' => $item->material_file_name,
-                            'file_url' => $item->material_file_url,
-                        ];
-                    }),
-                    'assignments' => $section->submissions->map(function ($submission) {
-                        // Already filtered to this student above,
-                        // so first() is either their submission or null
-                        $studentSubmission = $submission->studentSubmissions->first();
 
-                        return [
-                            'id' => $submission->id,
-                            'title' => $submission->title,
-                            'description' => $submission->description,
-                            'deadline' => $submission->deadline,
-                            'attachments' => $submission->attachments->map(function ($attachment) {
-                                return [
-                                    'id' => $attachment->id,
-                                    'file_name' => $attachment->file_name,
-                                    'file_type' => $attachment->file_type,
-                                    'file_size' => $attachment->file_size,
-                                    'file_url' => $attachment->file_url,
-                                ];
-                            }),
-                            'submission_status' => $studentSubmission ? 'submitted' : 'not_submitted',
-                            'submitted_at' => $studentSubmission?->created_at?->toDateTimeString(),
-                        ];
+                    // No existing Resource matches this flattened shape
+                    // (id/name/email straight from the teacher's user),
+                    // so it's written inline rather than adding a new class.
+                    'teacher' => $section->teacher ? [
+                        'id'    => $section->teacher->id,
+                        'name'  => $section->teacher->user?->name,
+                        'email' => $section->teacher->user?->email,
+                    ] : null,
+
+                    // Reuses the existing SectionItemResource as-is —
+                    // it already resolves uploaded-file paths vs. external
+                    // URLs via Storage::disk('public')->url().
+                    'materials' => SectionItemResource::collection($section->items)->resolve(),
+
+                    'assignments' => $section->submissions->map(function ($submission) {
+                        // Relation was pre-scoped to this student in the
+                        // query above, so first() is their one submission
+                        // (or nothing, if they haven't submitted).
+                        $mySubmission = $submission->studentSubmissions->first();
+
+                        // Start from the existing SectionSubmissionResource
+                        // output (id, title, description, deadline,
+                        // attachments, section, timestamps), then merge in
+                        // the two student-specific fields it doesn't know
+                        // about — no new Resource class needed for that.
+                        return array_merge(
+                            (new SectionSubmissionResource($submission))->resolve(),
+                            [
+                                'submission_status' => $mySubmission ? 'submitted' : 'not_submitted',
+                                'my_submission' => $mySubmission ? [
+                                    'id'           => $mySubmission->id,
+                                    'file_name'    => $mySubmission->file_name,
+                                    'file_type'    => $mySubmission->file_type,
+                                    'file_size'    => $mySubmission->file_size,
+                                    'file_url'     => $mySubmission->file_url,
+                                    'submitted_at' => $mySubmission->created_at?->toDateTimeString(),
+                                ] : null,
+                            ]
+                        );
                     }),
                 ];
             });
@@ -133,6 +184,27 @@ class MoodleStudentCourseController extends Controller
         return $this->ok('Course sections retrieved successfully', [
             'sections' => $sections,
         ]);
+    }
+
+    /**
+     * Resolve the authenticated user's student profile, or fail with a
+     * clear 403 rather than a null-property crash.
+     *
+     * TODO: remove this guard once a dedicated `EnsureUserIsStudent`
+     * route middleware exists — at that point this method can simply
+     * return $request->user()->student without the abort_unless check.
+     */
+    private function resolveStudent(Request $request)
+    {
+        $student = $request->user()->student;
+
+        abort_unless(
+            $student,
+            403,
+            'Only accounts with a student profile can access this resource.'
+        );
+
+        return $student;
     }
 
     /**

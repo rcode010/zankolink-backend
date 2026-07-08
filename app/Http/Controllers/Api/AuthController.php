@@ -72,9 +72,9 @@ class AuthController extends Controller
         }
         $user = Auth::user();
          if (! $user->canAccessAdminPanel()) {
-             Auth::logout();
+            Auth::logout();
 
-             return $this->error('You are not allowed to access the admin panel.', 403);
+            return $this->error('You are not allowed to access the admin panel.', 403);
          }
 
         if ($user->is_two_factor_enabled) {
