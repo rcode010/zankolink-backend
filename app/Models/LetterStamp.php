@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LetterStamp extends Model
 {
-    protected $fillable = ['letter_id', 'user_id', 'comment'];
+    protected $fillable = ['letter_id', 'user_id', 'comment', 'scope_type'];
 
     public function user(): BelongsTo
     {

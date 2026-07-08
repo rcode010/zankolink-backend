@@ -53,6 +53,19 @@ class LetterResource extends JsonResource
                     'name' => $this->receiver->name,
                 ];
             }),
+            'attachments' => $this->whenLoaded('attachments', function () {
+                return $this->attachments->map(function ($attachment) {
+                    return [
+                        'id' => $attachment->id,
+                        'file_name' => $attachment->file_name,
+                        'file_type' => $attachment->file_type,
+                        'file_size' => $attachment->file_size ?? null,
+                        'file_url' => $attachment->file_url
+                            ? Storage::disk('public')->url($attachment->file_url)
+                            : null,
+                    ];
+                });
+            }),
         ];
     }
 }

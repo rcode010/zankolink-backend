@@ -25,9 +25,14 @@ class StoreAttachmentRequest extends FormRequest
         return [
             'file' => [
                 'required',
+                'array',
+            ],
+
+            'file.*' => [
+                'required',
                 'file',
                 'mimes:pdf,doc,docx,jpg,jpeg,png',
-                'max:5120', // 5MB
+                'max:5120',
             ],
         ];
     }

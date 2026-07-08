@@ -65,6 +65,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -73,7 +74,7 @@ endpoints:
         name: course_id
         description: 'The ID of the course.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -91,7 +92,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      course_id: 16
+      course_id: 1
       course: 1
     queryParameters:
       per_page:
@@ -145,7 +146,10 @@ endpoints:
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -189,6 +193,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -197,7 +202,7 @@ endpoints:
         name: course_id
         description: 'The ID of the course.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -217,7 +222,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      course_id: 16
+      course_id: 1
       course: 0
     queryParameters: []
     cleanQueryParameters: []
@@ -249,7 +254,10 @@ endpoints:
         headers: []
         description: 'not a teacher'
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -293,6 +301,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -301,7 +310,7 @@ endpoints:
         name: section_id
         description: 'The ID of the section.'
         required: true
-        example: 16
+        example: 2
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -319,7 +328,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      section_id: 16
+      section_id: 2
       section: 12
     queryParameters: []
     cleanQueryParameters: []
@@ -337,7 +346,10 @@ endpoints:
           access-control-allow-origin: '*'
         description: null
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -381,6 +393,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -389,7 +402,7 @@ endpoints:
         name: section_id
         description: 'The ID of the section.'
         required: true
-        example: 16
+        example: 2
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -409,7 +422,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      section_id: 16
+      section_id: 2
       section: 0
     queryParameters: []
     cleanQueryParameters: []
@@ -454,7 +467,10 @@ endpoints:
     fileParameters: []
     responses: []
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null
@@ -498,6 +514,7 @@ endpoints:
       authenticated: true
       deprecated: false
     headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -506,7 +523,7 @@ endpoints:
         name: section_id
         description: 'The ID of the section.'
         required: true
-        example: 16
+        example: 2
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -524,7 +541,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      section_id: 16
+      section_id: 2
       section: 12
     queryParameters: []
     cleanQueryParameters: []
@@ -544,7 +561,10 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
     controller: null
     method: null
     route: null

@@ -12,6 +12,7 @@ use App\Models\Letter;
 use App\Models\LetterBroadcast;
 use App\Models\LetterFlow;
 use App\Models\LetterSignature;
+use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -66,7 +67,7 @@ class LetterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreLetterRequest $request, QrCodeService $qrCodeService)
+    public function store(StoreLetterRequest $request, QrCodeService $qrCodeService,LetterVerificationHashService $letterVerificationHashService)
     {
         $this->authorize('create', Letter::class);
         $user = $request->user();
@@ -76,25 +77,12 @@ class LetterController extends Controller
         $data['sender_id'] = $user->id;
         $data['status'] = 'pending';
 
-        $data['letter_uuid'] = Str::uuid();
-        $letter = DB::transaction(function () use ($data, $qrCodeService,$user) {
+        $data['letter_uuid'] = (string)Str::uuid();
+        $letter = DB::transaction(function () use ($data, $qrCodeService, $user, $letterVerificationHashService) {
 
-            $letter = Letter::create($data);
+            $letter = Letter::create($data)->fresh();
 
-            $dataToBeHashed = [
-                'letter_number' => $letter->letter_number,
-                'type' => $letter->type,
-                'title' => $letter->title,
-                'body' => $letter->body,
-                'original_sender_id' => $letter->original_sender_id,
-                'academic_year_id' => $letter->academic_year_id,
-                'payload' => $letter->payload ?? null,
-            ];
-            $hashData = hash_hmac(
-                'sha256',
-                json_encode($dataToBeHashed, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-                config('app.key')
-            );
+            $hashData = $letterVerificationHashService->generate($letter);
 
             $qrCodePath = $qrCodeService->generate($letter, 'public', 'qr-codes', 400);
             $letter->update([
@@ -130,6 +118,7 @@ class LetterController extends Controller
     public function show(Letter $letter)
     {
         $this->authorize('view', $letter);
+
         return $this->ok(
             'Letter retrieved successfully',
             (new LetterResource(
@@ -196,8 +185,6 @@ class LetterController extends Controller
         $user = auth()->user();
         $credentials = $request->validated();
 
-
-
         if ($letter->receiver_id === (int) $credentials['receiver_id']) {
             return $this->error("New receiver can't be the same as current one.", 400);
         }
@@ -235,7 +222,12 @@ class LetterController extends Controller
 
         $letters = QueryBuilder::for(Letter::class)
             ->where('receiver_id', $user->id)
-            ->with(['sender:id,name', 'receiver:id,name'])
+            ->with([
+                'sender:id,name',
+                'receiver:id,name',
+                'attachments',
+                'signatures',
+            ])
             ->allowedFilters(
                 AllowedFilter::exact('status'),
             )
@@ -249,18 +241,22 @@ class LetterController extends Controller
                 ];
             });
 
-        $broadcasts = LetterBroadcast::query()
-            ->with('attachments')
-            ->where('is_active', true)
-            ->latest()
-            ->get()
-            ->map(function ($broadcast) use ($request) {
-                return [
-                    'inbox_type' => 'letter_broadcast',
-                    'created_at' => $broadcast->created_at,
-                    'data' => (new LetterBroadcastResource($broadcast))->resolve($request),
-                ];
-            });
+        $broadcasts = collect();
+
+        if (! $user->isMinistryAdmin()) {
+            $broadcasts = LetterBroadcast::query()
+                ->with('attachments')
+                ->where('is_active', true)
+                ->latest()
+                ->get()
+                ->map(function ($broadcast) use ($request) {
+                    return [
+                        'inbox_type' => 'letter_broadcast',
+                        'created_at' => $broadcast->created_at,
+                        'data' => (new LetterBroadcastResource($broadcast))->resolve($request),
+                    ];
+                });
+        }
 
         $inbox = $letters
             ->concat($broadcasts)
@@ -272,26 +268,35 @@ class LetterController extends Controller
             $inbox->toArray()
         );
     }
-    public function outbox(Request $request){
+
+    public function outbox(Request $request)
+    {
         $this->authorize('viewAny', Letter::class);
         $user = $request->user();
-        if($user->isMinistryAdmin()){
+        if ($user->isMinistryAdmin()) {
             $broadcasts = LetterBroadcast::query()
                 ->with('attachments')
                 ->latest()
                 ->get();
 
-            return $this->ok("Broadcast letters fetched successfully", $broadcasts->toArray());
+            return $this->ok('Broadcast letters fetched successfully', $broadcasts->toArray());
         }
         $letters = QueryBuilder::for(Letter::class)
-            ->where('sender_id', $user->id)
-            ->where('original_sender_id', $user->id)
-            ->with(['sender:id,name', 'receiver:id,name'])
+            ->where(function ($query) use ($user) {
+                $query->where('sender_id', $user->id)
+                    ->orWhere('original_sender_id', $user->id);
+            })
+            ->with([
+                'sender:id,name',
+                'receiver:id,name',
+                'attachments',
+                'signatures',
+            ])
             ->allowedFilters(
                 AllowedFilter::exact('status')
-            )->defaultSort(
-                '-created_at',
-            )->get();
+            )
+            ->defaultSort('-created_at')
+            ->get();
 
         return $this->ok('Outbox letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
     }
