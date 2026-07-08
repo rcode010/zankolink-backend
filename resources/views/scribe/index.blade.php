@@ -26,7 +26,7 @@
             </style>
 
     <script>
-        var tryItOutBaseUrl = "http://localhost:8000";
+        var tryItOutBaseUrl = "http://localhost";
         var useCsrf = Boolean();
         var csrfUrl = "/sanctum/csrf-cookie";
     </script>
@@ -65,6 +65,28 @@
                 <li class="tocify-item level-1" data-unique="authenticating-requests">
                     <a href="#authenticating-requests">Authenticating requests</a>
                 </li>
+                            </ul>
+                    <ul id="tocify-header-course-sections-management" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="course-sections-management">
+                    <a href="#course-sections-management">Course Sections Management</a>
+                </li>
+                                    <ul id="tocify-subheader-course-sections-management" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="course-sections-management-GETapi-courses--course_id--sections">
+                                <a href="#course-sections-management-GETapi-courses--course_id--sections">List Course Sections</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="course-sections-management-POSTapi-courses--course_id--sections">
+                                <a href="#course-sections-management-POSTapi-courses--course_id--sections">Create Course Section</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="course-sections-management-GETapi-course-sections--section_id-">
+                                <a href="#course-sections-management-GETapi-course-sections--section_id-">Show Section Details</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="course-sections-management-PUTapi-course-sections--section_id-">
+                                <a href="#course-sections-management-PUTapi-course-sections--section_id-">Update Course Section</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="course-sections-management-DELETEapi-course-sections--section_id-">
+                                <a href="#course-sections-management-DELETEapi-course-sections--section_id-">Delete Course Section</a>
+                            </li>
+                                                                        </ul>
                             </ul>
                     <ul id="tocify-header-endpoints" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="endpoints">
@@ -217,21 +239,6 @@
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-courses--course_id-">
                                 <a href="#endpoints-DELETEapi-courses--course_id-">Remove the specified resource from storage.</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-courses--course_id--sections">
-                                <a href="#endpoints-GETapi-courses--course_id--sections">GET api/courses/{course_id}/sections</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-courses--course_id--sections">
-                                <a href="#endpoints-POSTapi-courses--course_id--sections">Store a newly created resource in storage.</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-course-sections--section_id-">
-                                <a href="#endpoints-GETapi-course-sections--section_id-">Display the specified section.</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-PUTapi-course-sections--section_id-">
-                                <a href="#endpoints-PUTapi-course-sections--section_id-">Update the specified section in storage.</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-course-sections--section_id-">
-                                <a href="#endpoints-DELETEapi-course-sections--section_id-">Remove the specified section from storage (Soft Delete).</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-course-sections--section_id--submissions">
                                 <a href="#endpoints-GETapi-course-sections--section_id--submissions">Display a listing of the resource.</a>
@@ -454,7 +461,7 @@
     <div class="content">
         <h1 id="introduction">Introduction</h1>
 <aside>
-    <strong>Base URL</strong>: <code>http://localhost:8000</code>
+    <strong>Base URL</strong>: <code>http://localhost</code>
 </aside>
 <pre><code>This documentation aims to provide all the information you need to work with our API.
 
@@ -466,7 +473,985 @@ You can switch the language used with the tabs at the top right (or from the nav
 <p>All authenticated endpoints are marked with a <code>requires authentication</code> badge in the documentation below.</p>
 <p>Use the Bearer token returned from the login endpoint.</p>
 
-        <h1 id="endpoints">Endpoints</h1>
+        <h1 id="course-sections-management">Course Sections Management</h1>
+
+    <p>Handles CRUD operations for Course Sections.</p>
+<ul>
+<li>--- CORE ARCHITECTURE &amp; DESIGN CONTRACT ---</li>
+</ul>
+<ol>
+<li>StoreCourseSectionRequest Contract:</li>
+</ol>
+<ul>
+<li>Validates POST /api/courses/{course}/sections</li>
+<li>Expected Body: { "title": "Section A" } (string, required, max:255)</li>
+<li>Note: parent course is bound via URL, teacher_id is derived from auth session.</li>
+</ul>
+<ul>
+<li>
+<ol start="2">
+<li>UpdateCourseSectionRequest Contract:</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li>Validates PUT/PATCH /api/sections/{section}</li>
+<li>Expected Body (all optional): 
+{ "title": "New Title", "course_id": 2, "teacher_id": 5 }</li>
+<li>Note: teacher_id is nullable, allowing frontends to unassign teachers.</li>
+</ul>
+<ul>
+<li>
+<ol start="3">
+<li>CourseSectionResource JSON Contract:</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li>Prevents data leaks of internal columns (e.g. deleted_at, raw foreign keys).</li>
+<li>Conditionally loads relations using whenLoaded() to prevent N+1 database queries.</li>
+<li>Output Shape:
+{
+"id": 12,
+"title": "Section A",
+"course": { "id": 1, "name": "Laravel Docs" }, // Optional
+"teacher": { "id": 3, "title": "Dr. John" },   // Optional/Nullable
+"created_at": "2026-07-08 10:00:00",
+"updated_at": "2026-07-08 10:30:00"
+}</li>
+</ul>
+
+                                <h2 id="course-sections-management-GETapi-courses--course_id--sections">List Course Sections</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>List all sections belonging to a specific course, with optional filtering and pagination.</p>
+
+<span id="example-requests-GETapi-courses--course_id--sections">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/courses/1/sections?per_page=15&amp;filter%5Btitle%5D=Introduction&amp;filter%5Bteacher_id%5D=3" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/courses/1/sections"
+);
+
+const params = {
+    "per_page": "15",
+    "filter[title]": "Introduction",
+    "filter[teacher_id]": "3",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-courses--course_id--sections">
+            <blockquote>
+            <p>Example response (401):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-courses--course_id--sections" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-courses--course_id--sections"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-courses--course_id--sections"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-courses--course_id--sections" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-courses--course_id--sections">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-courses--course_id--sections" data-method="GET"
+      data-path="api/courses/{course_id}/sections"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-courses--course_id--sections', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-courses--course_id--sections"
+                    onclick="tryItOut('GETapi-courses--course_id--sections');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-courses--course_id--sections"
+                    onclick="cancelTryOut('GETapi-courses--course_id--sections');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-courses--course_id--sections"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/courses/{course_id}/sections</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-courses--course_id--sections"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-courses--course_id--sections"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-courses--course_id--sections"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="GETapi-courses--course_id--sections"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course"                data-endpoint="GETapi-courses--course_id--sections"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the parent course. Example: <code>1</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>per_page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="per_page"                data-endpoint="GETapi-courses--course_id--sections"
+               value="15"
+               data-component="query">
+    <br>
+<p>Number of items per page. Default 15, max 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>filter[title]</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="filter[title]"                data-endpoint="GETapi-courses--course_id--sections"
+               value="Introduction"
+               data-component="query">
+    <br>
+<p>Partial match on section title (case-insensitive "LIKE"). Example: <code>Introduction</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>filter[teacher_id]</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="filter[teacher_id]"                data-endpoint="GETapi-courses--course_id--sections"
+               value="3"
+               data-component="query">
+    <br>
+<p>Exact match on teacher ID. Example: <code>3</code></p>
+            </div>
+                </form>
+
+                    <h2 id="course-sections-management-POSTapi-courses--course_id--sections">Create Course Section</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Create a new section under the given course. The section is automatically assigned to the authenticated teacher.</p>
+
+<span id="example-requests-POSTapi-courses--course_id--sections">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost/api/courses/1/sections" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"title\": \"b\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/courses/1/sections"
+);
+
+const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "title": "b"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-courses--course_id--sections">
+            <blockquote>
+            <p>Example response (403, not a teacher):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;status&quot;: &quot;error&quot;,
+    &quot;message&quot;: &quot;Only accounts with a teacher profile can create course sections.&quot;,
+    &quot;data&quot;: null
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-POSTapi-courses--course_id--sections" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-courses--course_id--sections"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-courses--course_id--sections"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-courses--course_id--sections" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-courses--course_id--sections">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-courses--course_id--sections" data-method="POST"
+      data-path="api/courses/{course_id}/sections"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-courses--course_id--sections', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-courses--course_id--sections"
+                    onclick="tryItOut('POSTapi-courses--course_id--sections');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-courses--course_id--sections"
+                    onclick="cancelTryOut('POSTapi-courses--course_id--sections');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-courses--course_id--sections"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/courses/{course_id}/sections</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-courses--course_id--sections"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-courses--course_id--sections"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-courses--course_id--sections"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="POSTapi-courses--course_id--sections"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course"                data-endpoint="POSTapi-courses--course_id--sections"
+               value="0"
+               data-component="url">
+    <br>
+<p>The ID of the parent course. Example: 1</p>
+<ul>
+<li>@bodyParam title string required The title or name of the new course section. Example: <code>0</code></li>
+</ul>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="title"                data-endpoint="POSTapi-courses--course_id--sections"
+               value="b"
+               data-component="body">
+    <br>
+<p>Must not be greater than 255 characters. Example: <code>b</code></p>
+        </div>
+        </form>
+
+                    <h2 id="course-sections-management-GETapi-course-sections--section_id-">Show Section Details</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Retrieve full details of a single section, including its related teacher and course.</p>
+
+<span id="example-requests-GETapi-course-sections--section_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/course-sections/2" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/course-sections/2"
+);
+
+const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-course-sections--section_id-">
+            <blockquote>
+            <p>Example response (401):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-course-sections--section_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-course-sections--section_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-course-sections--section_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-course-sections--section_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-course-sections--section_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-course-sections--section_id-" data-method="GET"
+      data-path="api/course-sections/{section_id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-course-sections--section_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-course-sections--section_id-"
+                    onclick="tryItOut('GETapi-course-sections--section_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-course-sections--section_id-"
+                    onclick="cancelTryOut('GETapi-course-sections--section_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-course-sections--section_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/course-sections/{section_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-course-sections--section_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-course-sections--section_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-course-sections--section_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="section_id"                data-endpoint="GETapi-course-sections--section_id-"
+               value="2"
+               data-component="url">
+    <br>
+<p>The ID of the section. Example: <code>2</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>section</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="section"                data-endpoint="GETapi-course-sections--section_id-"
+               value="12"
+               data-component="url">
+    <br>
+<p>The ID of the course section. Example: <code>12</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="course-sections-management-PUTapi-course-sections--section_id-">Update Course Section</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Update an existing section's details (title, and/or reassign teacher/course).</p>
+
+<span id="example-requests-PUTapi-course-sections--section_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://localhost/api/course-sections/2" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"teacher_id\": 3,
+    \"course_id\": 4,
+    \"title\": \"b\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/course-sections/2"
+);
+
+const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "teacher_id": 3,
+    "course_id": 4,
+    "title": "b"
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-course-sections--section_id-">
+</span>
+<span id="execution-results-PUTapi-course-sections--section_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-course-sections--section_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-course-sections--section_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-course-sections--section_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-course-sections--section_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-course-sections--section_id-" data-method="PUT"
+      data-path="api/course-sections/{section_id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-course-sections--section_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-course-sections--section_id-"
+                    onclick="tryItOut('PUTapi-course-sections--section_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-course-sections--section_id-"
+                    onclick="cancelTryOut('PUTapi-course-sections--section_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-course-sections--section_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/course-sections/{section_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-course-sections--section_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-course-sections--section_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-course-sections--section_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="section_id"                data-endpoint="PUTapi-course-sections--section_id-"
+               value="2"
+               data-component="url">
+    <br>
+<p>The ID of the section. Example: <code>2</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>section</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="section"                data-endpoint="PUTapi-course-sections--section_id-"
+               value="0"
+               data-component="url">
+    <br>
+<p>The ID of the course section. Example: 12</p>
+<ul>
+<li>@bodyParam title string The updated title of the section. Example: <code>0</code></li>
+</ul>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>teacher_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="teacher_id"                data-endpoint="PUTapi-course-sections--section_id-"
+               value="3"
+               data-component="body">
+    <br>
+<p>The ID of the teacher assigned to this section. Pass null to unassign. Example: <code>3</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="PUTapi-course-sections--section_id-"
+               value="4"
+               data-component="body">
+    <br>
+<p>The ID of the course this section belongs to. Example: <code>4</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="title"                data-endpoint="PUTapi-course-sections--section_id-"
+               value="b"
+               data-component="body">
+    <br>
+<p>Must not be greater than 255 characters. Example: <code>b</code></p>
+        </div>
+        </form>
+
+                    <h2 id="course-sections-management-DELETEapi-course-sections--section_id-">Delete Course Section</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>Soft-deletes the section. The record stays in the database with <code>deleted_at</code> timestamp set.</p>
+
+<span id="example-requests-DELETEapi-course-sections--section_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://localhost/api/course-sections/2" \
+    --header "Authorization: Bearer {ACCESS_TOKEN}" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/course-sections/2"
+);
+
+const headers = {
+    "Authorization": "Bearer {ACCESS_TOKEN}",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-course-sections--section_id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;status&quot;: &quot;success&quot;,
+    &quot;message&quot;: &quot;Course section deleted successfully.&quot;,
+    &quot;data&quot;: null
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-DELETEapi-course-sections--section_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-course-sections--section_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-course-sections--section_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-course-sections--section_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-course-sections--section_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-course-sections--section_id-" data-method="DELETE"
+      data-path="api/course-sections/{section_id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-course-sections--section_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-course-sections--section_id-"
+                    onclick="tryItOut('DELETEapi-course-sections--section_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-course-sections--section_id-"
+                    onclick="cancelTryOut('DELETEapi-course-sections--section_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-course-sections--section_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/course-sections/{section_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-course-sections--section_id-"
+               value="Bearer {ACCESS_TOKEN}"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-course-sections--section_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-course-sections--section_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="section_id"                data-endpoint="DELETEapi-course-sections--section_id-"
+               value="2"
+               data-component="url">
+    <br>
+<p>The ID of the section. Example: <code>2</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>section</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="section"                data-endpoint="DELETEapi-course-sections--section_id-"
+               value="12"
+               data-component="url">
+    <br>
+<p>The ID of the course section. Example: <code>12</code></p>
+            </div>
+                    </form>
+
+                <h1 id="endpoints">Endpoints</h1>
 
     
 
@@ -484,7 +1469,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/user" \
+    --get "http://localhost/api/user" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -492,7 +1477,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/user"
+    "http://localhost/api/user"
 );
 
 const headers = {
@@ -511,7 +1496,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-user">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -523,17 +1508,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;id&quot;: 1,
-    &quot;name&quot;: &quot;Albin Herzog IV&quot;,
-    &quot;email&quot;: &quot;admin@ministry.gov&quot;,
-    &quot;phone&quot;: &quot;07701234567&quot;,
-    &quot;is_active&quot;: 1,
-    &quot;two_factor_code&quot;: null,
-    &quot;two_factor_expires_at&quot;: null,
-    &quot;is_two_factor_enabled&quot;: 0,
-    &quot;created_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
-    &quot;updated_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
-    &quot;deleted_at&quot;: null
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -636,7 +1611,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/login" \
+    "http://localhost/api/auth/login" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -649,7 +1624,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/login"
+    "http://localhost/api/auth/login"
 );
 
 const headers = {
@@ -797,7 +1772,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/moodle/login" \
+    "http://localhost/api/auth/moodle/login" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -810,7 +1785,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/moodle/login"
+    "http://localhost/api/auth/moodle/login"
 );
 
 const headers = {
@@ -958,7 +1933,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/reset-password" \
+    "http://localhost/api/auth/reset-password" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -972,7 +1947,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/reset-password"
+    "http://localhost/api/auth/reset-password"
 );
 
 const headers = {
@@ -1133,7 +2108,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/forget-password" \
+    "http://localhost/api/auth/forget-password" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -1145,7 +2120,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/forget-password"
+    "http://localhost/api/auth/forget-password"
 );
 
 const headers = {
@@ -1280,7 +2255,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/verify" \
+    "http://localhost/api/auth/verify" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -1293,7 +2268,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/verify"
+    "http://localhost/api/auth/verify"
 );
 
 const headers = {
@@ -1441,7 +2416,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/register" \
+    "http://localhost/api/auth/register" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -1452,14 +2427,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"phone\": \"07564255931\",
     \"role\": \"architecto\",
     \"scope_id\": 16,
-    \"scope_type\": \"MINISTRY\"
+    \"scope_type\": \"DEPARTMENT\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/register"
+    "http://localhost/api/auth/register"
 );
 
 const headers = {
@@ -1475,7 +2450,7 @@ let body = {
     "phone": "07564255931",
     "role": "architecto",
     "scope_id": 16,
-    "scope_type": "MINISTRY"
+    "scope_type": "DEPARTMENT"
 };
 
 fetch(url, {
@@ -1651,10 +2626,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="scope_type"                data-endpoint="POSTapi-auth-register"
-               value="MINISTRY"
+               value="DEPARTMENT"
                data-component="body">
     <br>
-<p>Example: <code>MINISTRY</code></p>
+<p>Example: <code>DEPARTMENT</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>MINISTRY</code></li> <li><code>UNIVERSITY</code></li> <li><code>FACULTY</code></li> <li><code>DEPARTMENT</code></li></ul>
         </div>
@@ -1674,7 +2649,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/two-factor/prepare" \
+    "http://localhost/api/auth/two-factor/prepare" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -1682,7 +2657,7 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/two-factor/prepare"
+    "http://localhost/api/auth/two-factor/prepare"
 );
 
 const headers = {
@@ -1800,7 +2775,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/two-factor/enable" \
+    "http://localhost/api/auth/two-factor/enable" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -1812,7 +2787,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/two-factor/enable"
+    "http://localhost/api/auth/two-factor/enable"
 );
 
 const headers = {
@@ -1947,7 +2922,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/two-factor/disable" \
+    "http://localhost/api/auth/two-factor/disable" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -1955,7 +2930,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/two-factor/disable"
+    "http://localhost/api/auth/two-factor/disable"
 );
 
 const headers = {
@@ -2073,7 +3048,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/logout" \
+    "http://localhost/api/auth/logout" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -2081,7 +3056,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/logout"
+    "http://localhost/api/auth/logout"
 );
 
 const headers = {
@@ -2199,7 +3174,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/auth/change-password" \
+    "http://localhost/api/auth/change-password" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -2212,7 +3187,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/change-password"
+    "http://localhost/api/auth/change-password"
 );
 
 const headers = {
@@ -2360,7 +3335,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/auth/me" \
+    --get "http://localhost/api/auth/me" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -2368,7 +3343,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/auth/me"
+    "http://localhost/api/auth/me"
 );
 
 const headers = {
@@ -2387,7 +3362,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-auth-me">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -2399,39 +3374,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;User logged in successfully&quot;,
-    &quot;data&quot;: {
-        &quot;id&quot;: 1,
-        &quot;name&quot;: &quot;Albin Herzog IV&quot;,
-        &quot;email&quot;: &quot;admin@ministry.gov&quot;,
-        &quot;phone&quot;: &quot;07701234567&quot;,
-        &quot;is_active&quot;: 1,
-        &quot;is_two_factor_enabled&quot;: 0,
-        &quot;roles&quot;: [
-            {
-                &quot;id&quot;: 1,
-                &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;
-            }
-        ],
-        &quot;created_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
-        &quot;updated_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
-        &quot;scopes&quot;: [
-            {
-                &quot;id&quot;: 1,
-                &quot;role&quot;: {
-                    &quot;id&quot;: 1,
-                    &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;
-                },
-                &quot;scope_type&quot;: &quot;MINISTRY&quot;,
-                &quot;scope_id&quot;: null,
-                &quot;scope&quot;: {
-                    &quot;id&quot;: null,
-                    &quot;name&quot;: &quot;Ministry&quot;
-                }
-            }
-        ]
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -2534,7 +3477,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/verify/6ff8f7f6-1eb3-3525-be4a-3932c805afed" \
+    --get "http://localhost/api/verify/6ff8f7f6-1eb3-3525-be4a-3932c805afed" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -2546,7 +3489,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/verify/6ff8f7f6-1eb3-3525-be4a-3932c805afed"
+    "http://localhost/api/verify/6ff8f7f6-1eb3-3525-be4a-3932c805afed"
 );
 
 const headers = {
@@ -2710,7 +3653,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/universities" \
+    --get "http://localhost/api/universities" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -2718,7 +3661,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/universities"
+    "http://localhost/api/universities"
 );
 
 const headers = {
@@ -2737,7 +3680,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-universities">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -2749,111 +3692,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Universities retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 4,
-                &quot;name&quot;: &quot;West LarryUniversity&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 482,
-                    &quot;name&quot;: &quot;University Admin&quot;
-                },
-                &quot;academic_year_id&quot;: 1,
-                &quot;location&quot;: &quot;Batzhaven&quot;,
-                &quot;start_date&quot;: &quot;2024-08-30&quot;,
-                &quot;end_date&quot;: &quot;2028-11-17&quot;,
-                &quot;established_year&quot;: &quot;2009-02-15&quot;,
-                &quot;is_active&quot;: 1,
-                &quot;created_at&quot;: &quot;2026-07-07 18:13:01&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:13:02&quot;
-            },
-            {
-                &quot;id&quot;: 1,
-                &quot;name&quot;: &quot;AlycelandUniversity&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 2,
-                    &quot;name&quot;: &quot;Pete Thompson&quot;
-                },
-                &quot;academic_year_id&quot;: 1,
-                &quot;location&quot;: &quot;Lubowitzberg&quot;,
-                &quot;start_date&quot;: &quot;2024-09-01&quot;,
-                &quot;end_date&quot;: null,
-                &quot;established_year&quot;: &quot;2008-07-28&quot;,
-                &quot;is_active&quot;: 1,
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 2,
-                &quot;name&quot;: &quot;ElenormouthUniversity&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 161,
-                    &quot;name&quot;: &quot;Mrs. Amie Kertzmann PhD&quot;
-                },
-                &quot;academic_year_id&quot;: 1,
-                &quot;location&quot;: &quot;Port Mustafaside&quot;,
-                &quot;start_date&quot;: &quot;2025-01-20&quot;,
-                &quot;end_date&quot;: &quot;2027-12-03&quot;,
-                &quot;established_year&quot;: &quot;1972-03-21&quot;,
-                &quot;is_active&quot;: 1,
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:53&quot;
-            },
-            {
-                &quot;id&quot;: 3,
-                &quot;name&quot;: &quot;West KamilleUniversity&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 320,
-                    &quot;name&quot;: &quot;Paul Murphy III&quot;
-                },
-                &quot;academic_year_id&quot;: 1,
-                &quot;location&quot;: &quot;Gladyceshire&quot;,
-                &quot;start_date&quot;: &quot;2024-07-19&quot;,
-                &quot;end_date&quot;: &quot;2029-03-02&quot;,
-                &quot;established_year&quot;: &quot;1987-04-21&quot;,
-                &quot;is_active&quot;: 1,
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:56&quot;
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/universities?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/universities?page=1&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: null
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 1,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/universities?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/universities&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 4,
-            &quot;total&quot;: 4
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -2956,22 +3795,22 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/universities" \
+    "http://localhost/api/universities" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"name\": \"b\",
     \"location\": \"n\",
-    \"start_date\": \"2026-07-08T08:39:06\",
+    \"start_date\": \"2026-07-08T11:09:00\",
     \"end_date\": \"2052-07-31\",
-    \"established_year\": \"2026-07-08T08:39:06\",
+    \"established_year\": \"2026-07-08T11:09:00\",
     \"is_active\": true,
     \"faculties\": [
         {
             \"name\": \"b\",
             \"location\": \"n\",
-            \"is_active\": true,
+            \"is_active\": false,
             \"departments\": [
                 {
                     \"name\": \"b\",
@@ -2986,7 +3825,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/universities"
+    "http://localhost/api/universities"
 );
 
 const headers = {
@@ -2998,15 +3837,15 @@ const headers = {
 let body = {
     "name": "b",
     "location": "n",
-    "start_date": "2026-07-08T08:39:06",
+    "start_date": "2026-07-08T11:09:00",
     "end_date": "2052-07-31",
-    "established_year": "2026-07-08T08:39:06",
+    "established_year": "2026-07-08T11:09:00",
     "is_active": true,
     "faculties": [
         {
             "name": "b",
             "location": "n",
-            "is_active": true,
+            "is_active": false,
             "departments": [
                 {
                     "name": "b",
@@ -3166,10 +4005,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="POSTapi-universities"
-               value="2026-07-08T08:39:06"
+               value="2026-07-08T11:09:00"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T11:09:00</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -3190,10 +4029,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="established_year"                data-endpoint="POSTapi-universities"
-               value="2026-07-08T08:39:06"
+               value="2026-07-08T11:09:00"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T11:09:00</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>is_active</code></b>&nbsp;&nbsp;
@@ -3271,7 +4110,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>admin_id</code></b>&nbsp;&nbsp;
@@ -3361,7 +4200,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/universities/1" \
+    --get "http://localhost/api/universities/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -3369,7 +4208,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/universities/1"
+    "http://localhost/api/universities/1"
 );
 
 const headers = {
@@ -3388,7 +4227,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-universities--university_id-">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -3400,24 +4239,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;University retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;id&quot;: 1,
-        &quot;name&quot;: &quot;AlycelandUniversity&quot;,
-        &quot;admin&quot;: {
-            &quot;id&quot;: 2,
-            &quot;name&quot;: &quot;Pete Thompson&quot;
-        },
-        &quot;academic_year_id&quot;: 1,
-        &quot;location&quot;: &quot;Lubowitzberg&quot;,
-        &quot;start_date&quot;: &quot;2024-09-01&quot;,
-        &quot;end_date&quot;: null,
-        &quot;established_year&quot;: &quot;2008-07-28&quot;,
-        &quot;is_active&quot;: 1,
-        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -3533,24 +4355,24 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/universities/1" \
+    "http://localhost/api/universities/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"name\": \"b\",
     \"location\": \"architecto\",
-    \"start_date\": \"2026-07-08T08:39:06\",
+    \"start_date\": \"2026-07-08T11:09:00\",
     \"end_date\": \"2052-07-31\",
-    \"established_year\": \"2026-07-08T08:39:06\",
-    \"is_active\": true
+    \"established_year\": \"2026-07-08T11:09:00\",
+    \"is_active\": false
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/universities/1"
+    "http://localhost/api/universities/1"
 );
 
 const headers = {
@@ -3562,10 +4384,10 @@ const headers = {
 let body = {
     "name": "b",
     "location": "architecto",
-    "start_date": "2026-07-08T08:39:06",
+    "start_date": "2026-07-08T11:09:00",
     "end_date": "2052-07-31",
-    "established_year": "2026-07-08T08:39:06",
-    "is_active": true
+    "established_year": "2026-07-08T11:09:00",
+    "is_active": false
 };
 
 fetch(url, {
@@ -3730,10 +4552,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="PATCHapi-universities--university_id-"
-               value="2026-07-08T08:39:06"
+               value="2026-07-08T11:09:00"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T11:09:00</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -3754,10 +4576,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="established_year"                data-endpoint="PATCHapi-universities--university_id-"
-               value="2026-07-08T08:39:06"
+               value="2026-07-08T11:09:00"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T11:09:00</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>is_active</code></b>&nbsp;&nbsp;
@@ -3779,7 +4601,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
         </form>
 
@@ -3797,7 +4619,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/universities/1" \
+    "http://localhost/api/universities/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -3805,7 +4627,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/universities/1"
+    "http://localhost/api/universities/1"
 );
 
 const headers = {
@@ -3936,21 +4758,21 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/academic-year/update" \
+    "http://localhost/api/academic-year/update" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"year\": \"architecto\",
-    \"start_date\": \"2026-07-08T08:39:06\",
-    \"end_date\": \"2026-07-08T08:39:06\"
+    \"start_date\": \"2026-07-08T11:09:00\",
+    \"end_date\": \"2026-07-08T11:09:00\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/academic-year/update"
+    "http://localhost/api/academic-year/update"
 );
 
 const headers = {
@@ -3961,8 +4783,8 @@ const headers = {
 
 let body = {
     "year": "architecto",
-    "start_date": "2026-07-08T08:39:06",
-    "end_date": "2026-07-08T08:39:06"
+    "start_date": "2026-07-08T11:09:00",
+    "end_date": "2026-07-08T11:09:00"
 };
 
 fetch(url, {
@@ -4078,10 +4900,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="POSTapi-academic-year-update"
-               value="2026-07-08T08:39:06"
+               value="2026-07-08T11:09:00"
                data-component="body">
     <br>
-<p>e.g., "2026-2027". Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
+<p>e.g., "2026-2027". Must be a valid date. Example: <code>2026-07-08T11:09:00</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -4090,10 +4912,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="end_date"                data-endpoint="POSTapi-academic-year-update"
-               value="2026-07-08T08:39:06"
+               value="2026-07-08T11:09:00"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T11:09:00</code></p>
         </div>
         </form>
 
@@ -4111,7 +4933,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/faculties" \
+    --get "http://localhost/api/faculties" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -4119,7 +4941,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/faculties"
+    "http://localhost/api/faculties"
 );
 
 const headers = {
@@ -4138,7 +4960,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-faculties">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -4150,215 +4972,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Faculties retrieved successfully&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 7,
-                &quot;name&quot;: &quot;College of Languages&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 486,
-                    &quot;name&quot;: &quot;Dean&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;university_id&quot;: 4,
-                &quot;university&quot;: {
-                    &quot;id&quot;: 4,
-                    &quot;name&quot;: &quot;West LarryUniversity&quot;,
-                    &quot;academic_year_id&quot;: null,
-                    &quot;location&quot;: null,
-                    &quot;start_date&quot;: null,
-                    &quot;end_date&quot;: null,
-                    &quot;established_year&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:13:03&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:13:03&quot;
-            },
-            {
-                &quot;id&quot;: 5,
-                &quot;name&quot;: &quot;College of Law and Politics&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 321,
-                    &quot;name&quot;: &quot;Dominique Beahan&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;university_id&quot;: 3,
-                &quot;university&quot;: {
-                    &quot;id&quot;: 3,
-                    &quot;name&quot;: &quot;West KamilleUniversity&quot;,
-                    &quot;academic_year_id&quot;: null,
-                    &quot;location&quot;: null,
-                    &quot;start_date&quot;: null,
-                    &quot;end_date&quot;: null,
-                    &quot;established_year&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:56&quot;
-            },
-            {
-                &quot;id&quot;: 6,
-                &quot;name&quot;: &quot;College of Engineering&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 400,
-                    &quot;name&quot;: &quot;Sasha Kulas&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;university_id&quot;: 3,
-                &quot;university&quot;: {
-                    &quot;id&quot;: 3,
-                    &quot;name&quot;: &quot;West KamilleUniversity&quot;,
-                    &quot;academic_year_id&quot;: null,
-                    &quot;location&quot;: null,
-                    &quot;start_date&quot;: null,
-                    &quot;end_date&quot;: null,
-                    &quot;established_year&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
-            },
-            {
-                &quot;id&quot;: 3,
-                &quot;name&quot;: &quot;College of Humanities&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 162,
-                    &quot;name&quot;: &quot;Mollie Becker&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;university_id&quot;: 2,
-                &quot;university&quot;: {
-                    &quot;id&quot;: 2,
-                    &quot;name&quot;: &quot;ElenormouthUniversity&quot;,
-                    &quot;academic_year_id&quot;: null,
-                    &quot;location&quot;: null,
-                    &quot;start_date&quot;: null,
-                    &quot;end_date&quot;: null,
-                    &quot;established_year&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:53&quot;
-            },
-            {
-                &quot;id&quot;: 4,
-                &quot;name&quot;: &quot;College of Humanities&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 241,
-                    &quot;name&quot;: &quot;Justine Green&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;university_id&quot;: 2,
-                &quot;university&quot;: {
-                    &quot;id&quot;: 2,
-                    &quot;name&quot;: &quot;ElenormouthUniversity&quot;,
-                    &quot;academic_year_id&quot;: null,
-                    &quot;location&quot;: null,
-                    &quot;start_date&quot;: null,
-                    &quot;end_date&quot;: null,
-                    &quot;established_year&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:55&quot;
-            },
-            {
-                &quot;id&quot;: 1,
-                &quot;name&quot;: &quot;College of Fine Arts&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 3,
-                    &quot;name&quot;: &quot;Noel Herzog MD&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;university_id&quot;: 1,
-                &quot;university&quot;: {
-                    &quot;id&quot;: 1,
-                    &quot;name&quot;: &quot;AlycelandUniversity&quot;,
-                    &quot;academic_year_id&quot;: null,
-                    &quot;location&quot;: null,
-                    &quot;start_date&quot;: null,
-                    &quot;end_date&quot;: null,
-                    &quot;established_year&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 2,
-                &quot;name&quot;: &quot;College of Dentistry&quot;,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 82,
-                    &quot;name&quot;: &quot;Dr. Alayna Hermiston&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;university_id&quot;: 1,
-                &quot;university&quot;: {
-                    &quot;id&quot;: 1,
-                    &quot;name&quot;: &quot;AlycelandUniversity&quot;,
-                    &quot;academic_year_id&quot;: null,
-                    &quot;location&quot;: null,
-                    &quot;start_date&quot;: null,
-                    &quot;end_date&quot;: null,
-                    &quot;established_year&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:51&quot;
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/faculties?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/faculties?page=1&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: null
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 1,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/faculties?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/faculties&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 7,
-            &quot;total&quot;: 7
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -4461,7 +5075,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/faculties" \
+    "http://localhost/api/faculties" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -4475,7 +5089,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/faculties"
+    "http://localhost/api/faculties"
 );
 
 const headers = {
@@ -4658,7 +5272,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/faculties/1" \
+    --get "http://localhost/api/faculties/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -4666,7 +5280,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/faculties/1"
+    "http://localhost/api/faculties/1"
 );
 
 const headers = {
@@ -4685,7 +5299,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-faculties--faculty_id-">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -4697,32 +5311,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Faculty retrieved successfully&quot;,
-    &quot;data&quot;: {
-        &quot;id&quot;: 1,
-        &quot;name&quot;: &quot;College of Fine Arts&quot;,
-        &quot;admin&quot;: {
-            &quot;id&quot;: 3,
-            &quot;name&quot;: &quot;Noel Herzog MD&quot;
-        },
-        &quot;is_active&quot;: 1,
-        &quot;university_id&quot;: 1,
-        &quot;university&quot;: {
-            &quot;id&quot;: 1,
-            &quot;name&quot;: &quot;AlycelandUniversity&quot;,
-            &quot;academic_year_id&quot;: null,
-            &quot;location&quot;: null,
-            &quot;start_date&quot;: null,
-            &quot;end_date&quot;: null,
-            &quot;established_year&quot;: null,
-            &quot;is_active&quot;: null,
-            &quot;created_at&quot;: null,
-            &quot;updated_at&quot;: null
-        },
-        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -4838,7 +5427,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/faculties/1" \
+    "http://localhost/api/faculties/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -4851,7 +5440,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/faculties/1"
+    "http://localhost/api/faculties/1"
 );
 
 const headers = {
@@ -5034,7 +5623,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/faculties/1" \
+    "http://localhost/api/faculties/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -5042,7 +5631,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/faculties/1"
+    "http://localhost/api/faculties/1"
 );
 
 const headers = {
@@ -5173,7 +5762,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/departments" \
+    --get "http://localhost/api/departments" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -5181,7 +5770,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments"
+    "http://localhost/api/departments"
 );
 
 const headers = {
@@ -5200,7 +5789,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -5212,368 +5801,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Departments retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 19,
-                &quot;name&quot;: &quot;Architectural Engineering&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 7,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 487,
-                    &quot;name&quot;: &quot;Head of Department&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 7,
-                    &quot;name&quot;: &quot;College of Languages&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:13:03&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:13:03&quot;
-            },
-            {
-                &quot;id&quot;: 16,
-                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 6,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 401,
-                    &quot;name&quot;: &quot;Adriana Carter&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 6,
-                    &quot;name&quot;: &quot;College of Engineering&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
-            },
-            {
-                &quot;id&quot;: 17,
-                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 6,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 427,
-                    &quot;name&quot;: &quot;Evert Hackett&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 6,
-                    &quot;name&quot;: &quot;College of Engineering&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 18,
-                &quot;name&quot;: &quot;Fine Arts and Design&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 6,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 453,
-                    &quot;name&quot;: &quot;Thelma Bosco&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 6,
-                    &quot;name&quot;: &quot;College of Engineering&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 13,
-                &quot;name&quot;: &quot;Clinical Pharmacy&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 5,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 322,
-                    &quot;name&quot;: &quot;Cristopher Metz III&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 5,
-                    &quot;name&quot;: &quot;College of Law and Politics&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:56&quot;
-            },
-            {
-                &quot;id&quot;: 14,
-                &quot;name&quot;: &quot;Clinical Pharmacy&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 5,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 348,
-                    &quot;name&quot;: &quot;Candelario Miller II&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 5,
-                    &quot;name&quot;: &quot;College of Law and Politics&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:57&quot;
-            },
-            {
-                &quot;id&quot;: 15,
-                &quot;name&quot;: &quot;Soil and Water Science&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 5,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 374,
-                    &quot;name&quot;: &quot;Mrs. Margarita Romaguera II&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 5,
-                    &quot;name&quot;: &quot;College of Law and Politics&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:56&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
-            },
-            {
-                &quot;id&quot;: 10,
-                &quot;name&quot;: &quot;English Translation&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 4,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 242,
-                    &quot;name&quot;: &quot;Ludwig Homenick&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 4,
-                    &quot;name&quot;: &quot;College of Humanities&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:55&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:55&quot;
-            },
-            {
-                &quot;id&quot;: 11,
-                &quot;name&quot;: &quot;Kurdish Literature&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 4,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 268,
-                    &quot;name&quot;: &quot;Prof. Mekhi Monahan&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 4,
-                    &quot;name&quot;: &quot;College of Humanities&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:55&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:55&quot;
-            },
-            {
-                &quot;id&quot;: 12,
-                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 4,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 294,
-                    &quot;name&quot;: &quot;Emmett Powlowski DVM&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 4,
-                    &quot;name&quot;: &quot;College of Humanities&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:55&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:56&quot;
-            },
-            {
-                &quot;id&quot;: 7,
-                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 3,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 163,
-                    &quot;name&quot;: &quot;Nicola Dicki&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 3,
-                    &quot;name&quot;: &quot;College of Humanities&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:53&quot;
-            },
-            {
-                &quot;id&quot;: 8,
-                &quot;name&quot;: &quot;Mechanical Engineering&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 3,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 189,
-                    &quot;name&quot;: &quot;Larue Reynolds&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 3,
-                    &quot;name&quot;: &quot;College of Humanities&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:54&quot;
-            },
-            {
-                &quot;id&quot;: 9,
-                &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 3,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 215,
-                    &quot;name&quot;: &quot;Raegan Kohler&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 3,
-                    &quot;name&quot;: &quot;College of Humanities&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:53&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:54&quot;
-            },
-            {
-                &quot;id&quot;: 4,
-                &quot;name&quot;: &quot;Public Law&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 2,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 83,
-                    &quot;name&quot;: &quot;Orpha Wyman V&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 2,
-                    &quot;name&quot;: &quot;College of Dentistry&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:51&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:51&quot;
-            },
-            {
-                &quot;id&quot;: 5,
-                &quot;name&quot;: &quot;Political Science&quot;,
-                &quot;code&quot;: null,
-                &quot;faculty_id&quot;: 2,
-                &quot;admin&quot;: {
-                    &quot;id&quot;: 109,
-                    &quot;name&quot;: &quot;Mrs. Roxane Hettinger&quot;
-                },
-                &quot;is_active&quot;: 1,
-                &quot;faculty&quot;: {
-                    &quot;id&quot;: 2,
-                    &quot;name&quot;: &quot;College of Dentistry&quot;,
-                    &quot;is_active&quot;: null,
-                    &quot;university_id&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:51&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:52&quot;
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/departments?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/departments?page=2&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: &quot;http://localhost:8000/api/departments?page=2&quot;
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 2,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/departments?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/departments?page=2&quot;,
-                    &quot;label&quot;: &quot;2&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/departments?page=2&quot;,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/departments&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 15,
-            &quot;total&quot;: 19
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -5676,7 +5904,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/departments" \
+    "http://localhost/api/departments" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -5690,7 +5918,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments"
+    "http://localhost/api/departments"
 );
 
 const headers = {
@@ -5873,7 +6101,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/departments/1" \
+    --get "http://localhost/api/departments/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -5881,7 +6109,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/1"
+    "http://localhost/api/departments/1"
 );
 
 const headers = {
@@ -5900,7 +6128,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments--department_id-">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -5912,29 +6140,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Department retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;id&quot;: 1,
-        &quot;name&quot;: &quot;Architectural Engineering&quot;,
-        &quot;code&quot;: null,
-        &quot;faculty_id&quot;: 1,
-        &quot;admin&quot;: {
-            &quot;id&quot;: 4,
-            &quot;name&quot;: &quot;Gabriella Bailey&quot;
-        },
-        &quot;is_active&quot;: 1,
-        &quot;faculty&quot;: {
-            &quot;id&quot;: 1,
-            &quot;name&quot;: &quot;College of Fine Arts&quot;,
-            &quot;is_active&quot;: null,
-            &quot;university_id&quot;: null,
-            &quot;created_at&quot;: null,
-            &quot;updated_at&quot;: null
-        },
-        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -6050,20 +6256,20 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/departments/1" \
+    "http://localhost/api/departments/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"name\": \"b\",
-    \"is_active\": false
+    \"is_active\": true
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/1"
+    "http://localhost/api/departments/1"
 );
 
 const headers = {
@@ -6074,7 +6280,7 @@ const headers = {
 
 let body = {
     "name": "b",
-    "is_active": false
+    "is_active": true
 };
 
 fetch(url, {
@@ -6240,7 +6446,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
         </div>
         </form>
 
@@ -6258,7 +6464,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/departments/1" \
+    "http://localhost/api/departments/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -6266,7 +6472,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/1"
+    "http://localhost/api/departments/1"
 );
 
 const headers = {
@@ -6397,7 +6603,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/departments/1/seat" \
+    "http://localhost/api/departments/1/seat" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -6409,7 +6615,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/1/seat"
+    "http://localhost/api/departments/1/seat"
 );
 
 const headers = {
@@ -6557,7 +6763,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/departments/student-selected-courses" \
+    --get "http://localhost/api/departments/student-selected-courses" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -6569,7 +6775,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/student-selected-courses"
+    "http://localhost/api/departments/student-selected-courses"
 );
 
 const headers = {
@@ -6592,7 +6798,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments-student-selected-courses">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -6604,7 +6810,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\Department] student-selected-courses&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -6732,7 +6938,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/departments/approve-selection" \
+    "http://localhost/api/departments/approve-selection" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -6745,7 +6951,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/approve-selection"
+    "http://localhost/api/departments/approve-selection"
 );
 
 const headers = {
@@ -6893,7 +7099,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/teachers" \
+    --get "http://localhost/api/teachers" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -6901,7 +7107,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/teachers"
+    "http://localhost/api/teachers"
 );
 
 const headers = {
@@ -6920,7 +7126,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-teachers">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -6932,242 +7138,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Teachers retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 81,
-                &quot;title&quot;: &quot;prof&quot;,
-                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 428,
-                    &quot;name&quot;: &quot;Sarai Denesik&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 82,
-                &quot;title&quot;: &quot;assoc_prof&quot;,
-                &quot;speciality&quot;: &quot;Networks&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 429,
-                    &quot;name&quot;: &quot;Mario Collins&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 83,
-                &quot;title&quot;: &quot;dr&quot;,
-                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 430,
-                    &quot;name&quot;: &quot;Kaci Morissette&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 84,
-                &quot;title&quot;: &quot;mr&quot;,
-                &quot;speciality&quot;: &quot;Cyber Security&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 431,
-                    &quot;name&quot;: &quot;Mrs. Lizzie O&#039;Connell Jr.&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 85,
-                &quot;title&quot;: &quot;mr&quot;,
-                &quot;speciality&quot;: &quot;Cyber Security&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 432,
-                    &quot;name&quot;: &quot;Prof. Hugh Rippin&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 86,
-                &quot;title&quot;: &quot;dr&quot;,
-                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 454,
-                    &quot;name&quot;: &quot;Dr. Meda Cummings&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 87,
-                &quot;title&quot;: &quot;asst_prof&quot;,
-                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 455,
-                    &quot;name&quot;: &quot;Mr. Adan Kshlerin&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 88,
-                &quot;title&quot;: &quot;prof&quot;,
-                &quot;speciality&quot;: &quot;Software Engineering&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 456,
-                    &quot;name&quot;: &quot;Lacey Lockman&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 89,
-                &quot;title&quot;: &quot;ms&quot;,
-                &quot;speciality&quot;: &quot;Cyber Security&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 457,
-                    &quot;name&quot;: &quot;Sharon Johns&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 90,
-                &quot;title&quot;: &quot;ms&quot;,
-                &quot;speciality&quot;: &quot;Networks&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 458,
-                    &quot;name&quot;: &quot;Jaqueline DuBuque Jr.&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 71,
-                &quot;title&quot;: &quot;mr&quot;,
-                &quot;speciality&quot;: &quot;Software Engineering&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 375,
-                    &quot;name&quot;: &quot;Ms. Olga Conroy&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
-            },
-            {
-                &quot;id&quot;: 72,
-                &quot;title&quot;: &quot;dr&quot;,
-                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 376,
-                    &quot;name&quot;: &quot;Eulalia Schmitt&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
-            },
-            {
-                &quot;id&quot;: 73,
-                &quot;title&quot;: &quot;asst_prof&quot;,
-                &quot;speciality&quot;: &quot;Software Engineering&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 377,
-                    &quot;name&quot;: &quot;Sam Konopelski IV&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
-            },
-            {
-                &quot;id&quot;: 74,
-                &quot;title&quot;: &quot;mr&quot;,
-                &quot;speciality&quot;: &quot;Software Engineering&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 378,
-                    &quot;name&quot;: &quot;Mrs. Libbie Borer&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
-            },
-            {
-                &quot;id&quot;: 75,
-                &quot;title&quot;: &quot;assoc_prof&quot;,
-                &quot;speciality&quot;: &quot;Networks&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 379,
-                    &quot;name&quot;: &quot;Prof. Jamir Quitzon DDS&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:58&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:58&quot;
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/teachers?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/teachers?page=6&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: &quot;http://localhost:8000/api/teachers?page=2&quot;
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 6,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=2&quot;,
-                    &quot;label&quot;: &quot;2&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=3&quot;,
-                    &quot;label&quot;: &quot;3&quot;,
-                    &quot;page&quot;: 3,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=4&quot;,
-                    &quot;label&quot;: &quot;4&quot;,
-                    &quot;page&quot;: 4,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=5&quot;,
-                    &quot;label&quot;: &quot;5&quot;,
-                    &quot;page&quot;: 5,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=6&quot;,
-                    &quot;label&quot;: &quot;6&quot;,
-                    &quot;page&quot;: 6,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/teachers?page=2&quot;,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/teachers&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 15,
-            &quot;total&quot;: 90
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -7270,13 +7241,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/teachers" \
+    "http://localhost/api/teachers" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"user_id\": \"architecto\",
-    \"title\": \"assoc_prof\",
+    \"title\": \"ms\",
     \"speciality\": \"n\"
 }"
 </code></pre></div>
@@ -7284,7 +7255,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/teachers"
+    "http://localhost/api/teachers"
 );
 
 const headers = {
@@ -7295,7 +7266,7 @@ const headers = {
 
 let body = {
     "user_id": "architecto",
-    "title": "assoc_prof",
+    "title": "ms",
     "speciality": "n"
 };
 
@@ -7412,10 +7383,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="title"                data-endpoint="POSTapi-teachers"
-               value="assoc_prof"
+               value="ms"
                data-component="body">
     <br>
-<p>Example: <code>assoc_prof</code></p>
+<p>Example: <code>ms</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>prof</code></li> <li><code>assoc_prof</code></li> <li><code>asst_prof</code></li> <li><code>lecturer</code></li> <li><code>dr</code></li> <li><code>mr</code></li> <li><code>ms</code></li></ul>
         </div>
@@ -7447,7 +7418,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/teachers/1" \
+    --get "http://localhost/api/teachers/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -7455,7 +7426,7 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/teachers/1"
+    "http://localhost/api/teachers/1"
 );
 
 const headers = {
@@ -7474,7 +7445,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-teachers--teacher_id-">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -7486,19 +7457,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Teacher retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;id&quot;: 1,
-        &quot;title&quot;: &quot;assoc_prof&quot;,
-        &quot;speciality&quot;: &quot;Networks&quot;,
-        &quot;user&quot;: {
-            &quot;id&quot;: 5,
-            &quot;name&quot;: &quot;Dr. Julio Stroman&quot;
-        },
-        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -7614,12 +7573,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/teachers/1" \
+    "http://localhost/api/teachers/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"title\": \"assoc_prof\",
+    \"title\": \"mr\",
     \"speciality\": \"b\"
 }"
 </code></pre></div>
@@ -7627,7 +7586,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/teachers/1"
+    "http://localhost/api/teachers/1"
 );
 
 const headers = {
@@ -7637,7 +7596,7 @@ const headers = {
 };
 
 let body = {
-    "title": "assoc_prof",
+    "title": "mr",
     "speciality": "b"
 };
 
@@ -7767,10 +7726,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="title"                data-endpoint="PATCHapi-teachers--teacher_id-"
-               value="assoc_prof"
+               value="mr"
                data-component="body">
     <br>
-<p>Example: <code>assoc_prof</code></p>
+<p>Example: <code>mr</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>prof</code></li> <li><code>assoc_prof</code></li> <li><code>asst_prof</code></li> <li><code>lecturer</code></li> <li><code>dr</code></li> <li><code>mr</code></li> <li><code>ms</code></li></ul>
         </div>
@@ -7802,7 +7761,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/teachers/1" \
+    "http://localhost/api/teachers/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -7810,7 +7769,7 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/teachers/1"
+    "http://localhost/api/teachers/1"
 );
 
 const headers = {
@@ -7941,7 +7900,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/students" \
+    --get "http://localhost/api/students" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -7949,7 +7908,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/students"
+    "http://localhost/api/students"
 );
 
 const headers = {
@@ -7968,7 +7927,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-students">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -7980,46 +7939,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Student retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/students?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/students?page=1&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: null
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: null,
-            &quot;last_page&quot;: 1,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/students?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/students&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: null,
-            &quot;total&quot;: 0
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -8122,7 +8042,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/students" \
+    "http://localhost/api/students" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -8132,14 +8052,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"enrollment_type\": \"morning\",
     \"stage\": 16,
     \"student_number\": \"n\",
-    \"status\": \"on_leave\"
+    \"status\": \"active\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/students"
+    "http://localhost/api/students"
 );
 
 const headers = {
@@ -8154,7 +8074,7 @@ let body = {
     "enrollment_type": "morning",
     "stage": 16,
     "student_number": "n",
-    "status": "on_leave"
+    "status": "active"
 };
 
 fetch(url, {
@@ -8320,10 +8240,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="POSTapi-students"
-               value="on_leave"
+               value="active"
                data-component="body">
     <br>
-<p>Example: <code>on_leave</code></p>
+<p>Example: <code>active</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>active</code></li> <li><code>inactive</code></li> <li><code>on_leave</code></li> <li><code>suspended</code></li> <li><code>graduated</code></li></ul>
         </div>
@@ -8343,7 +8263,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/students/1" \
+    --get "http://localhost/api/students/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -8351,7 +8271,7 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/students/1"
+    "http://localhost/api/students/1"
 );
 
 const headers = {
@@ -8370,7 +8290,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-students--student_id-">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -8382,30 +8302,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Student retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;id&quot;: 1,
-        &quot;enrollment_type&quot;: &quot;parallel&quot;,
-        &quot;stage&quot;: 3,
-        &quot;student_number&quot;: &quot;ST31258&quot;,
-        &quot;status&quot;: &quot;active&quot;,
-        &quot;user&quot;: {
-            &quot;id&quot;: 10,
-            &quot;name&quot;: &quot;Christina Quigley&quot;
-        },
-        &quot;department&quot;: {
-            &quot;id&quot;: 1,
-            &quot;name&quot;: &quot;Architectural Engineering&quot;,
-            &quot;code&quot;: null,
-            &quot;faculty_id&quot;: null,
-            &quot;is_active&quot;: null,
-            &quot;created_at&quot;: null,
-            &quot;updated_at&quot;: null
-        },
-        &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-        &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -8521,7 +8418,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/students/1" \
+    "http://localhost/api/students/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -8536,7 +8433,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/students/1"
+    "http://localhost/api/students/1"
 );
 
 const headers = {
@@ -8751,7 +8648,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/students/1" \
+    "http://localhost/api/students/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -8759,7 +8656,7 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/students/1"
+    "http://localhost/api/students/1"
 );
 
 const headers = {
@@ -8890,7 +8787,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/students/course-selection" \
+    "http://localhost/api/students/course-selection" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -8902,7 +8799,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/students/course-selection"
+    "http://localhost/api/students/course-selection"
 );
 
 const headers = {
@@ -9051,7 +8948,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/courses" \
+    --get "http://localhost/api/courses" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -9059,7 +8956,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses"
+    "http://localhost/api/courses"
 );
 
 const headers = {
@@ -9078,7 +8975,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-courses">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -9090,377 +8987,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Courses retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 86,
-                &quot;name&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;code&quot;: &quot;SUE64031&quot;,
-                &quot;credit_hours&quot;: 3,
-                &quot;year_level&quot;: 3,
-                &quot;is_active&quot;: 1,
-                &quot;department_id&quot;: 18,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 18,
-                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
-            },
-            {
-                &quot;id&quot;: 87,
-                &quot;name&quot;: &quot;Software Architecture&quot;,
-                &quot;code&quot;: &quot;SUE78579&quot;,
-                &quot;credit_hours&quot;: 3,
-                &quot;year_level&quot;: 1,
-                &quot;is_active&quot;: 1,
-                &quot;department_id&quot;: 18,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 18,
-                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
-            },
-            {
-                &quot;id&quot;: 88,
-                &quot;name&quot;: &quot;Operating Systems&quot;,
-                &quot;code&quot;: &quot;UOS72481&quot;,
-                &quot;credit_hours&quot;: 3,
-                &quot;year_level&quot;: 1,
-                &quot;is_active&quot;: 0,
-                &quot;department_id&quot;: 18,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 18,
-                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
-            },
-            {
-                &quot;id&quot;: 89,
-                &quot;name&quot;: &quot;Web Development&quot;,
-                &quot;code&quot;: &quot;SUE67813&quot;,
-                &quot;credit_hours&quot;: 4,
-                &quot;year_level&quot;: 1,
-                &quot;is_active&quot;: 0,
-                &quot;department_id&quot;: 18,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 18,
-                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
-            },
-            {
-                &quot;id&quot;: 90,
-                &quot;name&quot;: &quot;Introduction to IT&quot;,
-                &quot;code&quot;: &quot;KOU97064&quot;,
-                &quot;credit_hours&quot;: 4,
-                &quot;year_level&quot;: 1,
-                &quot;is_active&quot;: 0,
-                &quot;department_id&quot;: 18,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 18,
-                    &quot;name&quot;: &quot;Fine Arts and Design&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:13:00&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:13:00&quot;
-            },
-            {
-                &quot;id&quot;: 76,
-                &quot;name&quot;: &quot;Computer Networks&quot;,
-                &quot;code&quot;: &quot;SUE19847&quot;,
-                &quot;credit_hours&quot;: 2,
-                &quot;year_level&quot;: 1,
-                &quot;is_active&quot;: 0,
-                &quot;department_id&quot;: 16,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 16,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 77,
-                &quot;name&quot;: &quot;Web Development&quot;,
-                &quot;code&quot;: &quot;KOU11886&quot;,
-                &quot;credit_hours&quot;: 4,
-                &quot;year_level&quot;: 4,
-                &quot;is_active&quot;: 1,
-                &quot;department_id&quot;: 16,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 16,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 78,
-                &quot;name&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;code&quot;: &quot;UOS60499&quot;,
-                &quot;credit_hours&quot;: 2,
-                &quot;year_level&quot;: 1,
-                &quot;is_active&quot;: 0,
-                &quot;department_id&quot;: 16,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 16,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 79,
-                &quot;name&quot;: &quot;Operating Systems&quot;,
-                &quot;code&quot;: &quot;UOS25996&quot;,
-                &quot;credit_hours&quot;: 4,
-                &quot;year_level&quot;: 3,
-                &quot;is_active&quot;: 1,
-                &quot;department_id&quot;: 16,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 16,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 80,
-                &quot;name&quot;: &quot;Software Architecture&quot;,
-                &quot;code&quot;: &quot;UOS70231&quot;,
-                &quot;credit_hours&quot;: 4,
-                &quot;year_level&quot;: 3,
-                &quot;is_active&quot;: 1,
-                &quot;department_id&quot;: 16,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 16,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 81,
-                &quot;name&quot;: &quot;Database Systems&quot;,
-                &quot;code&quot;: &quot;KOU26068&quot;,
-                &quot;credit_hours&quot;: 3,
-                &quot;year_level&quot;: 1,
-                &quot;is_active&quot;: 0,
-                &quot;department_id&quot;: 17,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 17,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 82,
-                &quot;name&quot;: &quot;Operating Systems&quot;,
-                &quot;code&quot;: &quot;SUE40108&quot;,
-                &quot;credit_hours&quot;: 4,
-                &quot;year_level&quot;: 2,
-                &quot;is_active&quot;: 0,
-                &quot;department_id&quot;: 17,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 17,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 83,
-                &quot;name&quot;: &quot;Data Structures&quot;,
-                &quot;code&quot;: &quot;UOS05167&quot;,
-                &quot;credit_hours&quot;: 4,
-                &quot;year_level&quot;: 3,
-                &quot;is_active&quot;: 1,
-                &quot;department_id&quot;: 17,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 17,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 84,
-                &quot;name&quot;: &quot;Data Structures&quot;,
-                &quot;code&quot;: &quot;SUE31305&quot;,
-                &quot;credit_hours&quot;: 4,
-                &quot;year_level&quot;: 2,
-                &quot;is_active&quot;: 1,
-                &quot;department_id&quot;: 17,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 17,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            },
-            {
-                &quot;id&quot;: 85,
-                &quot;name&quot;: &quot;Computer Networks&quot;,
-                &quot;code&quot;: &quot;KOU59590&quot;,
-                &quot;credit_hours&quot;: 3,
-                &quot;year_level&quot;: 2,
-                &quot;is_active&quot;: 0,
-                &quot;department_id&quot;: 17,
-                &quot;department&quot;: {
-                    &quot;id&quot;: 17,
-                    &quot;name&quot;: &quot;Medicine and General Surgery&quot;,
-                    &quot;code&quot;: null,
-                    &quot;faculty_id&quot;: null,
-                    &quot;is_active&quot;: null,
-                    &quot;created_at&quot;: null,
-                    &quot;updated_at&quot;: null
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:59&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:59&quot;
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/courses?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/courses?page=6&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: &quot;http://localhost:8000/api/courses?page=2&quot;
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 6,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=2&quot;,
-                    &quot;label&quot;: &quot;2&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=3&quot;,
-                    &quot;label&quot;: &quot;3&quot;,
-                    &quot;page&quot;: 3,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=4&quot;,
-                    &quot;label&quot;: &quot;4&quot;,
-                    &quot;page&quot;: 4,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=5&quot;,
-                    &quot;label&quot;: &quot;5&quot;,
-                    &quot;page&quot;: 5,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=6&quot;,
-                    &quot;label&quot;: &quot;6&quot;,
-                    &quot;page&quot;: 6,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses?page=2&quot;,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/courses&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 15,
-            &quot;total&quot;: 90
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -9563,7 +9090,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/courses" \
+    "http://localhost/api/courses" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -9580,7 +9107,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses"
+    "http://localhost/api/courses"
 );
 
 const headers = {
@@ -9790,7 +9317,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/courses/1" \
+    --get "http://localhost/api/courses/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -9798,7 +9325,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1"
+    "http://localhost/api/courses/1"
 );
 
 const headers = {
@@ -9817,7 +9344,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-courses--course_id-">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -9829,28 +9356,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Course retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;id&quot;: 1,
-        &quot;name&quot;: &quot;Software Architecture&quot;,
-        &quot;code&quot;: &quot;UOS92046&quot;,
-        &quot;credit_hours&quot;: 4,
-        &quot;year_level&quot;: 2,
-        &quot;is_active&quot;: 0,
-        &quot;department_id&quot;: 1,
-        &quot;department&quot;: {
-            &quot;id&quot;: 1,
-            &quot;name&quot;: &quot;Architectural Engineering&quot;,
-            &quot;code&quot;: null,
-            &quot;faculty_id&quot;: null,
-            &quot;is_active&quot;: null,
-            &quot;created_at&quot;: null,
-            &quot;updated_at&quot;: null
-        },
-        &quot;created_at&quot;: &quot;2026-07-07 18:12:50&quot;,
-        &quot;updated_at&quot;: &quot;2026-07-07 18:12:50&quot;
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -9966,7 +9472,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/courses/1" \
+    "http://localhost/api/courses/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -9982,7 +9488,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1"
+    "http://localhost/api/courses/1"
 );
 
 const headers = {
@@ -10204,7 +9710,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/courses/1" \
+    "http://localhost/api/courses/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -10212,7 +9718,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1"
+    "http://localhost/api/courses/1"
 );
 
 const headers = {
@@ -10329,852 +9835,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-courses--course_id--sections">GET api/courses/{course_id}/sections</h2>
-
-<p>
-<small class="badge badge-darkred">requires authentication</small>
-</p>
-
-
-
-<span id="example-requests-GETapi-courses--course_id--sections">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/courses/1/sections" \
-    --header "Authorization: Bearer {ACCESS_TOKEN}" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/sections"
-);
-
-const headers = {
-    "Authorization": "Bearer {ACCESS_TOKEN}",
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-courses--course_id--sections">
-            <blockquote>
-            <p>Example response (200):</p>
-        </blockquote>
-                <details class="annotation">
-            <summary style="cursor: pointer;">
-                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
-            </summary>
-            <pre><code class="language-http">cache-control: no-cache, private
-content-type: application/json
-access-control-allow-origin: *
- </code></pre></details>         <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Course sections retrieved successfully&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/courses/1/sections?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/courses/1/sections?page=1&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: null
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: null,
-            &quot;last_page&quot;: 1,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses/1/sections?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/courses/1/sections&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: null,
-            &quot;total&quot;: 0
-        }
-    }
-}</code>
- </pre>
-    </span>
-<span id="execution-results-GETapi-courses--course_id--sections" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-courses--course_id--sections"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-courses--course_id--sections"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-courses--course_id--sections" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-courses--course_id--sections">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-courses--course_id--sections" data-method="GET"
-      data-path="api/courses/{course_id}/sections"
-      data-authed="1"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-courses--course_id--sections', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-courses--course_id--sections"
-                    onclick="tryItOut('GETapi-courses--course_id--sections');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-courses--course_id--sections"
-                    onclick="cancelTryOut('GETapi-courses--course_id--sections');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-courses--course_id--sections"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/courses/{course_id}/sections</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization" class="auth-value"               data-endpoint="GETapi-courses--course_id--sections"
-               value="Bearer {ACCESS_TOKEN}"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-courses--course_id--sections"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-courses--course_id--sections"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="GETapi-courses--course_id--sections"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-POSTapi-courses--course_id--sections">Store a newly created resource in storage.</h2>
-
-<p>
-<small class="badge badge-darkred">requires authentication</small>
-</p>
-
-
-
-<span id="example-requests-POSTapi-courses--course_id--sections">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/courses/1/sections" \
-    --header "Authorization: Bearer {ACCESS_TOKEN}" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --data "{
-    \"course_id\": \"architecto\",
-    \"title\": \"n\"
-}"
-</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/sections"
-);
-
-const headers = {
-    "Authorization": "Bearer {ACCESS_TOKEN}",
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-let body = {
-    "course_id": "architecto",
-    "title": "n"
-};
-
-fetch(url, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(body),
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-POSTapi-courses--course_id--sections">
-</span>
-<span id="execution-results-POSTapi-courses--course_id--sections" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-POSTapi-courses--course_id--sections"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-courses--course_id--sections"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-POSTapi-courses--course_id--sections" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-courses--course_id--sections">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-POSTapi-courses--course_id--sections" data-method="POST"
-      data-path="api/courses/{course_id}/sections"
-      data-authed="1"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-courses--course_id--sections', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-courses--course_id--sections"
-                    onclick="tryItOut('POSTapi-courses--course_id--sections');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-courses--course_id--sections"
-                    onclick="cancelTryOut('POSTapi-courses--course_id--sections');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-courses--course_id--sections"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-black">POST</small>
-            <b><code>api/courses/{course_id}/sections</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-courses--course_id--sections"
-               value="Bearer {ACCESS_TOKEN}"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-courses--course_id--sections"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-courses--course_id--sections"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="POSTapi-courses--course_id--sections"
-               value="1"
-               data-component="url">
-    <br>
-<p>The ID of the course. Example: <code>1</code></p>
-            </div>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="course_id"                data-endpoint="POSTapi-courses--course_id--sections"
-               value="architecto"
-               data-component="body">
-    <br>
-<p>Must match an existing stored value. Example: <code>architecto</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="title"                data-endpoint="POSTapi-courses--course_id--sections"
-               value="n"
-               data-component="body">
-    <br>
-<p>Must not be greater than 255 characters. Example: <code>n</code></p>
-        </div>
-        </form>
-
-                    <h2 id="endpoints-GETapi-course-sections--section_id-">Display the specified section.</h2>
-
-<p>
-<small class="badge badge-darkred">requires authentication</small>
-</p>
-
-
-
-<span id="example-requests-GETapi-course-sections--section_id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/course-sections/16" \
-    --header "Authorization: Bearer {ACCESS_TOKEN}" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/course-sections/16"
-);
-
-const headers = {
-    "Authorization": "Bearer {ACCESS_TOKEN}",
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-course-sections--section_id-">
-            <blockquote>
-            <p>Example response (404):</p>
-        </blockquote>
-                <details class="annotation">
-            <summary style="cursor: pointer;">
-                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
-            </summary>
-            <pre><code class="language-http">cache-control: no-cache, private
-content-type: application/json
-access-control-allow-origin: *
- </code></pre></details>         <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\CourseSection] 16&quot;
-}</code>
- </pre>
-    </span>
-<span id="execution-results-GETapi-course-sections--section_id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-course-sections--section_id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-course-sections--section_id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-course-sections--section_id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-course-sections--section_id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-course-sections--section_id-" data-method="GET"
-      data-path="api/course-sections/{section_id}"
-      data-authed="1"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-course-sections--section_id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-course-sections--section_id-"
-                    onclick="tryItOut('GETapi-course-sections--section_id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-course-sections--section_id-"
-                    onclick="cancelTryOut('GETapi-course-sections--section_id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-course-sections--section_id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/course-sections/{section_id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization" class="auth-value"               data-endpoint="GETapi-course-sections--section_id-"
-               value="Bearer {ACCESS_TOKEN}"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-course-sections--section_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-course-sections--section_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="GETapi-course-sections--section_id-"
-               value="16"
-               data-component="url">
-    <br>
-<p>The ID of the section. Example: <code>16</code></p>
-            </div>
-                    </form>
-
-                    <h2 id="endpoints-PUTapi-course-sections--section_id-">Update the specified section in storage.</h2>
-
-<p>
-<small class="badge badge-darkred">requires authentication</small>
-</p>
-
-
-
-<span id="example-requests-PUTapi-course-sections--section_id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/course-sections/16" \
-    --header "Authorization: Bearer {ACCESS_TOKEN}" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --data "{
-    \"title\": \"b\"
-}"
-</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/course-sections/16"
-);
-
-const headers = {
-    "Authorization": "Bearer {ACCESS_TOKEN}",
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-let body = {
-    "title": "b"
-};
-
-fetch(url, {
-    method: "PUT",
-    headers,
-    body: JSON.stringify(body),
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-PUTapi-course-sections--section_id-">
-</span>
-<span id="execution-results-PUTapi-course-sections--section_id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-PUTapi-course-sections--section_id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-PUTapi-course-sections--section_id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-PUTapi-course-sections--section_id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-PUTapi-course-sections--section_id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-PUTapi-course-sections--section_id-" data-method="PUT"
-      data-path="api/course-sections/{section_id}"
-      data-authed="1"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('PUTapi-course-sections--section_id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-PUTapi-course-sections--section_id-"
-                    onclick="tryItOut('PUTapi-course-sections--section_id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-PUTapi-course-sections--section_id-"
-                    onclick="cancelTryOut('PUTapi-course-sections--section_id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-PUTapi-course-sections--section_id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-darkblue">PUT</small>
-            <b><code>api/course-sections/{section_id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-course-sections--section_id-"
-               value="Bearer {ACCESS_TOKEN}"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="PUTapi-course-sections--section_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="PUTapi-course-sections--section_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="PUTapi-course-sections--section_id-"
-               value="16"
-               data-component="url">
-    <br>
-<p>The ID of the section. Example: <code>16</code></p>
-            </div>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>teacher_id</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="teacher_id"                data-endpoint="PUTapi-course-sections--section_id-"
-               value=""
-               data-component="body">
-    <br>
-<p>Must match an existing stored value.</p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="course_id"                data-endpoint="PUTapi-course-sections--section_id-"
-               value=""
-               data-component="body">
-    <br>
-<p>Must match an existing stored value.</p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="title"                data-endpoint="PUTapi-course-sections--section_id-"
-               value="b"
-               data-component="body">
-    <br>
-<p>Must not be greater than 255 characters. Example: <code>b</code></p>
-        </div>
-        </form>
-
-                    <h2 id="endpoints-DELETEapi-course-sections--section_id-">Remove the specified section from storage (Soft Delete).</h2>
-
-<p>
-<small class="badge badge-darkred">requires authentication</small>
-</p>
-
-
-
-<span id="example-requests-DELETEapi-course-sections--section_id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/course-sections/16" \
-    --header "Authorization: Bearer {ACCESS_TOKEN}" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/course-sections/16"
-);
-
-const headers = {
-    "Authorization": "Bearer {ACCESS_TOKEN}",
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-
-fetch(url, {
-    method: "DELETE",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-DELETEapi-course-sections--section_id-">
-</span>
-<span id="execution-results-DELETEapi-course-sections--section_id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-DELETEapi-course-sections--section_id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-DELETEapi-course-sections--section_id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-DELETEapi-course-sections--section_id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-DELETEapi-course-sections--section_id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-DELETEapi-course-sections--section_id-" data-method="DELETE"
-      data-path="api/course-sections/{section_id}"
-      data-authed="1"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-course-sections--section_id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-DELETEapi-course-sections--section_id-"
-                    onclick="tryItOut('DELETEapi-course-sections--section_id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-DELETEapi-course-sections--section_id-"
-                    onclick="cancelTryOut('DELETEapi-course-sections--section_id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-DELETEapi-course-sections--section_id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-red">DELETE</small>
-            <b><code>api/course-sections/{section_id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization" class="auth-value"               data-endpoint="DELETEapi-course-sections--section_id-"
-               value="Bearer {ACCESS_TOKEN}"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer {ACCESS_TOKEN}</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="DELETEapi-course-sections--section_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="DELETEapi-course-sections--section_id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>section_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="DELETEapi-course-sections--section_id-"
-               value="16"
-               data-component="url">
-    <br>
-<p>The ID of the section. Example: <code>16</code></p>
-            </div>
-                    </form>
-
                     <h2 id="endpoints-GETapi-course-sections--section_id--submissions">Display a listing of the resource.</h2>
 
 <p>
@@ -11189,7 +9849,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/course-sections/16/submissions" \
+    --get "http://localhost/api/course-sections/2/submissions" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -11197,7 +9857,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/course-sections/16/submissions"
+    "http://localhost/api/course-sections/2/submissions"
 );
 
 const headers = {
@@ -11216,7 +9876,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-course-sections--section_id--submissions">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -11228,7 +9888,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\CourseSection] 16&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -11323,10 +9983,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="section_id"                data-endpoint="GETapi-course-sections--section_id--submissions"
-               value="16"
+               value="2"
                data-component="url">
     <br>
-<p>The ID of the section. Example: <code>16</code></p>
+<p>The ID of the section. Example: <code>2</code></p>
             </div>
                     </form>
 
@@ -11344,19 +10004,19 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/course-sections/16/submissions" \
+    "http://localhost/api/course-sections/2/submissions" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "title=b"\
     --form "description=Eius et animi quos velit et."\
     --form "deadline=2052-07-31"\
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE5D1.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Aryan Hussen\AppData\Local\Temp\php68EB.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/course-sections/16/submissions"
+    "http://localhost/api/course-sections/2/submissions"
 );
 
 const headers = {
@@ -11472,10 +10132,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="section_id"                data-endpoint="POSTapi-course-sections--section_id--submissions"
-               value="16"
+               value="2"
                data-component="url">
     <br>
-<p>The ID of the section. Example: <code>16</code></p>
+<p>The ID of the section. Example: <code>2</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -11544,7 +10204,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/section-submissions/16" \
+    --get "http://localhost/api/section-submissions/16" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -11552,7 +10212,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-submissions/16"
+    "http://localhost/api/section-submissions/16"
 );
 
 const headers = {
@@ -11571,7 +10231,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-submissions--submission_id-">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -11583,7 +10243,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionSubmission] 16&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -11699,19 +10359,19 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/section-submissions/16" \
+    "http://localhost/api/section-submissions/16" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "title=b"\
     --form "description=Eius et animi quos velit et."\
     --form "deadline=2052-07-31"\
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE5F1.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Aryan Hussen\AppData\Local\Temp\php690B.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-submissions/16"
+    "http://localhost/api/section-submissions/16"
 );
 
 const headers = {
@@ -11899,7 +10559,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/section-submissions/16" \
+    "http://localhost/api/section-submissions/16" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -11907,7 +10567,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-submissions/16"
+    "http://localhost/api/section-submissions/16"
 );
 
 const headers = {
@@ -12038,7 +10698,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/section-submission-attachments/16/download" \
+    --get "http://localhost/api/section-submission-attachments/16/download" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -12046,7 +10706,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-submission-attachments/16/download"
+    "http://localhost/api/section-submission-attachments/16/download"
 );
 
 const headers = {
@@ -12065,7 +10725,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-submission-attachments--attachment_id--download">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -12077,7 +10737,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionSubmissionAttachment] 16&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -12193,7 +10853,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/section-submission-attachments/16" \
+    "http://localhost/api/section-submission-attachments/16" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -12201,7 +10861,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-submission-attachments/16"
+    "http://localhost/api/section-submission-attachments/16"
 );
 
 const headers = {
@@ -12332,16 +10992,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/section-submissions/16/submit" \
+    "http://localhost/api/section-submissions/16/submit" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE5F2.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Aryan Hussen\AppData\Local\Temp\php693B.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-submissions/16/submit"
+    "http://localhost/api/section-submissions/16/submit"
 );
 
 const headers = {
@@ -12490,7 +11150,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/section-submissions/16/my-submission" \
+    --get "http://localhost/api/section-submissions/16/my-submission" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -12498,7 +11158,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-submissions/16/my-submission"
+    "http://localhost/api/section-submissions/16/my-submission"
 );
 
 const headers = {
@@ -12517,7 +11177,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-submissions--submission_id--my-submission">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -12529,7 +11189,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionSubmission] 16&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -12645,7 +11305,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/student-submissions/16/download" \
+    --get "http://localhost/api/student-submissions/16/download" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -12653,7 +11313,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/student-submissions/16/download"
+    "http://localhost/api/student-submissions/16/download"
 );
 
 const headers = {
@@ -12672,7 +11332,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-student-submissions--studentSubmission_id--download">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -12684,7 +11344,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\StudentSubmission] 16&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -12800,7 +11460,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/student-submissions/16" \
+    "http://localhost/api/student-submissions/16" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -12808,7 +11468,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/student-submissions/16"
+    "http://localhost/api/student-submissions/16"
 );
 
 const headers = {
@@ -12939,7 +11599,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/course-sections/16/items" \
+    --get "http://localhost/api/course-sections/2/items" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -12947,7 +11607,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/course-sections/16/items"
+    "http://localhost/api/course-sections/2/items"
 );
 
 const headers = {
@@ -12966,7 +11626,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-course-sections--section_id--items">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -12978,7 +11638,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\CourseSection] 16&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -13073,10 +11733,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="section_id"                data-endpoint="GETapi-course-sections--section_id--items"
-               value="16"
+               value="2"
                data-component="url">
     <br>
-<p>The ID of the section. Example: <code>16</code></p>
+<p>The ID of the section. Example: <code>2</code></p>
             </div>
                     </form>
 
@@ -13094,18 +11754,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/course-sections/16/items" \
+    "http://localhost/api/course-sections/2/items" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "url=http://www.bailey.biz/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html"\
     --form "material_file_name=i"\
-    --form "file=@C:\Users\Raman\AppData\Local\Temp\phpE612.tmp" </code></pre></div>
+    --form "file=@C:\Users\Aryan Hussen\AppData\Local\Temp\php695B.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/course-sections/16/items"
+    "http://localhost/api/course-sections/2/items"
 );
 
 const headers = {
@@ -13220,10 +11880,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="section_id"                data-endpoint="POSTapi-course-sections--section_id--items"
-               value="16"
+               value="2"
                data-component="url">
     <br>
-<p>The ID of the section. Example: <code>16</code></p>
+<p>The ID of the section. Example: <code>2</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -13236,7 +11896,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>This field is required when <code>url</code> is not present. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>C:\Users\Raman\AppData\Local\Temp\phpE612.tmp</code></p>
+<p>This field is required when <code>url</code> is not present. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>C:\Users\Aryan Hussen\AppData\Local\Temp\php695B.tmp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>url</code></b>&nbsp;&nbsp;
@@ -13278,7 +11938,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/section-items/16" \
+    --get "http://localhost/api/section-items/16" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -13286,7 +11946,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-items/16"
+    "http://localhost/api/section-items/16"
 );
 
 const headers = {
@@ -13305,7 +11965,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-items--item_id-">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -13317,7 +11977,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionItem] 16&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -13433,7 +12093,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/section-items/16/download" \
+    --get "http://localhost/api/section-items/16/download" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -13441,7 +12101,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-items/16/download"
+    "http://localhost/api/section-items/16/download"
 );
 
 const headers = {
@@ -13460,7 +12120,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-section-items--item_id--download">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -13472,7 +12132,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\SectionItem] 16&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -13588,7 +12248,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/section-items/16" \
+    "http://localhost/api/section-items/16" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -13600,7 +12260,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-items/16"
+    "http://localhost/api/section-items/16"
 );
 
 const headers = {
@@ -13752,7 +12412,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/section-items/16" \
+    "http://localhost/api/section-items/16" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -13760,7 +12420,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/section-items/16"
+    "http://localhost/api/section-items/16"
 );
 
 const headers = {
@@ -13891,7 +12551,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/departments/1/assign-teacher" \
+    "http://localhost/api/departments/1/assign-teacher" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -13903,7 +12563,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/1/assign-teacher"
+    "http://localhost/api/departments/1/assign-teacher"
 );
 
 const headers = {
@@ -14051,7 +12711,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/departments/1/teachers" \
+    --get "http://localhost/api/departments/1/teachers" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -14059,7 +12719,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/1/teachers"
+    "http://localhost/api/departments/1/teachers"
 );
 
 const headers = {
@@ -14078,7 +12738,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments--department_id--teachers">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -14090,102 +12750,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Department teachers retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 1,
-                &quot;title&quot;: &quot;assoc_prof&quot;,
-                &quot;speciality&quot;: &quot;Networks&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 5,
-                    &quot;name&quot;: &quot;Dr. Julio Stroman&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 2,
-                &quot;title&quot;: &quot;lecturer&quot;,
-                &quot;speciality&quot;: &quot;Networks&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 6,
-                    &quot;name&quot;: &quot;Stella Lemke&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 3,
-                &quot;title&quot;: &quot;prof&quot;,
-                &quot;speciality&quot;: &quot;Networks&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 7,
-                    &quot;name&quot;: &quot;Jadyn Ratke DVM&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 4,
-                &quot;title&quot;: &quot;mr&quot;,
-                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 8,
-                    &quot;name&quot;: &quot;Evan Feest&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 5,
-                &quot;title&quot;: &quot;lecturer&quot;,
-                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 9,
-                    &quot;name&quot;: &quot;Dr. Roderick Nikolaus&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/departments/1/teachers?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/departments/1/teachers?page=1&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: null
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 1,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/departments/1/teachers?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/departments/1/teachers&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 5,
-            &quot;total&quot;: 5
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -14301,7 +12866,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/departments/1/teachers/1" \
+    "http://localhost/api/departments/1/teachers/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -14309,7 +12874,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/1/teachers/1"
+    "http://localhost/api/departments/1/teachers/1"
 );
 
 const headers = {
@@ -14452,20 +13017,20 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/courses/1/assign-teacher" \
+    "http://localhost/api/courses/1/assign-teacher" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"teacher_id\": \"architecto\",
-    \"role\": \"lab_instructor\"
+    \"role\": \"primary_lecturer\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/assign-teacher"
+    "http://localhost/api/courses/1/assign-teacher"
 );
 
 const headers = {
@@ -14476,7 +13041,7 @@ const headers = {
 
 let body = {
     "teacher_id": "architecto",
-    "role": "lab_instructor"
+    "role": "primary_lecturer"
 };
 
 fetch(url, {
@@ -14605,10 +13170,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="role"                data-endpoint="POSTapi-courses--course_id--assign-teacher"
-               value="lab_instructor"
+               value="primary_lecturer"
                data-component="body">
     <br>
-<p>Example: <code>lab_instructor</code></p>
+<p>Example: <code>primary_lecturer</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>primary_lecturer</code></li> <li><code>assistant_lecturer</code></li> <li><code>lab_instructor</code></li></ul>
         </div>
@@ -14628,7 +13193,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/courses/1/teachers" \
+    --get "http://localhost/api/courses/1/teachers" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -14636,7 +13201,7 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/teachers"
+    "http://localhost/api/courses/1/teachers"
 );
 
 const headers = {
@@ -14655,7 +13220,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-courses--course_id--teachers">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -14667,80 +13232,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Course teachers retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 4,
-                &quot;title&quot;: &quot;mr&quot;,
-                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 8,
-                    &quot;name&quot;: &quot;Evan Feest&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 1,
-                &quot;title&quot;: &quot;assoc_prof&quot;,
-                &quot;speciality&quot;: &quot;Networks&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 5,
-                    &quot;name&quot;: &quot;Dr. Julio Stroman&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 5,
-                &quot;title&quot;: &quot;lecturer&quot;,
-                &quot;speciality&quot;: &quot;Artificial Intelligence&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 9,
-                    &quot;name&quot;: &quot;Dr. Roderick Nikolaus&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/courses/1/teachers?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/courses/1/teachers?page=1&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: null
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 1,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses/1/teachers?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/courses/1/teachers&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 3,
-            &quot;total&quot;: 3
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -14856,19 +13348,19 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/courses/1/teachers/1" \
+    "http://localhost/api/courses/1/teachers/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"role\": \"primary_lecturer\"
+    \"role\": \"lab_instructor\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/teachers/1"
+    "http://localhost/api/courses/1/teachers/1"
 );
 
 const headers = {
@@ -14878,7 +13370,7 @@ const headers = {
 };
 
 let body = {
-    "role": "primary_lecturer"
+    "role": "lab_instructor"
 };
 
 fetch(url, {
@@ -15007,10 +13499,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="role"                data-endpoint="PUTapi-courses--course_id--teachers--teacher_id-"
-               value="primary_lecturer"
+               value="lab_instructor"
                data-component="body">
     <br>
-<p>Example: <code>primary_lecturer</code></p>
+<p>Example: <code>lab_instructor</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>primary_lecturer</code></li> <li><code>assistant_lecturer</code></li> <li><code>lab_instructor</code></li></ul>
         </div>
@@ -15030,7 +13522,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/courses/1/teachers/1" \
+    "http://localhost/api/courses/1/teachers/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -15038,7 +13530,7 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/teachers/1"
+    "http://localhost/api/courses/1/teachers/1"
 );
 
 const headers = {
@@ -15181,7 +13673,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/departments/1/students" \
+    --get "http://localhost/api/departments/1/students" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -15189,7 +13681,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/departments/1/students"
+    "http://localhost/api/departments/1/students"
 );
 
 const headers = {
@@ -15208,7 +13700,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-departments--department_id--students">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -15220,248 +13712,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Department students retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 6,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 1,
-                &quot;student_number&quot;: &quot;ST52318&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 15,
-                    &quot;name&quot;: &quot;Mekhi Kertzmann&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 7,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 1,
-                &quot;student_number&quot;: &quot;ST85267&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 16,
-                    &quot;name&quot;: &quot;Devon Robel Jr.&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 14,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 1,
-                &quot;student_number&quot;: &quot;ST47593&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 23,
-                    &quot;name&quot;: &quot;Isobel Brown&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 15,
-                &quot;enrollment_type&quot;: &quot;evening&quot;,
-                &quot;stage&quot;: 1,
-                &quot;student_number&quot;: &quot;ST93748&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 24,
-                    &quot;name&quot;: &quot;Jesse Dicki&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 2,
-                &quot;enrollment_type&quot;: &quot;evening&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST13277&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 11,
-                    &quot;name&quot;: &quot;Miss Pamela Braun&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 4,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST95677&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 13,
-                    &quot;name&quot;: &quot;Marjory Renner&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 5,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST61937&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 14,
-                    &quot;name&quot;: &quot;Tate Lowe&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 16,
-                &quot;enrollment_type&quot;: &quot;evening&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST67294&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 25,
-                    &quot;name&quot;: &quot;Wilfrid Deckow&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 18,
-                &quot;enrollment_type&quot;: &quot;evening&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST91217&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 27,
-                    &quot;name&quot;: &quot;Devon Hoppe&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 19,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST83749&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 28,
-                    &quot;name&quot;: &quot;Brandi Schoen I&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 20,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST45679&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 29,
-                    &quot;name&quot;: &quot;Miss Kasey Cremin&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 1,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 3,
-                &quot;student_number&quot;: &quot;ST31258&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 10,
-                    &quot;name&quot;: &quot;Christina Quigley&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 9,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 3,
-                &quot;student_number&quot;: &quot;ST88507&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 18,
-                    &quot;name&quot;: &quot;Demario Murazik IV&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 10,
-                &quot;enrollment_type&quot;: &quot;evening&quot;,
-                &quot;stage&quot;: 3,
-                &quot;student_number&quot;: &quot;ST59788&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 19,
-                    &quot;name&quot;: &quot;Meda Walker&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 13,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 3,
-                &quot;student_number&quot;: &quot;ST43141&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 22,
-                    &quot;name&quot;: &quot;Dr. Cloyd Howe V&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/departments/1/students?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/departments/1/students?page=2&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: &quot;http://localhost:8000/api/departments/1/students?page=2&quot;
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 2,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/departments/1/students?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/departments/1/students?page=2&quot;,
-                    &quot;label&quot;: &quot;2&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/departments/1/students?page=2&quot;,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/departments/1/students&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 15,
-            &quot;total&quot;: 20
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -15577,7 +13828,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/courses/1/students" \
+    --get "http://localhost/api/courses/1/students" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -15585,7 +13836,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/students"
+    "http://localhost/api/courses/1/students"
 );
 
 const headers = {
@@ -15604,7 +13855,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-courses--course_id--students">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -15616,216 +13867,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Course students retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 6,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 1,
-                &quot;student_number&quot;: &quot;ST52318&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 15,
-                    &quot;name&quot;: &quot;Mekhi Kertzmann&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 20,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST45679&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 29,
-                    &quot;name&quot;: &quot;Miss Kasey Cremin&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 13,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 3,
-                &quot;student_number&quot;: &quot;ST43141&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 22,
-                    &quot;name&quot;: &quot;Dr. Cloyd Howe V&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 7,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 1,
-                &quot;student_number&quot;: &quot;ST85267&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 16,
-                    &quot;name&quot;: &quot;Devon Robel Jr.&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 1,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 3,
-                &quot;student_number&quot;: &quot;ST31258&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 10,
-                    &quot;name&quot;: &quot;Christina Quigley&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 10,
-                &quot;enrollment_type&quot;: &quot;evening&quot;,
-                &quot;stage&quot;: 3,
-                &quot;student_number&quot;: &quot;ST59788&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 19,
-                    &quot;name&quot;: &quot;Meda Walker&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 15,
-                &quot;enrollment_type&quot;: &quot;evening&quot;,
-                &quot;stage&quot;: 1,
-                &quot;student_number&quot;: &quot;ST93748&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 24,
-                    &quot;name&quot;: &quot;Jesse Dicki&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 5,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST61937&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 14,
-                    &quot;name&quot;: &quot;Tate Lowe&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 14,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 1,
-                &quot;student_number&quot;: &quot;ST47593&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 23,
-                    &quot;name&quot;: &quot;Isobel Brown&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 3,
-                &quot;enrollment_type&quot;: &quot;evening&quot;,
-                &quot;stage&quot;: 4,
-                &quot;student_number&quot;: &quot;ST76969&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 12,
-                    &quot;name&quot;: &quot;Art Schuster&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 19,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 2,
-                &quot;student_number&quot;: &quot;ST83749&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 28,
-                    &quot;name&quot;: &quot;Brandi Schoen I&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 9,
-                &quot;enrollment_type&quot;: &quot;morning&quot;,
-                &quot;stage&quot;: 3,
-                &quot;student_number&quot;: &quot;ST88507&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 18,
-                    &quot;name&quot;: &quot;Demario Murazik IV&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            },
-            {
-                &quot;id&quot;: 11,
-                &quot;enrollment_type&quot;: &quot;parallel&quot;,
-                &quot;stage&quot;: 4,
-                &quot;student_number&quot;: &quot;ST35637&quot;,
-                &quot;status&quot;: &quot;active&quot;,
-                &quot;user&quot;: {
-                    &quot;id&quot;: 20,
-                    &quot;name&quot;: &quot;Miss Laura Lind V&quot;
-                },
-                &quot;created_at&quot;: &quot;2026-07-07 18:12:49&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07 18:12:49&quot;
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/courses/1/students?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/courses/1/students?page=1&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: null
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 1,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/courses/1/students?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/courses/1/students&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 13,
-            &quot;total&quot;: 13
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -15941,7 +13983,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/courses/1/assign-student" \
+    "http://localhost/api/courses/1/assign-student" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -15953,7 +13995,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/assign-student"
+    "http://localhost/api/courses/1/assign-student"
 );
 
 const headers = {
@@ -16113,20 +14155,20 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/courses/1/students/1" \
+    "http://localhost/api/courses/1/students/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
     \"grade\": 1,
-    \"enrolled_at\": \"2026-07-08T08:39:06\"
+    \"enrolled_at\": \"2026-07-08T11:09:01\"
 }"
 </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/students/1"
+    "http://localhost/api/courses/1/students/1"
 );
 
 const headers = {
@@ -16137,7 +14179,7 @@ const headers = {
 
 let body = {
     "grade": 1,
-    "enrolled_at": "2026-07-08T08:39:06"
+    "enrolled_at": "2026-07-08T11:09:01"
 };
 
 fetch(url, {
@@ -16290,10 +14332,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="enrolled_at"                data-endpoint="PUTapi-courses--course_id--students--student_id-"
-               value="2026-07-08T08:39:06"
+               value="2026-07-08T11:09:01"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T11:09:01</code></p>
         </div>
         </form>
 
@@ -16311,7 +14353,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/courses/1/students/1" \
+    "http://localhost/api/courses/1/students/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -16319,7 +14361,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/courses/1/students/1"
+    "http://localhost/api/courses/1/students/1"
 );
 
 const headers = {
@@ -16462,7 +14504,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/letters" \
+    "http://localhost/api/letters" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -16479,7 +14521,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters"
+    "http://localhost/api/letters"
 );
 
 const headers = {
@@ -16681,7 +14723,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/letters" \
+    --get "http://localhost/api/letters" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -16689,7 +14731,7 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters"
+    "http://localhost/api/letters"
 );
 
 const headers = {
@@ -16708,7 +14750,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -16720,46 +14762,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Letters retrieved successfully&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/letters?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/letters?page=1&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: null
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: null,
-            &quot;last_page&quot;: 1,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/letters?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/letters&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: null,
-            &quot;total&quot;: 0
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -16862,7 +14865,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/letters/recents" \
+    --get "http://localhost/api/letters/recents" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -16870,7 +14873,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/recents"
+    "http://localhost/api/letters/recents"
 );
 
 const headers = {
@@ -16889,7 +14892,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters-recents">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -16901,9 +14904,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Letters retrieved successfully&quot;,
-    &quot;data&quot;: []
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -17006,7 +15007,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/letters/1" \
+    --get "http://localhost/api/letters/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -17014,7 +15015,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/1"
+    "http://localhost/api/letters/1"
 );
 
 const headers = {
@@ -17033,7 +15034,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters--letter_id-">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -17045,35 +15046,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Letter retrieved successfully&quot;,
-    &quot;data&quot;: {
-        &quot;id&quot;: 1,
-        &quot;letter_number&quot;: &quot;2d2f3508-81ff-419b-9778-d7df00d9aaaf&quot;,
-        &quot;original_sender_id&quot;: 54,
-        &quot;sender_id&quot;: 54,
-        &quot;receiver_id&quot;: 107,
-        &quot;type&quot;: &quot;open_faculty&quot;,
-        &quot;title&quot;: &quot;Commodi id in inventore sint accusamus sunt commodi.&quot;,
-        &quot;body&quot;: &quot;Dolor rerum iusto repellat dicta dolorem quo. Eveniet vel velit et eos pariatur. Iusto qui officiis dolor deserunt rerum praesentium.\n\nNeque aliquid inventore sequi accusantium. Sunt fugiat qui eveniet enim aut quidem. Ut possimus quae est ipsa quam facilis. Ut sit illum incidunt sit nam ducimus.\n\nQuidem sequi accusamus culpa quia praesentium. Aut corrupti labore minima repellat. Delectus reiciendis animi et eos excepturi. Et impedit alias qui et non voluptatum.&quot;,
-        &quot;is_read&quot;: false,
-        &quot;academic_year_id&quot;: 1,
-        &quot;is_archived&quot;: false,
-        &quot;status&quot;: &quot;rejected&quot;,
-        &quot;qr_code_path&quot;: null,
-        &quot;qr_code_url&quot;: null,
-        &quot;payload&quot;: null,
-        &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-        &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-        &quot;sender&quot;: {
-            &quot;id&quot;: 54,
-            &quot;name&quot;: &quot;Noel Morissette&quot;
-        },
-        &quot;receiver&quot;: {
-            &quot;id&quot;: 107,
-            &quot;name&quot;: &quot;Conrad Pacocha&quot;
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -17189,7 +15162,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/letters/1" \
+    "http://localhost/api/letters/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -17201,7 +15174,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/1"
+    "http://localhost/api/letters/1"
 );
 
 const headers = {
@@ -17349,7 +15322,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/letters/1/raise" \
+    "http://localhost/api/letters/1/raise" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -17362,7 +15335,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/1/raise"
+    "http://localhost/api/letters/1/raise"
 );
 
 const headers = {
@@ -17523,7 +15496,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/letters/inbox" \
+    --get "http://localhost/api/letters/inbox" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -17531,7 +15504,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/inbox"
+    "http://localhost/api/letters/inbox"
 );
 
 const headers = {
@@ -17550,7 +15523,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters-inbox">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -17562,9 +15535,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Inbox letters fetched successfully&quot;,
-    &quot;data&quot;: []
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -17667,7 +15638,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/letters/outbox" \
+    --get "http://localhost/api/letters/outbox" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -17675,7 +15646,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/outbox"
+    "http://localhost/api/letters/outbox"
 );
 
 const headers = {
@@ -17694,7 +15665,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters-outbox">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -17706,9 +15677,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Broadcast letters fetched successfully&quot;,
-    &quot;data&quot;: []
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -17811,7 +15780,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/letters/1/approve" \
+    "http://localhost/api/letters/1/approve" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -17819,7 +15788,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/1/approve"
+    "http://localhost/api/letters/1/approve"
 );
 
 const headers = {
@@ -17950,7 +15919,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/letters/1/decline" \
+    "http://localhost/api/letters/1/decline" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -17958,7 +15927,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/1/decline"
+    "http://localhost/api/letters/1/decline"
 );
 
 const headers = {
@@ -18089,7 +16058,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/letters/1/forward" \
+    "http://localhost/api/letters/1/forward" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -18101,7 +16070,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/1/forward"
+    "http://localhost/api/letters/1/forward"
 );
 
 const headers = {
@@ -18249,16 +16218,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/letters/1/attachments" \
+    "http://localhost/api/letters/1/attachments" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "file[]=@C:\Users\Raman\AppData\Local\Temp\phpE6EE.tmp" </code></pre></div>
+    --form "file[]=@C:\Users\Aryan Hussen\AppData\Local\Temp\php6A37.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/1/attachments"
+    "http://localhost/api/letters/1/attachments"
 );
 
 const headers = {
@@ -18407,7 +16376,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/letters/1/attachments/1/download" \
+    --get "http://localhost/api/letters/1/attachments/1/download" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -18415,7 +16384,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/1/attachments/1/download"
+    "http://localhost/api/letters/1/attachments/1/download"
 );
 
 const headers = {
@@ -18434,7 +16403,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letters--letter_id--attachments--attachment_id--download">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -18446,8 +16415,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: false,
-    &quot;message&quot;: &quot;Attachment not found.&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -18575,7 +16543,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/letters/1/attachments/1" \
+    "http://localhost/api/letters/1/attachments/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -18583,7 +16551,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letters/1/attachments/1"
+    "http://localhost/api/letters/1/attachments/1"
 );
 
 const headers = {
@@ -18726,7 +16694,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/signatures" \
+    "http://localhost/api/signatures" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -18739,7 +16707,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/signatures"
+    "http://localhost/api/signatures"
 );
 
 const headers = {
@@ -18887,7 +16855,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/signatures/architecto" \
+    --get "http://localhost/api/signatures/architecto" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -18895,7 +16863,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/signatures/architecto"
+    "http://localhost/api/signatures/architecto"
 );
 
 const headers = {
@@ -18914,7 +16882,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-signatures--id-">
             <blockquote>
-            <p>Example response (500):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -18926,7 +16894,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;Server Error&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -19042,7 +17010,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/signatures" \
+    --get "http://localhost/api/signatures" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -19050,7 +17018,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/signatures"
+    "http://localhost/api/signatures"
 );
 
 const headers = {
@@ -19069,7 +17037,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-signatures">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -19081,575 +17049,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Signatures retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;data&quot;: [
-            {
-                &quot;id&quot;: 41,
-                &quot;letter_id&quot;: 26,
-                &quot;user_id&quot;: 462,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: &quot;Ea voluptate deserunt nulla.&quot;,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 26,
-                    &quot;letter_number&quot;: &quot;f72162ae-bd41-45cb-b514-9ee60d8f3a05&quot;,
-                    &quot;original_sender_id&quot;: 375,
-                    &quot;sender_id&quot;: 375,
-                    &quot;receiver_id&quot;: 339,
-                    &quot;type&quot;: &quot;hire_teacher&quot;,
-                    &quot;title&quot;: &quot;Voluptas quas voluptas dolor rerum fuga ea veniam.&quot;,
-                    &quot;body&quot;: &quot;Repudiandae earum nostrum pariatur et quibusdam. Nemo tempora facere consequatur ad pariatur. Accusamus accusantium recusandae qui illo. Rem voluptatibus incidunt alias architecto eius est saepe. Hic qui impedit ea alias et.\n\nMagnam voluptatibus molestiae esse aliquam. Exercitationem quis quibusdam voluptatem deserunt voluptas repellat. Cumque harum corrupti ex iure molestiae.\n\nImpedit perspiciatis voluptate odit et. Omnis ullam minima tempore enim. Quia dolorem voluptas incidunt fuga voluptates saepe voluptatem magnam.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;rejected&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;42a0fcc4ce5d91e3a031e7f5ee12542a8a84ae3ca8683446dcad557df7e37c34&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 462,
-                    &quot;name&quot;: &quot;Jane Kreiger&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 42,
-                &quot;letter_id&quot;: 26,
-                &quot;user_id&quot;: 39,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: null,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 26,
-                    &quot;letter_number&quot;: &quot;f72162ae-bd41-45cb-b514-9ee60d8f3a05&quot;,
-                    &quot;original_sender_id&quot;: 375,
-                    &quot;sender_id&quot;: 375,
-                    &quot;receiver_id&quot;: 339,
-                    &quot;type&quot;: &quot;hire_teacher&quot;,
-                    &quot;title&quot;: &quot;Voluptas quas voluptas dolor rerum fuga ea veniam.&quot;,
-                    &quot;body&quot;: &quot;Repudiandae earum nostrum pariatur et quibusdam. Nemo tempora facere consequatur ad pariatur. Accusamus accusantium recusandae qui illo. Rem voluptatibus incidunt alias architecto eius est saepe. Hic qui impedit ea alias et.\n\nMagnam voluptatibus molestiae esse aliquam. Exercitationem quis quibusdam voluptatem deserunt voluptas repellat. Cumque harum corrupti ex iure molestiae.\n\nImpedit perspiciatis voluptate odit et. Omnis ullam minima tempore enim. Quia dolorem voluptas incidunt fuga voluptates saepe voluptatem magnam.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;rejected&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;42a0fcc4ce5d91e3a031e7f5ee12542a8a84ae3ca8683446dcad557df7e37c34&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 39,
-                    &quot;name&quot;: &quot;Augustine Howell&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 43,
-                &quot;letter_id&quot;: 27,
-                &quot;user_id&quot;: 80,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: &quot;Dolores veritatis eos error reiciendis quo dolor nostrum.&quot;,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 27,
-                    &quot;letter_number&quot;: &quot;7244f044-f25f-4d00-8a08-98c247b4b698&quot;,
-                    &quot;original_sender_id&quot;: 384,
-                    &quot;sender_id&quot;: 384,
-                    &quot;receiver_id&quot;: 58,
-                    &quot;type&quot;: &quot;close_faculty&quot;,
-                    &quot;title&quot;: &quot;Vero ducimus non expedita.&quot;,
-                    &quot;body&quot;: &quot;Atque et ipsum consequuntur aliquid aut excepturi. Qui suscipit enim quisquam dolores. Sit similique vitae sequi expedita laboriosam et cum. Nihil omnis laudantium autem a incidunt.\n\nConsequuntur in magni asperiores voluptatum ipsa modi. Iure saepe quisquam molestiae et cupiditate. Vitae veritatis fuga voluptatem consequatur. Ea pariatur quis vero ut omnis assumenda. Sequi quia similique corporis.\n\nIn blanditiis culpa nostrum praesentium nostrum omnis. Minima beatae aut quia et. Quos nihil ullam deserunt odio eius consequatur vitae veniam. Laboriosam vel porro natus perferendis voluptatum id magni.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;approved&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;fc75037f6725e3bbebbf602a2f7e89d86733216a1e35ff5d5e04e7126b5c3a5e&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 80,
-                    &quot;name&quot;: &quot;Johathan Schamberger&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 44,
-                &quot;letter_id&quot;: 28,
-                &quot;user_id&quot;: 214,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: null,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 28,
-                    &quot;letter_number&quot;: &quot;8713854b-67e1-4684-81e0-e2a086dd5bfe&quot;,
-                    &quot;original_sender_id&quot;: 69,
-                    &quot;sender_id&quot;: 69,
-                    &quot;receiver_id&quot;: 139,
-                    &quot;type&quot;: &quot;create_department&quot;,
-                    &quot;title&quot;: &quot;Qui et nemo quia ea error animi.&quot;,
-                    &quot;body&quot;: &quot;Porro minima maiores ullam vel dicta. Odit laudantium enim veritatis ipsa fugit. Quos sit distinctio cupiditate animi.\n\nSed voluptatum quam repellendus ut ad. Possimus debitis reprehenderit facilis nihil omnis recusandae enim ducimus. Sit saepe cupiditate aut praesentium et ut. Rerum et esse veniam nihil.\n\nSunt quam et et explicabo necessitatibus. Adipisci eius illum illum voluptatem sed. Iure alias error adipisci expedita.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;approved&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;089a56bcb0524f3534be15599468f24ab94465cf9c3cede69eecfb7923725a16&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 214,
-                    &quot;name&quot;: &quot;Khalil Macejkovic&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 45,
-                &quot;letter_id&quot;: 28,
-                &quot;user_id&quot;: 16,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: null,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 28,
-                    &quot;letter_number&quot;: &quot;8713854b-67e1-4684-81e0-e2a086dd5bfe&quot;,
-                    &quot;original_sender_id&quot;: 69,
-                    &quot;sender_id&quot;: 69,
-                    &quot;receiver_id&quot;: 139,
-                    &quot;type&quot;: &quot;create_department&quot;,
-                    &quot;title&quot;: &quot;Qui et nemo quia ea error animi.&quot;,
-                    &quot;body&quot;: &quot;Porro minima maiores ullam vel dicta. Odit laudantium enim veritatis ipsa fugit. Quos sit distinctio cupiditate animi.\n\nSed voluptatum quam repellendus ut ad. Possimus debitis reprehenderit facilis nihil omnis recusandae enim ducimus. Sit saepe cupiditate aut praesentium et ut. Rerum et esse veniam nihil.\n\nSunt quam et et explicabo necessitatibus. Adipisci eius illum illum voluptatem sed. Iure alias error adipisci expedita.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;approved&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;089a56bcb0524f3534be15599468f24ab94465cf9c3cede69eecfb7923725a16&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 16,
-                    &quot;name&quot;: &quot;Devon Robel Jr.&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 46,
-                &quot;letter_id&quot;: 29,
-                &quot;user_id&quot;: 286,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: null,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 29,
-                    &quot;letter_number&quot;: &quot;e1585ee4-a987-4002-83e2-1d949fd26f0f&quot;,
-                    &quot;original_sender_id&quot;: 342,
-                    &quot;sender_id&quot;: 342,
-                    &quot;receiver_id&quot;: 49,
-                    &quot;type&quot;: &quot;close_faculty&quot;,
-                    &quot;title&quot;: &quot;Molestias officiis laboriosam sit enim magnam consectetur.&quot;,
-                    &quot;body&quot;: &quot;Suscipit sequi vitae dolores nulla sit voluptate. Eius dolore officiis sequi tempore itaque autem dolorem eius. Perspiciatis quaerat voluptatibus aut totam consequatur odio.\n\nNihil hic officiis placeat et aut. Eveniet laborum consequatur voluptatem omnis velit. Consequatur numquam ex beatae odit dolorem voluptatibus. Nisi pariatur est repellendus consectetur ut necessitatibus fugit.\n\nQui distinctio voluptatem dolores iusto et. Excepturi reprehenderit totam nisi sunt quibusdam.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;rejected&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;3e0fd313c00e341dfd38b1c711b3151d6cabb49b9f32da1a56877bd54e46cf24&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 286,
-                    &quot;name&quot;: &quot;Ms. Pat Marvin MD&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 47,
-                &quot;letter_id&quot;: 29,
-                &quot;user_id&quot;: 434,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: &quot;Et velit nobis eum tempore quidem id aliquam.&quot;,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 29,
-                    &quot;letter_number&quot;: &quot;e1585ee4-a987-4002-83e2-1d949fd26f0f&quot;,
-                    &quot;original_sender_id&quot;: 342,
-                    &quot;sender_id&quot;: 342,
-                    &quot;receiver_id&quot;: 49,
-                    &quot;type&quot;: &quot;close_faculty&quot;,
-                    &quot;title&quot;: &quot;Molestias officiis laboriosam sit enim magnam consectetur.&quot;,
-                    &quot;body&quot;: &quot;Suscipit sequi vitae dolores nulla sit voluptate. Eius dolore officiis sequi tempore itaque autem dolorem eius. Perspiciatis quaerat voluptatibus aut totam consequatur odio.\n\nNihil hic officiis placeat et aut. Eveniet laborum consequatur voluptatem omnis velit. Consequatur numquam ex beatae odit dolorem voluptatibus. Nisi pariatur est repellendus consectetur ut necessitatibus fugit.\n\nQui distinctio voluptatem dolores iusto et. Excepturi reprehenderit totam nisi sunt quibusdam.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;rejected&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;3e0fd313c00e341dfd38b1c711b3151d6cabb49b9f32da1a56877bd54e46cf24&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 434,
-                    &quot;name&quot;: &quot;Prof. Zora Lindgren&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 48,
-                &quot;letter_id&quot;: 30,
-                &quot;user_id&quot;: 394,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: null,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 30,
-                    &quot;letter_number&quot;: &quot;23fb7b9a-20c0-48a2-8746-92ac127f8ed7&quot;,
-                    &quot;original_sender_id&quot;: 345,
-                    &quot;sender_id&quot;: 345,
-                    &quot;receiver_id&quot;: 386,
-                    &quot;type&quot;: &quot;open_university&quot;,
-                    &quot;title&quot;: &quot;Necessitatibus esse consequuntur alias sit ea ex.&quot;,
-                    &quot;body&quot;: &quot;Ducimus vel laboriosam itaque ea voluptatem repellendus. Aspernatur voluptatum corrupti occaecati sequi minus. Cum eaque eaque consequatur in.\n\nDelectus soluta molestiae eos est est voluptate omnis repellat. Vel neque sunt quam dolor maxime. Voluptatum ut optio ab deleniti id excepturi. Quia quia atque et magnam optio sit.\n\nUllam quas placeat molestiae quasi qui voluptatibus. Aliquam nihil nulla occaecati voluptatem deserunt deleniti. Beatae voluptatem sit beatae. Sint quae id nostrum.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;approved&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;4ee6e8cb7dbb98a0daa968cbfadc350d3b1b19e7707ff6b9ebb8ba5f7a99dbb9&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 394,
-                    &quot;name&quot;: &quot;Ms. Amya Ratke II&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 49,
-                &quot;letter_id&quot;: 30,
-                &quot;user_id&quot;: 406,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: &quot;Consequuntur voluptatem aliquam vitae sit quod tempora.&quot;,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 30,
-                    &quot;letter_number&quot;: &quot;23fb7b9a-20c0-48a2-8746-92ac127f8ed7&quot;,
-                    &quot;original_sender_id&quot;: 345,
-                    &quot;sender_id&quot;: 345,
-                    &quot;receiver_id&quot;: 386,
-                    &quot;type&quot;: &quot;open_university&quot;,
-                    &quot;title&quot;: &quot;Necessitatibus esse consequuntur alias sit ea ex.&quot;,
-                    &quot;body&quot;: &quot;Ducimus vel laboriosam itaque ea voluptatem repellendus. Aspernatur voluptatum corrupti occaecati sequi minus. Cum eaque eaque consequatur in.\n\nDelectus soluta molestiae eos est est voluptate omnis repellat. Vel neque sunt quam dolor maxime. Voluptatum ut optio ab deleniti id excepturi. Quia quia atque et magnam optio sit.\n\nUllam quas placeat molestiae quasi qui voluptatibus. Aliquam nihil nulla occaecati voluptatem deserunt deleniti. Beatae voluptatem sit beatae. Sint quae id nostrum.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;approved&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;4ee6e8cb7dbb98a0daa968cbfadc350d3b1b19e7707ff6b9ebb8ba5f7a99dbb9&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 406,
-                    &quot;name&quot;: &quot;Prof. Toney Beatty&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 1,
-                &quot;letter_id&quot;: 1,
-                &quot;user_id&quot;: 17,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: &quot;Voluptatem cupiditate quisquam consectetur quae.&quot;,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 1,
-                    &quot;letter_number&quot;: &quot;2d2f3508-81ff-419b-9778-d7df00d9aaaf&quot;,
-                    &quot;original_sender_id&quot;: 54,
-                    &quot;sender_id&quot;: 54,
-                    &quot;receiver_id&quot;: 107,
-                    &quot;type&quot;: &quot;open_faculty&quot;,
-                    &quot;title&quot;: &quot;Commodi id in inventore sint accusamus sunt commodi.&quot;,
-                    &quot;body&quot;: &quot;Dolor rerum iusto repellat dicta dolorem quo. Eveniet vel velit et eos pariatur. Iusto qui officiis dolor deserunt rerum praesentium.\n\nNeque aliquid inventore sequi accusantium. Sunt fugiat qui eveniet enim aut quidem. Ut possimus quae est ipsa quam facilis. Ut sit illum incidunt sit nam ducimus.\n\nQuidem sequi accusamus culpa quia praesentium. Aut corrupti labore minima repellat. Delectus reiciendis animi et eos excepturi. Et impedit alias qui et non voluptatum.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;rejected&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;86852a30e299e66e855e88f38b921f3a40e9058eacbab3546c8d3df87c912688&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 17,
-                    &quot;name&quot;: &quot;Marie Heller&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 2,
-                &quot;letter_id&quot;: 2,
-                &quot;user_id&quot;: 373,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: null,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 2,
-                    &quot;letter_number&quot;: &quot;961c363f-c122-4814-8d58-9db840613065&quot;,
-                    &quot;original_sender_id&quot;: 397,
-                    &quot;sender_id&quot;: 397,
-                    &quot;receiver_id&quot;: 86,
-                    &quot;type&quot;: &quot;close_faculty&quot;,
-                    &quot;title&quot;: &quot;Cupiditate ullam repellat enim adipisci porro non omnis ut.&quot;,
-                    &quot;body&quot;: &quot;Minus et doloremque dolor odit. Quia inventore voluptatibus dolor. Impedit voluptatum cum dolor qui.\n\nAt rerum quia impedit velit perspiciatis sed ratione illo. Eligendi consequatur vero expedita molestiae quas recusandae molestiae. Laborum iste quo sint reiciendis.\n\nNecessitatibus ab asperiores quo sit vel culpa. Deleniti architecto quis minus eveniet fuga labore consectetur quia. Possimus assumenda ipsam reprehenderit dolor culpa vel. Modi sint cum numquam nesciunt incidunt dolor fugiat.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;pending&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;c53b44aa1be81958a20870ca15fbcd9eed82e56b3142d6afb12834792fb8a83a&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 373,
-                    &quot;name&quot;: &quot;Cassie Orn&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 3,
-                &quot;letter_id&quot;: 3,
-                &quot;user_id&quot;: 167,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: &quot;Velit accusantium minus nihil.&quot;,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 3,
-                    &quot;letter_number&quot;: &quot;5514fc9e-aa2b-4728-923a-83157235a8b0&quot;,
-                    &quot;original_sender_id&quot;: 261,
-                    &quot;sender_id&quot;: 261,
-                    &quot;receiver_id&quot;: 419,
-                    &quot;type&quot;: &quot;close_university&quot;,
-                    &quot;title&quot;: &quot;Quis aliquam aut quisquam ab magnam nihil ullam.&quot;,
-                    &quot;body&quot;: &quot;Explicabo a maiores aperiam excepturi rerum sequi. Ipsa officiis corrupti recusandae possimus. Vel qui nostrum repudiandae animi fugit. Ipsam repellat facilis aut ea dolor sunt qui voluptatem.\n\nAut provident tempora et cupiditate vero eaque. Iusto veritatis impedit velit ipsa aut. Earum fugit maiores amet quasi ut et. Rerum laboriosam non labore eos architecto est et.\n\nNihil aut omnis soluta delectus eum. Impedit consequatur et ut aut. Sunt sed consequatur architecto qui culpa quam.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;pending&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;84d37a3d56bc78053d3d24b3fcd45fad54dadee03eee68f047c7909bc81bb109&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 167,
-                    &quot;name&quot;: &quot;Mr. Alfonzo Hamill&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 4,
-                &quot;letter_id&quot;: 3,
-                &quot;user_id&quot;: 169,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: &quot;Quam impedit quisquam eius odit et hic qui.&quot;,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 3,
-                    &quot;letter_number&quot;: &quot;5514fc9e-aa2b-4728-923a-83157235a8b0&quot;,
-                    &quot;original_sender_id&quot;: 261,
-                    &quot;sender_id&quot;: 261,
-                    &quot;receiver_id&quot;: 419,
-                    &quot;type&quot;: &quot;close_university&quot;,
-                    &quot;title&quot;: &quot;Quis aliquam aut quisquam ab magnam nihil ullam.&quot;,
-                    &quot;body&quot;: &quot;Explicabo a maiores aperiam excepturi rerum sequi. Ipsa officiis corrupti recusandae possimus. Vel qui nostrum repudiandae animi fugit. Ipsam repellat facilis aut ea dolor sunt qui voluptatem.\n\nAut provident tempora et cupiditate vero eaque. Iusto veritatis impedit velit ipsa aut. Earum fugit maiores amet quasi ut et. Rerum laboriosam non labore eos architecto est et.\n\nNihil aut omnis soluta delectus eum. Impedit consequatur et ut aut. Sunt sed consequatur architecto qui culpa quam.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;pending&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;84d37a3d56bc78053d3d24b3fcd45fad54dadee03eee68f047c7909bc81bb109&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 169,
-                    &quot;name&quot;: &quot;Alejandrin Jones&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 5,
-                &quot;letter_id&quot;: 4,
-                &quot;user_id&quot;: 32,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: null,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 4,
-                    &quot;letter_number&quot;: &quot;f2177176-84fd-4638-b089-25e79e4d5196&quot;,
-                    &quot;original_sender_id&quot;: 415,
-                    &quot;sender_id&quot;: 415,
-                    &quot;receiver_id&quot;: 170,
-                    &quot;type&quot;: &quot;close_university&quot;,
-                    &quot;title&quot;: &quot;Et quia fugiat quia in.&quot;,
-                    &quot;body&quot;: &quot;Amet accusantium officia qui impedit autem. Inventore aut dolores ad recusandae fugiat. Nisi commodi nihil est eos consequatur. Eum quis exercitationem maxime sequi.\n\nConsequatur nisi ut est numquam aut ut et. Saepe voluptatibus omnis doloribus soluta. Quas omnis delectus eius ut. Nisi non aut eos rerum dolor.\n\nNon asperiores aut similique autem ut aut. Commodi ea at est consequuntur corrupti inventore nihil. Iste asperiores qui fuga quo animi. Omnis ut sunt sint aperiam temporibus.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;pending&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;e1c4ce2eeb68a61b999a0a3de132c038b309c15852f7f20ed94be13cc8f211df&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 32,
-                    &quot;name&quot;: &quot;Prof. Raoul Hyatt&quot;
-                }
-            },
-            {
-                &quot;id&quot;: 6,
-                &quot;letter_id&quot;: 4,
-                &quot;user_id&quot;: 37,
-                &quot;role_at_time&quot;: null,
-                &quot;comment&quot;: null,
-                &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                &quot;letter&quot;: {
-                    &quot;id&quot;: 4,
-                    &quot;letter_number&quot;: &quot;f2177176-84fd-4638-b089-25e79e4d5196&quot;,
-                    &quot;original_sender_id&quot;: 415,
-                    &quot;sender_id&quot;: 415,
-                    &quot;receiver_id&quot;: 170,
-                    &quot;type&quot;: &quot;close_university&quot;,
-                    &quot;title&quot;: &quot;Et quia fugiat quia in.&quot;,
-                    &quot;body&quot;: &quot;Amet accusantium officia qui impedit autem. Inventore aut dolores ad recusandae fugiat. Nisi commodi nihil est eos consequatur. Eum quis exercitationem maxime sequi.\n\nConsequatur nisi ut est numquam aut ut et. Saepe voluptatibus omnis doloribus soluta. Quas omnis delectus eius ut. Nisi non aut eos rerum dolor.\n\nNon asperiores aut similique autem ut aut. Commodi ea at est consequuntur corrupti inventore nihil. Iste asperiores qui fuga quo animi. Omnis ut sunt sint aperiam temporibus.&quot;,
-                    &quot;is_read&quot;: 0,
-                    &quot;academic_year_id&quot;: 1,
-                    &quot;is_archived&quot;: 0,
-                    &quot;status&quot;: &quot;pending&quot;,
-                    &quot;qr_code_path&quot;: null,
-                    &quot;letter_uuid&quot;: null,
-                    &quot;verification_hash&quot;: &quot;e1c4ce2eeb68a61b999a0a3de132c038b309c15852f7f20ed94be13cc8f211df&quot;,
-                    &quot;created_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;updated_at&quot;: &quot;2026-07-07T15:13:00.000000Z&quot;,
-                    &quot;payload&quot;: null,
-                    &quot;executed_at&quot;: null
-                },
-                &quot;user&quot;: {
-                    &quot;id&quot;: 37,
-                    &quot;name&quot;: &quot;Blair Hirthe&quot;
-                }
-            }
-        ],
-        &quot;links&quot;: {
-            &quot;first&quot;: &quot;http://localhost:8000/api/signatures?page=1&quot;,
-            &quot;last&quot;: &quot;http://localhost:8000/api/signatures?page=4&quot;,
-            &quot;prev&quot;: null,
-            &quot;next&quot;: &quot;http://localhost:8000/api/signatures?page=2&quot;
-        },
-        &quot;meta&quot;: {
-            &quot;current_page&quot;: 1,
-            &quot;from&quot;: 1,
-            &quot;last_page&quot;: 4,
-            &quot;links&quot;: [
-                {
-                    &quot;url&quot;: null,
-                    &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                    &quot;page&quot;: null,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=1&quot;,
-                    &quot;label&quot;: &quot;1&quot;,
-                    &quot;page&quot;: 1,
-                    &quot;active&quot;: true
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=2&quot;,
-                    &quot;label&quot;: &quot;2&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=3&quot;,
-                    &quot;label&quot;: &quot;3&quot;,
-                    &quot;page&quot;: 3,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=4&quot;,
-                    &quot;label&quot;: &quot;4&quot;,
-                    &quot;page&quot;: 4,
-                    &quot;active&quot;: false
-                },
-                {
-                    &quot;url&quot;: &quot;http://localhost:8000/api/signatures?page=2&quot;,
-                    &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                    &quot;page&quot;: 2,
-                    &quot;active&quot;: false
-                }
-            ],
-            &quot;path&quot;: &quot;http://localhost:8000/api/signatures&quot;,
-            &quot;per_page&quot;: 15,
-            &quot;to&quot;: 15,
-            &quot;total&quot;: 49
-        }
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -19752,7 +17152,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/users" \
+    --get "http://localhost/api/users" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -19760,7 +17160,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users"
+    "http://localhost/api/users"
 );
 
 const headers = {
@@ -19779,7 +17179,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -19791,260 +17191,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Users retrieved successfully.&quot;,
-    &quot;data&quot;: [
-        {
-            &quot;id&quot;: 489,
-            &quot;name&quot;: &quot;Student&quot;,
-            &quot;email&quot;: &quot;student@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 11,
-                    &quot;name&quot;: &quot;student&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 489,
-                    &quot;role_id&quot;: 11,
-                    &quot;role_name&quot;: &quot;student&quot;,
-                    &quot;scope_type&quot;: &quot;DEPARTMENT&quot;,
-                    &quot;scope_id&quot;: 19
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:04.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:04.000000Z&quot;
-        },
-        {
-            &quot;id&quot;: 490,
-            &quot;name&quot;: &quot;High School Graduate&quot;,
-            &quot;email&quot;: &quot;HIGH.SCHOOL.GRADUATE@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 12,
-                    &quot;name&quot;: &quot;HIGH_SCHOOL_GRADUATE&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 490,
-                    &quot;role_id&quot;: 12,
-                    &quot;role_name&quot;: &quot;HIGH_SCHOOL_GRADUATE&quot;,
-                    &quot;scope_type&quot;: &quot;MINISTRY&quot;,
-                    &quot;scope_id&quot;: null
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:04.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:04.000000Z&quot;
-        },
-        {
-            &quot;id&quot;: 485,
-            &quot;name&quot;: &quot;University Admin Science&quot;,
-            &quot;email&quot;: &quot;UNIVERSITY.ADMIN.SCIENCE@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 7,
-                    &quot;name&quot;: &quot;UNIVERSITY_ADMIN_SCIENCE&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 485,
-                    &quot;role_id&quot;: 7,
-                    &quot;role_name&quot;: &quot;UNIVERSITY_ADMIN_SCIENCE&quot;,
-                    &quot;scope_type&quot;: &quot;UNIVERSITY&quot;,
-                    &quot;scope_id&quot;: 4
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;
-        },
-        {
-            &quot;id&quot;: 486,
-            &quot;name&quot;: &quot;Dean&quot;,
-            &quot;email&quot;: &quot;DEAN@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 8,
-                    &quot;name&quot;: &quot;DEAN&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 486,
-                    &quot;role_id&quot;: 8,
-                    &quot;role_name&quot;: &quot;DEAN&quot;,
-                    &quot;scope_type&quot;: &quot;FACULTY&quot;,
-                    &quot;scope_id&quot;: 7
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;
-        },
-        {
-            &quot;id&quot;: 487,
-            &quot;name&quot;: &quot;Head of Department&quot;,
-            &quot;email&quot;: &quot;HEAD.OF.DEPARTMENT@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 9,
-                    &quot;name&quot;: &quot;HEAD_OF_DEPARTMENT&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 487,
-                    &quot;role_id&quot;: 9,
-                    &quot;role_name&quot;: &quot;HEAD_OF_DEPARTMENT&quot;,
-                    &quot;scope_type&quot;: &quot;DEPARTMENT&quot;,
-                    &quot;scope_id&quot;: 19
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;
-        },
-        {
-            &quot;id&quot;: 488,
-            &quot;name&quot;: &quot;Lecturer&quot;,
-            &quot;email&quot;: &quot;lecturer@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 10,
-                    &quot;name&quot;: &quot;lecturer&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 488,
-                    &quot;role_id&quot;: 10,
-                    &quot;role_name&quot;: &quot;lecturer&quot;,
-                    &quot;scope_type&quot;: &quot;DEPARTMENT&quot;,
-                    &quot;scope_id&quot;: 19
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:03.000000Z&quot;
-        },
-        {
-            &quot;id&quot;: 482,
-            &quot;name&quot;: &quot;University Admin&quot;,
-            &quot;email&quot;: &quot;UNIVERSITY.ADMIN@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 4,
-                    &quot;name&quot;: &quot;UNIVERSITY_ADMIN&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 482,
-                    &quot;role_id&quot;: 4,
-                    &quot;role_name&quot;: &quot;UNIVERSITY_ADMIN&quot;,
-                    &quot;scope_type&quot;: &quot;UNIVERSITY&quot;,
-                    &quot;scope_id&quot;: 4
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;
-        },
-        {
-            &quot;id&quot;: 483,
-            &quot;name&quot;: &quot;University Admin Administration&quot;,
-            &quot;email&quot;: &quot;UNIVERSITY.ADMIN.ADMINISTRATION@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 5,
-                    &quot;name&quot;: &quot;UNIVERSITY_ADMIN_ADMINISTRATION&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 483,
-                    &quot;role_id&quot;: 5,
-                    &quot;role_name&quot;: &quot;UNIVERSITY_ADMIN_ADMINISTRATION&quot;,
-                    &quot;scope_type&quot;: &quot;UNIVERSITY&quot;,
-                    &quot;scope_id&quot;: 4
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;
-        },
-        {
-            &quot;id&quot;: 484,
-            &quot;name&quot;: &quot;University Admin Students&quot;,
-            &quot;email&quot;: &quot;UNIVERSITY.ADMIN.STUDENTS@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 6,
-                    &quot;name&quot;: &quot;UNIVERSITY_ADMIN_STUDENTS&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 484,
-                    &quot;role_id&quot;: 6,
-                    &quot;role_name&quot;: &quot;UNIVERSITY_ADMIN_STUDENTS&quot;,
-                    &quot;scope_type&quot;: &quot;UNIVERSITY&quot;,
-                    &quot;scope_id&quot;: 4
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:02.000000Z&quot;
-        },
-        {
-            &quot;id&quot;: 479,
-            &quot;name&quot;: &quot;Ministry Admin&quot;,
-            &quot;email&quot;: &quot;MINISTRY.ADMIN@zankolink.test&quot;,
-            &quot;phone&quot;: &quot;07700000000&quot;,
-            &quot;is_active&quot;: 1,
-            &quot;is_two_factor_enabled&quot;: 0,
-            &quot;roles&quot;: [
-                {
-                    &quot;id&quot;: 1,
-                    &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;
-                }
-            ],
-            &quot;scopes&quot;: [
-                {
-                    &quot;user_scope_id&quot;: 479,
-                    &quot;role_id&quot;: 1,
-                    &quot;role_name&quot;: &quot;MINISTRY_ADMIN&quot;,
-                    &quot;scope_type&quot;: &quot;MINISTRY&quot;,
-                    &quot;scope_id&quot;: null
-                }
-            ],
-            &quot;created_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;,
-            &quot;updated_at&quot;: &quot;2026-07-07T15:13:01.000000Z&quot;
-        }
-    ]
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -20147,7 +17294,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/users/superior-roles" \
+    --get "http://localhost/api/users/superior-roles" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -20155,7 +17302,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/superior-roles"
+    "http://localhost/api/users/superior-roles"
 );
 
 const headers = {
@@ -20174,7 +17321,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users-superior-roles">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -20186,25 +17333,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Higher Role Users retrieved successfully&quot;,
-    &quot;data&quot;: [
-        {
-            &quot;user_id&quot;: 479,
-            &quot;name&quot;: &quot;Ministry Admin&quot;,
-            &quot;role&quot;: &quot;MINISTRY_ADMIN&quot;
-        },
-        {
-            &quot;user_id&quot;: 481,
-            &quot;name&quot;: &quot;Ministry Administration Head&quot;,
-            &quot;role&quot;: &quot;MINISTRY_ADMINISTRATION_HEAD&quot;
-        },
-        {
-            &quot;user_id&quot;: 480,
-            &quot;name&quot;: &quot;Ministry Import Export Staff&quot;,
-            &quot;role&quot;: &quot;MINISTRY_IMPORT_EXPORT_STAFF&quot;
-        }
-    ]
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -20307,7 +17436,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/users/same-level" \
+    --get "http://localhost/api/users/same-level" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -20315,7 +17444,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/same-level"
+    "http://localhost/api/users/same-level"
 );
 
 const headers = {
@@ -20334,7 +17463,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users-same-level">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -20346,37 +17475,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;same roles retrieved successfully&quot;,
-    &quot;data&quot;: [
-        {
-            &quot;user_id&quot;: 479,
-            &quot;name&quot;: &quot;Ministry Admin&quot;,
-            &quot;email&quot;: &quot;MINISTRY.ADMIN@zankolink.test&quot;,
-            &quot;role_id&quot;: 1,
-            &quot;role&quot;: &quot;MINISTRY_ADMIN&quot;,
-            &quot;scope_type&quot;: &quot;MINISTRY&quot;,
-            &quot;scope_id&quot;: null
-        },
-        {
-            &quot;user_id&quot;: 481,
-            &quot;name&quot;: &quot;Ministry Administration Head&quot;,
-            &quot;email&quot;: &quot;MINISTRY.ADMINISTRATION.HEAD@zankolink.test&quot;,
-            &quot;role_id&quot;: 3,
-            &quot;role&quot;: &quot;MINISTRY_ADMINISTRATION_HEAD&quot;,
-            &quot;scope_type&quot;: &quot;MINISTRY&quot;,
-            &quot;scope_id&quot;: null
-        },
-        {
-            &quot;user_id&quot;: 480,
-            &quot;name&quot;: &quot;Ministry Import Export Staff&quot;,
-            &quot;email&quot;: &quot;MINISTRY.IMPORT.EXPORT.STAFF@zankolink.test&quot;,
-            &quot;role_id&quot;: 2,
-            &quot;role&quot;: &quot;MINISTRY_IMPORT_EXPORT_STAFF&quot;,
-            &quot;scope_type&quot;: &quot;MINISTRY&quot;,
-            &quot;scope_id&quot;: null
-        }
-    ]
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -20479,7 +17578,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/users/1" \
+    --get "http://localhost/api/users/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -20487,7 +17586,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/1"
+    "http://localhost/api/users/1"
 );
 
 const headers = {
@@ -20506,7 +17605,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users--user_id-">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -20518,33 +17617,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;User retrieved successfully.&quot;,
-    &quot;data&quot;: {
-        &quot;id&quot;: 1,
-        &quot;name&quot;: &quot;Albin Herzog IV&quot;,
-        &quot;email&quot;: &quot;admin@ministry.gov&quot;,
-        &quot;phone&quot;: &quot;07701234567&quot;,
-        &quot;is_active&quot;: 1,
-        &quot;is_two_factor_enabled&quot;: 0,
-        &quot;roles&quot;: [
-            {
-                &quot;id&quot;: 1,
-                &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;
-            }
-        ],
-        &quot;scopes&quot;: [
-            {
-                &quot;user_scope_id&quot;: 1,
-                &quot;role_id&quot;: 1,
-                &quot;role_name&quot;: &quot;MINISTRY_ADMIN&quot;,
-                &quot;scope_type&quot;: &quot;MINISTRY&quot;,
-                &quot;scope_id&quot;: null
-            }
-        ],
-        &quot;created_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;,
-        &quot;updated_at&quot;: &quot;2026-07-07T15:12:49.000000Z&quot;
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -20660,7 +17733,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PATCH \
-    "http://localhost:8000/api/users/1" \
+    "http://localhost/api/users/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -20673,7 +17746,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/1"
+    "http://localhost/api/users/1"
 );
 
 const headers = {
@@ -20834,7 +17907,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/users/1/activate" \
+    "http://localhost/api/users/1/activate" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -20842,7 +17915,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/1/activate"
+    "http://localhost/api/users/1/activate"
 );
 
 const headers = {
@@ -20973,7 +18046,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/users/1/deactivate" \
+    "http://localhost/api/users/1/deactivate" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -20981,7 +18054,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/1/deactivate"
+    "http://localhost/api/users/1/deactivate"
 );
 
 const headers = {
@@ -21112,7 +18185,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/roles" \
+    --get "http://localhost/api/roles" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -21120,7 +18193,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/roles"
+    "http://localhost/api/roles"
 );
 
 const headers = {
@@ -21139,7 +18212,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-roles">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -21151,348 +18224,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Roles retrieved successfully.&quot;,
-    &quot;data&quot;: [
-        {
-            &quot;id&quot;: 1,
-            &quot;name&quot;: &quot;MINISTRY_ADMIN&quot;,
-            &quot;permissions&quot;: [
-                &quot;view letter broadcast&quot;,
-                &quot;create letter broadcast&quot;,
-                &quot;view universities&quot;,
-                &quot;view university&quot;,
-                &quot;create universities&quot;,
-                &quot;update universities&quot;,
-                &quot;delete universities&quot;,
-                &quot;view faculties&quot;,
-                &quot;view faculty&quot;,
-                &quot;create faculties&quot;,
-                &quot;update faculties&quot;,
-                &quot;delete faculties&quot;,
-                &quot;view departments&quot;,
-                &quot;view department&quot;,
-                &quot;create departments&quot;,
-                &quot;update departments&quot;,
-                &quot;delete departments&quot;,
-                &quot;update department seats&quot;,
-                &quot;view users&quot;,
-                &quot;view user&quot;,
-                &quot;create users&quot;,
-                &quot;update users&quot;,
-                &quot;delete users&quot;,
-                &quot;activate users&quot;,
-                &quot;deactivate users&quot;,
-                &quot;view teachers&quot;,
-                &quot;view teacher&quot;,
-                &quot;create teachers&quot;,
-                &quot;update teachers&quot;,
-                &quot;delete teachers&quot;,
-                &quot;assign teachers&quot;,
-                &quot;unassign teachers&quot;,
-                &quot;view students&quot;,
-                &quot;create students&quot;,
-                &quot;update students&quot;,
-                &quot;delete students&quot;,
-                &quot;view courses&quot;,
-                &quot;create courses&quot;,
-                &quot;update courses&quot;,
-                &quot;delete courses&quot;,
-                &quot;assign course teachers&quot;,
-                &quot;view course teachers&quot;,
-                &quot;update course teachers&quot;,
-                &quot;delete course teachers&quot;,
-                &quot;assign course students&quot;,
-                &quot;view course students&quot;,
-                &quot;update course students&quot;,
-                &quot;delete course students&quot;,
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;update letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;approve letters&quot;,
-                &quot;decline letters&quot;,
-                &quot;forward letters&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;,
-                &quot;delete attachments&quot;,
-                &quot;view signatures&quot;,
-                &quot;create signatures&quot;,
-                &quot;view reports&quot;,
-                &quot;update academic year&quot;,
-                &quot;create stamps&quot;,
-                &quot;view stamps&quot;,
-                &quot;view roles&quot;,
-                &quot;create roles&quot;,
-                &quot;update roles&quot;,
-                &quot;delete roles&quot;,
-                &quot;view permissions&quot;,
-                &quot;view user roles&quot;,
-                &quot;create user roles&quot;,
-                &quot;delete user roles&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 2,
-            &quot;name&quot;: &quot;MINISTRY_IMPORT_EXPORT_STAFF&quot;,
-            &quot;permissions&quot;: [
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;,
-                &quot;view signatures&quot;,
-                &quot;create signatures&quot;,
-                &quot;create stamps&quot;,
-                &quot;view stamps&quot;,
-                &quot;approve letters&quot;,
-                &quot;decline letters&quot;,
-                &quot;forward letters&quot;,
-                &quot;view letter broadcast&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 3,
-            &quot;name&quot;: &quot;MINISTRY_ADMINISTRATION_HEAD&quot;,
-            &quot;permissions&quot;: [
-                &quot;view letters&quot;,
-                &quot;update letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;create letters&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;,
-                &quot;view signatures&quot;,
-                &quot;create signatures&quot;,
-                &quot;create stamps&quot;,
-                &quot;view stamps&quot;,
-                &quot;view reports&quot;,
-                &quot;forward letters&quot;,
-                &quot;view letter broadcast&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 4,
-            &quot;name&quot;: &quot;UNIVERSITY_ADMIN&quot;,
-            &quot;permissions&quot;: [
-                &quot;view university&quot;,
-                &quot;view faculties&quot;,
-                &quot;view faculty&quot;,
-                &quot;create faculties&quot;,
-                &quot;update faculties&quot;,
-                &quot;view departments&quot;,
-                &quot;view department&quot;,
-                &quot;create departments&quot;,
-                &quot;update departments&quot;,
-                &quot;view users&quot;,
-                &quot;create users&quot;,
-                &quot;update users&quot;,
-                &quot;activate users&quot;,
-                &quot;deactivate users&quot;,
-                &quot;view teachers&quot;,
-                &quot;view students&quot;,
-                &quot;view courses&quot;,
-                &quot;view reports&quot;,
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;approve letters&quot;,
-                &quot;decline letters&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;,
-                &quot;create stamps&quot;,
-                &quot;view stamps&quot;,
-                &quot;view signatures&quot;,
-                &quot;create signatures&quot;,
-                &quot;forward letters&quot;,
-                &quot;view letter broadcast&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 5,
-            &quot;name&quot;: &quot;UNIVERSITY_ADMIN_ADMINISTRATION&quot;,
-            &quot;permissions&quot;: [
-                &quot;view university&quot;,
-                &quot;view faculties&quot;,
-                &quot;view faculty&quot;,
-                &quot;view departments&quot;,
-                &quot;view users&quot;,
-                &quot;view teachers&quot;,
-                &quot;view students&quot;,
-                &quot;view courses&quot;,
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;approve letters&quot;,
-                &quot;decline letters&quot;,
-                &quot;create signatures&quot;,
-                &quot;view signatures&quot;,
-                &quot;create stamps&quot;,
-                &quot;view stamps&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;,
-                &quot;forward letters&quot;,
-                &quot;view letter broadcast&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 6,
-            &quot;name&quot;: &quot;UNIVERSITY_ADMIN_STUDENTS&quot;,
-            &quot;permissions&quot;: [
-                &quot;view university&quot;,
-                &quot;view faculties&quot;,
-                &quot;view faculty&quot;,
-                &quot;view departments&quot;,
-                &quot;view users&quot;,
-                &quot;view teachers&quot;,
-                &quot;view students&quot;,
-                &quot;view courses&quot;,
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;approve letters&quot;,
-                &quot;decline letters&quot;,
-                &quot;create signatures&quot;,
-                &quot;view signatures&quot;,
-                &quot;create stamps&quot;,
-                &quot;view stamps&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;,
-                &quot;forward letters&quot;,
-                &quot;view letter broadcast&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 7,
-            &quot;name&quot;: &quot;UNIVERSITY_ADMIN_SCIENCE&quot;,
-            &quot;permissions&quot;: [
-                &quot;view university&quot;,
-                &quot;view faculties&quot;,
-                &quot;view faculty&quot;,
-                &quot;view departments&quot;,
-                &quot;view users&quot;,
-                &quot;view teachers&quot;,
-                &quot;view students&quot;,
-                &quot;view courses&quot;,
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;approve letters&quot;,
-                &quot;decline letters&quot;,
-                &quot;create signatures&quot;,
-                &quot;view signatures&quot;,
-                &quot;create stamps&quot;,
-                &quot;view stamps&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;,
-                &quot;forward letters&quot;,
-                &quot;view letter broadcast&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 8,
-            &quot;name&quot;: &quot;DEAN&quot;,
-            &quot;permissions&quot;: [
-                &quot;view university&quot;,
-                &quot;view faculty&quot;,
-                &quot;view departments&quot;,
-                &quot;create departments&quot;,
-                &quot;update departments&quot;,
-                &quot;view teachers&quot;,
-                &quot;view teacher&quot;,
-                &quot;create teachers&quot;,
-                &quot;update teachers&quot;,
-                &quot;assign teachers&quot;,
-                &quot;view students&quot;,
-                &quot;view courses&quot;,
-                &quot;create courses&quot;,
-                &quot;update courses&quot;,
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;approve letters&quot;,
-                &quot;decline letters&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;,
-                &quot;create stamps&quot;,
-                &quot;view stamps&quot;,
-                &quot;view signatures&quot;,
-                &quot;create signatures&quot;,
-                &quot;view reports&quot;,
-                &quot;forward letters&quot;,
-                &quot;view letter broadcast&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 9,
-            &quot;name&quot;: &quot;HEAD_OF_DEPARTMENT&quot;,
-            &quot;permissions&quot;: [
-                &quot;view department&quot;,
-                &quot;view faculty&quot;,
-                &quot;view university&quot;,
-                &quot;view teachers&quot;,
-                &quot;view teacher&quot;,
-                &quot;assign teachers&quot;,
-                &quot;unassign teachers&quot;,
-                &quot;view students&quot;,
-                &quot;view courses&quot;,
-                &quot;create courses&quot;,
-                &quot;update courses&quot;,
-                &quot;assign course teachers&quot;,
-                &quot;view course teachers&quot;,
-                &quot;update course teachers&quot;,
-                &quot;delete course teachers&quot;,
-                &quot;update department seats&quot;,
-                &quot;assign course students&quot;,
-                &quot;view course students&quot;,
-                &quot;create stamps&quot;,
-                &quot;view stamps&quot;,
-                &quot;view signatures&quot;,
-                &quot;create signatures&quot;,
-                &quot;update course students&quot;,
-                &quot;delete course students&quot;,
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;approve letters&quot;,
-                &quot;decline letters&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;,
-                &quot;forward letters&quot;,
-                &quot;view letter broadcast&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 10,
-            &quot;name&quot;: &quot;lecturer&quot;,
-            &quot;permissions&quot;: [
-                &quot;view courses&quot;,
-                &quot;view students&quot;,
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;raise letters&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 11,
-            &quot;name&quot;: &quot;student&quot;,
-            &quot;permissions&quot;: [
-                &quot;view courses&quot;,
-                &quot;view letters&quot;,
-                &quot;create letters&quot;,
-                &quot;upload attachments&quot;,
-                &quot;download attachments&quot;
-            ]
-        },
-        {
-            &quot;id&quot;: 12,
-            &quot;name&quot;: &quot;HIGH_SCHOOL_GRADUATE&quot;,
-            &quot;permissions&quot;: [
-                &quot;view departments&quot;
-            ]
-        }
-    ]
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -21595,7 +18327,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/roles" \
+    "http://localhost/api/roles" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -21610,7 +18342,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/roles"
+    "http://localhost/api/roles"
 );
 
 const headers = {
@@ -21762,7 +18494,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/roles/1" \
+    "http://localhost/api/roles/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -21777,7 +18509,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/roles/1"
+    "http://localhost/api/roles/1"
 );
 
 const headers = {
@@ -21942,7 +18674,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/roles/1" \
+    "http://localhost/api/roles/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -21950,7 +18682,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/roles/1"
+    "http://localhost/api/roles/1"
 );
 
 const headers = {
@@ -22081,7 +18813,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/permissions" \
+    --get "http://localhost/api/permissions" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -22089,7 +18821,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/permissions"
+    "http://localhost/api/permissions"
 );
 
 const headers = {
@@ -22108,7 +18840,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-permissions">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -22120,298 +18852,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Permissions retrieved successfully.&quot;,
-    &quot;data&quot;: [
-        {
-            &quot;id&quot;: 24,
-            &quot;name&quot;: &quot;activate users&quot;
-        },
-        {
-            &quot;id&quot;: 53,
-            &quot;name&quot;: &quot;approve letters&quot;
-        },
-        {
-            &quot;id&quot;: 45,
-            &quot;name&quot;: &quot;assign course students&quot;
-        },
-        {
-            &quot;id&quot;: 41,
-            &quot;name&quot;: &quot;assign course teachers&quot;
-        },
-        {
-            &quot;id&quot;: 31,
-            &quot;name&quot;: &quot;assign teachers&quot;
-        },
-        {
-            &quot;id&quot;: 38,
-            &quot;name&quot;: &quot;create courses&quot;
-        },
-        {
-            &quot;id&quot;: 15,
-            &quot;name&quot;: &quot;create departments&quot;
-        },
-        {
-            &quot;id&quot;: 10,
-            &quot;name&quot;: &quot;create faculties&quot;
-        },
-        {
-            &quot;id&quot;: 2,
-            &quot;name&quot;: &quot;create letter broadcast&quot;
-        },
-        {
-            &quot;id&quot;: 50,
-            &quot;name&quot;: &quot;create letters&quot;
-        },
-        {
-            &quot;id&quot;: 66,
-            &quot;name&quot;: &quot;create roles&quot;
-        },
-        {
-            &quot;id&quot;: 60,
-            &quot;name&quot;: &quot;create signatures&quot;
-        },
-        {
-            &quot;id&quot;: 63,
-            &quot;name&quot;: &quot;create stamps&quot;
-        },
-        {
-            &quot;id&quot;: 34,
-            &quot;name&quot;: &quot;create students&quot;
-        },
-        {
-            &quot;id&quot;: 28,
-            &quot;name&quot;: &quot;create teachers&quot;
-        },
-        {
-            &quot;id&quot;: 5,
-            &quot;name&quot;: &quot;create universities&quot;
-        },
-        {
-            &quot;id&quot;: 71,
-            &quot;name&quot;: &quot;create user roles&quot;
-        },
-        {
-            &quot;id&quot;: 21,
-            &quot;name&quot;: &quot;create users&quot;
-        },
-        {
-            &quot;id&quot;: 25,
-            &quot;name&quot;: &quot;deactivate users&quot;
-        },
-        {
-            &quot;id&quot;: 54,
-            &quot;name&quot;: &quot;decline letters&quot;
-        },
-        {
-            &quot;id&quot;: 58,
-            &quot;name&quot;: &quot;delete attachments&quot;
-        },
-        {
-            &quot;id&quot;: 48,
-            &quot;name&quot;: &quot;delete course students&quot;
-        },
-        {
-            &quot;id&quot;: 44,
-            &quot;name&quot;: &quot;delete course teachers&quot;
-        },
-        {
-            &quot;id&quot;: 40,
-            &quot;name&quot;: &quot;delete courses&quot;
-        },
-        {
-            &quot;id&quot;: 17,
-            &quot;name&quot;: &quot;delete departments&quot;
-        },
-        {
-            &quot;id&quot;: 12,
-            &quot;name&quot;: &quot;delete faculties&quot;
-        },
-        {
-            &quot;id&quot;: 68,
-            &quot;name&quot;: &quot;delete roles&quot;
-        },
-        {
-            &quot;id&quot;: 36,
-            &quot;name&quot;: &quot;delete students&quot;
-        },
-        {
-            &quot;id&quot;: 30,
-            &quot;name&quot;: &quot;delete teachers&quot;
-        },
-        {
-            &quot;id&quot;: 7,
-            &quot;name&quot;: &quot;delete universities&quot;
-        },
-        {
-            &quot;id&quot;: 72,
-            &quot;name&quot;: &quot;delete user roles&quot;
-        },
-        {
-            &quot;id&quot;: 23,
-            &quot;name&quot;: &quot;delete users&quot;
-        },
-        {
-            &quot;id&quot;: 57,
-            &quot;name&quot;: &quot;download attachments&quot;
-        },
-        {
-            &quot;id&quot;: 55,
-            &quot;name&quot;: &quot;forward letters&quot;
-        },
-        {
-            &quot;id&quot;: 52,
-            &quot;name&quot;: &quot;raise letters&quot;
-        },
-        {
-            &quot;id&quot;: 32,
-            &quot;name&quot;: &quot;unassign teachers&quot;
-        },
-        {
-            &quot;id&quot;: 62,
-            &quot;name&quot;: &quot;update academic year&quot;
-        },
-        {
-            &quot;id&quot;: 47,
-            &quot;name&quot;: &quot;update course students&quot;
-        },
-        {
-            &quot;id&quot;: 43,
-            &quot;name&quot;: &quot;update course teachers&quot;
-        },
-        {
-            &quot;id&quot;: 39,
-            &quot;name&quot;: &quot;update courses&quot;
-        },
-        {
-            &quot;id&quot;: 18,
-            &quot;name&quot;: &quot;update department seats&quot;
-        },
-        {
-            &quot;id&quot;: 16,
-            &quot;name&quot;: &quot;update departments&quot;
-        },
-        {
-            &quot;id&quot;: 11,
-            &quot;name&quot;: &quot;update faculties&quot;
-        },
-        {
-            &quot;id&quot;: 51,
-            &quot;name&quot;: &quot;update letters&quot;
-        },
-        {
-            &quot;id&quot;: 67,
-            &quot;name&quot;: &quot;update roles&quot;
-        },
-        {
-            &quot;id&quot;: 35,
-            &quot;name&quot;: &quot;update students&quot;
-        },
-        {
-            &quot;id&quot;: 29,
-            &quot;name&quot;: &quot;update teachers&quot;
-        },
-        {
-            &quot;id&quot;: 6,
-            &quot;name&quot;: &quot;update universities&quot;
-        },
-        {
-            &quot;id&quot;: 22,
-            &quot;name&quot;: &quot;update users&quot;
-        },
-        {
-            &quot;id&quot;: 56,
-            &quot;name&quot;: &quot;upload attachments&quot;
-        },
-        {
-            &quot;id&quot;: 46,
-            &quot;name&quot;: &quot;view course students&quot;
-        },
-        {
-            &quot;id&quot;: 42,
-            &quot;name&quot;: &quot;view course teachers&quot;
-        },
-        {
-            &quot;id&quot;: 37,
-            &quot;name&quot;: &quot;view courses&quot;
-        },
-        {
-            &quot;id&quot;: 14,
-            &quot;name&quot;: &quot;view department&quot;
-        },
-        {
-            &quot;id&quot;: 13,
-            &quot;name&quot;: &quot;view departments&quot;
-        },
-        {
-            &quot;id&quot;: 8,
-            &quot;name&quot;: &quot;view faculties&quot;
-        },
-        {
-            &quot;id&quot;: 9,
-            &quot;name&quot;: &quot;view faculty&quot;
-        },
-        {
-            &quot;id&quot;: 1,
-            &quot;name&quot;: &quot;view letter broadcast&quot;
-        },
-        {
-            &quot;id&quot;: 49,
-            &quot;name&quot;: &quot;view letters&quot;
-        },
-        {
-            &quot;id&quot;: 69,
-            &quot;name&quot;: &quot;view permissions&quot;
-        },
-        {
-            &quot;id&quot;: 61,
-            &quot;name&quot;: &quot;view reports&quot;
-        },
-        {
-            &quot;id&quot;: 65,
-            &quot;name&quot;: &quot;view roles&quot;
-        },
-        {
-            &quot;id&quot;: 59,
-            &quot;name&quot;: &quot;view signatures&quot;
-        },
-        {
-            &quot;id&quot;: 64,
-            &quot;name&quot;: &quot;view stamps&quot;
-        },
-        {
-            &quot;id&quot;: 33,
-            &quot;name&quot;: &quot;view students&quot;
-        },
-        {
-            &quot;id&quot;: 27,
-            &quot;name&quot;: &quot;view teacher&quot;
-        },
-        {
-            &quot;id&quot;: 26,
-            &quot;name&quot;: &quot;view teachers&quot;
-        },
-        {
-            &quot;id&quot;: 3,
-            &quot;name&quot;: &quot;view universities&quot;
-        },
-        {
-            &quot;id&quot;: 4,
-            &quot;name&quot;: &quot;view university&quot;
-        },
-        {
-            &quot;id&quot;: 20,
-            &quot;name&quot;: &quot;view user&quot;
-        },
-        {
-            &quot;id&quot;: 70,
-            &quot;name&quot;: &quot;view user roles&quot;
-        },
-        {
-            &quot;id&quot;: 19,
-            &quot;name&quot;: &quot;view users&quot;
-        }
-    ]
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -22514,7 +18955,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/users/1/roles" \
+    --get "http://localhost/api/users/1/roles" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -22522,7 +18963,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/1/roles"
+    "http://localhost/api/users/1/roles"
 );
 
 const headers = {
@@ -22541,7 +18982,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-users--user_id--roles">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -22553,17 +18994,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;User roles retrieved successfully.&quot;,
-    &quot;data&quot;: [
-        {
-            &quot;user_scope_id&quot;: 1,
-            &quot;role_id&quot;: 1,
-            &quot;role_name&quot;: &quot;MINISTRY_ADMIN&quot;,
-            &quot;scope_type&quot;: &quot;MINISTRY&quot;,
-            &quot;scope_id&quot;: null
-        }
-    ]
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -22679,7 +19110,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/users/1/roles" \
+    "http://localhost/api/users/1/roles" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -22693,7 +19124,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/1/roles"
+    "http://localhost/api/users/1/roles"
 );
 
 const headers = {
@@ -22869,7 +19300,7 @@ Must be one of:
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/users/1/roles/1" \
+    "http://localhost/api/users/1/roles/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -22877,7 +19308,7 @@ Must be one of:
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/1/roles/1"
+    "http://localhost/api/users/1/roles/1"
 );
 
 const headers = {
@@ -23020,7 +19451,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/users/1/roles/by-role/1" \
+    "http://localhost/api/users/1/roles/by-role/1" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -23028,7 +19459,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/users/1/roles/by-role/1"
+    "http://localhost/api/users/1/roles/by-role/1"
 );
 
 const headers = {
@@ -23171,7 +19602,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/stamps" \
+    "http://localhost/api/stamps" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -23184,7 +19615,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/stamps"
+    "http://localhost/api/stamps"
 );
 
 const headers = {
@@ -23332,7 +19763,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/stamps" \
+    --get "http://localhost/api/stamps" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -23340,7 +19771,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/stamps"
+    "http://localhost/api/stamps"
 );
 
 const headers = {
@@ -23359,7 +19790,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-stamps">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -23371,42 +19802,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Letter stamps retrieved successfully&quot;,
-    &quot;data&quot;: {
-        &quot;current_page&quot;: 1,
-        &quot;data&quot;: [],
-        &quot;first_page_url&quot;: &quot;http://localhost:8000/api/stamps?page=1&quot;,
-        &quot;from&quot;: null,
-        &quot;last_page&quot;: 1,
-        &quot;last_page_url&quot;: &quot;http://localhost:8000/api/stamps?page=1&quot;,
-        &quot;links&quot;: [
-            {
-                &quot;url&quot;: null,
-                &quot;label&quot;: &quot;&amp;laquo; Previous&quot;,
-                &quot;page&quot;: null,
-                &quot;active&quot;: false
-            },
-            {
-                &quot;url&quot;: &quot;http://localhost:8000/api/stamps?page=1&quot;,
-                &quot;label&quot;: &quot;1&quot;,
-                &quot;page&quot;: 1,
-                &quot;active&quot;: true
-            },
-            {
-                &quot;url&quot;: null,
-                &quot;label&quot;: &quot;Next &amp;raquo;&quot;,
-                &quot;page&quot;: null,
-                &quot;active&quot;: false
-            }
-        ],
-        &quot;next_page_url&quot;: null,
-        &quot;path&quot;: &quot;http://localhost:8000/api/stamps&quot;,
-        &quot;per_page&quot;: 15,
-        &quot;prev_page_url&quot;: null,
-        &quot;to&quot;: null,
-        &quot;total&quot;: 0
-    }
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -23509,7 +19905,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/letter-broadcast" \
+    --get "http://localhost/api/letter-broadcast" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -23517,7 +19913,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letter-broadcast"
+    "http://localhost/api/letter-broadcast"
 );
 
 const headers = {
@@ -23536,7 +19932,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letter-broadcast">
             <blockquote>
-            <p>Example response (200):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -23548,9 +19944,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;LetterBroadcasts fetched&quot;,
-    &quot;data&quot;: []
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -23653,7 +20047,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/letter-broadcast/16" \
+    --get "http://localhost/api/letter-broadcast/16" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -23661,7 +20055,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letter-broadcast/16"
+    "http://localhost/api/letter-broadcast/16"
 );
 
 const headers = {
@@ -23680,7 +20074,7 @@ fetch(url, {
 
 <span id="example-responses-GETapi-letter-broadcast--letterBroadcast_id-">
             <blockquote>
-            <p>Example response (404):</p>
+            <p>Example response (401):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
@@ -23692,7 +20086,7 @@ access-control-allow-origin: *
  </code></pre></details>         <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\LetterBroadcast] 16&quot;
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
 }</code>
  </pre>
     </span>
@@ -23808,18 +20202,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/letter-broadcast" \
+    "http://localhost/api/letter-broadcast" \
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "title=b"\
     --form "body=architecto"\
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE79B.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Aryan Hussen\AppData\Local\Temp\php6B14.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/letter-broadcast"
+    "http://localhost/api/letter-broadcast"
 );
 
 const headers = {

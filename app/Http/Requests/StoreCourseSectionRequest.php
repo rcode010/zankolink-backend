@@ -14,9 +14,15 @@ class StoreCourseSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            
-            'course_id' => 'required|exists:courses,id',
             'title' => 'required|string|max:255',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'Please provide a title for the section.',
+            'title.max'      => 'The section title must not exceed 255 characters.',
         ];
     }
 }
