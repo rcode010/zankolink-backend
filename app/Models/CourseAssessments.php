@@ -14,6 +14,16 @@ class CourseAssessments extends Model
         return $this->belongsTo(Course::class);
     }
 
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
+
+    public function marks()
+    {
+        return $this->hasMany(StudentMarks::class, 'course_assessment_id');
+    }
+
     public function academicYear()
     {
         return $this->belongsTo(AcademicYear::class);
@@ -22,5 +32,10 @@ class CourseAssessments extends Model
     public function teacher()
     {
         return $this->belongsTo(Teacher::class);
+    }
+
+    public function studentMarks()
+    {
+        return $this->hasMany(StudentMarks::class);
     }
 }

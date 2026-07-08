@@ -1,0 +1,109 @@
+name: 'Course Marks'
+description: |-
+
+  APIs for students to view their marks in a specific course.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/moodle/courses/{course_id}/my-marks'
+    metadata:
+      custom: []
+      groupName: 'Course Marks'
+      groupDescription: |-
+
+        APIs for students to view their marks in a specific course.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'View my course marks'
+      description: "Retrieve the authenticated student's marks for all assessments in a specific course."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course:
+        custom: []
+        name: course
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+      course: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "success": true,
+            "message": "Course marks retrieved successfully",
+            "data": {
+              "course": {
+                "id": 1,
+                "name": "Database Systems",
+                "code": "DB101"
+              },
+              "assessments": [
+                {
+                  "assessment_id": 1,
+                  "title": "Quiz 1",
+                  "type": "quiz",
+                  "max_mark": "10.00",
+                  "weight": "5.00",
+                  "mark_id": 1,
+                  "mark": "8.50",
+                  "status": "valid",
+                  "feedback": "Good work",
+                  "graded_at": "2026-07-08 09:30:00"
+                },
+                {
+                  "assessment_id": 2,
+                  "title": "Final Exam",
+                  "type": "final",
+                  "max_mark": "60.00",
+                  "weight": "50.00",
+                  "mark_id": null,
+                  "mark": null,
+                  "status": null,
+                  "feedback": null,
+                  "graded_at": null
+                }
+              ]
+            }
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null

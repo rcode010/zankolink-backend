@@ -1,0 +1,736 @@
+name: 'Course Assessments'
+description: |-
+
+  APIs for managing course assessments such as quizzes, assignments, midterms, finals, projects, and activities.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/moodle/courses/{course_id}/assessments'
+    metadata:
+      custom: []
+      groupName: 'Course Assessments'
+      groupDescription: |-
+
+        APIs for managing course assessments such as quizzes, assignments, midterms, finals, projects, and activities.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List course assessments'
+      description: 'Retrieve all assessments for a specific course. Supports filtering by title and assessment type.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course:
+        custom: []
+        name: course
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+      course: 1
+    queryParameters:
+      'filter[title]':
+        custom: []
+        name: 'filter[title]'
+        description: 'Filter assessments by partial title.'
+        required: false
+        example: Quiz
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'filter[type]':
+        custom: []
+        name: 'filter[type]'
+        description: 'Filter assessments by exact type. Must be one of: quiz, assignment, final, midterm, project, activity.'
+        required: false
+        example: quiz
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      'filter[title]': Quiz
+      'filter[type]': quiz
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "success": true,
+            "message": "Course Assessments retrieved successfully",
+            "data": [
+              {
+                "id": 1,
+                "course_id": 1,
+                "teacher_id": 2,
+                "academic_year_id": 1,
+                "title": "Quiz 1",
+                "type": "quiz",
+                "max_mark": "10.00",
+                "weight": "5.00",
+                "due_at": "2026-07-20 10:00:00",
+                "is_published": true,
+                "created_at": "2026-07-08T09:00:00.000000Z",
+                "updated_at": "2026-07-08T09:00:00.000000Z"
+              }
+            ]
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/moodle/courses/{course_id}/assessments'
+    metadata:
+      custom: []
+      groupName: 'Course Assessments'
+      groupDescription: |-
+
+        APIs for managing course assessments such as quizzes, assignments, midterms, finals, projects, and activities.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create course assessment'
+      description: 'Create a new assessment for a specific course. The authenticated user must be a teacher.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course:
+        custom: []
+        name: course
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+      course: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      academic_year_id:
+        custom: []
+        name: academic_year_id
+        description: 'The ID of the academic year.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      title:
+        custom: []
+        name: title
+        description: 'The assessment title.'
+        required: true
+        example: 'Quiz 1'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      type:
+        custom: []
+        name: type
+        description: 'The assessment type. Must be one of: quiz, assignment, final, midterm, project, activity.'
+        required: true
+        example: quiz
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      max_mark:
+        custom: []
+        name: max_mark
+        description: 'The maximum mark for this assessment.'
+        required: true
+        example: 10.0
+        type: number
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      weight:
+        custom: []
+        name: weight
+        description: 'The assessment weight.'
+        required: true
+        example: 5.0
+        type: number
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      due_at:
+        custom: []
+        name: due_at
+        description: 'nullable The due date and time of the assessment.'
+        required: false
+        example: '2026-07-20 10:00:00'
+        type: datetime
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      is_published:
+        custom: []
+        name: is_published
+        description: 'Whether the assessment is visible/published.'
+        required: true
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      academic_year_id: 1
+      title: 'Quiz 1'
+      type: quiz
+      max_mark: 10.0
+      weight: 5.0
+      due_at: '2026-07-20 10:00:00'
+      is_published: true
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: |-
+          {
+            "success": true,
+            "message": "Course Assessment created successfully",
+            "data": {
+              "id": 1,
+              "course_id": 1,
+              "teacher_id": 2,
+              "academic_year_id": 1,
+              "title": "Quiz 1",
+              "type": "quiz",
+              "max_mark": "10.00",
+              "weight": "5.00",
+              "due_at": "2026-07-20 10:00:00",
+              "is_published": true,
+              "created_at": "2026-07-08T09:00:00.000000Z",
+              "updated_at": "2026-07-08T09:00:00.000000Z"
+            }
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "The title field is required.",
+            "errors": {
+              "title": ["The title field is required."]
+            }
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/moodle/courses/{course_id}/assessments/{assessment_id}'
+    metadata:
+      custom: []
+      groupName: 'Course Assessments'
+      groupDescription: |-
+
+        APIs for managing course assessments such as quizzes, assignments, midterms, finals, projects, and activities.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Show course assessment'
+      description: 'Retrieve a specific course assessment with its course, teacher, and academic year details.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      assessment_id:
+        custom: []
+        name: assessment_id
+        description: 'The ID of the assessment.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course:
+        custom: []
+        name: course
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      assessment:
+        custom: []
+        name: assessment
+        description: 'The ID of the assessment.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+      assessment_id: 1
+      course: 1
+      assessment: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "success": true,
+            "message": "Course Assessment retrieved successfully",
+            "data": {
+              "id": 1,
+              "course_id": 1,
+              "teacher_id": 2,
+              "academic_year_id": 1,
+              "title": "Quiz 1",
+              "type": "quiz",
+              "max_mark": "10.00",
+              "weight": "5.00",
+              "due_at": "2026-07-20 10:00:00",
+              "is_published": true,
+              "course": {
+                "id": 1,
+                "name": "Database Systems"
+              },
+              "teacher": {
+                "id": 2,
+                "user_id": 5,
+                "user": {
+                  "id": 5,
+                  "name": "Teacher Name"
+                }
+              },
+              "academic_year": {
+                "id": 1,
+                "year": "2026-2027"
+              }
+            }
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: |-
+          {
+            "success": false,
+            "message": "Assessment does not belong to this course."
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/moodle/courses/{course_id}/assessments/{assessment_id}'
+    metadata:
+      custom: []
+      groupName: 'Course Assessments'
+      groupDescription: |-
+
+        APIs for managing course assessments such as quizzes, assignments, midterms, finals, projects, and activities.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete course assessment'
+      description: 'Soft delete a specific course assessment. The assessment must belong to the given course.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      assessment_id:
+        custom: []
+        name: assessment_id
+        description: 'The ID of the assessment.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course:
+        custom: []
+        name: course
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      assessment:
+        custom: []
+        name: assessment
+        description: 'The ID of the assessment.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+      assessment_id: 1
+      course: 1
+      assessment: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "success": true,
+            "message": "Course Assessment deleted successfully"
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: |-
+          {
+            "success": false,
+            "message": "Assessment does not belong to this course."
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/moodle/courses/{course_id}/assessments/{assessment_id}'
+    metadata:
+      custom: []
+      groupName: 'Course Assessments'
+      groupDescription: |-
+
+        APIs for managing course assessments such as quizzes, assignments, midterms, finals, projects, and activities.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update course assessment'
+      description: 'Update an existing course assessment. The assessment must belong to the given course.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      assessment_id:
+        custom: []
+        name: assessment_id
+        description: 'The ID of the assessment.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course:
+        custom: []
+        name: course
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      assessment:
+        custom: []
+        name: assessment
+        description: 'The ID of the assessment.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+      assessment_id: 1
+      course: 1
+      assessment: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      academic_year_id:
+        custom: []
+        name: academic_year_id
+        description: 'optional The ID of the academic year.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      title:
+        custom: []
+        name: title
+        description: 'optional The assessment title.'
+        required: false
+        example: 'Midterm Exam'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      type:
+        custom: []
+        name: type
+        description: 'optional The assessment type. Must be one of: quiz, assignment, final, midterm, project, activity.'
+        required: false
+        example: midterm
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      max_mark:
+        custom: []
+        name: max_mark
+        description: 'optional The maximum mark for this assessment.'
+        required: false
+        example: 30.0
+        type: number
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      weight:
+        custom: []
+        name: weight
+        description: 'optional The assessment weight.'
+        required: false
+        example: 20.0
+        type: number
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      due_at:
+        custom: []
+        name: due_at
+        description: 'nullable The due date and time of the assessment.'
+        required: false
+        example: '2026-08-01 09:00:00'
+        type: datetime
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      is_published:
+        custom: []
+        name: is_published
+        description: 'optional Whether the assessment is visible/published.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      academic_year_id: 1
+      title: 'Midterm Exam'
+      type: midterm
+      max_mark: 30.0
+      weight: 20.0
+      due_at: '2026-08-01 09:00:00'
+      is_published: true
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "success": true,
+            "message": "Course Assessment updated successfully",
+            "data": {
+              "id": 1,
+              "course_id": 1,
+              "teacher_id": 2,
+              "academic_year_id": 1,
+              "title": "Midterm Exam",
+              "type": "midterm",
+              "max_mark": "30.00",
+              "weight": "20.00",
+              "due_at": "2026-08-01 09:00:00",
+              "is_published": true
+            }
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: |-
+          {
+            "success": false,
+            "message": "Assessment does not belong to this course."
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 4|SEFdPq3SxBm41TNYTur98H0OgmabgzvyVorPxgGHdd809785'
+    controller: null
+    method: null
+    route: null

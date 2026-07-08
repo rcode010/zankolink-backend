@@ -50,5 +50,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
 
     require __DIR__.'/api/course-assessment.php';
-
+    require __DIR__.'/api/student-marks.php';
 });
