@@ -170,26 +170,109 @@ class StudentAttendanceController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * View my attendance
+     *
+     * Returns the attendance records for the authenticated student.
+     *
+     * @group Attendance
+     *
+     * @authenticated
+     *
+     * @queryParam course_id integer Filter by course ID. Example: 5
+     * @queryParam status string Filter by attendance status. Example: Present
+     * @queryParam per_page integer Number of results per page. Example: 15
+     *
+     * @response 200 {
+     * "success": true,
+     * "message": "Attendance retrieved successfully.",
+     * "data": [
+     * {
+     * "id": 3,
+     * "attendance_session_id": 1,
+     * "student": {
+     * "id": 7,
+     * "enrollment_type": "parallel",
+     * "stage": 3,
+     * "student_number": "ST71824",
+     * "status": "active",
+     * "user": {
+     * "id": 16,
+     * "name": "Miss Trinity Rodriguez III"
+     * },
+     * "created_at": "2026-07-08 14:04:32",
+     * "updated_at": "2026-07-08 14:04:32"
+     * },
+     * "status": "Excused Absence",
+     * "note": "Brought doctors note",
+     * "attendance_session": {
+     * "id": 1,
+     * "title": "Second Lecture",
+     * "session_date": "2026-07-17",
+     * "start_at": "2026-07-17 04:00:00",
+     * "end_at": "2026-07-17 06:00:00",
+     * "course": {
+     * "id": 2,
+     * "name": "Cyber Security",
+     * "code": "SUE91153",
+     * "credit_hours": 4,
+     * "year_level": 1,
+     * "is_active": 1,
+     * "department_id": 1,
+     * "created_at": "2026-07-08 14:04:32",
+     * "updated_at": "2026-07-08 14:04:32"
+     * },
+     * "teacher": {
+     * "id": 1,
+     * "title": "assoc_prof",
+     * "speciality": "Artificial Intelligence",
+     * "user": {
+     * "id": 5,
+     * "name": "Adrian Hilpert"
+     * },
+     * "created_at": "2026-07-08 14:04:32",
+     * "updated_at": "2026-07-08 14:04:32"
+     * },
+     * "created_at": "2026-07-08T11:06:00.000000Z"
+     * },
+     * "created_at": "2026-07-08T11:07:07.000000Z",
+     * "updated_at": "2026-07-08T11:09:00.000000Z"
+     * }
+     * ]
+     * }
      */
-    public function show(string $id)
+    public function myAttendance(Request $request)
     {
-        //
-    }
+        $student = $request->user()->student;
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        $request->validate([
+            'course_id' => 'nullable|exists:courses,id',
+            'status' => 'nullable|in:Present,Absent,Excused Absence,Late',
+            'per_page' => 'nullable|integer|min:1',
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $per_page = $request->query('per_page', 15);
+
+        $attendance = StudentAttendance::query()
+            ->where('student_id', $student->id)
+            ->whereHas('attendanceSession', function ($query) use ($request) {
+                $query->when($request->course_id, function ($query) use ($request) {
+                    $query->where('course_id', $request->course_id);
+                });
+            })
+            ->when($request->status, function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->with([
+                'attendanceSession.course',
+                'attendanceSession.teacher.user',
+                'student.user',
+            ])
+            ->latest()
+            ->paginate($per_page);
+
+        return $this->ok(
+            'Attendance retrieved successfully.',
+            StudentAttendanceResource::collection($attendance)->resolve()
+        );
     }
 }
