@@ -12,7 +12,11 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
+/**
+ * @group Section-Item
+ *
+ * APIs for section-item CRUD.
+ */
 class SectionItemController extends Controller
 {
     use ApiResponses;
@@ -111,7 +115,7 @@ class SectionItemController extends Controller
         }
 
         $item->delete();
-    
+
 
         return $this->ok('Section item deleted successfully.');
     }
