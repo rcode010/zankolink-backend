@@ -437,7 +437,7 @@ endpoints:
         name: scope_type
         description: ''
         required: true
-        example: UNIVERSITY
+        example: MINISTRY
         type: string
         enumValues:
           - MINISTRY
@@ -454,7 +454,7 @@ endpoints:
       phone: '07564255931'
       role: architecto
       scope_id: 16
-      scope_type: UNIVERSITY
+      scope_type: MINISTRY
     fileParameters: []
     responses: []
     responseFields: []
@@ -908,7 +908,7 @@ endpoints:
         name: start_date
         description: 'Must be a valid date.'
         required: false
-        example: '2026-07-07T22:48:29'
+        example: '2026-07-08T08:39:06'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -919,7 +919,7 @@ endpoints:
         name: end_date
         description: 'Must be a valid date. Must be a date after <code>start_date</code>.'
         required: false
-        example: '2052-07-30'
+        example: '2052-07-31'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -930,7 +930,7 @@ endpoints:
         name: established_year
         description: 'Must be a valid date.'
         required: true
-        example: '2026-07-07T22:48:29'
+        example: '2026-07-08T08:39:06'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -941,7 +941,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1031,7 +1031,7 @@ endpoints:
         name: 'faculties[].departments[].is_active'
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1051,10 +1051,10 @@ endpoints:
     cleanBodyParameters:
       name: b
       location: 'n'
-      start_date: '2026-07-07T22:48:29'
-      end_date: '2052-07-30'
-      established_year: '2026-07-07T22:48:29'
-      is_active: false
+      start_date: '2026-07-08T08:39:06'
+      end_date: '2052-07-31'
+      established_year: '2026-07-08T08:39:06'
+      is_active: true
       faculties:
         -
           name: b
@@ -1062,7 +1062,7 @@ endpoints:
           is_active: true
           departments:
             - name: b
-              is_active: false
+              is_active: true
     fileParameters: []
     responses: []
     responseFields: []
@@ -1214,7 +1214,7 @@ endpoints:
         name: start_date
         description: 'Must be a valid date.'
         required: false
-        example: '2026-07-07T22:48:29'
+        example: '2026-07-08T08:39:06'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1225,7 +1225,7 @@ endpoints:
         name: end_date
         description: 'Must be a valid date. Must be a date after <code>start_date</code>.'
         required: false
-        example: '2052-07-30'
+        example: '2052-07-31'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1236,7 +1236,7 @@ endpoints:
         name: established_year
         description: 'Must be a valid date.'
         required: false
-        example: '2026-07-07T22:48:29'
+        example: '2026-07-08T08:39:06'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1256,9 +1256,9 @@ endpoints:
     cleanBodyParameters:
       name: b
       location: architecto
-      start_date: '2026-07-07T22:48:29'
-      end_date: '2052-07-30'
-      established_year: '2026-07-07T22:48:29'
+      start_date: '2026-07-08T08:39:06'
+      end_date: '2052-07-31'
+      established_year: '2026-07-08T08:39:06'
       is_active: true
     fileParameters: []
     responses: []
@@ -1357,7 +1357,7 @@ endpoints:
         name: start_date
         description: 'e.g., "2026-2027". Must be a valid date.'
         required: true
-        example: '2026-07-07T22:48:29'
+        example: '2026-07-08T08:39:06'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1368,7 +1368,7 @@ endpoints:
         name: end_date
         description: 'Must be a valid date.'
         required: true
-        example: '2026-07-07T22:48:29'
+        example: '2026-07-08T08:39:06'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1376,8 +1376,8 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       year: architecto
-      start_date: '2026-07-07T22:48:29'
-      end_date: '2026-07-07T22:48:29'
+      start_date: '2026-07-08T08:39:06'
+      end_date: '2026-07-08T08:39:06'
     fileParameters: []
     responses: []
     responseFields: []
@@ -1633,7 +1633,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1641,7 +1641,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       name: b
-      is_active: false
+      is_active: true
     fileParameters: []
     responses: []
     responseFields: []
@@ -1805,7 +1805,7 @@ endpoints:
         name: is_active
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -1814,7 +1814,7 @@ endpoints:
     cleanBodyParameters:
       name: b
       faculty_id: architecto
-      is_active: true
+      is_active: false
     fileParameters: []
     responses: []
     responseFields: []
@@ -2293,7 +2293,7 @@ endpoints:
         name: title
         description: ''
         required: true
-        example: dr
+        example: assoc_prof
         type: string
         enumValues:
           - prof
@@ -2319,7 +2319,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       user_id: architecto
-      title: dr
+      title: assoc_prof
       speciality: 'n'
     fileParameters: []
     responses: []
@@ -2439,7 +2439,7 @@ endpoints:
         name: title
         description: ''
         required: false
-        example: prof
+        example: assoc_prof
         type: string
         enumValues:
           - prof
@@ -2464,7 +2464,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      title: prof
+      title: assoc_prof
       speciality: b
     fileParameters: []
     responses: []
@@ -2837,7 +2837,7 @@ endpoints:
         name: status
         description: ''
         required: false
-        example: suspended
+        example: active
         type: string
         enumValues:
           - active
@@ -2852,7 +2852,7 @@ endpoints:
       enrollment_type: morning
       stage: 16
       student_number: 'n'
-      status: suspended
+      status: active
     fileParameters: []
     responses: []
     responseFields: []
@@ -4938,7 +4938,7 @@ endpoints:
         name: role
         description: ''
         required: true
-        example: primary_lecturer
+        example: lab_instructor
         type: string
         enumValues:
           - primary_lecturer
@@ -4949,7 +4949,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       teacher_id: architecto
-      role: primary_lecturer
+      role: lab_instructor
     fileParameters: []
     responses: []
     responseFields: []
@@ -5069,7 +5069,7 @@ endpoints:
         name: role
         description: ''
         required: true
-        example: lab_instructor
+        example: primary_lecturer
         type: string
         enumValues:
           - primary_lecturer
@@ -5079,7 +5079,7 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      role: lab_instructor
+      role: primary_lecturer
     fileParameters: []
     responses: []
     responseFields: []
@@ -5406,7 +5406,7 @@ endpoints:
         name: enrolled_at
         description: 'Must be a valid date.'
         required: false
-        example: '2026-07-07T22:48:29'
+        example: '2026-07-08T08:39:06'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -5414,7 +5414,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       grade: 1
-      enrolled_at: '2026-07-07T22:48:29'
+      enrolled_at: '2026-07-08T08:39:06'
     fileParameters: []
     responses: []
     responseFields: []
@@ -5524,7 +5524,7 @@ endpoints:
         name: type
         description: ''
         required: true
-        example: create_department
+        example: hire_teacher
         type: string
         enumValues:
           - hire_teacher
@@ -5582,7 +5582,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       receiver_id: architecto
-      type: create_department
+      type: hire_teacher
       title: 'n'
       body: architecto
       academic_year_id: architecto
@@ -7192,7 +7192,7 @@ endpoints:
         name: scope_type
         description: ''
         required: true
-        example: FACULTY
+        example: MINISTRY
         type: string
         enumValues:
           - MINISTRY
@@ -7215,7 +7215,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       role_id: architecto
-      scope_type: FACULTY
+      scope_type: MINISTRY
       scope_id: 16
     fileParameters: []
     responses: []

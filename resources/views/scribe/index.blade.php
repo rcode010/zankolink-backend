@@ -445,7 +445,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: July 7, 2026</li>
+        <li>Last updated: July 8, 2026</li>
     </ul>
 </div>
 
@@ -1452,7 +1452,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"phone\": \"07564255931\",
     \"role\": \"architecto\",
     \"scope_id\": 16,
-    \"scope_type\": \"UNIVERSITY\"
+    \"scope_type\": \"MINISTRY\"
 }"
 </code></pre></div>
 
@@ -1475,7 +1475,7 @@ let body = {
     "phone": "07564255931",
     "role": "architecto",
     "scope_id": 16,
-    "scope_type": "UNIVERSITY"
+    "scope_type": "MINISTRY"
 };
 
 fetch(url, {
@@ -1651,10 +1651,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="scope_type"                data-endpoint="POSTapi-auth-register"
-               value="UNIVERSITY"
+               value="MINISTRY"
                data-component="body">
     <br>
-<p>Example: <code>UNIVERSITY</code></p>
+<p>Example: <code>MINISTRY</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>MINISTRY</code></li> <li><code>UNIVERSITY</code></li> <li><code>FACULTY</code></li> <li><code>DEPARTMENT</code></li></ul>
         </div>
@@ -2963,10 +2963,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --data "{
     \"name\": \"b\",
     \"location\": \"n\",
-    \"start_date\": \"2026-07-07T22:48:29\",
-    \"end_date\": \"2052-07-30\",
-    \"established_year\": \"2026-07-07T22:48:29\",
-    \"is_active\": false,
+    \"start_date\": \"2026-07-08T08:39:06\",
+    \"end_date\": \"2052-07-31\",
+    \"established_year\": \"2026-07-08T08:39:06\",
+    \"is_active\": true,
     \"faculties\": [
         {
             \"name\": \"b\",
@@ -2975,7 +2975,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             \"departments\": [
                 {
                     \"name\": \"b\",
-                    \"is_active\": false
+                    \"is_active\": true
                 }
             ]
         }
@@ -2998,10 +2998,10 @@ const headers = {
 let body = {
     "name": "b",
     "location": "n",
-    "start_date": "2026-07-07T22:48:29",
-    "end_date": "2052-07-30",
-    "established_year": "2026-07-07T22:48:29",
-    "is_active": false,
+    "start_date": "2026-07-08T08:39:06",
+    "end_date": "2052-07-31",
+    "established_year": "2026-07-08T08:39:06",
+    "is_active": true,
     "faculties": [
         {
             "name": "b",
@@ -3010,7 +3010,7 @@ let body = {
             "departments": [
                 {
                     "name": "b",
-                    "is_active": false
+                    "is_active": true
                 }
             ]
         }
@@ -3166,10 +3166,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="POSTapi-universities"
-               value="2026-07-07T22:48:29"
+               value="2026-07-08T08:39:06"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -3178,10 +3178,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="end_date"                data-endpoint="POSTapi-universities"
-               value="2052-07-30"
+               value="2052-07-31"
                data-component="body">
     <br>
-<p>Must be a valid date. Must be a date after <code>start_date</code>. Example: <code>2052-07-30</code></p>
+<p>Must be a valid date. Must be a date after <code>start_date</code>. Example: <code>2052-07-31</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>established_year</code></b>&nbsp;&nbsp;
@@ -3190,10 +3190,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="established_year"                data-endpoint="POSTapi-universities"
-               value="2026-07-07T22:48:29"
+               value="2026-07-08T08:39:06"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>is_active</code></b>&nbsp;&nbsp;
@@ -3215,7 +3215,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
         <details>
@@ -3327,7 +3327,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
                     </div>
                                                                 <div style="margin-left: 28px; clear: unset;">
                         <b style="line-height: 2;"><code>admin_id</code></b>&nbsp;&nbsp;
@@ -3540,9 +3540,9 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --data "{
     \"name\": \"b\",
     \"location\": \"architecto\",
-    \"start_date\": \"2026-07-07T22:48:29\",
-    \"end_date\": \"2052-07-30\",
-    \"established_year\": \"2026-07-07T22:48:29\",
+    \"start_date\": \"2026-07-08T08:39:06\",
+    \"end_date\": \"2052-07-31\",
+    \"established_year\": \"2026-07-08T08:39:06\",
     \"is_active\": true
 }"
 </code></pre></div>
@@ -3562,9 +3562,9 @@ const headers = {
 let body = {
     "name": "b",
     "location": "architecto",
-    "start_date": "2026-07-07T22:48:29",
-    "end_date": "2052-07-30",
-    "established_year": "2026-07-07T22:48:29",
+    "start_date": "2026-07-08T08:39:06",
+    "end_date": "2052-07-31",
+    "established_year": "2026-07-08T08:39:06",
     "is_active": true
 };
 
@@ -3730,10 +3730,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="PATCHapi-universities--university_id-"
-               value="2026-07-07T22:48:29"
+               value="2026-07-08T08:39:06"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -3742,10 +3742,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="end_date"                data-endpoint="PATCHapi-universities--university_id-"
-               value="2052-07-30"
+               value="2052-07-31"
                data-component="body">
     <br>
-<p>Must be a valid date. Must be a date after <code>start_date</code>. Example: <code>2052-07-30</code></p>
+<p>Must be a valid date. Must be a date after <code>start_date</code>. Example: <code>2052-07-31</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>established_year</code></b>&nbsp;&nbsp;
@@ -3754,10 +3754,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="established_year"                data-endpoint="PATCHapi-universities--university_id-"
-               value="2026-07-07T22:48:29"
+               value="2026-07-08T08:39:06"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>is_active</code></b>&nbsp;&nbsp;
@@ -3942,8 +3942,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"year\": \"architecto\",
-    \"start_date\": \"2026-07-07T22:48:29\",
-    \"end_date\": \"2026-07-07T22:48:29\"
+    \"start_date\": \"2026-07-08T08:39:06\",
+    \"end_date\": \"2026-07-08T08:39:06\"
 }"
 </code></pre></div>
 
@@ -3961,8 +3961,8 @@ const headers = {
 
 let body = {
     "year": "architecto",
-    "start_date": "2026-07-07T22:48:29",
-    "end_date": "2026-07-07T22:48:29"
+    "start_date": "2026-07-08T08:39:06",
+    "end_date": "2026-07-08T08:39:06"
 };
 
 fetch(url, {
@@ -4078,10 +4078,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="POSTapi-academic-year-update"
-               value="2026-07-07T22:48:29"
+               value="2026-07-08T08:39:06"
                data-component="body">
     <br>
-<p>e.g., "2026-2027". Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
+<p>e.g., "2026-2027". Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -4090,10 +4090,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="end_date"                data-endpoint="POSTapi-academic-year-update"
-               value="2026-07-07T22:48:29"
+               value="2026-07-08T08:39:06"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
         </div>
         </form>
 
@@ -4844,7 +4844,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"name\": \"b\",
-    \"is_active\": false
+    \"is_active\": true
 }"
 </code></pre></div>
 
@@ -4862,7 +4862,7 @@ const headers = {
 
 let body = {
     "name": "b",
-    "is_active": false
+    "is_active": true
 };
 
 fetch(url, {
@@ -5016,7 +5016,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Example: <code>true</code></p>
         </div>
         </form>
 
@@ -5683,7 +5683,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --data "{
     \"name\": \"b\",
     \"faculty_id\": \"architecto\",
-    \"is_active\": true
+    \"is_active\": false
 }"
 </code></pre></div>
 
@@ -5702,7 +5702,7 @@ const headers = {
 let body = {
     "name": "b",
     "faculty_id": "architecto",
-    "is_active": true
+    "is_active": false
 };
 
 fetch(url, {
@@ -5855,7 +5855,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
         </div>
         </form>
 
@@ -7276,7 +7276,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"user_id\": \"architecto\",
-    \"title\": \"dr\",
+    \"title\": \"assoc_prof\",
     \"speciality\": \"n\"
 }"
 </code></pre></div>
@@ -7295,7 +7295,7 @@ const headers = {
 
 let body = {
     "user_id": "architecto",
-    "title": "dr",
+    "title": "assoc_prof",
     "speciality": "n"
 };
 
@@ -7412,10 +7412,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="title"                data-endpoint="POSTapi-teachers"
-               value="dr"
+               value="assoc_prof"
                data-component="body">
     <br>
-<p>Example: <code>dr</code></p>
+<p>Example: <code>assoc_prof</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>prof</code></li> <li><code>assoc_prof</code></li> <li><code>asst_prof</code></li> <li><code>lecturer</code></li> <li><code>dr</code></li> <li><code>mr</code></li> <li><code>ms</code></li></ul>
         </div>
@@ -7619,7 +7619,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"title\": \"prof\",
+    \"title\": \"assoc_prof\",
     \"speciality\": \"b\"
 }"
 </code></pre></div>
@@ -7637,7 +7637,7 @@ const headers = {
 };
 
 let body = {
-    "title": "prof",
+    "title": "assoc_prof",
     "speciality": "b"
 };
 
@@ -7767,10 +7767,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="title"                data-endpoint="PATCHapi-teachers--teacher_id-"
-               value="prof"
+               value="assoc_prof"
                data-component="body">
     <br>
-<p>Example: <code>prof</code></p>
+<p>Example: <code>assoc_prof</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>prof</code></li> <li><code>assoc_prof</code></li> <li><code>asst_prof</code></li> <li><code>lecturer</code></li> <li><code>dr</code></li> <li><code>mr</code></li> <li><code>ms</code></li></ul>
         </div>
@@ -8529,7 +8529,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"enrollment_type\": \"morning\",
     \"stage\": 16,
     \"student_number\": \"n\",
-    \"status\": \"suspended\"
+    \"status\": \"active\"
 }"
 </code></pre></div>
 
@@ -8549,7 +8549,7 @@ let body = {
     "enrollment_type": "morning",
     "stage": 16,
     "student_number": "n",
-    "status": "suspended"
+    "status": "active"
 };
 
 fetch(url, {
@@ -8728,10 +8728,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="PATCHapi-students--student_id-"
-               value="suspended"
+               value="active"
                data-component="body">
     <br>
-<p>Example: <code>suspended</code></p>
+<p>Example: <code>active</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>active</code></li> <li><code>inactive</code></li> <li><code>on_leave</code></li> <li><code>suspended</code></li> <li><code>graduated</code></li></ul>
         </div>
@@ -11351,7 +11351,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "title=b"\
     --form "description=Eius et animi quos velit et."\
     --form "deadline=2052-07-31"\
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\php2D8F.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE5D1.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -11706,7 +11706,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "title=b"\
     --form "description=Eius et animi quos velit et."\
     --form "deadline=2052-07-31"\
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\php2DA0.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE5F1.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -12336,7 +12336,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\php2DB1.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE5F2.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13100,7 +13100,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --form "url=http://www.bailey.biz/quos-velit-et-fugiat-sunt-nihil-accusantium-harum.html"\
     --form "material_file_name=i"\
-    --form "file=@C:\Users\Raman\AppData\Local\Temp\php2DC1.tmp" </code></pre></div>
+    --form "file=@C:\Users\Raman\AppData\Local\Temp\phpE612.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13236,7 +13236,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>This field is required when <code>url</code> is not present. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>C:\Users\Raman\AppData\Local\Temp\php2DC1.tmp</code></p>
+<p>This field is required when <code>url</code> is not present. Must be a file. Must not be greater than 51200 kilobytes. Example: <code>C:\Users\Raman\AppData\Local\Temp\phpE612.tmp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>url</code></b>&nbsp;&nbsp;
@@ -14458,7 +14458,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"teacher_id\": \"architecto\",
-    \"role\": \"primary_lecturer\"
+    \"role\": \"lab_instructor\"
 }"
 </code></pre></div>
 
@@ -14476,7 +14476,7 @@ const headers = {
 
 let body = {
     "teacher_id": "architecto",
-    "role": "primary_lecturer"
+    "role": "lab_instructor"
 };
 
 fetch(url, {
@@ -14605,10 +14605,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="role"                data-endpoint="POSTapi-courses--course_id--assign-teacher"
-               value="primary_lecturer"
+               value="lab_instructor"
                data-component="body">
     <br>
-<p>Example: <code>primary_lecturer</code></p>
+<p>Example: <code>lab_instructor</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>primary_lecturer</code></li> <li><code>assistant_lecturer</code></li> <li><code>lab_instructor</code></li></ul>
         </div>
@@ -14861,7 +14861,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"role\": \"lab_instructor\"
+    \"role\": \"primary_lecturer\"
 }"
 </code></pre></div>
 
@@ -14878,7 +14878,7 @@ const headers = {
 };
 
 let body = {
-    "role": "lab_instructor"
+    "role": "primary_lecturer"
 };
 
 fetch(url, {
@@ -15007,10 +15007,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="role"                data-endpoint="PUTapi-courses--course_id--teachers--teacher_id-"
-               value="lab_instructor"
+               value="primary_lecturer"
                data-component="body">
     <br>
-<p>Example: <code>lab_instructor</code></p>
+<p>Example: <code>primary_lecturer</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>primary_lecturer</code></li> <li><code>assistant_lecturer</code></li> <li><code>lab_instructor</code></li></ul>
         </div>
@@ -16119,7 +16119,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"grade\": 1,
-    \"enrolled_at\": \"2026-07-07T22:48:29\"
+    \"enrolled_at\": \"2026-07-08T08:39:06\"
 }"
 </code></pre></div>
 
@@ -16137,7 +16137,7 @@ const headers = {
 
 let body = {
     "grade": 1,
-    "enrolled_at": "2026-07-07T22:48:29"
+    "enrolled_at": "2026-07-08T08:39:06"
 };
 
 fetch(url, {
@@ -16290,10 +16290,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="enrolled_at"                data-endpoint="PUTapi-courses--course_id--students--student_id-"
-               value="2026-07-07T22:48:29"
+               value="2026-07-08T08:39:06"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2026-07-07T22:48:29</code></p>
+<p>Must be a valid date. Example: <code>2026-07-08T08:39:06</code></p>
         </div>
         </form>
 
@@ -16468,7 +16468,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"receiver_id\": \"architecto\",
-    \"type\": \"create_department\",
+    \"type\": \"hire_teacher\",
     \"title\": \"n\",
     \"body\": \"architecto\",
     \"academic_year_id\": \"architecto\",
@@ -16490,7 +16490,7 @@ const headers = {
 
 let body = {
     "receiver_id": "architecto",
-    "type": "create_department",
+    "type": "hire_teacher",
     "title": "n",
     "body": "architecto",
     "academic_year_id": "architecto",
@@ -16610,10 +16610,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="type"                data-endpoint="POSTapi-letters"
-               value="create_department"
+               value="hire_teacher"
                data-component="body">
     <br>
-<p>Example: <code>create_department</code></p>
+<p>Example: <code>hire_teacher</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>hire_teacher</code></li> <li><code>fire_teacher</code></li> <li><code>create_department</code></li> <li><code>close_department</code></li> <li><code>open_faculty</code></li> <li><code>close_faculty</code></li></ul>
         </div>
@@ -18253,7 +18253,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Authorization: Bearer {ACCESS_TOKEN}" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "file[]=@C:\Users\Raman\AppData\Local\Temp\php2E20.tmp" </code></pre></div>
+    --form "file[]=@C:\Users\Raman\AppData\Local\Temp\phpE6EE.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -22685,7 +22685,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --data "{
     \"role_id\": \"architecto\",
-    \"scope_type\": \"FACULTY\",
+    \"scope_type\": \"MINISTRY\",
     \"scope_id\": 16
 }"
 </code></pre></div>
@@ -22704,7 +22704,7 @@ const headers = {
 
 let body = {
     "role_id": "architecto",
-    "scope_type": "FACULTY",
+    "scope_type": "MINISTRY",
     "scope_id": 16
 };
 
@@ -22834,10 +22834,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="scope_type"                data-endpoint="POSTapi-users--user_id--roles"
-               value="FACULTY"
+               value="MINISTRY"
                data-component="body">
     <br>
-<p>Example: <code>FACULTY</code></p>
+<p>Example: <code>MINISTRY</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>MINISTRY</code></li> <li><code>UNIVERSITY</code></li> <li><code>FACULTY</code></li> <li><code>DEPARTMENT</code></li></ul>
         </div>
@@ -23814,7 +23814,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --form "title=b"\
     --form "body=architecto"\
-    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\php2E9E.tmp" </code></pre></div>
+    --form "files[]=@C:\Users\Raman\AppData\Local\Temp\phpE79B.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
