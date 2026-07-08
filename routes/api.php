@@ -48,3 +48,7 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     require __DIR__.'/api/letter-stamp.php';
     require __DIR__.'/api/letter-broadcast.php';
 });
+
+Route::middleware(['auth:sanctum', 'ability:moodle'])->group(function () {
+    require __DIR__.'/api/course-attendance-sessions.php';
+});
