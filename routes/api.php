@@ -42,7 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     require __DIR__.'/api/attachments.php';
     require __DIR__.'/api/signatures.php';
     require __DIR__.'/api/users.php';
-    require __DIR__.'/api/reports.php';
+    
 
     require __DIR__.'/api/roles_permissions.php';
     require __DIR__.'/api/letter-stamp.php';
