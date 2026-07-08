@@ -16,11 +16,45 @@ class CourseAttendanceSessionsController extends Controller
     use ApiResponses;
 
     /**
-     * Display a listing of the resource.
+     * List attendance sessions
+     *
+     * Returns a paginated list of attendance sessions belonging to the authenticated teacher.
+     *
+     * @group Attendance
+     *
+     * @authenticated
+     *
+     * @queryParam course_id integer Filter by course ID. Example: 5
+     * @queryParam session_date date Filter by session date. Example: 2026-07-08
+     * @queryParam per_page integer Number of results per page. Example: 15
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $teacher = $request->user()->teacher;
+
+        $request->validate([
+            'course_id' => 'nullable|exists:courses,id',
+            'session_date' => 'nullable|date',
+            'per_page' => 'nullable|integer|min:1',
+        ]);
+
+        $per_page = $request->query('per_page', 15);
+
+        $sessions = CourseAttendanceSessions::query()
+            ->where('teacher_id', $teacher->id)
+            ->when($request->course_id, fn ($query) => $query->where('course_id', $request->course_id)
+            )
+            ->when($request->session_date, fn ($query) => $query->whereDate('session_date', $request->session_date)
+            )
+            ->with('course', 'teacher.user', 'academicYear')
+            ->latest('session_date')
+            ->paginate($per_page);
+
+        return $this->ok(
+            'Sessions retrieved successfully.',
+            CourseAttendanceSessionResource::collection($sessions)->resolve()
+        );
+
     }
 
     /**
@@ -74,11 +108,33 @@ class CourseAttendanceSessionsController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * View attendance session
+     *
+     * Returns the details of a single attendance session.
+     *
+     * @group Attendance
+     *
+     * @authenticated
+     *
+     * @urlParam session integer required The attendance session ID. Example: 1
      */
-    public function show(string $id)
+    public function show(CourseAttendanceSessions $session, Request $request)
     {
-        //
+        $teacher = $request->user()->teacher;
+
+        if ($session->teacher_id !== $teacher->id) {
+            return $this->error(
+                'You are not authorized to view this attendance session.',
+                403
+            );
+        }
+
+        $session->load('course', 'teacher.user', 'academicYear');
+
+        return $this->ok(
+            'Attendance session retrieved successfully.',
+            (new CourseAttendanceSessionResource($session))->resolve(),
+        );
     }
 
     /**
