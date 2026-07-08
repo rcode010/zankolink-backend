@@ -25,7 +25,7 @@ class CourseAttendanceSessions extends Model
         return $this->belongsTo(AcademicYear::class, 'academic_year_id');
     }
 
-    public function studentAttendance(): HasMany
+    public function attendance(): HasMany
     {
         return $this->hasMany(StudentAttendance::class, 'attendance_session_id');
     }

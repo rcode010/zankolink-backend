@@ -23,10 +23,10 @@ class StoreStudentAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'attendance_session_id' => 'required|exists:course_attendance_sessions,id',
-            'student_id' => 'required|exists:students,id',
-            'status' => 'required|in:Present,Absent,Excused Absence,Late',
-            'note' => 'nullable|string',
+            'attendance' => 'required|array|min:1',
+            'attendance.*.student_id' => 'required|exists:students,id',
+            'attendance.*.status' => 'required|in:Present,Absent,Late,Excused Absence',
+            'attendance.*.note' => 'nullable|string',
         ];
     }
 }

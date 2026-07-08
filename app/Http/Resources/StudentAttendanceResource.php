@@ -20,6 +20,9 @@ class StudentAttendanceResource extends JsonResource
             'student' => new StudentResource($this->whenLoaded('student')),
             'status' => $this->status,
             'note' => $this->note,
+
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

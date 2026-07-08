@@ -51,4 +51,5 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
 
 Route::middleware(['auth:sanctum', 'ability:moodle'])->group(function () {
     require __DIR__.'/api/course-attendance-sessions.php';
+    require __DIR__.'/api/student-attendance.php';
 });
