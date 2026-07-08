@@ -11,7 +11,11 @@ use App\Models\SectionSubmission;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+/**
+ * @group Section-Submission
+ *
+ * APIs for section-submission CRUD.
+ */
 class SectionSubmissionController extends Controller
 {
     use ApiResponses;

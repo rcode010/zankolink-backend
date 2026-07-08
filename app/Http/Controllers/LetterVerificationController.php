@@ -7,7 +7,11 @@ use App\Models\Letter;
 use App\Services\LetterVerificationHashService;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Str;
-
+/**
+ * @group Letter Verification
+ *
+ * APIs for letter-verification retrival.
+ */
 class LetterVerificationController extends Controller
 {
     use ApiResponses;

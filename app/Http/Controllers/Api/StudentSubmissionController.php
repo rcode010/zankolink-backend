@@ -10,7 +10,11 @@ use App\Models\StudentSubmission;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+/**
+ * @group Student-Submission
+ *
+ * APIs for student-submission CRUD.
+ */
 class StudentSubmissionController extends Controller
 {
     use ApiResponses;

@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\SectionSubmissionAttachment;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\Storage;
-
+/**
+ * @group Section-Submission
+ *
+ * APIs for section-submission CRUD.
+ */
 class SectionSubmissionAttachmentController extends Controller
 {
     use ApiResponses;

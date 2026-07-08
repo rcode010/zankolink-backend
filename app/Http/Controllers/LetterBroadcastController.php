@@ -7,7 +7,11 @@ use App\Models\LetterBroadcast;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+/**
+ * @group Letter-Broadcast
+ *
+ * APIs for letter-broadcast creation.
+ */
 class LetterBroadcastController extends Controller
 {
     use ApiResponses;

@@ -10,7 +10,11 @@ use App\Services\LetterActionService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+/**
+ * @group Letter Workflow
+ *
+ * APIs for LetterWorkFlow.
+ */
 class LetterWorkflowController extends Controller
 {
     use ApiResponses;
