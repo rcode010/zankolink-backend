@@ -1,0 +1,447 @@
+name: 'Course Section Items Management'
+description: |-
+
+  APIs for managing files, documents, and external links within a course section.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/course-sections/{section_id}/items'
+    metadata:
+      custom: []
+      groupName: 'Course Section Items Management'
+      groupDescription: |-
+
+        APIs for managing files, documents, and external links within a course section.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List Section Items'
+      description: 'Get all items (files/links) attached to a specific course section.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      section_id:
+        custom: []
+        name: section_id
+        description: 'The ID of the section.'
+        required: true
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      section:
+        custom: []
+        name: section
+        description: 'The ID of the course section.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      section_id: 2
+      section: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/course-sections/{section_id}/items'
+    metadata:
+      custom: []
+      groupName: 'Course Section Items Management'
+      groupDescription: |-
+
+        APIs for managing files, documents, and external links within a course section.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Add Section Item'
+      description: 'Upload a physical file or attach an external link to a course section.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters:
+      section_id:
+        custom: []
+        name: section_id
+        description: 'The ID of the section.'
+        required: true
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      section:
+        custom: []
+        name: section
+        description: 'The ID of the course section.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      section_id: 2
+      section: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      file:
+        custom: []
+        name: file
+        description: 'The physical document or media file to upload (Max 50MB). Required if url is omitted.'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      url:
+        custom: []
+        name: url
+        description: 'The full external link/URL. Required if file is omitted.'
+        required: false
+        example: 'https://example.com/slide.pdf'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      material_file_name:
+        custom: []
+        name: material_file_name
+        description: 'Custom display name for the material. Required only if url is provided.'
+        required: false
+        example: 'Lecture 1 Slides'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      url: 'https://example.com/slide.pdf'
+      material_file_name: 'Lecture 1 Slides'
+    fileParameters:
+      file: null
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/section-items/{item_id}'
+    metadata:
+      custom: []
+      groupName: 'Course Section Items Management'
+      groupDescription: |-
+
+        APIs for managing files, documents, and external links within a course section.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'View Section Item'
+      description: 'Fetch details of a specific section item.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      item_id:
+        custom: []
+        name: item_id
+        description: 'The ID of the item.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      item:
+        custom: []
+        name: item
+        description: 'The ID of the section item.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      item_id: 16
+      item: 5
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/section-items/{item_id}/download'
+    metadata:
+      custom: []
+      groupName: 'Course Section Items Management'
+      groupDescription: |-
+
+        APIs for managing files, documents, and external links within a course section.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Download or Redirect Item'
+      description: "Downloads the file directly if it's hosted locally, or redirects away if it's an external URL."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      item_id:
+        custom: []
+        name: item_id
+        description: 'The ID of the item.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      item:
+        custom: []
+        name: item
+        description: 'The ID of the section item.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      item_id: 16
+      item: 5
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+      - PATCH
+    uri: 'api/section-items/{item_id}'
+    metadata:
+      custom: []
+      groupName: 'Course Section Items Management'
+      groupDescription: |-
+
+        APIs for managing files, documents, and external links within a course section.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update Section Item'
+      description: 'Update metadata (like custom file name) for an item. Re-uploading a new file should go through delete + store instead.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      item_id:
+        custom: []
+        name: item_id
+        description: 'The ID of the item.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      item:
+        custom: []
+        name: item
+        description: 'The ID of the section item.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      item_id: 16
+      item: 5
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      material_file_name:
+        custom: []
+        name: material_file_name
+        description: 'The updated custom name for the material.'
+        required: false
+        example: 'Updated Lecture 1 Slides'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      material_file_name: 'Updated Lecture 1 Slides'
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/section-items/{item_id}'
+    metadata:
+      custom: []
+      groupName: 'Course Section Items Management'
+      groupDescription: |-
+
+        APIs for managing files, documents, and external links within a course section.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete Section Item'
+      description: 'Permanently remove an item and delete its physical file from storage if applicable.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      item_id:
+        custom: []
+        name: item_id
+        description: 'The ID of the item.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      item:
+        custom: []
+        name: item
+        description: 'The ID of the section item.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      item_id: 16
+      item: 5
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
