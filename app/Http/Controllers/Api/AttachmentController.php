@@ -20,24 +20,28 @@ class AttachmentController extends Controller
      */
     public function store(StoreAttachmentRequest $request, Letter $letter): JsonResponse
     {
-        $file = $request->file('file');
+        $attachments = collect();
 
-        $path = $file->store(
-            "attachments/letters/{$letter->id}",
-            'public'
-        );
+        foreach ($request->file('file') as $file) {
+            $path = $file->store(
+                "attachments/letters/{$letter->id}",
+                'public'
+            );
 
-        $attachment = Attachment::create([
-            'letter_id' => $letter->id,
-            'file_name' => $file->getClientOriginalName(),
-            'file_type' => $file->getClientOriginalExtension(),
-            'file_size' => $file->getSize(),
-            'file_url' => $path,
-        ]);
+            $attachments->push(
+                Attachment::create([
+                    'letter_id' => $letter->id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_type' => $file->getClientOriginalExtension(),
+                    'file_size' => $file->getSize(),
+                    'file_url' => $path,
+                ])
+            );
+        }
 
         return $this->created(
-            'Attachment uploaded successfully.',
-            (new AttachmentResource($attachment))->resolve()
+            'Attachments uploaded successfully.',
+            AttachmentResource::collection($attachments)->resolve()
         );
     }
 

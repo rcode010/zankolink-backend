@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LetterVerificationRequest;
 use App\Models\Letter;
+use App\Services\LetterVerificationHashService;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Str;
 
 class LetterVerificationController extends Controller
 {
     use ApiResponses;
-    public function getLetterVerification(LetterVerificationRequest $request){
+    public function getLetterVerification(LetterVerificationRequest $request,LetterVerificationHashService $letterVerificationHashService){
         $credentials = $request->validated();
 
         $letter = Letter::where('letter_uuid', $credentials['letter_uuid'])
@@ -61,28 +62,13 @@ class LetterVerificationController extends Controller
             ])
             ->firstOrFail();
 
-        $dataToBeHashed = [
-            'letter_number' => $letter->letter_number,
-            'type' => $letter->type,
-            'title' => $letter->title,
-            'body' => $letter->body,
 
-            'original_sender_id' => $letter->original_sender_id,
-            'academic_year_id' => $letter->academic_year_id,
-            'payload' => $letter->payload ?? null,
-        ];
-        $hashData = hash_hmac(
-            'sha256',
-            json_encode($dataToBeHashed, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-            config('app.key')
-        );
-        $content_verified = hash_equals($letter->verification_hash, $hashData);
 
         return $this->ok("Letter verification retrieved successfully", [
             'letter_number'=>$letter->letter_number,
             'title'=>$letter->title,
             'status'=>$letter->status,
-            'content_verified'=>$content_verified,
+            'content_verified'=>$letterVerificationHashService->verify($letter),
             'created_at'=>$letter->created_at,
             'flows'=>$letter->flows,
             'receiver'=>$letter->receiver,
