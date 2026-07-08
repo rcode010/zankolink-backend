@@ -18,6 +18,7 @@ use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -42,6 +43,7 @@ class DatabaseSeeder extends Seeder
         $this->seedUniversities();
 
         $this->seedLetters();
+        $this->createMoodleDemoUsers();
 
         Artisan::call('zankolink:seed-frontend-users');
     }
@@ -419,5 +421,96 @@ class DatabaseSeeder extends Seeder
                     ]);
                 }
             });
+    }
+    private function createMoodleDemoUsers(): void
+    {
+        $department = Department::first();
+        $course = Course::first();
+
+        $academicYearId = DB::table('academic_years')
+            ->where('is_active', true)
+            ->value('id');
+
+        if (! $department || ! $course || ! $academicYearId) {
+            return;
+        }
+
+        $teacherUser = User::updateOrCreate(
+            ['email' => 'teacher@zankolink.test'],
+            [
+                'name' => 'Demo Teacher',
+                'password' =>'Password@123',
+                'phone'=>'07700000000',
+                'is_active' => true,
+            ]
+        );
+
+        $teacherUser->syncRoles(['lecturer']);
+
+        $teacher = Teacher::updateOrCreate(
+            [
+                'user_id' => $teacherUser->id,
+                'title' => 'mr',
+                'speciality' => 'Software Engineering',
+            ]
+        );
+
+        DB::table('teacher_department')->updateOrInsert(
+            [
+                'teacher_id' => $teacher->id,
+                'department_id' => $department->id,
+            ],
+            [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        DB::table('course_teacher')->updateOrInsert(
+            [
+                'course_id' => $course->id,
+                'teacher_id' => $teacher->id,
+            ],
+            [
+                'role' => 'primary_lecturer',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        $studentUser = User::updateOrCreate(
+            ['email' => 'student@zankolink.test'],
+            [
+                'name' => 'Demo Student',
+                'password' => 'Password@123',
+                'phone'=>'07700000000',
+                'is_active' => true,
+            ]
+        );
+
+        $studentUser->syncRoles(['student']);
+
+        $student = Student::updateOrCreate(
+            ['user_id' => $studentUser->id],
+            [
+                'department_id' => $department->id,
+                'enrollment_type' => "morning",
+                'student_number' => "ST75585",
+                'stage' => 3,
+                'status' => 'active',
+            ]
+        );
+
+        DB::table('course_student')->updateOrInsert(
+            [
+                'course_id' => $course->id,
+                'student_id' => $student->id,
+                'academic_year_id' => $academicYearId,
+            ],
+            [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
     }
 }

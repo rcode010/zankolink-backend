@@ -1,0 +1,1133 @@
+name: Attendance
+description: ''
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/moodle/attendance-sessions
+    metadata:
+      custom: []
+      groupName: Attendance
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List attendance sessions'
+      description: 'Returns a paginated list of attendance sessions belonging to the authenticated teacher.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'Filter by course ID.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      session_date:
+        custom: []
+        name: session_date
+        description: 'date Filter by session date.'
+        required: false
+        example: '2026-07-08'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Number of results per page.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      course_id: 5
+      session_date: '2026-07-08'
+      per_page: 15
+    bodyParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'Must match an existing stored value.'
+        required: false
+        example: null
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      session_date:
+        custom: []
+        name: session_date
+        description: 'Must be a valid date.'
+        required: false
+        example: '2026-07-08T15:28:34'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Must be at least 1.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      session_date: '2026-07-08T15:28:34'
+      per_page: 16
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+          "success": true,
+          "message": "Sessions retrieved successfully.",
+          "data": [
+          {
+          "id": 9,
+          "title": "Second Lecture",
+          "session_date": "2026-07-17",
+          "start_at": "2026-07-17 04:00:00",
+          "end_at": "2026-07-17 06:00:00",
+          "course": {
+          "id": 1,
+          "name": "Software Architecture",
+          "code": "KOU29129",
+          "credit_hours": 2,
+          "year_level": 3,
+          "is_active": 0,
+          "department_id": 1,
+          "created_at": "2026-07-08 09:06:26",
+          "updated_at": "2026-07-08 09:06:26"
+          },
+          "teacher": {
+          "id": 2,
+          "title": "dr",
+          "speciality": "Networks",
+          "user": {
+          "id": 6,
+          "name": "Prof. Sofia O'Connell"
+          },
+          "created_at": "2026-07-08 09:06:25",
+          "updated_at": "2026-07-08 09:06:25"
+          },
+          "created_at": "2026-07-08T08:44:52.000000Z"
+          },
+          {
+          "id": 1,
+          "title": "First Lecture",
+          "session_date": "2026-07-06",
+          "start_at": "2026-07-06 04:00:00",
+          "end_at": "2026-07-06 06:00:00",
+          "course": {
+          "id": 1,
+          "name": "Software Architecture",
+          "code": "KOU29129",
+          "credit_hours": 2,
+          "year_level": 3,
+          "is_active": 0,
+          "department_id": 1,
+          "created_at": "2026-07-08 09:06:26",
+          "updated_at": "2026-07-08 09:06:26"
+          },
+          "teacher": {
+          "id": 2,
+          "title": "dr",
+          "speciality": "Networks",
+          "user": {
+          "id": 6,
+          "name": "Prof. Sofia O'Connell"
+          },
+          "created_at": "2026-07-08 09:06:25",
+          "updated_at": "2026-07-08 09:06:25"
+          },
+          "created_at": "2026-07-08T07:46:55.000000Z"
+          }
+          ]
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/moodle/attendance-sessions
+    metadata:
+      custom: []
+      groupName: Attendance
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create attendance session'
+      description: |-
+        Creates a new attendance session for a course.
+
+        The authenticated teacher is automatically assigned as the session owner,
+        and the currently active academic year is used.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The course ID.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      session_date:
+        custom: []
+        name: session_date
+        description: 'The session date.'
+        required: true
+        example: '2026-07-08'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      start_at:
+        custom: []
+        name: start_at
+        description: 'Session start time.'
+        required: true
+        example: '2026-07-08 09:00:00'
+        type: datetime
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      end_at:
+        custom: []
+        name: end_at
+        description: 'Session end time.'
+        required: true
+        example: '2026-07-08 10:30:00'
+        type: datetime
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      title:
+        custom: []
+        name: title
+        description: 'Session title.'
+        required: true
+        example: 'Week 5 Lecture'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      course_id: 5
+      session_date: '2026-07-08'
+      start_at: '2026-07-08 09:00:00'
+      end_at: '2026-07-08 10:30:00'
+      title: 'Week 5 Lecture'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: |-
+          {
+          "success": true,
+          "message": "Sessions retrieved successfully.",
+          "data": [
+          {
+          "id": 9,
+          "title": "Second Lecture",
+          "session_date": "2026-07-17",
+          "start_at": "2026-07-17 04:00:00",
+          "end_at": "2026-07-17 06:00:00",
+          "course": {
+          "id": 1,
+          "name": "Software Architecture",
+          "code": "KOU29129",
+          "credit_hours": 2,
+          "year_level": 3,
+          "is_active": 0,
+          "department_id": 1,
+          "created_at": "2026-07-08 09:06:26",
+          "updated_at": "2026-07-08 09:06:26"
+          },
+          "teacher": {
+          "id": 2,
+          "title": "dr",
+          "speciality": "Networks",
+          "user": {
+          "id": 6,
+          "name": "Prof. Sofia O'Connell"
+          },
+          "created_at": "2026-07-08 09:06:25",
+          "updated_at": "2026-07-08 09:06:25"
+          },
+          "created_at": "2026-07-08T08:44:52.000000Z"
+          },
+          {
+          "id": 1,
+          "title": "First Lecture",
+          "session_date": "2026-07-06",
+          "start_at": "2026-07-06 04:00:00",
+          "end_at": "2026-07-06 06:00:00",
+          "course": {
+          "id": 1,
+          "name": "Software Architecture",
+          "code": "KOU29129",
+          "credit_hours": 2,
+          "year_level": 3,
+          "is_active": 0,
+          "department_id": 1,
+          "created_at": "2026-07-08 09:06:26",
+          "updated_at": "2026-07-08 09:06:26"
+          },
+          "teacher": {
+          "id": 2,
+          "title": "dr",
+          "speciality": "Networks",
+          "user": {
+          "id": 6,
+          "name": "Prof. Sofia O'Connell"
+          },
+          "created_at": "2026-07-08 09:06:25",
+          "updated_at": "2026-07-08 09:06:25"
+          },
+          "created_at": "2026-07-08T07:46:55.000000Z"
+          }
+          ]
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/moodle/attendance-sessions/{session_id}'
+    metadata:
+      custom: []
+      groupName: Attendance
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'View attendance session'
+      description: 'Returns the details of a single attendance session.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      session_id:
+        custom: []
+        name: session_id
+        description: 'The ID of the session.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      session:
+        custom: []
+        name: session
+        description: 'The attendance session ID.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      session_id: 1
+      session: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          "success": true,
+          "message": "Attendance session retrieved successfully.",
+          "data": {
+          "id": 1,
+          "title": "First Lecture",
+          "session_date": "2026-07-06",
+          "start_at": "2026-07-06 04:00:00",
+          "end_at": "2026-07-06 06:00:00",
+          "course": {
+          "id": 1,
+          "name": "Software Architecture",
+          "code": "KOU29129",
+          "credit_hours": 2,
+          "year_level": 3,
+          "is_active": 0,
+          "department_id": 1,
+          "created_at": "2026-07-08 09:06:26",
+          "updated_at": "2026-07-08 09:06:26"
+          },
+          "teacher": {
+          "id": 2,
+          "title": "dr",
+          "speciality": "Networks",
+          "user": {
+          "id": 6,
+          "name": "Prof. Sofia O'Connell"
+          },
+          "created_at": "2026-07-08 09:06:25",
+          "updated_at": "2026-07-08 09:06:25"
+          },
+          "created_at": "2026-07-08T07:46:55.000000Z"
+          }
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+          "success": false,
+          "message": "You are not authorized to view this attendance session."
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/moodle/attendance-sessions/{session_id}'
+    metadata:
+      custom: []
+      groupName: Attendance
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update attendance session'
+      description: 'Updates an existing attendance session.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      session_id:
+        custom: []
+        name: session_id
+        description: 'The ID of the session.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      session:
+        custom: []
+        name: session
+        description: 'The attendance session ID.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      session_id: 1
+      session: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      session_date:
+        custom: []
+        name: session_date
+        description: 'The session date.'
+        required: false
+        example: '2026-07-08'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      start_at:
+        custom: []
+        name: start_at
+        description: 'The session start time.'
+        required: false
+        example: '2026-07-08 09:00:00'
+        type: datetime
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      end_at:
+        custom: []
+        name: end_at
+        description: 'The session end time.'
+        required: false
+        example: '2026-07-08 10:30:00'
+        type: datetime
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      title:
+        custom: []
+        name: title
+        description: 'The session title.'
+        required: false
+        example: 'Week 5 Lecture'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      session_date: '2026-07-08'
+      start_at: '2026-07-08 09:00:00'
+      end_at: '2026-07-08 10:30:00'
+      title: 'Week 5 Lecture'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+          "success": true,
+          "message": "Attendance session updated successfully.",
+          "data": {
+          "id": 10,
+          "title": "Third Lecture",
+          "session_date": "2026-07-18",
+          "start_at": "2026-07-18 16:00:00",
+          "end_at": "2026-07-18 18:00:00",
+          "course": {
+          "id": 1,
+          "name": "Software Architecture",
+          "code": "KOU29129",
+          "credit_hours": 2,
+          "year_level": 3,
+          "is_active": 0,
+          "department_id": 1,
+          "created_at": "2026-07-08 09:06:26",
+          "updated_at": "2026-07-08 09:06:26"
+          },
+          "teacher": {
+          "id": 4,
+          "title": "asst_prof",
+          "speciality": "Software Engineering",
+          "user": {
+          "id": 8,
+          "name": "Connor Schmeler"
+          },
+          "created_at": "2026-07-08 09:06:25",
+          "updated_at": "2026-07-08 09:06:25"
+          },
+          "created_at": "2026-07-08T08:51:12.000000Z"
+          }
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+          "success": false,
+          "message": "You are not authorized to update this attendance session."
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/moodle/attendance-sessions/{session_id}'
+    metadata:
+      custom: []
+      groupName: Attendance
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete attendance session'
+      description: 'Deletes an attendance session.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      session_id:
+        custom: []
+        name: session_id
+        description: 'The ID of the session.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      session:
+        custom: []
+        name: session
+        description: 'The attendance session ID.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      session_id: 1
+      session: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+          "success": true,
+          "message": "Attendance session deleted successfully.",
+          "data": []
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+          "success": false,
+          "message": "You are not authorized to delete this attendance session."
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/moodle/attendance-sessions/{session_id}/attendance'
+    metadata:
+      custom: []
+      groupName: Attendance
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Record attendance'
+      description: |-
+        Records or updates attendance for students in an attendance session.
+
+        If a student's attendance already exists for the session, it will be updated.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      session_id:
+        custom: []
+        name: session_id
+        description: 'The ID of the session.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      session:
+        custom: []
+        name: session
+        description: 'The attendance session ID.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      session_id: 1
+      session: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      attendance:
+        custom: []
+        name: attendance
+        description: 'List of attendance records.'
+        required: true
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'attendance[].student_id':
+        custom: []
+        name: 'attendance[].student_id'
+        description: 'The student ID.'
+        required: true
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'attendance[].status':
+        custom: []
+        name: 'attendance[].status'
+        description: 'Attendance status.'
+        required: true
+        example: present
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'attendance[].note':
+        custom: []
+        name: 'attendance[].note'
+        description: 'Optional note.'
+        required: false
+        example: 'Arrived 15 minutes late'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      attendance:
+        - architecto
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+          "success": true,
+          "message": "Attendance recorded successfully.",
+          "data": []
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+          "success": false,
+          "message": "You are not authorized to record attendance for this session."
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+          "success": false,
+          "message": "Student 1 is not enrolled in this course"
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/moodle/attendance-sessions/{session_id}/attendance'
+    metadata:
+      custom: []
+      groupName: Attendance
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'View attendance'
+      description: 'Returns all attendance records for an attendance session.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      session_id:
+        custom: []
+        name: session_id
+        description: 'The ID of the session.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      session:
+        custom: []
+        name: session
+        description: 'The attendance session ID.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      session_id: 1
+      session: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+          "success": true,
+          "message": "Attendance retrieved successfully.",
+          "data": [
+          {
+          "id": 1,
+          "attendance_session_id": 1,
+          "student": {
+          "id": 20,
+          "enrollment_type": "morning",
+          "stage": 1,
+          "student_number": "ST83956",
+          "status": "active",
+          "user": {
+          "id": 29,
+          "name": "Oswaldo Eichmann"
+          },
+          "created_at": "2026-07-08 14:04:32",
+          "updated_at": "2026-07-08 14:04:32"
+          },
+          "status": "Present",
+          "note": null,
+          "created_at": "2026-07-08T11:07:07.000000Z",
+          "updated_at": "2026-07-08T11:07:07.000000Z"
+          },
+          {
+          "id": 2,
+          "attendance_session_id": 1,
+          "student": {
+          "id": 7,
+          "enrollment_type": "parallel",
+          "stage": 3,
+          "student_number": "ST71824",
+          "status": "active",
+          "user": {
+          "id": 16,
+          "name": "Miss Trinity Rodriguez III"
+          },
+          "created_at": "2026-07-08 14:04:32",
+          "updated_at": "2026-07-08 14:04:32"
+          },
+          "status": "Excused Absence",
+          "note": "Brought doctors note",
+          "created_at": "2026-07-08T11:07:07.000000Z",
+          "updated_at": "2026-07-08T11:09:00.000000Z"
+          }
+          ]
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+           "success": false,
+           "message": "You are not authorized to record attendance for this session."
+           }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/moodle/my-attendance
+    metadata:
+      custom: []
+      groupName: Attendance
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'View my attendance'
+      description: 'Returns the attendance records for the authenticated student.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {ACCESS_TOKEN}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'Filter by course ID.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      status:
+        custom: []
+        name: status
+        description: 'Filter by attendance status.'
+        required: false
+        example: Present
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Number of results per page.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      course_id: 5
+      status: Present
+      per_page: 15
+    bodyParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'Must match an existing stored value.'
+        required: false
+        example: null
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      status:
+        custom: []
+        name: status
+        description: ''
+        required: false
+        example: Present
+        type: string
+        enumValues:
+          - Present
+          - Absent
+          - 'Excused Absence'
+          - Late
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Must be at least 1.'
+        required: false
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      status: Present
+      per_page: 16
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+          "success": true,
+          "message": "Attendance retrieved successfully.",
+          "data": [
+          {
+          "id": 3,
+          "attendance_session_id": 1,
+          "student": {
+          "id": 7,
+          "enrollment_type": "parallel",
+          "stage": 3,
+          "student_number": "ST71824",
+          "status": "active",
+          "user": {
+          "id": 16,
+          "name": "Miss Trinity Rodriguez III"
+          },
+          "created_at": "2026-07-08 14:04:32",
+          "updated_at": "2026-07-08 14:04:32"
+          },
+          "status": "Excused Absence",
+          "note": "Brought doctors note",
+          "attendance_session": {
+          "id": 1,
+          "title": "Second Lecture",
+          "session_date": "2026-07-17",
+          "start_at": "2026-07-17 04:00:00",
+          "end_at": "2026-07-17 06:00:00",
+          "course": {
+          "id": 2,
+          "name": "Cyber Security",
+          "code": "SUE91153",
+          "credit_hours": 4,
+          "year_level": 1,
+          "is_active": 1,
+          "department_id": 1,
+          "created_at": "2026-07-08 14:04:32",
+          "updated_at": "2026-07-08 14:04:32"
+          },
+          "teacher": {
+          "id": 1,
+          "title": "assoc_prof",
+          "speciality": "Artificial Intelligence",
+          "user": {
+          "id": 5,
+          "name": "Adrian Hilpert"
+          },
+          "created_at": "2026-07-08 14:04:32",
+          "updated_at": "2026-07-08 14:04:32"
+          },
+          "created_at": "2026-07-08T11:06:00.000000Z"
+          },
+          "created_at": "2026-07-08T11:07:07.000000Z",
+          "updated_at": "2026-07-08T11:09:00.000000Z"
+          }
+          ]
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 6g43cv8PD1aE5beadkZfhV6'
+    controller: null
+    method: null
+    route: null
