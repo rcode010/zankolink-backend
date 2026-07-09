@@ -43,7 +43,7 @@ class CourseController extends Controller
         }
 
         $courses = QueryBuilder::for($query)
-            ->with('department:id,name')
+            ->with(['prerequisites','department:id,name'])
             ->allowedFilters(
                 AllowedFilter::partial('name'),
                 AllowedFilter::partial('code'),
