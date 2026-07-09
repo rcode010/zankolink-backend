@@ -10,6 +10,7 @@ use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Student;
+use App\Services\CoursePrerequisiteEligibilityService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 /**
@@ -53,7 +54,7 @@ class StudentCourseController extends Controller
         );
     }
 
-    public function store(AssignStudentCourseRequest $request, Course $course)
+    public function store(AssignStudentCourseRequest $request, Course $course,CoursePrerequisiteEligibilityService $service)
     {
         $student = Student::findOrFail($request->validated('student_id'));
 
@@ -63,14 +64,23 @@ class StudentCourseController extends Controller
                 400
             );
         }
-
         $activeAcademicYearId = AcademicYear::where('is_active', true)->value('id');
+        $eligibility =$service->check($student, $course);
+        if (! $eligibility['eligible']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student has not passed all prerequisite courses.',
+                'missing_prerequisites' => $eligibility['missing_prerequisites'],
+            ], 422);
+        }
+
 
         $course->students()
             ->syncWithoutDetaching([
                 $student->id => [
                     'academic_year_id' => $activeAcademicYearId,
                     'enrolled_at' => now(),
+                    'status'=>"enrolled"
                 ],
             ]);
 
