@@ -25,4 +25,8 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
-.scribe/
+/.scribe/
+/public/docs/
+/resources/views/scribe/
+/resources/views/vendor/scribe/
+/lang/scribe.php
