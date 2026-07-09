@@ -11,6 +11,8 @@ use App\Models\Course;
 use App\Models\CourseAttendanceSessions;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CourseAttendanceSessionsController extends Controller
 {
@@ -100,21 +102,15 @@ class CourseAttendanceSessionsController extends Controller
     {
         $teacher = $request->user()->teacher;
 
-        $request->validate([
-            'course_id' => 'nullable|exists:courses,id',
-            'session_date' => 'nullable|date',
-            'per_page' => 'nullable|integer|min:1',
-        ]);
-
         $per_page = $request->query('per_page', 15);
 
-        $sessions = CourseAttendanceSessions::query()
+        $sessions = QueryBuilder::for(CourseAttendanceSessions::class)
             ->where('teacher_id', $teacher->id)
-            ->when($request->course_id, fn ($query) => $query->where('course_id', $request->course_id)
+            ->allowedFilters(
+                AllowedFilter::exact('course_id'),
+                AllowedFilter::exact('session_date'),
             )
-            ->when($request->session_date, fn ($query) => $query->whereDate('session_date', $request->session_date)
-            )
-            ->with('course', 'teacher.user', 'academicYear')
+            ->with(['course', 'teacher.user', 'academicYear'])
             ->latest('session_date')
             ->paginate($per_page);
 

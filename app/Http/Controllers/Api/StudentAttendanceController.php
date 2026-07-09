@@ -11,6 +11,8 @@ use App\Models\Student;
 use App\Models\StudentAttendance;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class StudentAttendanceController extends Controller
 {
@@ -246,31 +248,18 @@ class StudentAttendanceController extends Controller
     {
         $student = $request->user()->student;
 
-        $request->validate([
-            'course_id' => 'nullable|exists:courses,id',
-            'status' => 'nullable|in:Present,Absent,Excused Absence,Late',
-            'per_page' => 'nullable|integer|min:1',
-        ]);
-
         $per_page = $request->query('per_page', 15);
 
-        $attendance = StudentAttendance::query()
+        $attendance = QueryBuilder::for(StudentAttendance::class)
             ->where('student_id', $student->id)
-            ->whereHas('attendanceSession', function ($query) use ($request) {
-                $query->when($request->course_id, function ($query) use ($request) {
-                    $query->where('course_id', $request->course_id);
-                });
-            })
-            ->when($request->status, function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->with([
-                'attendanceSession.course',
-                'attendanceSession.teacher.user',
-                'student.user',
-            ])
+            ->allowedFilters(
+                AllowedFilter::exact('status'),
+                AllowedFilter::exact('attendanceSession.course_id'),
+            )
+            ->with(['attendanceSession.course', 'attendanceSession.teacher.user', 'student.user'])
             ->latest()
             ->paginate($per_page);
+
 
         return $this->ok(
             'Attendance retrieved successfully.',
