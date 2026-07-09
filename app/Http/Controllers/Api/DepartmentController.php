@@ -16,7 +16,11 @@ use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
-
+/**
+ * @group Department
+ *
+ * APIs for department CRUD.
+ */
 class DepartmentController extends Controller
 {
     use ApiResponses;

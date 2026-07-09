@@ -51,4 +51,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     require __DIR__.'/api/course-assessment.php';
     require __DIR__.'/api/student-marks.php';
+
+    require __DIR__.'/api/course-sections.php';
+    require __DIR__.'/api/section-submission.php';
+    require __DIR__.'/api/student-submissions.php';
+    require __DIR__.'/api/section_items.php';
 });

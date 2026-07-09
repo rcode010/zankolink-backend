@@ -8,7 +8,11 @@ use App\Http\Requests\UpdateRoleRequest;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-
+/**
+ * @group Role
+ *
+ * APIs for role CRUD.
+ */
 class RoleController extends Controller
 {
     use ApiResponses;

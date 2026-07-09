@@ -20,7 +20,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-
+/**
+ * @group Letters
+ *
+ * APIs for letter CRUDand raise.
+ */
 class LetterController extends Controller
 {
     use ApiResponses;
