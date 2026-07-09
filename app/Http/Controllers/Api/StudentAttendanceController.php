@@ -62,30 +62,37 @@ class StudentAttendanceController extends Controller
             );
         }
 
-        foreach ($data['attendance'] as $attendance) {
-            $studentExists = $session->course
-                ->students()
-                ->whereKey($attendance['student_id'])
-                ->exists();
+        $enrolledStudentIds = $session->course
+            ->students()
+            ->pluck('students.id')
+            ->all();
 
-            if (! $studentExists) {
-                return $this->error(
-                    "Student {$attendance['student_id']} is not enrolled in this course",
-                    422
-                );
-            }
+        $submittedIds = collect($data['attendance'])->pluck('student_id');
+        $invalidIds = $submittedIds->diff($enrolledStudentIds);
 
-            StudentAttendance::updateOrCreate(
-                [
-                    'attendance_session_id' => $session->id,
-                    'student_id' => $attendance['student_id'],
-                ],
-                [
-                    'status' => $attendance['status'],
-                    'note' => $attendance['note'] ?? null,
-                ]
+        if ($invalidIds->isNotEmpty()) {
+            return $this->error(
+                'One or more students are not enrolled in this course.',
+                422
             );
         }
+
+        $attendanceRecords = collect($data['attendance'])
+            ->map(fn ($attendance) => [
+                'attendance_session_id' => $session->id,
+                'student_id' => $attendance['student_id'],
+                'status' => $attendance['status'],
+                'note' => $attendance['note'] ?? null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])
+            ->toArray();
+
+        StudentAttendance::upsert(
+            $attendanceRecords,
+            ['attendance_session_id', 'student_id'],
+            ['status', 'note', 'updated_at']
+        );
 
         return $this->success('Attendance recorded successfully.');
     }
@@ -259,7 +266,6 @@ class StudentAttendanceController extends Controller
             ->with(['attendanceSession.course', 'attendanceSession.teacher.user', 'student.user'])
             ->latest()
             ->paginate($per_page);
-
 
         return $this->ok(
             'Attendance retrieved successfully.',

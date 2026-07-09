@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('note')->nullable();
 
             $table->timestamps();
+
+            $table->unique(['attendance_session_id', 'student_id']);
         });
     }
 
