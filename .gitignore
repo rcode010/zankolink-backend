@@ -30,5 +30,8 @@ Thumbs.db
 /resources/views/scribe/
 /resources/views/vendor/scribe/
 /lang/scribe.php
+<<<<<<< HEAD
 /storage/app/public/student-submissions/*
 /storage/app/public/section-submission-attachments/*
+=======
+>>>>>>> b4772b9f103349f797092278fb7dbfbe02e5bf77

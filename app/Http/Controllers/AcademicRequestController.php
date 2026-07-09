@@ -7,6 +7,7 @@ use App\Http\Resources\AcademicRequestResource;
 use App\Models\AcademicRequest;
 use App\Services\AcademicRequestDepartmentResolver;
 use App\Traits\ApiResponses;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -17,6 +18,61 @@ use Illuminate\Support\Facades\DB;
 class AcademicRequestController extends Controller
 {
     use ApiResponses;
+    /**
+     * List Academic Requests
+     *
+     * Returns a paginated list of academic requests submitted by the authenticated user.
+     *
+     * @authenticated
+     *
+     * @queryParam per_page integer optional Number of results per page. Defaults to 15. Example: 10
+     *
+     * @response 200 scenario="Requests retrieved successfully" {
+     *   "success": true,
+     *   "message": "Academic Request retrieved successfully",
+     *   "data": [
+     *     {
+     *       "id": 19,
+     *       "type": "leave",
+     *       "subject": "Medical Leave Request",
+     *       "description": "I need a leave of absence due to medical reasons.",
+     *       "status": "pending",
+     *       "user": {
+     *         "id": 479,
+     *         "name": "Demo Teacher"
+     *       },
+     *       "department": {
+     *         "id": 1,
+     *         "name": "Nursing and Midwifery"
+     *       },
+     *       "attachments": [
+     *         {
+     *           "id": 37,
+     *           "file_name": "medical_report.pdf",
+     *           "file_type": "image/jpeg",
+     *           "file_size": 259558,
+     *           "file_url": "http://localhost:8000/storage/attachments/academic-requests/Fc8XE05sD8fRTZu6kuJZoJV5qzMj4PHRXlAxzWTL.jpg"
+     *         }
+     *       ],
+     *       "created_at": "2026-07-09T08:06:22.000000Z",
+     *       "updated_at": "2026-07-09T08:06:22.000000Z"
+     *     }
+     *   ]
+     * }
+     *
+     * @response 401 scenario="Unauthenticated" {
+     *   "message": "Unauthenticated."
+     * }
+     */
+    public function index(Request $request){
+        $user = $request->user();
+        $academicRequests = AcademicRequest::where(
+            'user_id' , $user->id,
+        )->with(['attachments','user','department'])->get();
+
+        return $this->ok("Academic Request retrieved successfully",
+            (AcademicRequestResource::collection($academicRequests))->resolve());
+    }
     /**
      * Submit an Academic Request
      *
@@ -102,5 +158,65 @@ class AcademicRequestController extends Controller
         });
 
         return $this->created('Academic request created successfully', (new AcademicRequestResource($academicRequest))->resolve());
+    }
+
+    /**
+     * Get Academic Request
+     *
+     * Returns a single academic request by ID belonging to the authenticated user.
+     *
+     * @authenticated
+     *
+     * @urlParam academicRequest integer required The ID of the academic request. Example: 1
+     *
+     * @response 200 scenario="Request retrieved successfully" {
+     *   "success": true,
+     *   "message": "Academic Request retrieved successfully",
+     *   "data": {
+     *     "id": 1,
+     *     "type": "leave",
+     *     "subject": "anything",
+     *     "description": "asldfjasdl;kf",
+     *     "status": "pending",
+     *     "user": {
+     *       "id": 480,
+     *       "name": "Demo Student"
+     *     },
+     *     "department": {
+     *       "id": 1,
+     *       "name": "Nursing and Midwifery"
+     *     },
+     *     "attachments": [
+     *       {
+     *         "id": 1,
+     *         "file_name": "wallhaven-o3qqy5.jpg",
+     *         "file_type": "image/jpeg",
+     *         "file_size": 259558,
+     *         "file_url": "http://localhost:8000/storage/attachments/academic-requests/UzcNxzmNWLOvmJO7f3NuUyNux0IrjejReemfOAmG.jpg"
+     *       },
+     *       {
+     *         "id": 2,
+     *         "file_name": "wallhaven-qz1glr.jpg",
+     *         "file_type": "image/jpeg",
+     *         "file_size": 262923,
+     *         "file_url": "http://localhost:8000/storage/attachments/academic-requests/fPI8nRT3hrqG4H7XPuZrng8XyOXjl5KmytXWZRQB.jpg"
+     *       }
+     *     ],
+     *     "created_at": "2026-07-09T07:36:48.000000Z",
+     *     "updated_at": "2026-07-09T07:36:48.000000Z"
+     *   }
+     * }
+     *
+     * @response 404 scenario="Not found" {
+     *   "message": "No query results for model [App\\Models\\AcademicRequest] 1"
+     * }
+     *
+     * @response 401 scenario="Unauthenticated" {
+     *   "message": "Unauthenticated."
+     * }
+     */
+    public function show(AcademicRequest $academicRequest){
+
+        return $this->ok("Academic Request retrieved successfully",(new AcademicRequestResource($academicRequest->load(['attachments','user','department'])))->resolve());
     }
 }
