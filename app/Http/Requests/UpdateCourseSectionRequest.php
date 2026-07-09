@@ -14,9 +14,9 @@ class UpdateCourseSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'teacher_id' => 'sometimes|exists:teachers,id',
-            'course_id' => 'sometimes|exists:courses,id',
-            'title' => 'sometimes|string|max:255',
+            'teacher_id' => 'sometimes|nullable|exists:teachers,id',
+            'course_id'  => 'sometimes|exists:courses,id',
+            'title'      => 'sometimes|string|max:255',
         ];
     }
 }
