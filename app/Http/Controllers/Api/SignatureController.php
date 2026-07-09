@@ -12,7 +12,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
-
+/**
+ * @group Signature
+ *
+ * APIs for signature showing and creation.
+ */
 class SignatureController extends Controller
 {
     use ApiResponses;

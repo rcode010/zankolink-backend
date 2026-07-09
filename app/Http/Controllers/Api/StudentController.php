@@ -11,7 +11,11 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-
+/**
+ * @group Student
+ *
+ * APIs for Student CRUD.
+ */
 class StudentController extends Controller
 {
     use ApiResponses;

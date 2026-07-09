@@ -13,7 +13,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-
+/**
+ * @group Faculty
+ *
+ * APIs for faculty CRUD.
+ */
 class FacultyController extends Controller
 {
     use ApiResponses;

@@ -7,7 +7,11 @@ use App\Models\Course;
 use App\Models\CourseSelection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+/**
+ * @group Student-Selection
+ *
+ * APIs for student-sellection CRUD.
+ */
 class StudentSelectionController extends Controller
 {
     public function saveCourseSelection(Request $request)

@@ -12,7 +12,11 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-
+/**
+ * @group Course-Section
+ *
+ * APIs for course-section CRUD.
+ */
 class CourseSectionController extends Controller
 {
     use ApiResponses;
