@@ -12,7 +12,11 @@ use App\Models\Department;
 use App\Models\Student;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
-
+/**
+ * @group Student-Course
+ *
+ * APIs for student-course CRUD.
+ */
 class StudentCourseController extends Controller
 {
     use ApiResponses;

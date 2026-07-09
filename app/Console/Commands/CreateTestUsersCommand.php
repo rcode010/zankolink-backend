@@ -51,6 +51,7 @@ class CreateTestUsersCommand extends Command
 
         if (! $academicYear) {
             $this->error('  No active academic year found. Run db:seed first.');
+
             return;
         }
 
@@ -199,15 +200,16 @@ class CreateTestUsersCommand extends Command
 
         if (User::where('email', $email)->exists()) {
             $this->line("  <fg=yellow>SKIP</>  {$email} already exists — use --fresh to recreate.");
+
             return [$role, $email, $this->defaultPassword, $scopeType, $scopeId ?? 'null'];
         }
 
         $user = User::create([
-            'name'                  => $name,
-            'email'                 => $email,
-            'password'              => Hash::make($this->defaultPassword),
-            'phone'                 => '07700000000',
-            'is_active'             => true,
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make($this->defaultPassword),
+            'phone' => '07700000000',
+            'is_active' => true,
             'is_two_factor_enabled' => false,
         ]);
 
@@ -215,10 +217,10 @@ class CreateTestUsersCommand extends Command
         $user->assignRole($roleModel);
 
         UserScope::create([
-            'user_id'    => $user->id,
-            'role_id'    => $roleModel->id,
+            'user_id' => $user->id,
+            'role_id' => $roleModel->id,
             'scope_type' => $scopeType,
-            'scope_id'   => $scopeId,
+            'scope_id' => $scopeId,
         ]);
 
         $this->line("  <fg=green>OK</>    {$email}");

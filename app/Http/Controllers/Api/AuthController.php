@@ -25,7 +25,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
-
+/**
+ * @group Authentication
+ *
+ * APIs authenticate user.
+ */
 class AuthController extends Controller
 {
     use ApiResponses;

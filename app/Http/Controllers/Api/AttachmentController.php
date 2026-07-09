@@ -10,7 +10,11 @@ use App\Models\Letter;
 use App\Traits\ApiResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
-
+/**
+ * @group Attachement
+ *
+ * APIs for attachement CRUD.
+ */
 class AttachmentController extends Controller
 {
     use ApiResponses;

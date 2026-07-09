@@ -11,7 +11,11 @@ use App\Models\University;
 use App\Traits\ApiResponses;
 use App\Traits\ResolvesLetterScope;
 use Illuminate\Support\Facades\DB;
-
+/**
+ * @group Dashboard
+ *
+ * APIs Dashboard.
+ */
 class DashboardController extends Controller
 {
     use ApiResponses, ResolvesLetterScope;

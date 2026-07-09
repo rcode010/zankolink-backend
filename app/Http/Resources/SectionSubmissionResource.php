@@ -19,6 +19,7 @@ class SectionSubmissionResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'deadline' => $this->deadline,
+            'weight' => $this->weight,
 
             'section' => $this->whenLoaded(
                 'section',

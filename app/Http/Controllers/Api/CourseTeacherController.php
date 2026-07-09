@@ -10,7 +10,11 @@ use App\Models\Course;
 use App\Models\Teacher;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
-
+/**
+ * @group Course-Teacher
+ *
+ * APIs for course-teacher CRUD.
+ */
 class CourseTeacherController extends Controller
 {
     use ApiResponses;

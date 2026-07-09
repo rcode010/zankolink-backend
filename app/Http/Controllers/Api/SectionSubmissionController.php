@@ -12,12 +12,51 @@ use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @group Section-Submission
+ *
+ * APIs for section-submission CRUD.
+ */
 class SectionSubmissionController extends Controller
 {
     use ApiResponses;
 
     /**
-     * Display a listing of the resource.
+     * List assignments in a section
+     *
+     * Returns all assignments belonging to the specified course section.
+     *
+     * @authenticated
+     *
+     * @urlParam section integer required The ID of the course section. Example: 1
+     *
+     * @response 200 {
+     * "success": true,
+     * "message": "Assignments retrieved successfully.",
+     * "data": [
+     * {
+     * "id": 1,
+     * "title": "homework",
+     * "description": "this is the description",
+     * "deadline": "2026-07-19 17:00:00",
+     * "section": {
+     * "id": 1,
+     * "title": "Week 1: Introduction to Laravel Basics"
+     * },
+     * "attachments": [
+     * {
+     * "id": 1,
+     * "file_name": "Screenshot 2026-07-04 142426.png",
+     * "file_type": "image/png",
+     * "file_size": 233,
+     * "file_url": "section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
+     * }
+     * ],
+     * "created_at": "2026-07-09 10:03:24",
+     * "updated_at": "2026-07-09 10:03:24"
+     * }
+     * ]
+     * }
      */
     public function index(CourseSection $section)
     {
@@ -30,7 +69,45 @@ class SectionSubmissionController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create assignment
+     *
+     * Creates a new assignment for the specified course section.
+     * Multiple attachment files may be uploaded.
+     *
+     * @authenticated
+     *
+     * @urlParam section integer required The ID of the course section. Example: 1
+     *
+     * @bodyParam title string required The assignment title. Example: Project 1
+     * @bodyParam description string required The assignment description.
+     * @bodyParam deadline datetime required Assignment deadline. Example: 2026-10-15 14:30:00
+     * @bodyParam files file[] Optional One or more attachment files.
+     *
+     * @response 201 {
+     *  "success": true,
+     *  "message": "Assignment created successfully",
+     *  "data": {
+     *  "id": 1,
+     *  "title": "homework",
+     *  "description": "this is the description",
+     *  "deadline": "2026-07-19 17:00:00",
+     *  "section": {
+     *  "id": 1,
+     *  "title": "Week 1: Introduction to Laravel Basics"
+     *  },
+     *  "attachments": [
+     *  {
+     *  "id": 1,
+     *  "file_name": "Screenshot 2026-07-04 142426.png",
+     *  "file_type": "image/png",
+     *  "file_size": 233,
+     *  "file_url": "section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
+     *  }
+     *  ],
+     *  "created_at": "2026-07-09 10:03:24",
+     *  "updated_at": "2026-07-09 10:03:24"
+     *  }
+     *  }
      */
     public function store(StoreSectionSubmissionRequest $request, CourseSection $section)
     {
@@ -80,7 +157,39 @@ class SectionSubmissionController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show assignment details
+     *
+     * Returns the details of a specific assignment.
+     *
+     * @authenticated
+     *
+     * @urlParam submission integer required The ID of the assignment. Example: 1
+     *
+     * @response 200 {
+     * "success": true,
+     * "message": "Assignment retrieved successfully.",
+     * "data": {
+     * "id": 1,
+     * "title": "homework",
+     * "description": "this is the description",
+     * "deadline": "2026-07-19 17:00:00",
+     * "section": {
+     * "id": 1,
+     * "title": "Week 1: Introduction to Laravel Basics"
+     * },
+     * "attachments": [
+     * {
+     * "id": 1,
+     * "file_name": "Screenshot 2026-07-04 142426.png",
+     * "file_type": "image/png",
+     * "file_size": 233,
+     * "file_url": "section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
+     * }
+     * ],
+     * "created_at": "2026-07-09 10:03:24",
+     * "updated_at": "2026-07-09 10:03:24"
+     * }
+     * }
      */
     public function show(SectionSubmission $submission)
     {
@@ -95,13 +204,58 @@ class SectionSubmissionController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update assignment
+     *
+     * Updates an existing assignment.
+     * Additional attachment files may also be uploaded.
+     *
+     * @authenticated
+     *
+     * @urlParam submission integer required The ID of the assignment. Example: 1
+     *
+     * @bodyParam title string The assignment title. Example: Updated Project
+     * @bodyParam description string The assignment description.
+     * @bodyParam deadline datetime Assignment deadline. Example: 2026-10-20 16:00:00
+     * @bodyParam files file[] Optional One or more attachment files.
+     *
+     * @response 200 {
+     * "success": true,
+     * "message": "Assignment updated successfully.",
+     * "data": {
+     * "id": 1,
+     * "title": "new title",
+     * "description": "new description",
+     * "deadline": "01-08-2026",
+     * "section": {
+     * "id": 1,
+     * "title": "Week 1: Introduction to Laravel Basics"
+     * },
+     * "attachments": [
+     * {
+     * "id": 1,
+     * "file_name": "Screenshot 2026-07-04 142426.png",
+     * "file_type": "image/png",
+     * "file_size": 233,
+     * "file_url": "section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
+     * },
+     * {
+     * "id": 2,
+     * "file_name": "Screenshot 2026-07-04 142426.png",
+     * "file_type": "image/png",
+     * "file_size": 233,
+     * "file_url": "section-submission/KGq4P6aFWYL9o8Vvj2yEZQusc3HS8sSuiRiI37Ut.png"
+     * }
+     * ],
+     * "created_at": "2026-07-09 10:03:24",
+     * "updated_at": "2026-07-09 10:05:35"
+     * }
+     * }
      */
     public function update(UpdateSectionSubmissionRequest $request, SectionSubmission $submission)
     {
         $data = $request->validated();
         DB::beginTransaction();
-        try{
+        try {
             $submission->update($data);
 
             if ($request->hasFile('files')) {
@@ -117,6 +271,7 @@ class SectionSubmissionController extends Controller
             }
 
             DB::commit();
+
             return $this->success(
                 'Assignment updated successfully.',
                 (new SectionSubmissionResource($submission->load([
@@ -124,7 +279,7 @@ class SectionSubmissionController extends Controller
                     'attachments',
                 ])))->resolve()
             );
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
 
             \Log::error($e);
@@ -137,11 +292,23 @@ class SectionSubmissionController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete assignment
+     *
+     * Deletes an assignment and all of its attachments.
+     *
+     * @authenticated
+     *
+     * @urlParam submission integer required The ID of the assignment. Example: 1
+     *
+     * @response 200 {
+     * "success": true,
+     * "message": "Assignment deleted successfully.",
+     * "data": []
+     * }
      */
     public function destroy(SectionSubmission $submission)
     {
-        foreach($submission->attachments as $attachment){
+        foreach ($submission->attachments as $attachment) {
             Storage::disk('public')->delete($attachment->file_url);
         }
         $submission->delete();

@@ -25,3 +25,10 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/.scribe/
+/public/docs/
+/resources/views/scribe/
+/resources/views/vendor/scribe/
+/lang/scribe.php
+/storage/app/public/student-submissions/*
+/storage/app/public/section-submission-attachments/*

@@ -3,196 +3,196 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CourseResource;
-use App\Http\Resources\SectionItemResource;
 use App\Http\Resources\SectionSubmissionResource;
-use App\Models\Course;
+use App\Models\SectionSubmission;
+use App\Models\StudentSubmission;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /**
- * @group Moodle Student Dashboard
+ * @group Moodle Student Submissions
  *
- * Read-only endpoints for a student viewing their own enrolled courses,
- * course details, and section content (materials + assignments).
+ * Managing endpoints for students submitting their assignments and viewing their grades,
+ * alongside teacher-facing dashboard features to list and grade submissions.
  *
  * --- ACCESS CONTROL ---
- * Every method here checks two things before returning data:
- * 1. The authenticated user has a `student` profile at all
- * (guarded here defensively — TODO: move to route middleware once written).
- * 2. For course-scoped endpoints, that student is actually enrolled in
- * the requested course (via the `course_student` pivot), so a student
- * can never view another course's content by guessing its ID.
- *
- * --- RESOURCE USAGE NOTE ---
- * No new Resource classes were added for this feature. Where an existing
- * Resource already covers a shape (CourseResource, SectionItemResource,
- * SectionSubmissionResource), it's reused directly via ->resolve(). Where
- * the student view needs extra fields those Resources don't provide
- * (teacher's flattened name/email, per-student submission status, the
- * student's own submitted file), that logic is written inline below
- * instead of creating another Resource file.
+ * 1. Resolves the active student profile dynamically from the authenticated session.
+ * 2. Formatted specifically for a robust frontend state integration without deep resource nesting.
  */
-class MoodleStudentCourseController extends Controller
+class StudentSubmissionController extends Controller
 {
     use ApiResponses;
 
     /**
-     * List My Enrolled Courses
+     * List Assignment Submissions
      *
-     * List all courses the authenticated student is enrolled in.
+     * List all student submissions for a specific assignment blueprint (Lecturer-facing).
      *
      * @authenticated
-     * @responseFromApiResource App\Http\Resources\CourseResource collection
+     * @urlParam submission integer required The ID of the assignment blueprint. Example: 4
      */
-    public function myCourses(Request $request)
+    public function index(Request $request, SectionSubmission $submission)
     {
-        $student = $this->resolveStudent($request);
-
-        // Only load what CourseResource actually exposes (department, teachers).
-        $courses = $student->courses()
-        ->withCount(['students', 'sections'])
-            ->with([
-                'department:id,name,faculty_id',
-                'teachers.user:id,name,email',
-            ])
-            ->latest('courses.created_at')
+        $submissions = $submission->studentSubmissions()
+            ->with('student.user:id,name')
+            ->latest()
             ->get();
 
-        return $this->ok('Student enrolled courses retrieved successfully', [
-            'courses' => CourseResource::collection($courses)->resolve(),
-        ]);
+        return $this->ok('Student submissions retrieved successfully.', $submissions);
     }
 
     /**
-     * Show My Course Details
+     * Upload Assignment Submission
      *
-     * Show course-level info only (name, code, department, teachers).
-     * Sections/materials/assignments are handled by the sections() endpoint below.
+     * Submit a file upload response for a specific assignment blueprint (Student-facing).
      *
      * @authenticated
-     * @urlParam course integer required The ID of the course. Example: 3
-     * @responseFromApiResource App\Http\Resources\CourseResource
-     * @response status=403 scenario="not enrolled" {
-     * "status": "error",
-     * "message": "You are not enrolled in this course.",
-     * "data": null
-     * }
+     * @urlParam submission integer required The ID of the assignment blueprint. Example: 4
      */
-    public function showCourse(Request $request, Course $course)
+    public function store(Request $request, SectionSubmission $submission)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:pdf,doc,docx,zip,rar|max:10240',
+        ]);
+
+        $student = $this->resolveStudent($request);
+
+        $exists = $submission->studentSubmissions()->where('student_id', $student->id)->exists();
+        if ($exists) {
+            return $this->error('You have already submitted this assignment.', 400);
+        }
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $path = $file->store('student-submissions', 'public');
+
+            $studentSubmission = $submission->studentSubmissions()->create([
+                'student_id'   => $student->id,
+                'submitted_at' => now(),
+                'file_name'    => $file->getClientOriginalName(),
+                'file_type'    => $file->getClientMimeType(),
+                'file_size'    => $file->getSize(),
+                'file_url'     => $path,
+            ]);
+
+            return $this->success('Assignment submitted successfully.', $studentSubmission, 201);
+        }
+
+        return $this->error('File upload failed.', 400);
+    }
+
+    /**
+     * Show Student Submission details
+     *
+     * Fetch explicit operational details of a single student answer for marking (Lecturer-facing).
+     *
+     * @authenticated
+     * @urlParam studentSubmission integer required The unique response record ID. Example: 6
+     */
+    public function show(Request $request, StudentSubmission $studentSubmission)
+    {
+        return $this->ok('Student submission retrieved successfully.', $studentSubmission);
+    }
+
+    /**
+     * View My Personal Submission
+     *
+     * View flattened response blueprint details for a single assignment (Student-facing View Modal).
+     *
+     * @authenticated
+     * @urlParam submission integer required The ID of the assignment blueprint. Example: 4
+     */
+    public function mySubmission(Request $request, SectionSubmission $submission)
     {
         $student = $this->resolveStudent($request);
 
-        if (! $this->studentIsEnrolled($student->id, $course)) {
-            return $this->error('You are not enrolled in this course.', 403);
+        $studentSubmission = $submission->studentSubmissions()
+            ->where('student_id', $student->id)
+            ->first();
+
+        if (! $studentSubmission) {
+            return $this->ok('You have not submitted this assignment yet.', null);
         }
 
-        $course->load([
-            'department:id,name,faculty_id',
-            'teachers.user:id,name,email',
-        ]);
-
-        return $this->ok('Course details retrieved successfully', [
-            'course' => (new CourseResource($course))->resolve(),
+        return $this->ok('Submission retrieved successfully', [
+            'id'           => $studentSubmission->id,
+            'student_id'   => $studentSubmission->student_id,
+            'submitted_at' => $studentSubmission->created_at?->toDateTimeString(),
+            
+            'grade'        => $studentSubmission->grade,
+            'feedback'     => $studentSubmission->feedback,
+            'graded_at'    => $studentSubmission->graded_at,
+            
+            'attachment'   => [
+                'file_name' => $studentSubmission->file_name,
+                'file_type' => $studentSubmission->file_type,
+                'file_size' => $studentSubmission->file_size,
+                'file_url'  => $studentSubmission->file_url ? Storage::disk('public')->url($studentSubmission->file_url) : null,
+            ]
         ]);
     }
 
     /**
-     * List My Course Sections
+     * Grade Student Submission
      *
-     * Show sections for the course, each with its materials, assignments,
-     * assignment attachments, and this student's own submission status
-     * (including their submitted file, if any).
+     * Update validation markers, evaluate and grade a student's answer document (Lecturer-facing).
      *
      * @authenticated
-     * @urlParam course integer required The ID of the course. Example: 3
-     * @response status=403 scenario="not enrolled" {
-     * "status": "error",
-     * "message": "You are not enrolled in this course.",
-     * "data": null
-     * }
+     * @urlParam studentSubmission integer required The unique response record ID. Example: 6
      */
-    public function sections(Request $request, Course $course)
+    public function grade(Request $request, StudentSubmission $studentSubmission)
     {
-        $student = $this->resolveStudent($request);
-
-        if (! $this->studentIsEnrolled($student->id, $course)) {
-            return $this->error('You are not enrolled in this course.', 403);
-        }
-
-        $sections = $course->sections()
-            ->with([
-                'teacher.user:id,name,email',
-                'items', // course materials
-                'submissions.attachments', // assignments + their attachments
-                // Only load THIS student's own submission per assignment,
-                // not every student's — keeps the response small and private.
-                'submissions.studentSubmissions' => function ($query) use ($student) {
-                    $query->where('student_id', $student->id);
-                },
-            ])
-            ->latest()
-            ->get()
-            ->map(function ($section) {
-                return [
-                    'id'    => $section->id,
-                    'title' => $section->title,
-
-                    // No existing Resource matches this flattened shape
-                    // (id/name/email straight from the teacher's user),
-                    // so it's written inline rather than adding a new class.
-                    'teacher' => $section->teacher ? [
-                        'id'    => $section->teacher->id,
-                        'name'  => $section->teacher->user?->name,
-                        'email' => $section->teacher->user?->email,
-                    ] : null,
-
-                    // Reuses the existing SectionItemResource as-is —
-                    // it already resolves uploaded-file paths vs. external
-                    // URLs via Storage::disk('public')->url().
-                    'materials' => SectionItemResource::collection($section->items)->resolve(),
-
-                    'assignments' => $section->submissions->map(function ($submission) {
-                        // Relation was pre-scoped to this student in the
-                        // query above, so first() is their one submission
-                        // (or nothing, if they haven't submitted).
-                        $mySubmission = $submission->studentSubmissions->first();
-
-                        // Start from the existing SectionSubmissionResource
-                        // output (id, title, description, deadline,
-                        // attachments, section, timestamps), then merge in
-                        // the two student-specific fields it doesn't know
-                        // about — no new Resource class needed for that.
-                        return array_merge(
-                            (new SectionSubmissionResource($submission))->resolve(),
-                            [
-                                'submission_status' => $mySubmission ? 'submitted' : 'not_submitted',
-                                'my_submission' => $mySubmission ? [
-                                    'id'           => $mySubmission->id,
-                                    'file_name'    => $mySubmission->file_name,
-                                    'file_type'    => $mySubmission->file_type,
-                                    'file_size'    => $mySubmission->file_size,
-                                    'file_url'     => $mySubmission->file_url,
-                                    'submitted_at' => $mySubmission->created_at?->toDateTimeString(),
-                                ] : null,
-                            ]
-                        );
-                    }),
-                ];
-            });
-
-        return $this->ok('Course sections retrieved successfully', [
-            'sections' => $sections,
+        $request->validate([
+            'grade'    => 'required|numeric|min:0',
+            'feedback' => 'nullable|string',
         ]);
+
+        $studentSubmission->update([
+            'grade'     => $request->grade,
+            'feedback'  => $request->feedback,
+            'graded_at' => now(),
+        ]);
+
+        return $this->ok('Submission graded successfully.', $studentSubmission);
     }
 
     /**
-     * Resolve the authenticated user's student profile, or fail with a
-     * clear 403 rather than a null-property crash.
+     * Download Submitted File Attachment
      *
-     * TODO: remove this guard once a dedicated `EnsureUserIsStudent`
-     * route middleware exists — at that point this method can simply
-     * return $request->user()->student without the abort_unless check.
+     * Download secure attachment files locally from public local disk mappings.
+     *
+     * @authenticated
+     */
+    public function download(Request $request, StudentSubmission $studentSubmission)
+    {
+        if (! Storage::disk('public')->exists($studentSubmission->file_url)) {
+            return $this->error('File not found on storage.', 404);
+        }
+
+        return Storage::disk('public')->download($studentSubmission->file_url, $studentSubmission->file_name);
+    }
+
+    /**
+     * Delete Submission Record
+     *
+     * Remove student records alongside mapped resource attachments.
+     *
+     * @authenticated
+     */
+    public function destroy(Request $request, StudentSubmission $studentSubmission)
+    {
+        if ($studentSubmission->file_url) {
+            Storage::disk('public')->delete($studentSubmission->file_url);
+        }
+
+        $studentSubmission->delete();
+
+        return $this->ok('Submission deleted successfully.', null);
+    }
+
+    /**
+     * Resolve the authenticated user's student profile securely.
      */
     private function resolveStudent(Request $request)
     {
@@ -205,16 +205,5 @@ class MoodleStudentCourseController extends Controller
         );
 
         return $student;
-    }
-
-    /**
-     * Confirm the student has a confirmed enrollment (course_student pivot)
-     * in this course before letting them view its details/sections.
-     */
-    private function studentIsEnrolled(int $studentId, Course $course): bool
-    {
-        return $course->students()
-            ->where('students.id', $studentId)
-            ->exists();
     }
 }

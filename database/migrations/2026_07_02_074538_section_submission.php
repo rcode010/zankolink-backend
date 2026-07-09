@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->dateTime('deadline');
+            $table->decimal('weight', 5, 2)->nullable();
             $table->timestamps();
         });
     }
