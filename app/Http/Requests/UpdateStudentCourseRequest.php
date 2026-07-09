@@ -24,6 +24,7 @@ class UpdateStudentCourseRequest extends FormRequest
     {
         return [
             'grade' => 'sometimes|numeric|between:0,100',
+            'status' => 'sometimes|numeric|in:enrolled,passed,failed,withdrawn',
             'academic_year_id' => 'nullable|exists:academic_years,id',
             'enrolled_at' => 'sometimes|date',
         ];
