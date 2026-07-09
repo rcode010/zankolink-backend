@@ -40,4 +40,7 @@ class Course extends Model
     {
         return $this->hasMany(CourseSection::class);
     }
+    public function prerequisites(): HasMany{
+        return $this->hasMany(CoursePrerequirsites::class);
+    }
 }
