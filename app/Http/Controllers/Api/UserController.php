@@ -11,7 +11,11 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
-
+/**
+ * @group User
+ *
+ * APIs for user CRUD.
+ */
 class UserController extends Controller
 {
     use ApiResponses;

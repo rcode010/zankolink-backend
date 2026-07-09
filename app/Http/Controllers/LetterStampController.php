@@ -12,7 +12,11 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-
+/**
+ * @group Letter-Stamp
+ *
+ * APIs for letter-stamp creation.
+ */
 class LetterStampController extends Controller
 {
     use ApiResponses;

@@ -17,17 +17,20 @@ use Spatie\QueryBuilder\QueryBuilder;
  * @group Course Sections Management
  *
  * Handles CRUD operations for Course Sections.
- * * --- CORE ARCHITECTURE & DESIGN CONTRACT ---
+ * 
+ * --- CORE ARCHITECTURE & DESIGN CONTRACT ---
  * 1. StoreCourseSectionRequest Contract:
  * - Validates POST /api/courses/{course}/sections
  * - Expected Body: { "title": "Section A" } (string, required, max:255)
  * - Note: parent course is bound via URL, teacher_id is derived from auth session.
- * * 2. UpdateCourseSectionRequest Contract:
+ * 
+ * 2. UpdateCourseSectionRequest Contract:
  * - Validates PUT/PATCH /api/sections/{section}
  * - Expected Body (all optional): 
  * { "title": "New Title", "course_id": 2, "teacher_id": 5 }
  * - Note: teacher_id is nullable, allowing frontends to unassign teachers.
- * * 3. CourseSectionResource JSON Contract:
+ * 
+ * 3. CourseSectionResource JSON Contract:
  * - Prevents data leaks of internal columns (e.g. deleted_at, raw foreign keys).
  * - Conditionally loads relations using whenLoaded() to prevent N+1 database queries.
  * - Output Shape:
@@ -86,8 +89,8 @@ class CourseSectionController extends Controller
      *
      * @authenticated
      * @urlParam course integer required The ID of the parent course. Example: 1
-     * * @bodyParam title string required The title or name of the new course section. Example: Chapter 1: Setup
-     * * @responseFromApiResource App\Http\Resources\CourseSectionResource status=201
+     * @bodyParam title string required The title or name of the new course section. Example: Chapter 1: Setup
+     * @responseFromApiResource App\Http\Resources\CourseSectionResource status=201
      * @response status=403 scenario="not a teacher" {
      * "status": "error",
      * "message": "Only accounts with a teacher profile can create course sections.",
@@ -143,10 +146,10 @@ class CourseSectionController extends Controller
      *
      * @authenticated
      * @urlParam section integer required The ID of the course section. Example: 12
-     * * @bodyParam title string The updated title of the section. Example: Chapter 1: Advanced Routing
+     * @bodyParam title string The updated title of the section. Example: Chapter 1: Advanced Routing
      * @bodyParam course_id integer The ID of the course this section belongs to. Example: 4
      * @bodyParam teacher_id integer The ID of the teacher assigned to this section. Pass null to unassign. Example: 3
-     * * @responseFromApiResource App\Http\Resources\CourseSectionResource
+     * @responseFromApiResource App\Http\Resources\CourseSectionResource
      */
     public function update(UpdateCourseSectionRequest $request, CourseSection $section)
     {

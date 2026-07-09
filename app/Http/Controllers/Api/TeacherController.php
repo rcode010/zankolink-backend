@@ -12,7 +12,11 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-
+/**
+ * @group Teacher
+ *
+ * APIs for teacher CRUD.
+ */
 class TeacherController extends Controller
 {
     use ApiResponses;

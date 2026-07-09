@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\AcademicYear;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+/**
+ * @group AcademicYear
+ *
+ * APIs for academicYear update.
+ */
 class AcademicYearController extends Controller
 {
     /**
