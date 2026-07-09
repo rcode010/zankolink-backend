@@ -424,23 +424,33 @@ class DatabaseSeeder extends Seeder
     }
     private function createMoodleDemoUsers(): void
     {
-        $department = Department::first();
-        $course = Course::first();
+        $departments = Department::query()
+            ->take(2)
+            ->get();
+
+        $course = Course::query()
+            ->whereIn('department_id', $departments->pluck('id'))
+            ->first();
 
         $academicYearId = DB::table('academic_years')
             ->where('is_active', true)
             ->value('id');
 
-        if (! $department || ! $course || ! $academicYearId) {
+        if ($departments->count() < 2 || ! $course || ! $academicYearId) {
             return;
         }
+
+        $primaryDepartment = $departments->first();
+
+
+        // Teacher
 
         $teacherUser = User::updateOrCreate(
             ['email' => 'teacher@zankolink.test'],
             [
                 'name' => 'Demo Teacher',
-                'password' =>'Password@123',
-                'phone'=>'07700000000',
+                'password' => 'Password@123',
+                'phone' => '07700000000',
                 'is_active' => true,
             ]
         );
@@ -448,23 +458,32 @@ class DatabaseSeeder extends Seeder
         $teacherUser->syncRoles(['lecturer']);
 
         $teacher = Teacher::updateOrCreate(
+            ['user_id' => $teacherUser->id],
             [
-                'user_id' => $teacherUser->id,
                 'title' => 'mr',
                 'speciality' => 'Software Engineering',
             ]
         );
 
-        DB::table('teacher_department')->updateOrInsert(
-            [
-                'teacher_id' => $teacher->id,
-                'department_id' => $department->id,
-            ],
-            [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+        foreach ($departments as $department) {
+            DB::table('teacher_department')->updateOrInsert(
+                [
+                    'teacher_id' => $teacher->id,
+                    'department_id' => $department->id,
+                ],
+                [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            $this->createUserScope(
+                $teacherUser,
+                'lecturer',
+                'DEPARTMENT',
+                $department->id
+            );
+        }
 
         DB::table('course_teacher')->updateOrInsert(
             [
@@ -478,12 +497,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+       // Student
         $studentUser = User::updateOrCreate(
             ['email' => 'student@zankolink.test'],
             [
                 'name' => 'Demo Student',
                 'password' => 'Password@123',
-                'phone'=>'07700000000',
+                'phone' => '07700000001',
                 'is_active' => true,
             ]
         );
@@ -493,12 +513,19 @@ class DatabaseSeeder extends Seeder
         $student = Student::updateOrCreate(
             ['user_id' => $studentUser->id],
             [
-                'department_id' => $department->id,
-                'enrollment_type' => "morning",
-                'student_number' => "ST75585",
+                'department_id' => $primaryDepartment->id,
+                'enrollment_type' => 'morning',
+                'student_number' => 'ST75585',
                 'stage' => 3,
                 'status' => 'active',
             ]
+        );
+
+        $this->createUserScope(
+            $studentUser,
+            'student',
+            'DEPARTMENT',
+            $primaryDepartment->id
         );
 
         DB::table('course_student')->updateOrInsert(
@@ -506,6 +533,31 @@ class DatabaseSeeder extends Seeder
                 'course_id' => $course->id,
                 'student_id' => $student->id,
                 'academic_year_id' => $academicYearId,
+            ],
+            [
+                'status' => 'enrolled',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+    }
+    private function createUserScope(User $user, string $roleName, string $scopeType, ?int $scopeId): void
+    {
+        $roleId = DB::table('roles')
+            ->where('name', $roleName)
+            ->where('guard_name', 'web')
+            ->value('id');
+
+        if (! $roleId) {
+            return;
+        }
+
+        DB::table('user_scopes')->updateOrInsert(
+            [
+                'user_id' => $user->id,
+                'role_id' => $roleId,
+                'scope_type' => $scopeType,
+                'scope_id' => $scopeId,
             ],
             [
                 'created_at' => now(),
