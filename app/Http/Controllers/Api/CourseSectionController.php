@@ -17,20 +17,17 @@ use Spatie\QueryBuilder\QueryBuilder;
  * @group Course Sections Management
  *
  * Handles CRUD operations for Course Sections.
- * 
- * --- CORE ARCHITECTURE & DESIGN CONTRACT ---
+ * * --- CORE ARCHITECTURE & DESIGN CONTRACT ---
  * 1. StoreCourseSectionRequest Contract:
  * - Validates POST /api/courses/{course}/sections
  * - Expected Body: { "title": "Section A" } (string, required, max:255)
  * - Note: parent course is bound via URL, teacher_id is derived from auth session.
- * 
- * 2. UpdateCourseSectionRequest Contract:
+ * * 2. UpdateCourseSectionRequest Contract:
  * - Validates PUT/PATCH /api/sections/{section}
  * - Expected Body (all optional): 
  * { "title": "New Title", "course_id": 2, "teacher_id": 5 }
  * - Note: teacher_id is nullable, allowing frontends to unassign teachers.
- * 
- * 3. CourseSectionResource JSON Contract:
+ * * 3. CourseSectionResource JSON Contract:
  * - Prevents data leaks of internal columns (e.g. deleted_at, raw foreign keys).
  * - Conditionally loads relations using whenLoaded() to prevent N+1 database queries.
  * - Output Shape:
