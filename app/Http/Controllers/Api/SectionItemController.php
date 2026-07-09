@@ -12,17 +12,20 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
 /**
- * @group Section-Item
+ * @group Course Section Items Management
  *
- * APIs for section-item CRUD.
+ * APIs for managing files, documents, and external links within a course section.
  */
 class SectionItemController extends Controller
 {
     use ApiResponses;
 
     /**
-     * GET /api/course-sections/{section}/items
+     * List Section Items
+     * * Get all items (files/links) attached to a specific course section.
+     * * @urlParam section int required The ID of the course section. Example: 1
      */
     public function index(Request $request, CourseSection $section)
     {
@@ -35,7 +38,12 @@ class SectionItemController extends Controller
     }
 
     /**
-     * POST /api/course-sections/{section}/items
+     * Add Section Item
+     * * Upload a physical file or attach an external link to a course section.
+     * * @urlParam section int required The ID of the course section. Example: 1
+     * @bodyParam file file The physical document or media file to upload (Max 50MB). Required if url is omitted.
+     * @bodyParam url string The full external link/URL. Required if file is omitted. Example: https://example.com/slide.pdf
+     * @bodyParam material_file_name string Custom display name for the material. Required only if url is provided. Example: Lecture 1 Slides
      */
     public function store(StoreSectionItemRequest $request, CourseSection $section)
     {
@@ -66,7 +74,9 @@ class SectionItemController extends Controller
     }
 
     /**
-     * GET /api/section-items/{item}
+     * View Section Item
+     * * Fetch details of a specific section item.
+     * * @urlParam item int required The ID of the section item. Example: 5
      */
     public function show(Request $request, SectionItem $item)
     {
@@ -77,7 +87,9 @@ class SectionItemController extends Controller
     }
 
     /**
-     * GET /api/section-items/{item}/download
+     * Download or Redirect Item
+     * * Downloads the file directly if it's hosted locally, or redirects away if it's an external URL.
+     * * @urlParam item int required The ID of the section item. Example: 5
      */
     public function download(SectionItem $item)
     {
@@ -93,7 +105,10 @@ class SectionItemController extends Controller
     }
 
     /**
-     * PUT/PATCH /api/section-items/{item}
+     * Update Section Item
+     * * Update metadata (like custom file name) for an item. Re-uploading a new file should go through delete + store instead.
+     * * @urlParam item int required The ID of the section item. Example: 5
+     * @bodyParam material_file_name string The updated custom name for the material. Example: Updated Lecture 1 Slides
      */
     public function update(UpdateSectionItemRequest $request, SectionItem $item)
     {
@@ -106,7 +121,9 @@ class SectionItemController extends Controller
     }
 
     /**
-     * DELETE /api/section-items/{item}
+     * Delete Section Item
+     * * Permanently remove an item and delete its physical file from storage if applicable.
+     * * @urlParam item int required The ID of the section item. Example: 5
      */
     public function destroy(SectionItem $item)
     {
@@ -115,7 +132,6 @@ class SectionItemController extends Controller
         }
 
         $item->delete();
-
 
         return $this->ok('Section item deleted successfully.');
     }
