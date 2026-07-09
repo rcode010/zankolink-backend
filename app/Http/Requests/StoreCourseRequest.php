@@ -29,6 +29,9 @@ class StoreCourseRequest extends FormRequest
             'credit_hours' => 'required|integer|min:1',
             'year_level' => 'required|integer|min:1',
             'is_active' => 'nullable|boolean',
+            'prerequisites' => 'nullable|array',
+            'prerequisites.*' => 'required|integer|exists:courses,id',
+
         ];
     }
 }
