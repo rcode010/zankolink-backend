@@ -159,4 +159,64 @@ class AcademicRequestController extends Controller
 
         return $this->created('Academic request created successfully', (new AcademicRequestResource($academicRequest))->resolve());
     }
+
+    /**
+     * Get Academic Request
+     *
+     * Returns a single academic request by ID belonging to the authenticated user.
+     *
+     * @authenticated
+     *
+     * @urlParam academicRequest integer required The ID of the academic request. Example: 1
+     *
+     * @response 200 scenario="Request retrieved successfully" {
+     *   "success": true,
+     *   "message": "Academic Request retrieved successfully",
+     *   "data": {
+     *     "id": 1,
+     *     "type": "leave",
+     *     "subject": "anything",
+     *     "description": "asldfjasdl;kf",
+     *     "status": "pending",
+     *     "user": {
+     *       "id": 480,
+     *       "name": "Demo Student"
+     *     },
+     *     "department": {
+     *       "id": 1,
+     *       "name": "Nursing and Midwifery"
+     *     },
+     *     "attachments": [
+     *       {
+     *         "id": 1,
+     *         "file_name": "wallhaven-o3qqy5.jpg",
+     *         "file_type": "image/jpeg",
+     *         "file_size": 259558,
+     *         "file_url": "http://localhost:8000/storage/attachments/academic-requests/UzcNxzmNWLOvmJO7f3NuUyNux0IrjejReemfOAmG.jpg"
+     *       },
+     *       {
+     *         "id": 2,
+     *         "file_name": "wallhaven-qz1glr.jpg",
+     *         "file_type": "image/jpeg",
+     *         "file_size": 262923,
+     *         "file_url": "http://localhost:8000/storage/attachments/academic-requests/fPI8nRT3hrqG4H7XPuZrng8XyOXjl5KmytXWZRQB.jpg"
+     *       }
+     *     ],
+     *     "created_at": "2026-07-09T07:36:48.000000Z",
+     *     "updated_at": "2026-07-09T07:36:48.000000Z"
+     *   }
+     * }
+     *
+     * @response 404 scenario="Not found" {
+     *   "message": "No query results for model [App\\Models\\AcademicRequest] 1"
+     * }
+     *
+     * @response 401 scenario="Unauthenticated" {
+     *   "message": "Unauthenticated."
+     * }
+     */
+    public function show(AcademicRequest $academicRequest){
+
+        return $this->ok("Academic Request retrieved successfully",(new AcademicRequestResource($academicRequest->load(['attachments','user','department'])))->resolve());
+    }
 }
