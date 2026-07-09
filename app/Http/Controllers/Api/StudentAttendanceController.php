@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentAttendanceRequest;
+use App\Http\Requests\UpdateStudentAttendanceRequest;
 use App\Http\Resources\StudentAttendanceResource;
 use App\Models\CourseAttendanceSessions;
+use App\Models\Student;
 use App\Models\StudentAttendance;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -273,6 +275,98 @@ class StudentAttendanceController extends Controller
         return $this->ok(
             'Attendance retrieved successfully.',
             StudentAttendanceResource::collection($attendance)->resolve()
+        );
+    }
+
+    /**
+     * Update student attendance
+     *
+     * Updates a student's attendance record for an attendance session.
+     *
+     * @group Attendance
+     *
+     * @authenticated
+     *
+     * @urlParam session integer required The attendance session ID. Example: 1
+     * @urlParam student integer required The student ID. Example: 15
+     *
+     * @bodyParam status string required Attendance status. Example: Present
+     * @bodyParam note string Optional note. Example: Submitted medical excuse
+     *
+     * @response 200 {
+     * "success": true,
+     * "message": "Attendance updated successfully.",
+     * "data": {
+     * "id": 1,
+     * "attendance_session_id": 1,
+     * "student": {
+     * "id": 20,
+     * "enrollment_type": "morning",
+     * "stage": 1,
+     * "student_number": "ST83956",
+     * "status": "active",
+     * "user": {
+     * "id": 29,
+     * "name": "Oswaldo Eichmann"
+     * },
+     * "created_at": "2026-07-08 14:04:32",
+     * "updated_at": "2026-07-08 14:04:32"
+     * },
+     * "status": "Late",
+     * "note": "note",
+     * "attendance_session": {
+     * "id": 1,
+     * "title": "Second Lecture",
+     * "session_date": "2026-07-17",
+     * "start_at": "2026-07-17 04:00:00",
+     * "end_at": "2026-07-17 06:00:00",
+     * "course": {
+     * "id": 2,
+     * "name": "Cyber Security",
+     * "code": "SUE91153",
+     * "credit_hours": 4,
+     * "year_level": 1,
+     * "is_active": 1,
+     * "department_id": 1,
+     * "created_at": "2026-07-08 14:04:32",
+     * "updated_at": "2026-07-08 14:04:32"
+     * },
+     * "created_at": "2026-07-08T11:06:00.000000Z"
+     * },
+     * "created_at": "2026-07-08T11:07:07.000000Z",
+     * "updated_at": "2026-07-09T06:06:06.000000Z"
+     * }
+     * }
+     */
+    public function updateStudentAttendance(UpdateStudentAttendanceRequest $request, CourseAttendanceSessions $session, Student $student)
+    {
+        $teacher = $request->user()->teacher;
+
+        if ($session->teacher_id !== $teacher->id) {
+            return $this->error(
+                'You are not authorized to update attendance for this session.',
+                403
+            );
+        }
+
+        $attendance = StudentAttendance::where('attendance_session_id', $session->id)
+            ->where('student_id', $student->id)
+            ->first();
+
+        if (! $attendance) {
+            return $this->error(
+                'Attendance record not found.',
+                404
+            );
+        }
+
+        $attendance->update($request->validated());
+
+        $attendance->load('student.user', 'attendanceSession.course');
+
+        return $this->success(
+            'Attendance updated successfully.',
+            (new StudentAttendanceResource($attendance))->resolve()
         );
     }
 }
