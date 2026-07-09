@@ -7,6 +7,7 @@ use App\Http\Resources\AcademicRequestResource;
 use App\Models\AcademicRequest;
 use App\Services\AcademicRequestDepartmentResolver;
 use App\Traits\ApiResponses;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -17,6 +18,61 @@ use Illuminate\Support\Facades\DB;
 class AcademicRequestController extends Controller
 {
     use ApiResponses;
+    /**
+     * List Academic Requests
+     *
+     * Returns a paginated list of academic requests submitted by the authenticated user.
+     *
+     * @authenticated
+     *
+     * @queryParam per_page integer optional Number of results per page. Defaults to 15. Example: 10
+     *
+     * @response 200 scenario="Requests retrieved successfully" {
+     *   "success": true,
+     *   "message": "Academic Request retrieved successfully",
+     *   "data": [
+     *     {
+     *       "id": 19,
+     *       "type": "leave",
+     *       "subject": "Medical Leave Request",
+     *       "description": "I need a leave of absence due to medical reasons.",
+     *       "status": "pending",
+     *       "user": {
+     *         "id": 479,
+     *         "name": "Demo Teacher"
+     *       },
+     *       "department": {
+     *         "id": 1,
+     *         "name": "Nursing and Midwifery"
+     *       },
+     *       "attachments": [
+     *         {
+     *           "id": 37,
+     *           "file_name": "medical_report.pdf",
+     *           "file_type": "image/jpeg",
+     *           "file_size": 259558,
+     *           "file_url": "http://localhost:8000/storage/attachments/academic-requests/Fc8XE05sD8fRTZu6kuJZoJV5qzMj4PHRXlAxzWTL.jpg"
+     *         }
+     *       ],
+     *       "created_at": "2026-07-09T08:06:22.000000Z",
+     *       "updated_at": "2026-07-09T08:06:22.000000Z"
+     *     }
+     *   ]
+     * }
+     *
+     * @response 401 scenario="Unauthenticated" {
+     *   "message": "Unauthenticated."
+     * }
+     */
+    public function index(Request $request){
+        $user = $request->user();
+        $academicRequests = AcademicRequest::where(
+            'user_id' , $user->id,
+        )->with(['attachments','user','department'])->get();
+
+        return $this->ok("Academic Request retrieved successfully",
+            (AcademicRequestResource::collection($academicRequests))->resolve());
+    }
     /**
      * Submit an Academic Request
      *
