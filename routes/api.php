@@ -18,7 +18,7 @@ require __DIR__.'/api/auth.php';
 require __DIR__.'/api/letter-verification.php';
 
 // Protected Routes
-Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     require __DIR__.'/api/universities.php';
     require __DIR__.'/api/academic-years.php';
     require __DIR__.'/api/faculties.php';
@@ -26,6 +26,9 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     require __DIR__.'/api/teachers.php';
     require __DIR__.'/api/students.php';
     require __DIR__.'/api/courses.php';
+    require __DIR__.'/api/course-sections.php';
+    require __DIR__.'/api/section-submission.php';
+    require __DIR__.'/api/section_items.php';
     require __DIR__.'/api/dashboard.php';
 
     require __DIR__.'/api/teacher-departments.php';
@@ -43,8 +46,12 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     require __DIR__.'/api/letter-stamp.php';
     require __DIR__.'/api/letter-broadcast.php';
 });
+// ,'ability:moodle'
+Route::middleware(['auth:sanctum'])->group(function () {
 
-Route::middleware(['auth:sanctum', 'ability:moodle'])->group(function () {
+    require __DIR__.'/api/course-assessment.php';
+    require __DIR__.'/api/student-marks.php';
+
     require __DIR__.'/api/course-sections.php';
     require __DIR__.'/api/section-submission.php';
     require __DIR__.'/api/student-submissions.php';
