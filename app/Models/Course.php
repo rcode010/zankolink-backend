@@ -40,6 +40,7 @@ class Course extends Model
     {
         return $this->hasMany(CourseSection::class);
     }
+  
     public function prerequisites()
     {
         return $this->belongsToMany(
@@ -48,5 +49,10 @@ class Course extends Model
             'course_id',
             'prerequisite_course_id'
         );
+    }
+
+    public function assessments(): HasMany
+    {
+        return $this->hasMany(CourseAssesments::class);
     }
 }
