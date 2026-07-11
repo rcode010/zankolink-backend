@@ -33,9 +33,4 @@ class CourseAssessments extends Model
     {
         return $this->belongsTo(Teacher::class);
     }
-
-    public function studentMarks()
-    {
-        return $this->hasMany(StudentMarks::class);
-    }
 }
