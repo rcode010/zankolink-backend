@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Resources\SectionItemResource;
 use App\Http\Resources\SectionSubmissionResource;
+use App\Models\SectionItem;
 use App\Models\SectionSubmission;
 use App\Models\Student;
 use App\Models\StudentSubmission;
@@ -48,4 +50,21 @@ it('includes grade and feedback in the section submission response payload', fun
         ->toHaveKey('grade', 88.5)
         ->toHaveKey('feedback', 'Strong work overall.')
         ->toHaveKey('graded_at');
+});
+
+it('normalizes section item metadata for the lecturer dashboard', function () {
+    $item = new SectionItem([
+        'id' => 1,
+        'section_id' => 2,
+        'material_file_type' => 'pdf',
+        'material_file_name' => 'lecture1.pdf',
+        'material_file_url' => 'section-items/lecture1.pdf',
+    ]);
+
+    $payload = (new SectionItemResource($item))->resolve();
+
+    expect($payload)
+        ->toHaveKey('title', 'lecture1.pdf')
+        ->toHaveKey('type', 'PDF')
+        ->toHaveKey('size');
 });
