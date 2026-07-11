@@ -70,6 +70,7 @@ class StudentSubmissionController extends Controller
      */
     public function store(StoreStudentSubmissionRequest $request, SectionSubmission $submission)
     {
+        $this->authorize('create', [StudentSubmission::class, $submission]);
         $student = auth()->user()->student;
 
         if (now()->greaterThan($submission->deadline)) {
@@ -174,6 +175,7 @@ class StudentSubmissionController extends Controller
      */
     public function mySubmission(SectionSubmission $submission)
     {
+        $this->authorize('view', $submission);
         $student = auth()->user()->student;
 
         $studentSubmissions = StudentSubmission::with('student.user')
@@ -200,6 +202,7 @@ class StudentSubmissionController extends Controller
      */
     public function download(StudentSubmission $studentSubmission)
     {
+        $this->authorize('download', $studentSubmission);
         return Storage::disk('public')->download(
             $studentSubmission->file_url,
             $studentSubmission->file_name
@@ -223,6 +226,7 @@ class StudentSubmissionController extends Controller
      */
     public function destroy(StudentSubmission $studentSubmission)
     {
+        $this->authorize('delete', $studentSubmission);
         Storage::disk('public')->delete($studentSubmission->file_url);
 
         $studentSubmission->delete();
