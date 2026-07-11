@@ -28,6 +28,7 @@ class SectionSubmissionAttachmentController extends Controller
      */
     public function download(SectionSubmissionAttachment $attachment)
     {
+        $this->authorize('download', $attachment);
         return Storage::disk('public')->download(
             $attachment->file_url,
             $attachment->file_name
@@ -51,6 +52,7 @@ class SectionSubmissionAttachmentController extends Controller
      */
     public function destroy(SectionSubmissionAttachment $attachment)
     {
+        $this->authorize('delete', $attachment);
         Storage::disk('public')->delete($attachment->file_url);
 
         $attachment->delete();
