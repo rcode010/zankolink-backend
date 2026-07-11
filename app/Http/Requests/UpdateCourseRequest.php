@@ -37,6 +37,8 @@ class UpdateCourseRequest extends FormRequest
             'credit_hours' => 'sometimes|integer|min:1',
             'year_level' => 'sometimes|integer|min:1',
             'is_active' => 'nullable|boolean',
+            'prerequisites' => ['sometimes', 'array'],
+            'prerequisites.*' => ['integer', 'exists:courses,id'],
         ];
     }
 }

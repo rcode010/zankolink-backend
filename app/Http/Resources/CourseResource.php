@@ -24,7 +24,13 @@ class CourseResource extends JsonResource
             'department_id' => $this->department_id,
 
             'department' => new DepartmentResource($this->whenLoaded('department')),
-
+            'prerequisites' => $this->whenLoaded('prerequisites', function () {
+                return $this->prerequisites->map(fn ($course) => [
+                    'id' => $course->id,
+                    'name' => $course->name,
+                    'code' => $course->code,
+                ]);
+            }),
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
