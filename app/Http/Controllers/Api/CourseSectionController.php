@@ -24,7 +24,7 @@ use Spatie\QueryBuilder\QueryBuilder;
  * - Note: parent course is bound via URL, teacher_id is derived from auth session.
  * * 2. UpdateCourseSectionRequest Contract:
  * - Validates PUT/PATCH /api/sections/{section}
- * - Expected Body (all optional): 
+ * - Expected Body (all optional):
  * { "title": "New Title", "course_id": 2, "teacher_id": 5 }
  * - Note: teacher_id is nullable, allowing frontends to unassign teachers.
  * * 3. CourseSectionResource JSON Contract:
@@ -59,10 +59,17 @@ class CourseSectionController extends Controller
      */
    public function index(Request $request, Course $course)
     {
+        $this->authorize('viewAny', [CourseSection::class, $course]);
+
         $per_page = (int) $request->input('per_page', 15);
         $per_page = max(1, min($per_page, 100));
 
         $query = $course->sections();
+
+        if($teacher = $request->user()->teacher)
+        {
+            $query->where('teacher_id', $teacher->id);
+        }
 
        $sections = QueryBuilder::for($query)
            ->allowedFilters(
@@ -96,6 +103,8 @@ class CourseSectionController extends Controller
      */
     public function store(StoreCourseSectionRequest $request, Course $course)
     {
+        $this->authorize('create', [CourseSection::class, $course]);
+
         $validated = $request->validated();
         $teacher = auth()->user()->teacher;
 
@@ -128,6 +137,8 @@ class CourseSectionController extends Controller
      */
     public function show(CourseSection $section)
     {
+        $this->authorize('view', $section);
+
         $section->load('teacher.user', 'course');
 
         return $this->ok(
@@ -150,6 +161,7 @@ class CourseSectionController extends Controller
      */
     public function update(UpdateCourseSectionRequest $request, CourseSection $section)
     {
+        $this->authorize('update', $section);
         $section->update($request->validated());
 
         return $this->ok(
@@ -176,6 +188,8 @@ class CourseSectionController extends Controller
      */
     public function destroy(CourseSection $section)
     {
+        $this->authorize('delete', $section);
+
         $section->delete();
 
         return $this->ok('Course section deleted successfully.');
