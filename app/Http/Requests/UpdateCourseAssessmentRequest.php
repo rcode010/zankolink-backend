@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCourseRequest extends FormRequest
+class UpdateCourseAssessmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,15 +23,13 @@ class StoreCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'department_id' => 'required|exists:departments,id',
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:courses,code',
-            'credit_hours' => 'required|integer|min:1',
-            'year_level' => 'required|integer|min:1',
-            'is_active' => 'nullable|boolean',
-            'prerequisites' => 'nullable|array',
-            'prerequisites.*' => 'required|integer|exists:courses,id',
-
+            'academic_year_id' => 'sometimes|exists:academic_years,id',
+            'title' => 'sometimes|string|max:255',
+            'type' => 'sometimes|string|in:quiz,assignment,final,midterm,project,activity',
+            'max_mark' => 'sometimes|numeric|min:0',
+            'weight' => 'sometimes|numeric|min:0',
+            'due_at' => 'nullable|date',
+            'is_published' => 'sometimes|boolean',
         ];
     }
 }
