@@ -8,7 +8,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SectionSubmission extends Model
 {
-    protected $fillable = ['course_section_id', 'title', 'description', 'deadline'];
+    protected $fillable = ['course_section_id', 'title', 'description', 'deadline','weight'];
+
+     protected function casts(): array
+    {
+        return [
+            'weight' => 'decimal:2',
+        ];
+    }
 
     public function section(): BelongsTo
     {

@@ -41,10 +41,11 @@ Route::middleware('auth:sanctum')->group(function () {
     require __DIR__.'/api/signatures.php';
     require __DIR__.'/api/users.php';
 
-
     require __DIR__.'/api/roles_permissions.php';
     require __DIR__.'/api/letter-stamp.php';
     require __DIR__.'/api/letter-broadcast.php';
+
+   
 });
 // ,'ability:moodle'
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -52,11 +53,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     require __DIR__.'/api/course-assessment.php';
     require __DIR__.'/api/student-marks.php';
 
+<<<<<<< HEAD
+Route::middleware(['auth:sanctum', 'ability:moodle'])->group(function () {
+=======
     require __DIR__.'/api/course-sections.php';
     require __DIR__.'/api/section-submission.php';
     require __DIR__.'/api/student-submissions.php';
+>>>>>>> origin/main
     require __DIR__.'/api/section_items.php';
+    require __DIR__.'/api/moodle.php';
     require __DIR__.'/api/course-attendance-sessions.php';
     require __DIR__.'/api/student-attendance.php';
     require __DIR__.'/api/academic-request.php';
+    require __DIR__.'/api/student-submissions.php';
+    require __DIR__.'/api/course-sections.php';
+    require __DIR__.'/api/section-submission.php';
 });
