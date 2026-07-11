@@ -38,15 +38,12 @@ Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     require __DIR__.'/api/signatures.php';
     require __DIR__.'/api/users.php';
 
-
     require __DIR__.'/api/roles_permissions.php';
     require __DIR__.'/api/letter-stamp.php';
     require __DIR__.'/api/letter-broadcast.php';
 
-
- 
+   
 });
-
 
 Route::middleware(['auth:sanctum', 'ability:moodle'])->group(function () {
     require __DIR__.'/api/section_items.php';
@@ -57,5 +54,4 @@ Route::middleware(['auth:sanctum', 'ability:moodle'])->group(function () {
     require __DIR__.'/api/student-submissions.php';
     require __DIR__.'/api/course-sections.php';
     require __DIR__.'/api/section-submission.php';
-    
 });

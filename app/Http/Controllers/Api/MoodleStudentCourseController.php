@@ -3,200 +3,127 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\SectionSubmissionResource;
-use App\Models\SectionSubmission;
-use App\Models\StudentSubmission;
+use App\Http\Resources\CourseResource;
+use App\Http\Resources\CourseSectionResource;
+use App\Models\Course;
+use App\Models\CourseSection;
+use App\Models\Student;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 /**
- * @group Moodle Student Submissions
+ * @group Moodle Student Dashboard
  *
- * Managing endpoints for students submitting their assignments and viewing their grades,
- * alongside teacher-facing dashboard features to list and grade submissions.
+ * Endpoints for the student Moodle dashboard. These APIs list the authenticated
+ * student's enrolled courses and course sections, including lesson materials,
+ * assignment blueprints, submission attachments, and the student's own
+ * submission payload with any grade, feedback, and grading timestamp already
+ * assigned by the lecturer.
  *
  * --- ACCESS CONTROL ---
  * 1. Resolves the active student profile dynamically from the authenticated session.
- * 2. Formatted specifically for a robust frontend state integration without deep resource nesting.
+ * 2. Enforces course enrollment before returning a student's section view.
  */
-class StudentSubmissionController extends Controller
+class MoodleStudentCourseController extends Controller
 {
     use ApiResponses;
 
     /**
-     * List Assignment Submissions
+     * List My Enrolled Courses
      *
-     * List all student submissions for a specific assignment blueprint (Lecturer-facing).
+     * List all courses the authenticated student is enrolled in.
      *
      * @authenticated
-     * @urlParam submission integer required The ID of the assignment blueprint. Example: 4
      */
-    public function index(Request $request, SectionSubmission $submission)
+    public function myCourses(Request $request)
     {
-        $submissions = $submission->studentSubmissions()
-            ->with('student.user:id,name')
+        $student = $this->resolveStudent();
+
+        $courses = $student->courses()
+            ->with(['department', 'teachers.user'])
             ->latest()
             ->get();
 
-        return $this->ok('Student submissions retrieved successfully.', $submissions);
+        return $this->ok(
+            'Enrolled courses retrieved successfully.',
+            CourseResource::collection($courses)->resolve()
+        );
     }
 
     /**
-     * Upload Assignment Submission
+     * Show My Course Details
      *
-     * Submit a file upload response for a specific assignment blueprint (Student-facing).
+     * Show course-level information only for a single enrolled course.
      *
      * @authenticated
-     * @urlParam submission integer required The ID of the assignment blueprint. Example: 4
+     *
+     * @urlParam course integer required The ID of the course. Example: 1
      */
-    public function store(Request $request, SectionSubmission $submission)
+    public function showCourse(Course $course)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:pdf,doc,docx,zip,rar|max:10240',
-        ]);
+        $student = $this->resolveStudent();
 
-        $student = $this->resolveStudent($request);
+        $isEnrolled = $student->courses()->whereKey($course->id)->exists();
 
-        $exists = $submission->studentSubmissions()->where('student_id', $student->id)->exists();
-        if ($exists) {
-            return $this->error('You have already submitted this assignment.', 400);
-        }
+        abort_unless($isEnrolled, 403, 'You are not enrolled in this course.');
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $path = $file->store('student-submissions', 'public');
+        $course->load(['department', 'teachers.user']);
 
-            $studentSubmission = $submission->studentSubmissions()->create([
-                'student_id'   => $student->id,
-                'submitted_at' => now(),
-                'file_name'    => $file->getClientOriginalName(),
-                'file_type'    => $file->getClientMimeType(),
-                'file_size'    => $file->getSize(),
-                'file_url'     => $path,
-            ]);
-
-            return $this->success('Assignment submitted successfully.', $studentSubmission, 201);
-        }
-
-        return $this->error('File upload failed.', 400);
+        return $this->ok(
+            'Course retrieved successfully.',
+            (new CourseResource($course))->resolve()
+        );
     }
 
     /**
-     * Show Student Submission details
+     * List My Course Sections
      *
-     * Fetch explicit operational details of a single student answer for marking (Lecturer-facing).
-     *
-     * @authenticated
-     * @urlParam studentSubmission integer required The unique response record ID. Example: 6
-     */
-    public function show(Request $request, StudentSubmission $studentSubmission)
-    {
-        return $this->ok('Student submission retrieved successfully.', $studentSubmission);
-    }
-
-    /**
-     * View My Personal Submission
-     *
-     * View flattened response blueprint details for a single assignment (Student-facing View Modal).
+     * Show sections for a single enrolled course, including their materials,
+     * assignment blueprints, attachments, and the student's own submission
+     * status with any grade, feedback, and submission metadata already
+     * available for that assignment.
      *
      * @authenticated
-     * @urlParam submission integer required The ID of the assignment blueprint. Example: 4
+     *
+     * @urlParam course integer required The ID of the course. Example: 1
      */
-    public function mySubmission(Request $request, SectionSubmission $submission)
+    public function sections(Course $course)
     {
-        $student = $this->resolveStudent($request);
+        $student = $this->resolveStudent();
 
-        $studentSubmission = $submission->studentSubmissions()
-            ->where('student_id', $student->id)
-            ->first();
+        $isEnrolled = $student->courses()->whereKey($course->id)->exists();
 
-        if (! $studentSubmission) {
-            return $this->ok('You have not submitted this assignment yet.', null);
-        }
+        abort_unless($isEnrolled, 403, 'You are not enrolled in this course.');
 
-        return $this->ok('Submission retrieved successfully', [
-            'id'           => $studentSubmission->id,
-            'student_id'   => $studentSubmission->student_id,
-            'submitted_at' => $studentSubmission->created_at?->toDateTimeString(),
-            
-            'grade'        => $studentSubmission->grade,
-            'feedback'     => $studentSubmission->feedback,
-            'graded_at'    => $studentSubmission->graded_at,
-            
-            'attachment'   => [
-                'file_name' => $studentSubmission->file_name,
-                'file_type' => $studentSubmission->file_type,
-                'file_size' => $studentSubmission->file_size,
-                'file_url'  => $studentSubmission->file_url ? Storage::disk('public')->url($studentSubmission->file_url) : null,
-            ]
-        ]);
-    }
+        $sections = CourseSection::query()
+            ->where('course_id', $course->id)
+            ->with([
+                'teacher.user',
+                'course',
+                'items',
+                'submissions' => fn ($query) => $query->with([
+                    'attachments',
+                    'studentSubmissions' => fn ($query) => $query
+                        ->where('student_id', $student->id)
+                        ->with(['student.user', 'submission']),
+                ]),
+            ])
+            ->latest()
+            ->get();
 
-    /**
-     * Grade Student Submission
-     *
-     * Update validation markers, evaluate and grade a student's answer document (Lecturer-facing).
-     *
-     * @authenticated
-     * @urlParam studentSubmission integer required The unique response record ID. Example: 6
-     */
-    public function grade(Request $request, StudentSubmission $studentSubmission)
-    {
-        $request->validate([
-            'grade'    => 'required|numeric|min:0',
-            'feedback' => 'nullable|string',
-        ]);
-
-        $studentSubmission->update([
-            'grade'     => $request->grade,
-            'feedback'  => $request->feedback,
-            'graded_at' => now(),
-        ]);
-
-        return $this->ok('Submission graded successfully.', $studentSubmission);
-    }
-
-    /**
-     * Download Submitted File Attachment
-     *
-     * Download secure attachment files locally from public local disk mappings.
-     *
-     * @authenticated
-     */
-    public function download(Request $request, StudentSubmission $studentSubmission)
-    {
-        if (! Storage::disk('public')->exists($studentSubmission->file_url)) {
-            return $this->error('File not found on storage.', 404);
-        }
-
-        return Storage::disk('public')->download($studentSubmission->file_url, $studentSubmission->file_name);
-    }
-
-    /**
-     * Delete Submission Record
-     *
-     * Remove student records alongside mapped resource attachments.
-     *
-     * @authenticated
-     */
-    public function destroy(Request $request, StudentSubmission $studentSubmission)
-    {
-        if ($studentSubmission->file_url) {
-            Storage::disk('public')->delete($studentSubmission->file_url);
-        }
-
-        $studentSubmission->delete();
-
-        return $this->ok('Submission deleted successfully.', null);
+        return $this->ok(
+            'Course sections retrieved successfully.',
+            CourseSectionResource::collection($sections)->resolve()
+        );
     }
 
     /**
      * Resolve the authenticated user's student profile securely.
      */
-    private function resolveStudent(Request $request)
+    private function resolveStudent(): Student
     {
-        $student = $request->user()->student;
+        $student = Auth::user()?->student;
 
         abort_unless(
             $student,

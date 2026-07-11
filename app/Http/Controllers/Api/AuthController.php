@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
+
 /**
  * @group Authentication
  *
@@ -77,9 +78,9 @@ class AuthController extends Controller
         }
         $user = Auth::user();
          if (! $user->canAccessAdminPanel()) {
-            Auth::logout();
+          Auth::logout();
 
-            return $this->error('You are not allowed to access the admin panel.', 403);
+         return $this->error('You are not allowed to access the admin panel.', 403);
          }
 
         if ($user->is_two_factor_enabled) {
@@ -185,7 +186,6 @@ class AuthController extends Controller
             'two_factor_expires_at' => null,
         ]);
         $user->load('roles:id,name');
-
 
         $token = $user->createToken('admin-token', ['admin'])->plainTextToken;
 

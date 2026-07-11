@@ -14,6 +14,12 @@ class SectionSubmissionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $studentSubmissions = $this->relationLoaded('studentSubmissions')
+            ? $this->studentSubmissions
+            : collect();
+
+        $latestStudentSubmission = $studentSubmissions->first();
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -40,7 +46,17 @@ class SectionSubmissionResource extends JsonResource
                 ])
             ),
 
+            'grade' => $latestStudentSubmission?->grade,
+            'feedback' => $latestStudentSubmission?->feedback,
+            'graded_at' => $latestStudentSubmission?->graded_at?->toDateTimeString(),
+
+            'my_submissions' => $this->whenLoaded(
+                'studentSubmissions',
+                fn () => StudentSubmissionResource::collection($this->studentSubmissions)->resolve()
+            ),
+
             'created_at' => $this->created_at?->toDateTimeString(),
-            'updated_at' => $this->updated_at?->toDateTimeString(),        ];
+            'updated_at' => $this->updated_at?->toDateTimeString(),
+        ];
     }
 }
