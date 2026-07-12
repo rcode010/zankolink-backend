@@ -425,92 +425,162 @@ class DatabaseSeeder extends Seeder
     private function createMoodleDemoUsers(): void
     {
         $department = Department::first();
-        $course = Course::first();
 
         $academicYearId = DB::table('academic_years')
             ->where('is_active', true)
             ->value('id');
 
-        if (! $department || ! $course || ! $academicYearId) {
+        if (! $department || ! $academicYearId) {
             return;
         }
 
-        $teacherUser = User::updateOrCreate(
-            ['email' => 'teacher@zankolink.test'],
-            [
-                'name' => 'Demo Teacher',
-                'password' =>'Password@123',
-                'phone'=>'07700000000',
-                'is_active' => true,
-            ]
-        );
+        $courses = Course::query()
+            ->where('department_id', $department->id)
+            ->take(3)
+            ->get();
 
-        $teacherUser->syncRoles(['lecturer']);
+        if ($courses->isEmpty()) {
+            return;
+        }
 
-        $teacher = Teacher::updateOrCreate(
+       // Teachers
+
+
+        $teacherUsersData = [
             [
-                'user_id' => $teacherUser->id,
+                'name' => 'Demo Teacher One',
+                'email' => 'teacher@zankolink.test',
+                'phone' => '07700000001',
                 'title' => 'mr',
                 'speciality' => 'Software Engineering',
-            ]
-        );
-
-        DB::table('teacher_department')->updateOrInsert(
-            [
-                'teacher_id' => $teacher->id,
-                'department_id' => $department->id,
             ],
             [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+                'name' => 'Demo Teacher Two',
+                'email' => 'teacher2@zankolink.test',
+                'phone' => '07700000002',
+                'title' => 'dr',
+                'speciality' => 'Computer Networks',
+            ],
+        ];
 
-        DB::table('course_teacher')->updateOrInsert(
+        $teachers = collect();
+
+        foreach ($teacherUsersData as $teacherData) {
+            $teacherUser = User::updateOrCreate(
+                ['email' => $teacherData['email']],
+                [
+                    'name' => $teacherData['name'],
+                    'password' => 'Password@123',
+                    'phone' => $teacherData['phone'],
+                    'is_active' => true,
+                ]
+            );
+
+            $teacherUser->syncRoles(['lecturer']);
+
+            $teacher = Teacher::updateOrCreate(
+                ['user_id' => $teacherUser->id],
+                [
+                    'title' => $teacherData['title'],
+                    'speciality' => $teacherData['speciality'],
+                ]
+            );
+
+            DB::table('teacher_department')->updateOrInsert(
+                [
+                    'teacher_id' => $teacher->id,
+                    'department_id' => $department->id,
+                ],
+                [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            $teachers->push($teacher);
+        }
+
+        // Assign Teachers To Multiple Courses
+
+
+        foreach ($courses as $course) {
+            foreach ($teachers as $teacher) {
+                DB::table('course_teacher')->updateOrInsert(
+                    [
+                        'course_id' => $course->id,
+                        'teacher_id' => $teacher->id,
+                    ],
+                    [
+                        'role' => 'primary_lecturer',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+        }
+
+        // Students
+
+        $studentUsersData = [
             [
-                'course_id' => $course->id,
-                'teacher_id' => $teacher->id,
+                'name' => 'Demo Student One',
+                'email' => 'student@zankolink.test',
+                'phone' => '07700000003',
+                'student_number' => 'ST75585',
             ],
             [
-                'role' => 'primary_lecturer',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
-
-        $studentUser = User::updateOrCreate(
-            ['email' => 'student@zankolink.test'],
-            [
-                'name' => 'Demo Student',
-                'password' => 'Password@123',
-                'phone'=>'07700000000',
-                'is_active' => true,
-            ]
-        );
-
-        $studentUser->syncRoles(['student']);
-
-        $student = Student::updateOrCreate(
-            ['user_id' => $studentUser->id],
-            [
-                'department_id' => $department->id,
-                'enrollment_type' => "morning",
-                'student_number' => "ST75585",
-                'stage' => 3,
-                'status' => 'active',
-            ]
-        );
-
-        DB::table('course_student')->updateOrInsert(
-            [
-                'course_id' => $course->id,
-                'student_id' => $student->id,
-                'academic_year_id' => $academicYearId,
+                'name' => 'Demo Student Two',
+                'email' => 'student2@zankolink.test',
+                'phone' => '07700000004',
+                'student_number' => 'ST75586',
             ],
-            [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
-    }
-}
+        ];
+
+        $students = collect();
+
+        foreach ($studentUsersData as $studentData) {
+            $studentUser = User::updateOrCreate(
+                ['email' => $studentData['email']],
+                [
+                    'name' => $studentData['name'],
+                    'password' => 'Password@123',
+                    'phone' => $studentData['phone'],
+                    'is_active' => true,
+                ]
+            );
+
+            $studentUser->syncRoles(['student']);
+
+            $student = Student::updateOrCreate(
+                ['user_id' => $studentUser->id],
+                [
+                    'department_id' => $department->id,
+                    'enrollment_type' => 'morning',
+                    'student_number' => $studentData['student_number'],
+                    'stage' => 3,
+                    'status' => 'active',
+                ]
+            );
+
+            $students->push($student);
+        }
+
+        // Enroll Students Into Multiple Courses
+
+        foreach ($courses as $course) {
+            foreach ($students as $student) {
+                DB::table('course_student')->updateOrInsert(
+                    [
+                        'course_id' => $course->id,
+                        'student_id' => $student->id,
+                        'academic_year_id' => $academicYearId,
+                    ],
+                    [
+                        'enrolled_at' => now(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+        }
+    }}
