@@ -24,7 +24,7 @@ use Spatie\QueryBuilder\QueryBuilder;
  * - Note: parent course is bound via URL, teacher_id is derived from auth session.
  * * 2. UpdateCourseSectionRequest Contract:
  * - Validates PUT/PATCH /api/sections/{section}
- * - Expected Body (all optional): 
+ * - Expected Body (all optional):
  * { "title": "New Title", "course_id": 2, "teacher_id": 5 }
  * - Note: teacher_id is nullable, allowing frontends to unassign teachers.
  * * 3. CourseSectionResource JSON Contract:
@@ -69,13 +69,13 @@ class CourseSectionController extends Controller
                 AllowedFilter::partial('title'),
                 AllowedFilter::exact('teacher_id'),
             )
-            ->with('teacher.user', 'course')
-            ->latest()
-            ->paginate($per_page);
+           ->with(['course', 'items', 'submissions.attachments'])
+           ->latest()
+           ->paginate($per_page);
 
         return $this->ok(
             'Course sections retrieved successfully',
-            CourseSectionResource::collection($sections)->response()->getData(true)
+            (CourseSectionResource::collection($sections))->resolve()
         );
     }
 
@@ -107,7 +107,7 @@ class CourseSectionController extends Controller
 
         $validated['teacher_id'] = $teacher->id;
         $section = $course->sections()->create($validated);
-        $section->load(['teacher.user', 'course:id,name']);
+        $section->load([ 'course:id,name']);
 
         return $this->success(
             'Course section created successfully.',
@@ -128,7 +128,7 @@ class CourseSectionController extends Controller
      */
     public function show(CourseSection $section)
     {
-        $section->load('teacher.user', 'course');
+        $section->load( 'course');
 
         return $this->ok(
             'Course section retrieved successfully',
@@ -155,7 +155,7 @@ class CourseSectionController extends Controller
         return $this->ok(
             'Course section updated successfully.',
             (new CourseSectionResource(
-                $section->fresh()->load('teacher.user', 'course')
+                $section->fresh()->load( 'course')
             ))->resolve()
         );
     }

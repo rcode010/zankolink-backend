@@ -14,6 +14,8 @@ class SectionSubmission extends Model
     {
         return [
             'weight' => 'decimal:2',
+            'deadline' => 'datetime'
+
         ];
     }
 
@@ -31,4 +33,5 @@ class SectionSubmission extends Model
     {
         return $this->hasMany(SectionSubmissionAttachment::class);
     }
+
 }

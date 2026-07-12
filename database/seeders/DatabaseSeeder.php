@@ -84,6 +84,36 @@ class DatabaseSeeder extends Seeder
             // Roles & Permissions
             'view roles', 'create roles', 'update roles', 'delete roles',
             'view permissions', 'view user roles', 'create user roles', 'delete user roles',
+            // Course Section
+            'view course sections', 'view course section', 'create course sections',
+            'update course sections', 'delete course sections',
+            // Section Item
+            'view section items', 'view section item', 'create section items', 'update section items',
+            'delete section items', 'download section attachments', 'create section notes',
+            // Section Submission
+            'view section submissions', 'view section submission', 'create section submissions', 'update section submissions', 'delete section submissions',
+            // Section Submission Attachments
+            'download section submission attachments', 'delete section submission attachments',
+            // Student Submission
+            'create student submissions', 'view student submissions', 'download student submissions', 'delete student submissions',
+            'view own submission', 'view student submission', 'update student submissions',
+            // Academic Request
+            'view academic requests', 'view academic request', 'create academic requests',
+            // Attendance Sessions
+            'view attendance sessions', 'view attendance session', 'create attendance sessions',
+            'update attendance sessions', 'delete attendance sessions',
+            // Student Attendance
+            'create attendance records', 'view attendance records', 'view own attendance records',
+            'update attendance records',
+            // Course Assessments
+            'view course assessments', 'create course assessments', 'update course assessments',
+            'view course assessment', 'delete course assessments',
+            // Course Marks
+            'view own marks',
+            // Student Marks
+            'view assessment marks', 'create student marks',
+            'view student mark', 'update student mark',
+
         ];
 
         foreach ($permissions as $permission) {
@@ -177,19 +207,49 @@ class DatabaseSeeder extends Seeder
                 'view signatures','create signatures',
                 'update course students', 'delete course students',
                 'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
-                'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
+                'upload attachments', 'download attachments', 'forward letters','view letter broadcast',
+                'view academic requests', 'view academic request',
             ],
 
             'lecturer' => [
                 'view courses', 'view students',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
+                'view course sections', 'view course section',
+                'create course sections', 'update course sections',
+                'delete course sections', 'view section items',
+                'view section item', 'create section items',
+                'update section items', 'delete section items',
+                'download section attachments', 'create section notes',
+                'view section submissions', 'view section submission', 'create section submissions',
+                'update section submissions', 'delete section submissions',
+                'download section submission attachments', 'delete section submission attachments',
+                'view student submissions', 'update student submissions',
+                'view student submission', 'download student submissions', 'view academic requests',
+                'view academic request', 'create academic requests',
+                'view attendance sessions', 'view attendance session', 'create attendance sessions',
+                'update attendance sessions', 'delete attendance sessions',
+                'create attendance records', 'view attendance records',
+                'update attendance records',
+                'view course assessments', 'create course assessments', 'update course assessments',
+                'view course assessment', 'delete course assessments',
+                'view assessment marks', 'create student marks',
+                'view student mark', 'update student mark',
             ],
 
             'student' => [
                 'view courses',
                 'view letters', 'create letters',
                 'upload attachments', 'download attachments',
+                'view course sections', 'view course section',
+                'view section items', 'view section item',
+                'download section attachments', 'view section submissions',
+                'view section submission', 'download section submission attachments',
+                'create student submissions', 'view own submission',
+                'download student submissions', 'delete student submissions',
+                'view academic requests', 'view academic request',
+                'create academic requests', 'view own attendance records',
+                'view own marks',
             ],
 
             // Zankoline portal
@@ -424,122 +484,187 @@ class DatabaseSeeder extends Seeder
     }
     private function createMoodleDemoUsers(): void
     {
-        $departments = Department::query()
-            ->take(2)
-            ->get();
-
-        $course = Course::query()
-            ->whereIn('department_id', $departments->pluck('id'))
-            ->first();
+        $department = Department::first();
 
         $academicYearId = DB::table('academic_years')
             ->where('is_active', true)
             ->value('id');
 
-        if ($departments->count() < 2 || ! $course || ! $academicYearId) {
+        if (! $department || ! $academicYearId) {
             return;
         }
 
-        $primaryDepartment = $departments->first();
+        $courses = Course::query()
+            ->whereNotNull('department_id')
+            ->take(3)
+            ->get();
+
+        if ($courses->isEmpty()) {
+            return;
+        }
+
+        // Teachers
 
 
-        // Teacher
-
-        $teacherUser = User::updateOrCreate(
-            ['email' => 'teacher@zankolink.test'],
+        $teacherUsersData = [
             [
-                'name' => 'Demo Teacher',
-                'password' => 'Password@123',
-                'phone' => '07700000000',
-                'is_active' => true,
-            ]
-        );
-
-        $teacherUser->syncRoles(['lecturer']);
-
-        $teacher = Teacher::updateOrCreate(
-            ['user_id' => $teacherUser->id],
-            [
+                'name' => 'Demo Teacher One',
+                'email' => 'teacher@zankolink.test',
+                'phone' => '07700000001',
                 'title' => 'mr',
                 'speciality' => 'Software Engineering',
-            ]
-        );
+            ],
+            [
+                'name' => 'Demo Teacher Two',
+                'email' => 'teacher2@zankolink.test',
+                'phone' => '07700000002',
+                'title' => 'dr',
+                'speciality' => 'Computer Networks',
+            ],
+        ];
 
-        foreach ($departments as $department) {
-            DB::table('teacher_department')->updateOrInsert(
+        $teachers = collect();
+
+        foreach ($teacherUsersData as $teacherData) {
+            $teacherUser = User::updateOrCreate(
+                ['email' => $teacherData['email']],
                 [
-                    'teacher_id' => $teacher->id,
+                    'name' => $teacherData['name'],
+                    'password' => 'Password@123',
+                    'phone' => $teacherData['phone'],
+                    'is_active' => true,
+                ]
+            );
+
+            $teacherUser->syncRoles(['lecturer']);
+
+            $teacher = Teacher::updateOrCreate(
+                ['user_id' => $teacherUser->id],
+                [
+                    'title' => $teacherData['title'],
+                    'speciality' => $teacherData['speciality'],
+                ]
+            );
+
+            $departmentIds = $courses
+                ->pluck('department_id')
+                ->unique();
+
+            foreach ($departmentIds as $departmentId) {
+                DB::table('teacher_department')->updateOrInsert(
+                    [
+                        'teacher_id' => $teacher->id,
+                        'department_id' => $departmentId,
+                    ],
+                    [
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+
+                $this->createUserScope(
+                    $teacherUser,
+                    'lecturer',
+                    'DEPARTMENT',
+                    $departmentId
+                );
+            }
+
+            $teachers->push($teacher);
+        }
+
+        // Assign Teachers To Multiple Courses
+
+
+        foreach ($courses as $course) {
+            foreach ($teachers as $teacher) {
+                DB::table('course_teacher')->updateOrInsert(
+                    [
+                        'course_id' => $course->id,
+                        'teacher_id' => $teacher->id,
+                    ],
+                    [
+                        'role' => 'primary_lecturer',
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+        }
+
+        // Students
+
+
+        $studentUsersData = [
+            [
+                'name' => 'Demo Student One',
+                'email' => 'student@zankolink.test',
+                'phone' => '07700000003',
+                'student_number' => 'ST75585',
+            ],
+            [
+                'name' => 'Demo Student Two',
+                'email' => 'student2@zankolink.test',
+                'phone' => '07700000004',
+                'student_number' => 'ST75586',
+            ],
+        ];
+
+        $students = collect();
+
+        foreach ($studentUsersData as $studentData) {
+            $studentUser = User::updateOrCreate(
+                ['email' => $studentData['email']],
+                [
+                    'name' => $studentData['name'],
+                    'password' => 'Password@123',
+                    'phone' => $studentData['phone'],
+                    'is_active' => true,
+                ]
+            );
+
+            $studentUser->syncRoles(['student']);
+
+            $student = Student::updateOrCreate(
+                ['user_id' => $studentUser->id],
+                [
                     'department_id' => $department->id,
-                ],
-                [
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'enrollment_type' => 'morning',
+                    'student_number' => $studentData['student_number'],
+                    'stage' => 3,
+                    'status' => 'active',
                 ]
             );
 
             $this->createUserScope(
-                $teacherUser,
-                'lecturer',
+                $studentUser,
+                'student',
                 'DEPARTMENT',
                 $department->id
             );
+
+            $students->push($student);
         }
 
-        DB::table('course_teacher')->updateOrInsert(
-            [
-                'course_id' => $course->id,
-                'teacher_id' => $teacher->id,
-            ],
-            [
-                'role' => 'primary_lecturer',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+        //  Enroll Students Into Multiple Courses
 
-       // Student
-        $studentUser = User::updateOrCreate(
-            ['email' => 'student@zankolink.test'],
-            [
-                'name' => 'Demo Student',
-                'password' => 'Password@123',
-                'phone' => '07700000001',
-                'is_active' => true,
-            ]
-        );
 
-        $studentUser->syncRoles(['student']);
-
-        $student = Student::updateOrCreate(
-            ['user_id' => $studentUser->id],
-            [
-                'department_id' => $primaryDepartment->id,
-                'enrollment_type' => 'morning',
-                'student_number' => 'ST75585',
-                'stage' => 3,
-                'status' => 'active',
-            ]
-        );
-
-        $this->createUserScope(
-            $studentUser,
-            'student',
-            'DEPARTMENT',
-            $primaryDepartment->id
-        );
-
-        DB::table('course_student')->updateOrInsert(
-            [
-                'course_id' => $course->id,
-                'student_id' => $student->id,
-                'academic_year_id' => $academicYearId,
-            ],
-            [
-                'status' => 'enrolled',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+        foreach ($courses as $course) {
+            foreach ($students as $student) {
+                DB::table('course_student')->updateOrInsert(
+                    [
+                        'course_id' => $course->id,
+                        'student_id' => $student->id,
+                        'academic_year_id' => $academicYearId,
+                    ],
+                    [
+                        'enrolled_at' => now(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+        }
     }
     private function createUserScope(User $user, string $roleName, string $scopeType, ?int $scopeId): void
     {

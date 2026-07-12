@@ -13,7 +13,7 @@ class Course extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['department_id', 'name', 'code', 'credit_hours', 'year_level', 'is_active', 'type', 'seats'];
+    protected $fillable = ['department_id', 'name', 'code', 'credit_hours', 'year_level', 'is_active', 'type', 'seats','semester'];
 
     public function department(): BelongsTo
     {
@@ -40,7 +40,7 @@ class Course extends Model
     {
         return $this->hasMany(CourseSection::class);
     }
-  
+
     public function prerequisites()
     {
         return $this->belongsToMany(

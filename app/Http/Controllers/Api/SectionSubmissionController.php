@@ -11,6 +11,10 @@ use App\Models\SectionSubmission;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
+
 
 /**
  * @group Section-Submission
@@ -316,5 +320,75 @@ class SectionSubmissionController extends Controller
         return $this->success(
             'Assignment deleted successfully.',
         );
+    }
+    /**
+     * Get my assignments
+     *
+     * Retrieve all upcoming assignments for the authenticated student from their enrolled courses.
+     *
+     * This endpoint returns section submissions that have a deadline and belong to courses
+     * the authenticated student is enrolled in. It also includes the section, course details,
+     * and the student's submission if they have already submitted.
+     *
+     * @group Moodle Section Submissions
+     *
+     * @authenticated
+     *
+     * @queryParam filter[course_section_id] integer Filter assignments by course section ID. Example: 1
+     * @queryParam sort string Sort assignments by deadline. Use `deadline` for ascending or `-deadline` for descending. Example: deadline
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Assignments retrieved successfully.",
+     *   "data": [
+     *     {
+     *       "id": 2,
+     *       "course_section_id": 1,
+     *       "title": "homework",
+     *       "description": "this is the description",
+     *       "deadline": "2026-07-14T21:00:00.000000Z",
+     *       "created_at": "2026-07-12T07:00:32.000000Z",
+     *       "updated_at": "2026-07-12T07:00:32.000000Z",
+     *       "section": {
+     *         "id": 1,
+     *         "course_id": 1,
+     *         "teacher_id": 91,
+     *         "title": "Week 1: Introduction to Laravel Basics",
+     *         "created_at": "2026-07-12T06:59:16.000000Z",
+     *         "updated_at": "2026-07-12T06:59:16.000000Z",
+     *         "deleted_at": null,
+     *         "course": {
+     *           "id": 1,
+     *           "name": "Web Development",
+     *           "code": "UOS72410"
+     *         }
+     *       },
+     *       "student_submissions": []
+     *     }
+     *   ]
+     * }
+     */
+    public function myAssignments(Request $request){
+        $student = $request->user()->student;
+
+        $assignments = QueryBuilder::for(SectionSubmission::class)
+            ->whereNotNull('deadline')
+            ->where('deadline', '>=', now())
+            ->whereHas('section.course.students', function ($query) use ($student) {
+                $query->where('students.id', $student->id);
+            })
+            ->with([
+                'section.course:id,name,code',
+                'studentSubmissions' => fn ($query) => $query
+                    ->where('student_id', $student->id),
+            ])
+            ->allowedFilters(
+                AllowedFilter::exact('course_section_id'),
+            )
+            ->allowedSorts('deadline')
+            ->defaultSort('deadline')
+            ->get();
+
+        return $this->ok("Assignments retrieved successfully.", $assignments->toArray());
     }
 }

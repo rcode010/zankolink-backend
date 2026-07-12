@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->enum('type', ['mandatory', 'elective'])->default('mandatory');
+            $table->enum('semester',['fall','spring'])->default('fall');
             $table->integer('seats')->nullable();
             $table->text('name');
             $table->text('code');
