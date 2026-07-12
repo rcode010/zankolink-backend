@@ -24,7 +24,13 @@ class SectionItemController extends Controller
 
     /**
      * List Section Items
-     * * Get all items (files/links) attached to a specific course section.
+     * Returns all section materials for a given course section.
+     *
+     * This endpoint is used by the frontend to load the full material list for a
+     * section card. Each item is serialized through `SectionItemResource`, so the
+     * response is normalized for the UI and includes a frontend-friendly shape
+     * such as `title`, `type`, `url`, `content`, and `size`.
+     *
      * * @urlParam section int required The ID of the course section. Example: 1
      */
     public function index(Request $request, CourseSection $section)
@@ -41,8 +47,14 @@ class SectionItemController extends Controller
 
     /**
      * Add Section Item
-     * * Upload a physical file or attach an external link to a course section.
+     * Uploads a physical file or stores an external link as a section material.
+     *
+     * Use this endpoint when the frontend needs to create a file-based material
+     * or a URL-based material inside a course section. The created resource is
+     * returned in the normalized `SectionItemResource` format for immediate UI use.
+     *
      * * @urlParam section int required The ID of the course section. Example: 1
+     *
      * @bodyParam file file The physical document or media file to upload (Max 50MB). Required if url is omitted.
      * @bodyParam url string The full external link/URL. Required if file is omitted. Example: https://example.com/slide.pdf
      * @bodyParam material_file_name string Custom display name for the material. Required only if url is provided. Example: Lecture 1 Slides
@@ -78,8 +90,43 @@ class SectionItemController extends Controller
     }
 
     /**
+     * Add note to a section
+     * Creates a note-style section item with a title and content body.
+     *
+     * This endpoint is specifically for lecture notes and instructor comments that
+     * should be rendered as note cards in the frontend UI instead of as uploaded
+     * files or links.
+     *
+     * @bodyParam title string required The note title. Example: Week 1 Notes
+     * @bodyParam content string required The note body text. Example: Review chapters 1-3 before the next class.
+     */
+    public function storeNote(Request $request, CourseSection $section)
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string', 'max:5000'],
+        ]);
+
+        $item = $section->items()->create([
+            'material_file_type' => 'note',
+            'material_file_name' => $validated['title'],
+            'material_file_url' => $validated['content'],
+        ]);
+
+        return $this->success(
+            'Note added successfully.',
+            (new SectionItemResource($item))->toArray($request),
+            201
+        );
+    }
+
+    /**
      * View Section Item
-     * * Fetch details of a specific section item.
+     * Fetches one specific section item by ID.
+     *
+     * This is used when the frontend opens a material detail view or needs to
+     * inspect the normalized payload for a single item.
+     *
      * * @urlParam item int required The ID of the section item. Example: 5
      */
     public function show(Request $request, SectionItem $item)
@@ -93,7 +140,9 @@ class SectionItemController extends Controller
 
     /**
      * Download or Redirect Item
-     * * Downloads the file directly if it's hosted locally, or redirects away if it's an external URL.
+     * Downloads a stored file directly, or redirects the browser to an external
+     * URL when the item is a link.
+     *
      * * @urlParam item int required The ID of the section item. Example: 5
      */
     public function download(SectionItem $item)
@@ -113,8 +162,13 @@ class SectionItemController extends Controller
 
     /**
      * Update Section Item
-     * * Update metadata (like custom file name) for an item. Re-uploading a new file should go through delete + store instead.
+     * Updates metadata such as the display name for an existing section item.
+     *
+     * Re-uploading a file should be handled through delete + create flow instead
+     * of this metadata-only update endpoint.
+     *
      * * @urlParam item int required The ID of the section item. Example: 5
+     *
      * @bodyParam material_file_name string The updated custom name for the material. Example: Updated Lecture 1 Slides
      */
     public function update(UpdateSectionItemRequest $request, SectionItem $item)
@@ -130,7 +184,9 @@ class SectionItemController extends Controller
 
     /**
      * Delete Section Item
-     * * Permanently remove an item and delete its physical file from storage if applicable.
+     * Permanently removes a section item and deletes its physical storage file
+     * when the item is a local uploaded asset.
+     *
      * * @urlParam item int required The ID of the section item. Example: 5
      */
     public function destroy(SectionItem $item)

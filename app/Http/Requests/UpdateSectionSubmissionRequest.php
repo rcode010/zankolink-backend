@@ -26,6 +26,7 @@ class UpdateSectionSubmissionRequest extends FormRequest
             'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'deadline' => 'sometimes|date|after:now',
+            'weight' => 'sometimes|nullable|numeric|min:0|max:100',
 
             'files' => 'nullable|array',
             'files.*' => 'file|max:10240|mimes:doc,docx,pdf,ppt,pptx,jpg,jpeg,png',
