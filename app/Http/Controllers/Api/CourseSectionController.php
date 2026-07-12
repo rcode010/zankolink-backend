@@ -24,7 +24,7 @@ use Spatie\QueryBuilder\QueryBuilder;
  * - Note: parent course is bound via URL, teacher_id is derived from auth session.
  * * 2. UpdateCourseSectionRequest Contract:
  * - Validates PUT/PATCH /api/sections/{section}
- * - Expected Body (all optional): 
+ * - Expected Body (all optional):
  * { "title": "New Title", "course_id": 2, "teacher_id": 5 }
  * - Note: teacher_id is nullable, allowing frontends to unassign teachers.
  * * 3. CourseSectionResource JSON Contract:
@@ -75,7 +75,7 @@ class CourseSectionController extends Controller
 
         return $this->ok(
             'Course sections retrieved successfully',
-            CourseSectionResource::collection($sections)->response()->getData(true)
+            (CourseSectionResource::collection($sections))->resolve()
         );
     }
 
