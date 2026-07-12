@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+
 /**
  * @group Coruse
  *
@@ -46,6 +47,7 @@ class CourseController extends Controller
      *     "name": "Database Systems",
      *     "code": "CSe322",
      *     "credit_hours": 3,
+     *     "semester": "fall"
      *     "year_level": 3,
      *     "is_active": true,
      *     "department_id": 19,
@@ -74,15 +76,12 @@ class CourseController extends Controller
      *     "updated_at": "2026-07-09 14:33:59"
      *   }
      * }
-     *
      * @response 403 scenario="Unauthorized" {
      *   "message": "This action is unauthorized."
      * }
-     *
      * @response 404 scenario="Department not found" {
      *   "message": "No query results for model [App\\Models\\Department] 1"
      * }
-     *
      * @response 422 scenario="Validation error" {
      *   "message": "The name field is required.",
      *   "errors": {
@@ -109,11 +108,12 @@ class CourseController extends Controller
         }
 
         $courses = QueryBuilder::for($query)
-            ->with(['prerequisites','department:id,name'])
+            ->with(['prerequisites', 'department:id,name'])
             ->allowedFilters(
                 AllowedFilter::partial('name'),
                 AllowedFilter::partial('code'),
                 AllowedFilter::exact('department_id'),
+                AllowedFilter::exact('semester'),
                 'is_active',
             )
             ->latest()
@@ -126,6 +126,7 @@ class CourseController extends Controller
                 ->getData(true)
         );
     }
+
     /**
      * Create a Course
      *
@@ -137,6 +138,7 @@ class CourseController extends Controller
      * @bodyParam name string required The name of the course. Example: Database Systems
      * @bodyParam code string required The course code. Example: CSe322
      * @bodyParam credit_hours integer required Number of credit hours. Example: 3
+     * @bodyParam semester required. Example: spring or fall
      * @bodyParam year_level integer required The year level this course belongs to. Example: 3
      * @bodyParam department_id integer required The ID of the department this course belongs to. Example: 19
      * @bodyParam is_active boolean optional Whether the course is active. Defaults to true. Example: true
@@ -150,6 +152,7 @@ class CourseController extends Controller
      *     "name": "Database Systems",
      *     "code": "CSe322",
      *     "credit_hours": 3,
+     *     "semester": "fall"
      *     "year_level": 3,
      *     "is_active": true,
      *     "department_id": 19,
@@ -178,15 +181,12 @@ class CourseController extends Controller
      *     "updated_at": "2026-07-09 14:33:59"
      *   }
      * }
-     *
      * @response 403 scenario="Unauthorized" {
      *   "message": "This action is unauthorized."
      * }
-     *
      * @response 404 scenario="Department not found" {
      *   "message": "No query results for model [App\\Models\\Department] 1"
      * }
-     *
      * @response 422 scenario="Validation error" {
      *   "message": "The name field is required.",
      *   "errors": {
@@ -202,20 +202,21 @@ class CourseController extends Controller
 
         $this->authorize('createForDepartment', [Course::class, $department]);
         $prerequisites = $validated['prerequisites'] ?? [];
-
         unset($validated['prerequisites']);
-        $course = DB::transaction(function () use ($validated, $department,$prerequisites) {
+        $course = DB::transaction(function () use ($validated, $prerequisites) {
 
             $course = Course::create(
                 $validated
             );
             $course->prerequisites()->sync($prerequisites);
+
             return $course;
         });
         $course->load([
             'department:id,name',
             'prerequisites:id,name,code',
         ]);
+        //        dd("here...");
 
         return $this->success(
             'Course created successfully.',
@@ -242,6 +243,7 @@ class CourseController extends Controller
      *     "name": "Database Systems",
      *     "code": "CSe322",
      *     "credit_hours": 3,
+     *     "semester": "fall"
      *     "year_level": 3,
      *     "is_active": 1,
      *     "department_id": 19,
@@ -270,15 +272,12 @@ class CourseController extends Controller
      *     "updated_at": "2026-07-09 14:33:59"
      *   }
      * }
-     *
      * @response 403 scenario="Unauthorized" {
      *   "message": "This action is unauthorized."
      * }
-     *
      * @response 404 scenario="Course not found" {
      *   "message": "No query results for model [App\\Models\\Course] 1"
      * }
-     *
      * @response 401 scenario="Unauthenticated" {
      *   "message": "Unauthenticated."
      * }
@@ -326,6 +325,7 @@ class CourseController extends Controller
      *     "name": "Database Systems",
      *     "code": "CSe322",
      *     "credit_hours": 7,
+     *     "semester": "fall"
      *     "year_level": 3,
      *     "is_active": false,
      *     "department_id": 19,
@@ -349,22 +349,18 @@ class CourseController extends Controller
      *     "updated_at": "2026-07-09 14:45:18"
      *   }
      * }
-     *
      * @response 403 scenario="Unauthorized" {
      *   "message": "This action is unauthorized."
      * }
-     *
      * @response 404 scenario="Course not found" {
      *   "message": "No query results for model [App\\Models\\Course] 1"
      * }
-     *
      * @response 422 scenario="Validation error" {
      *   "message": "The credit hours field must be an integer.",
      *   "errors": {
      *     "credit_hours": ["The credit hours field must be an integer."]
      *   }
      * }
-     *
      * @response 401 scenario="Unauthenticated" {
      *   "message": "Unauthenticated."
      * }
@@ -380,7 +376,7 @@ class CourseController extends Controller
 
             $this->authorize('createForDepartment', [Course::class, $department]);
         }
-        $course = DB::transaction(function () use ($validated, $course,$request) {
+        $course = DB::transaction(function () use ($validated, $course) {
             $hasPrerequisites = array_key_exists('prerequisites', $validated);
 
             $prerequisites = $validated['prerequisites'] ?? null;
@@ -389,9 +385,10 @@ class CourseController extends Controller
 
             $course->update($validated);
 
-            if($hasPrerequisites) {
-                $course->prerequisites()->sync($prerequisites??[]);
+            if ($hasPrerequisites) {
+                $course->prerequisites()->sync($prerequisites ?? []);
             }
+
             return $course;
         });
         $course->load([
@@ -406,12 +403,14 @@ class CourseController extends Controller
             ))->toArray($request)
         );
     }
+
     /**
      * Delete course
      *
      * Delete a course from the system.
      *
      * @group Courses
+     *
      * @authenticated
      *
      * @urlParam course integer required The ID of the course. Example: 1
@@ -420,11 +419,9 @@ class CourseController extends Controller
      *   "success": true,
      *   "message": "Course deleted successfully."
      * }
-     *
      * @response 403 {
      *   "message": "This action is unauthorized."
      * }
-     *
      * @response 404 {
      *   "message": "No query results for model [App\\Models\\Course] 1"
      * }
