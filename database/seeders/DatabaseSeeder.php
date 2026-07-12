@@ -435,7 +435,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $courses = Course::query()
-            ->where('department_id', $department->id)
+            ->whereNotNull('department_id')
             ->take(3)
             ->get();
 
@@ -486,16 +486,29 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            DB::table('teacher_department')->updateOrInsert(
-                [
-                    'teacher_id' => $teacher->id,
-                    'department_id' => $department->id,
-                ],
-                [
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
-            );
+            $departmentIds = $courses
+                ->pluck('department_id')
+                ->unique();
+
+            foreach ($departmentIds as $departmentId) {
+                DB::table('teacher_department')->updateOrInsert(
+                    [
+                        'teacher_id' => $teacher->id,
+                        'department_id' => $departmentId,
+                    ],
+                    [
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+
+                $this->createUserScope(
+                    $teacherUser,
+                    'lecturer',
+                    'DEPARTMENT',
+                    $departmentId
+                );
+            }
 
             $teachers->push($teacher);
         }
@@ -561,6 +574,13 @@ class DatabaseSeeder extends Seeder
                     'stage' => 3,
                     'status' => 'active',
                 ]
+            );
+
+            $this->createUserScope(
+                $studentUser,
+                'student',
+                'DEPARTMENT',
+                $department->id
             );
 
             $students->push($student);
