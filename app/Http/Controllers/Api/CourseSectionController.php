@@ -69,9 +69,9 @@ class CourseSectionController extends Controller
                 AllowedFilter::partial('title'),
                 AllowedFilter::exact('teacher_id'),
             )
-            ->with( 'course')
-            ->latest()
-            ->paginate($per_page);
+           ->with(['course', 'teacher', 'items', 'submissions'])
+           ->latest()
+           ->paginate($per_page);
 
         return $this->ok(
             'Course sections retrieved successfully',
