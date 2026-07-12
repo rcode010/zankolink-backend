@@ -84,6 +84,36 @@ class DatabaseSeeder extends Seeder
             // Roles & Permissions
             'view roles', 'create roles', 'update roles', 'delete roles',
             'view permissions', 'view user roles', 'create user roles', 'delete user roles',
+            // Course Section
+            'view course sections', 'view course section', 'create course sections',
+            'update course sections', 'delete course sections',
+            // Section Item
+            'view section items', 'view section item', 'create section items', 'update section items',
+            'delete section items', 'download section attachments', 'create section notes',
+            // Section Submission
+            'view section submissions', 'view section submission', 'create section submissions', 'update section submissions', 'delete section submissions',
+            // Section Submission Attachments
+            'download section submission attachments', 'delete section submission attachments',
+            // Student Submission
+            'create student submissions', 'view student submissions', 'download student submissions', 'delete student submissions',
+            'view own submission', 'view student submission', 'update student submissions',
+            // Academic Request
+            'view academic requests', 'view academic request', 'create academic requests',
+            // Attendance Sessions
+            'view attendance sessions', 'view attendance session', 'create attendance sessions',
+            'update attendance sessions', 'delete attendance sessions',
+            // Student Attendance
+            'create attendance records', 'view attendance records', 'view own attendance records',
+            'update attendance records',
+            // Course Assessments
+            'view course assessments', 'create course assessments', 'update course assessments',
+            'view course assessment', 'delete course assessments',
+            // Course Marks
+            'view own marks',
+            // Student Marks
+            'view assessment marks', 'create student marks',
+            'view student mark', 'update student mark',
+
         ];
 
         foreach ($permissions as $permission) {
@@ -177,19 +207,49 @@ class DatabaseSeeder extends Seeder
                 'view signatures','create signatures',
                 'update course students', 'delete course students',
                 'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
-                'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
+                'upload attachments', 'download attachments', 'forward letters','view letter broadcast',
+                'view academic requests', 'view academic request',
             ],
 
             'lecturer' => [
                 'view courses', 'view students',
                 'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
+                'view course sections', 'view course section',
+                'create course sections', 'update course sections',
+                'delete course sections', 'view section items',
+                'view section item', 'create section items',
+                'update section items', 'delete section items',
+                'download section attachments', 'create section notes',
+                'view section submissions', 'view section submission', 'create section submissions',
+                'update section submissions', 'delete section submissions',
+                'download section submission attachments', 'delete section submission attachments',
+                'view student submissions', 'update student submissions',
+                'view student submission', 'download student submissions', 'view academic requests',
+                'view academic request', 'create academic requests',
+                'view attendance sessions', 'view attendance session', 'create attendance sessions',
+                'update attendance sessions', 'delete attendance sessions',
+                'create attendance records', 'view attendance records',
+                'update attendance records',
+                'view course assessments', 'create course assessments', 'update course assessments',
+                'view course assessment', 'delete course assessments',
+                'view assessment marks', 'create student marks',
+                'view student mark', 'update student mark',
             ],
 
             'student' => [
                 'view courses',
                 'view letters', 'create letters',
                 'upload attachments', 'download attachments',
+                'view course sections', 'view course section',
+                'view section items', 'view section item',
+                'download section attachments', 'view section submissions',
+                'view section submission', 'download section submission attachments',
+                'create student submissions', 'view own submission',
+                'download student submissions', 'delete student submissions',
+                'view academic requests', 'view academic request',
+                'create academic requests', 'view own attendance records',
+                'view own marks',
             ],
 
             // Zankoline portal
