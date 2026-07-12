@@ -102,6 +102,8 @@ class SectionItemController extends Controller
      */
     public function storeNote(Request $request, CourseSection $section)
     {
+        $this->authorize('create', [SectionItem::class, $section]);
+
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string', 'max:5000'],
