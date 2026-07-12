@@ -23,7 +23,13 @@ class CourseResource extends JsonResource
             'is_active' => $this->is_active,
             'department_id' => $this->department_id,
 
+            'students_count' => $this->whenCounted('students'),
+            'sections_count' => $this->whenCounted('sections'),
+
             'department' => new DepartmentResource($this->whenLoaded('department')),
+
+            'teachers' => TeacherResource::collection($this->whenLoaded('teachers')),
+
             'prerequisites' => $this->whenLoaded('prerequisites', function () {
                 return $this->prerequisites->map(fn ($course) => [
                     'id' => $course->id,

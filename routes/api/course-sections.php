@@ -3,13 +3,20 @@
 use App\Http\Controllers\Api\CourseSectionController;
 use Illuminate\Support\Facades\Route;
 
-// Course-scoped routes (Scoped under a specific course)
-Route::prefix('courses/{course}')->group(function () {
-    Route::get('/sections', [CourseSectionController::class, 'index']);
-    Route::post('/sections', [CourseSectionController::class, 'store']);
-});
 
-// Standalone routes for managing individual sections
-Route::get('course-sections/{section}', [CourseSectionController::class, 'show']);
-Route::put('course-sections/{section}', [CourseSectionController::class, 'update']);
-Route::delete('course-sections/{section}', [CourseSectionController::class, 'destroy']);
+Route::prefix('moodle')->group(function () {
+
+    // Course-scoped routes (Scoped under a specific parent course)
+    Route::prefix('courses/{course}')->group(function () {
+        Route::get('/sections', [CourseSectionController::class, 'index']);
+        Route::post('/sections', [CourseSectionController::class, 'store']);
+    });
+
+    // Standalone routes for managing individual section resources
+    Route::prefix('course-sections/{section}')->group(function () {
+        Route::get('/', [CourseSectionController::class, 'show']);
+        Route::put('/', [CourseSectionController::class, 'update']);
+        Route::delete('/', [CourseSectionController::class, 'destroy']);
+    });
+
+});

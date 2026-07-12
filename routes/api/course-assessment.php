@@ -7,5 +7,6 @@ Route::prefix('moodle')->group(function () {
     Route::post('/courses/{course}/assessments', [CourseAssesmentsController::class, 'store']);
     Route::get('/courses/{course}/assessments/{assessment}', [CourseAssesmentsController::class, 'show']);
     Route::delete('/courses/{course}/assessments/{assessment}', [CourseAssesmentsController::class, 'destroy']);
+    Route::patch('/courses/{course}/assessments/bulk', [CourseAssesmentsController::class, 'bulkUpdate']);
     Route::patch('/courses/{course}/assessments/{assessment}', [CourseAssesmentsController::class, 'update']);
 });
