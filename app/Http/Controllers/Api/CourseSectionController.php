@@ -69,7 +69,7 @@ class CourseSectionController extends Controller
                 AllowedFilter::partial('title'),
                 AllowedFilter::exact('teacher_id'),
             )
-           ->with(['course', 'teacher', 'items', 'submissions'])
+           ->with(['course', 'items', 'submissions.attachments'])
            ->latest()
            ->paginate($per_page);
 
