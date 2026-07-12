@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\CourseAssessments;
+use App\Models\StudentMarks;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
@@ -66,6 +67,8 @@ class CourseMarkController extends Controller
      */
     public function myMarks(Request $request, Course $course)
     {
+        $this->authorize('viewOwn', [StudentMarks::class, $course]);
+
         $student = $request->user()->student;
         $assessments = CourseAssessments::query()
             ->where('course_id', $course->id)
