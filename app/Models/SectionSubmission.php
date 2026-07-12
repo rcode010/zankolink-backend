@@ -24,4 +24,10 @@ class SectionSubmission extends Model
     {
         return $this->hasMany(SectionSubmissionAttachment::class);
     }
+    protected function casts()
+    {
+        return [
+            'deadline' => 'datetime'
+        ];
+    }
 }
