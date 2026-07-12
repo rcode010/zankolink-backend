@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDepartmentRequest;
+use App\Http\Requests\UpdateCourseSelectionSettingRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentSeatRequest;
 use App\Http\Resources\DepartmentResource;
@@ -278,5 +279,24 @@ class DepartmentController extends Controller
         })->all();
 
         return $this->ok('Pending courses retrieved successfully.', $selectedCourses);
+    }
+    public function updateCourseSelectionSettings(UpdateCourseSelectionSettingRequest $request, Department $department){
+        $credentials = $request->validated();
+
+        $department->update($credentials);
+        $department->refresh();
+
+        $isOpen =
+            $department->course_selection_starts_at &&
+            $department->course_selection_ends_at &&
+            now()->gte($department->course_selection_starts_at) &&
+            now()->lt($department->course_selection_ends_at);
+
+        return $this->ok('Course selection settings updated successfully.', [
+            'department_id' => $department->id,
+            'course_selection_starts_at' => $department->course_selection_starts_at,
+            'course_selection_ends_at' => $department->course_selection_ends_at,
+            'is_open' => $isOpen,
+        ]);
     }
 }

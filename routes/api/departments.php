@@ -12,5 +12,5 @@ Route::prefix('departments')->group(function () {
 
     Route::get('/student-selected-courses', [DepartmentController::class, 'getStudentSelectedCourses']);
     Route::post('/approve-selection', [DepartmentController::class, 'approveStudentSelection']);
-
+    Route::patch('/{department}/course-selection-settings', [DepartmentController::class,'updateCourseSelectionSettings']);
 });

@@ -28,6 +28,8 @@ class DepartmentResource extends JsonResource
             }),
 
             'is_active' => $this->is_active,
+            'course_selection_starts_at' => $this->course_selection_starts_at,
+            'course_selection_ends_at'=>$this->course_selection_ends_at,
 
             'faculty' => new FacultyResource($this->whenLoaded('faculty')),
 
