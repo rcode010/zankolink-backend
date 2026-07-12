@@ -69,7 +69,7 @@ class CourseSectionController extends Controller
                 AllowedFilter::partial('title'),
                 AllowedFilter::exact('teacher_id'),
             )
-            ->with('teacher.user', 'course')
+            ->with( 'course')
             ->latest()
             ->paginate($per_page);
 
@@ -107,7 +107,7 @@ class CourseSectionController extends Controller
 
         $validated['teacher_id'] = $teacher->id;
         $section = $course->sections()->create($validated);
-        $section->load(['teacher.user', 'course:id,name']);
+        $section->load([ 'course:id,name']);
 
         return $this->success(
             'Course section created successfully.',
@@ -128,7 +128,7 @@ class CourseSectionController extends Controller
      */
     public function show(CourseSection $section)
     {
-        $section->load('teacher.user', 'course');
+        $section->load( 'course');
 
         return $this->ok(
             'Course section retrieved successfully',
@@ -155,7 +155,7 @@ class CourseSectionController extends Controller
         return $this->ok(
             'Course section updated successfully.',
             (new CourseSectionResource(
-                $section->fresh()->load('teacher.user', 'course')
+                $section->fresh()->load( 'course')
             ))->resolve()
         );
     }
