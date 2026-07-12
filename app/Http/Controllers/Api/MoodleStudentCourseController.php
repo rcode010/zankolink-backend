@@ -42,6 +42,7 @@ class MoodleStudentCourseController extends Controller
 
         $courses = $student->courses()
             ->with(['department', 'teachers.user'])
+            ->withCount(['students', 'sections'])
             ->latest()
             ->get();
 
