@@ -26,6 +26,7 @@ class StoreCourseRequest extends FormRequest
             'department_id' => 'required|exists:departments,id',
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:50|unique:courses,code',
+            'semester' => 'required|in:fall,spring',
             'credit_hours' => 'required|integer|min:1',
             'year_level' => 'required|integer|min:1',
             'is_active' => 'nullable|boolean',

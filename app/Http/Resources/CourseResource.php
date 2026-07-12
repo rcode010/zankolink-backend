@@ -22,14 +22,16 @@ class CourseResource extends JsonResource
             'year_level' => $this->year_level,
             'is_active' => $this->is_active,
             'department_id' => $this->department_id,
-
+            'semester' => $this->semester,
             'students_count' => $this->whenCounted('students'),
             'sections_count' => $this->whenCounted('sections'),
 
-            'department' => new DepartmentResource($this->whenLoaded('department')),
-
-            'teachers' => TeacherResource::collection($this->whenLoaded('teachers')),
-
+            'department' => $this->whenLoaded('department', function () {
+                return new DepartmentResource($this->department);
+            }),
+            'teachers' => $this->whenLoaded('teachers', function () {
+                return TeacherResource::collection($this->teachers);
+            }),
             'prerequisites' => $this->whenLoaded('prerequisites', function () {
                 return $this->prerequisites->map(fn ($course) => [
                     'id' => $course->id,
