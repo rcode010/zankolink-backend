@@ -49,9 +49,10 @@ class LecturerCourseController extends Controller
             ->latest('courses.created_at')
             ->get();
 
-        return $this->ok('Lecturer assigned courses retrieved successfully', [
-            'courses' => CourseResource::collection($courses)->resolve(),
-        ]);
+        return $this->ok(
+        'Lecturer assigned courses retrieved successfully',
+        CourseResource::collection($courses)->resolve()
+    );
     }
 
     /**
