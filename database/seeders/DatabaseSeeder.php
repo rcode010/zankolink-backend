@@ -443,7 +443,7 @@ class DatabaseSeeder extends Seeder
             return;
         }
 
-       // Teachers
+        // Teachers
 
 
         $teacherUsersData = [
@@ -521,6 +521,7 @@ class DatabaseSeeder extends Seeder
 
         // Students
 
+
         $studentUsersData = [
             [
                 'name' => 'Demo Student One',
@@ -565,7 +566,8 @@ class DatabaseSeeder extends Seeder
             $students->push($student);
         }
 
-        // Enroll Students Into Multiple Courses
+        //  Enroll Students Into Multiple Courses
+
 
         foreach ($courses as $course) {
             foreach ($students as $student) {
@@ -583,4 +585,29 @@ class DatabaseSeeder extends Seeder
                 );
             }
         }
-    }}
+    }
+    private function createUserScope(User $user, string $roleName, string $scopeType, ?int $scopeId): void
+    {
+        $roleId = DB::table('roles')
+            ->where('name', $roleName)
+            ->where('guard_name', 'web')
+            ->value('id');
+
+        if (! $roleId) {
+            return;
+        }
+
+        DB::table('user_scopes')->updateOrInsert(
+            [
+                'user_id' => $user->id,
+                'role_id' => $roleId,
+                'scope_type' => $scopeType,
+                'scope_id' => $scopeId,
+            ],
+            [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+    }
+}
