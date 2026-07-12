@@ -280,6 +280,47 @@ class DepartmentController extends Controller
 
         return $this->ok('Pending courses retrieved successfully.', $selectedCourses);
     }
+    /**
+     * Update course selection settings
+     *
+     * Update the course selection start and end date for a department.
+     *
+     * This endpoint is used by the Head of Department to define when students
+     * are allowed to select/enroll in courses for their department.
+     *
+     * @group Course Selection Settings
+     *
+     * @authenticated
+     *
+     * @urlParam department integer required The ID of the department. Example: 1
+     *
+     * @bodyParam course_selection_starts_at datetime required The date and time when course selection starts. Example: 2026-07-09 21:00:00
+     * @bodyParam course_selection_ends_at datetime required The date and time when course selection ends. Must be after course_selection_starts_at. Example: 2026-07-10 21:00:00
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Course selection settings updated successfully.",
+     *   "data": {
+     *     "department_id": 1,
+     *     "course_selection_starts_at": "2026-07-09T21:00:00.000000Z",
+     *     "course_selection_ends_at": "2026-07-10T21:00:00.000000Z",
+     *     "is_open": false
+     *   }
+     * }
+     *
+     * @response 403 {
+     *   "message": "This action is unauthorized."
+     * }
+     *
+     * @response 422 {
+     *   "message": "The course selection ends at field must be a date after course selection starts at.",
+     *   "errors": {
+     *     "course_selection_ends_at": [
+     *       "The course selection ends at field must be a date after course selection starts at."
+     *     ]
+     *   }
+     * }
+     */
     public function updateCourseSelectionSettings(UpdateCourseSelectionSettingRequest $request, Department $department){
         $credentials = $request->validated();
 
@@ -297,6 +338,45 @@ class DepartmentController extends Controller
             'course_selection_starts_at' => $department->course_selection_starts_at,
             'course_selection_ends_at' => $department->course_selection_ends_at,
             'is_open' => $isOpen,
+        ]);
+    }
+    /**
+     * Close course selection
+     *
+     * Close course selection immediately for a department.
+     *
+     * This endpoint is used by the Head of Department when they want to stop
+     * course selection before the original end date.
+     *
+     * @group Course Selection Settings
+     *
+     * @authenticated
+     *
+     * @urlParam department integer required The ID of the department. Example: 1
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Course selection closed successfully.",
+     *   "data": {
+     *     "department_id": 1,
+     *     "course_selection_starts_at": "2026-07-09T21:00:00.000000Z",
+     *     "course_selection_ends_at": "2026-07-12T07:30:00.000000Z",
+     *     "is_open": false
+     *   }
+     * }
+     *
+     * @response 403 {
+     *   "message": "This action is unauthorized."
+     * }
+     */
+    public function closeCourseSelection(Request $request, Department $department){
+        $department->update(['course_selection_ends_at'=> now()]);
+        $department->refresh();
+        return $this->ok('Course selection settings updated successfully.', [
+            'department_id' => $department->id,
+            'course_selection_starts_at' => $department->course_selection_starts_at,
+            'course_selection_ends_at' => $department->course_selection_ends_at,
+            'is_open' => false,
         ]);
     }
 }
