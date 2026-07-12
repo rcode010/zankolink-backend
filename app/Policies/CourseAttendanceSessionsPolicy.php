@@ -15,7 +15,7 @@ class CourseAttendanceSessionsPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true; //will fix after permissions are added
+        return $user->hasPermissionTo('view attendance sessions');
     }
 
     /**
