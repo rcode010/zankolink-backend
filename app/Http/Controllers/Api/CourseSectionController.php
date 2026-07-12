@@ -76,13 +76,13 @@ class CourseSectionController extends Controller
                 AllowedFilter::partial('title'),
                 AllowedFilter::exact('teacher_id'),
             )
-            ->with('teacher.user', 'course')
-            ->latest()
-            ->paginate($per_page);
+           ->with(['course', 'items', 'submissions.attachments'])
+           ->latest()
+           ->paginate($per_page);
 
         return $this->ok(
             'Course sections retrieved successfully',
-            CourseSectionResource::collection($sections)->response()->getData(true)
+            (CourseSectionResource::collection($sections))->resolve()
         );
     }
 
@@ -116,7 +116,7 @@ class CourseSectionController extends Controller
 
         $validated['teacher_id'] = $teacher->id;
         $section = $course->sections()->create($validated);
-        $section->load(['teacher.user', 'course:id,name']);
+        $section->load([ 'course:id,name']);
 
         return $this->success(
             'Course section created successfully.',
@@ -139,7 +139,7 @@ class CourseSectionController extends Controller
     {
         $this->authorize('view', $section);
 
-        $section->load('teacher.user', 'course');
+        $section->load( 'course');
 
         return $this->ok(
             'Course section retrieved successfully',
@@ -167,7 +167,7 @@ class CourseSectionController extends Controller
         return $this->ok(
             'Course section updated successfully.',
             (new CourseSectionResource(
-                $section->fresh()->load('teacher.user', 'course')
+                $section->fresh()->load( 'course')
             ))->resolve()
         );
     }
@@ -188,8 +188,6 @@ class CourseSectionController extends Controller
      */
     public function destroy(CourseSection $section)
     {
-        $this->authorize('delete', $section);
-
         $section->delete();
 
         return $this->ok('Course section deleted successfully.');
