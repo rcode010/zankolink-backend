@@ -179,7 +179,8 @@ class DepartmentController extends Controller
         $studentId = $validated['student_id'];
         $academicYearId = $validated['academic_year_id'];
 
-        $pendingSelections = CourseSelection::where('student_id', $studentId)
+        $pendingSelections = CourseSelection::with('course:id,name,code,type')
+            ->where('student_id', $studentId)
             ->where('academic_year_id', $academicYearId)
             ->where('status', 'pending')
             ->get();
@@ -218,7 +219,16 @@ class DepartmentController extends Controller
             DB::table('course_student')->insert($enrollmentData);
         });
 
-        return $this->ok('Department approved successfully and student is now enrolled.');
+        return $this->ok('Department approved successfully and student is now enrolled.', [
+            'student_id' => $studentId,
+            'academic_year_id' => $academicYearId,
+            'enrolled_courses' => $pendingSelections->map(fn ($selection) => [
+                'id' => $selection->course->id,
+                'name' => $selection->course->name,
+                'code' => $selection->course->code,
+                'type' => $selection->course->type,
+            ])->values(),
+        ]);
     }
 
     /**
@@ -233,7 +243,7 @@ class DepartmentController extends Controller
 
         $user = $request->user();
 
-        $query = CourseSelection::with(['course', 'student:id,name,email,department_id'])
+        $query = CourseSelection::with(['course', 'student.user:id,name,email'])
             ->where('academic_year_id', $validated['academic_year_id'])
             ->where('status', 'pending');
 
@@ -268,7 +278,8 @@ class DepartmentController extends Controller
             return [
                 'id' => $selection->id,
                 'student_id' => $selection->student_id,
-                'student_name' => $selection->student->name ?? 'N/A',
+                'student_name' => $selection->student->user->name ?? 'N/A',
+                'student_email' => $selection->student->user->email ?? 'N/A',
                 'course_id' => $selection->course->id,
                 'course_name' => $selection->course->name,
                 'course_code' => $selection->course->code,
@@ -380,3 +391,4 @@ class DepartmentController extends Controller
         ]);
     }
 }
+
