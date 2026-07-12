@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BulkUpdateCourseAssessmentsRequest;
 use App\Http\Requests\StoreCourseAssessmentRequest;
 use App\Http\Requests\UpdateCourseAssessmentRequest;
 use App\Models\Course;
 use App\Models\CourseAssessments;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -178,6 +180,134 @@ class CourseAssesmentsController extends Controller
 
         return $this->ok('Course Assessment updated successfully', $assessment->toArray());
 
+    }
+    /**
+     * Bulk update course assessments
+     *
+     * Update multiple assessments belonging to the same course in one request.
+     * Each assessment object must include its assessment ID and at least one field to update.
+     *
+     * @group Course Assessments
+     * @authenticated
+     *
+     * @urlParam course integer required The ID of the course. Example: 1
+     *
+     * @bodyParam assessments array required The assessments to update.
+     * @bodyParam assessments.*.id integer required The ID of the assessment. Example: 1
+     * @bodyParam assessments.*.academic_year_id integer optional The academic year ID. Example: 1
+     * @bodyParam assessments.*.title string optional The assessment title. Example: Updated Quiz 1
+     * @bodyParam assessments.*.type string optional The assessment type. Must be one of: quiz, assignment, final, midterm, project, activity. Example: midterm
+     * @bodyParam assessments.*.max_mark number optional The maximum assessment mark. Example: 20
+     * @bodyParam assessments.*.weight number optional The assessment weight. Example: 10
+     * @bodyParam assessments.*.due_at datetime nullable The assessment due date and time. Example: 2026-07-20 10:00:00
+     * @bodyParam assessments.*.is_published boolean optional Whether the assessment is published. Example: true
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Course assessments updated successfully.",
+     *   "data": [
+     *     {
+     *       "id": 1,
+     *       "course_id": 1,
+     *       "teacher_id": 91,
+     *       "academic_year_id": 1,
+     *       "title": "Updated Quiz 1",
+     *       "type": "midterm",
+     *       "max_mark": 20,
+     *       "weight": 10,
+     *       "due_at": "2026-07-20 10:00:00",
+     *       "is_published": 1,
+     *       "created_at": "2026-07-11T19:20:42.000000Z",
+     *       "updated_at": "2026-07-11T19:25:17.000000Z",
+     *       "deleted_at": null
+     *     },
+     *     {
+     *       "id": 2,
+     *       "course_id": 1,
+     *       "teacher_id": 91,
+     *       "academic_year_id": 1,
+     *       "title": "Updated Midterm",
+     *       "type": "midterm",
+     *       "max_mark": 30,
+     *       "weight": 30,
+     *       "due_at": "2026-08-20 10:00:00",
+     *       "is_published": 0,
+     *       "created_at": "2026-07-11T19:20:44.000000Z",
+     *       "updated_at": "2026-07-11T19:25:17.000000Z",
+     *       "deleted_at": null
+     *     }
+     *   ]
+     * }
+     *
+     * @response 404 {
+     *   "success": false,
+     *   "message": "One or more assessments do not belong to this course."
+     * }
+     *
+     * @response 422 {
+     *   "message": "The assessments field is required.",
+     *   "errors": {
+     *     "assessments": [
+     *       "The assessments field is required."
+     *     ]
+     *   }
+     * }
+     */
+    public function bulkUpdate(
+        BulkUpdateCourseAssessmentsRequest $request,
+        Course $course
+    ) {
+        $items = collect($request->validated('assessments'));
+
+        $assessmentIds = $items
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        $assessments = CourseAssessments::query()
+            ->whereIn('id', $assessmentIds)
+            ->get()
+            ->keyBy('id');
+
+        if ($assessments->count() !== count($assessmentIds)) {
+            return $this->error(
+                'One or more assessments were not found.',
+                422
+            );
+        }
+
+        $hasInvalidAssessment = $assessments->contains(
+            fn (CourseAssessments $assessment) =>
+                (int) $assessment->course_id !== (int) $course->id
+        );
+
+        if ($hasInvalidAssessment) {
+            return $this->error(
+                'One or more assessments do not belong to this course.',
+                422
+            );
+        }
+
+        DB::transaction(function () use ($items, $assessments) {
+            foreach ($items as $item) {
+                $assessment = $assessments->get((int) $item['id']);
+
+                $assessment->update(
+                    collect($item)
+                        ->except('id')
+                        ->all()
+                );
+            }
+        });
+
+        $updatedAssessments = CourseAssessments::query()
+            ->whereIn('id', $assessmentIds)
+            ->get();
+
+        return $this->ok(
+            'Course assessments updated successfully.',
+            $updatedAssessments->toArray()
+        );
     }
 
     /**

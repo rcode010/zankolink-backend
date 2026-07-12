@@ -41,11 +41,6 @@ Route::middleware('auth:sanctum')->group(function () {
     require __DIR__.'/api/roles_permissions.php';
     require __DIR__.'/api/letter-stamp.php';
     require __DIR__.'/api/letter-broadcast.php';
-
-         
-   
-
-    
 });
 
 // Moodle & Assessment Routes
@@ -53,7 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     require __DIR__.'/api/course-assessment.php';
     require __DIR__.'/api/student-marks.php';
 
-    Route::middleware(['auth:sanctum', 'ability:moodle'])->group(function () {
+    Route::middleware(['ability:moodle'])->group(function () {
         require __DIR__.'/api/course-sections.php';
         require __DIR__.'/api/section-submission.php';
         require __DIR__.'/api/student-submissions.php';
@@ -63,8 +58,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
         require __DIR__.'/api/course-attendance-sessions.php';
         require __DIR__.'/api/student-attendance.php';
         require __DIR__.'/api/academic-request.php';
-   
     });
 });
-
- 

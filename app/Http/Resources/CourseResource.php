@@ -27,11 +27,9 @@ class CourseResource extends JsonResource
             'sections_count' => $this->whenCounted('sections'),
 
             'department' => new DepartmentResource($this->whenLoaded('department')),
-<<<<<<< HEAD
 
             'teachers' => TeacherResource::collection($this->whenLoaded('teachers')),
 
-=======
             'prerequisites' => $this->whenLoaded('prerequisites', function () {
                 return $this->prerequisites->map(fn ($course) => [
                     'id' => $course->id,
@@ -39,7 +37,6 @@ class CourseResource extends JsonResource
                     'code' => $course->code,
                 ]);
             }),
->>>>>>> origin/main
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
