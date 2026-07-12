@@ -3,13 +3,13 @@
 use App\Http\Controllers\Api\StudentSubmissionController;
 
 Route::prefix('moodle')->group(function () {
-    Route::post('/section-submissions/{submission}/submit', [StudentSubmissionController::class, 'store']);
-    Route::get('/section-submissions/{submission}/my-submission', [StudentSubmissionController::class, 'mySubmission']);
-    Route::get('/student-submissions/{studentSubmission}/download', [StudentSubmissionController::class, 'download']);
-    Route::delete('/student-submissions/{studentSubmission}', [StudentSubmissionController::class, 'destroy']);
+    Route::post('/section-submissions/{submission}/submit', [StudentSubmissionController::class, 'store'])->middleware('permission:create student submissions');
+    Route::get('/section-submissions/{submission}/my-submission', [StudentSubmissionController::class, 'mySubmission'])->middleware('permission:view own submission');
+    Route::get('/student-submissions/{studentSubmission}/download', [StudentSubmissionController::class, 'download'])->middleware('permission:download student submissions');
+    Route::delete('/student-submissions/{studentSubmission}', [StudentSubmissionController::class, 'destroy'])->middleware('permission:delete student submissions');
 
     // --- Lecturer-facing: submission review & grading ---
-   Route::get('/section-submissions/{submission}/student-submissions', [StudentSubmissionController::class, 'index']);
-    Route::get('/student-submissions/{studentSubmission}', [StudentSubmissionController::class, 'show']);
-    Route::put('/student-submissions/{studentSubmission}/grade', [StudentSubmissionController::class, 'grade']);
+   Route::get('/section-submissions/{submission}/student-submissions', [StudentSubmissionController::class, 'index'])->middleware('permission:view student submissions');
+    Route::get('/student-submissions/{studentSubmission}', [StudentSubmissionController::class, 'show'])->middleware('permission:view student submission');
+    Route::put('/student-submissions/{studentSubmission}/grade', [StudentSubmissionController::class, 'grade'])->middleware('permission:update student submission');
 });
