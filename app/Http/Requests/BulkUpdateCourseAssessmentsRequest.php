@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\CourseAssessments;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -80,6 +81,45 @@ class BulkUpdateCourseAssessmentsRequest extends FormRequest
                             'At least one field must be provided for update.'
                         );
                     }
+                }
+
+                $course = $this->route('course');
+
+                $assessmentIds = collect($this->input('assessments', []))
+                    ->pluck('id')
+                    ->filter()
+                    ->values();
+
+                if ($assessmentIds->isEmpty()) {
+                    return;
+                }
+
+                $existingAssessments = CourseAssessments::query()
+                    ->where('course_id', $course->id)
+                    ->whereIn('id', $assessmentIds)
+                    ->get()
+                    ->keyBy('id');
+
+                $updatedTotalWeight = CourseAssessments::query()
+                    ->where('course_id', $course->id)
+                    ->whereNotIn('id', $assessmentIds)
+                    ->sum('weight');
+
+                foreach ($this->input('assessments', []) as $assessment) {
+                    $existingAssessment = $existingAssessments->get($assessment['id']);
+
+                    if (! $existingAssessment) {
+                        continue;
+                    }
+
+                    $updatedTotalWeight += $assessment['weight'] ?? $existingAssessment->weight;
+                }
+
+                if ($updatedTotalWeight > 100) {
+                    $validator->errors()->add(
+                        'assessments',
+                        'Total assessment weight for this course cannot exceed 100%.'
+                    );
                 }
             },
         ];
