@@ -91,11 +91,7 @@ class LecturerCourseController extends Controller
      */
     public function showCourse(Request $request, Course $course)
     {
-        $teacher = auth()->user()->teacher;
-
-        if (! $this->teacherIsAssigned($teacher->id, $course)) {
-            return $this->error('You are not assigned to this course.', 403);
-        }
+        $this->authorize('viewAsLecturer', $course);
 
         $totalStudents = $course->students()->count();
 
@@ -166,11 +162,7 @@ class LecturerCourseController extends Controller
      */
     public function submissionsSummary(Request $request, Course $course)
     {
-        $teacher = auth()->user()->teacher;
-
-        if (! $this->teacherIsAssigned($teacher->id, $course)) {
-            return $this->error('You are not assigned to this course.', 403);
-        }
+        $this->authorize('viewAsLecturer', $course);
 
         $totalStudents = $course->students()->count();
 
@@ -212,15 +204,5 @@ class LecturerCourseController extends Controller
                 'not_submitted_count' => max($totalStudents - $submittedCount, 0),
             ]
         );
-    }
-
-    /**
-     * Confirm this teacher is assigned to the course via course_teacher.
-     */
-    private function teacherIsAssigned(int $teacherId, Course $course): bool
-    {
-        return $course->teachers()
-            ->where('teachers.id', $teacherId)
-            ->exists();
     }
 }

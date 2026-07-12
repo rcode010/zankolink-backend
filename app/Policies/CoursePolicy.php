@@ -113,4 +113,17 @@ class CoursePolicy
             ->whereKey($course->id)
             ->exists();
     }
+
+    public function viewAsLecturer(User $user, Course $course): bool
+    {
+        $teacher = $user->teacher;
+
+        if (! $teacher) {
+            return false;
+        }
+
+        return $course->teachers()
+            ->whereKey($teacher->id)
+            ->exists();
+    }
 }
