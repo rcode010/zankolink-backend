@@ -25,7 +25,7 @@ class StoreSectionSubmissionRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'deadline' => 'required|date|after:now',
+            'deadline' => 'required|date|after:|date_format:Y-m-d',
             'weight' => 'nullable|numeric|min:0|max:100',
 
             'files' => 'nullable|array',
