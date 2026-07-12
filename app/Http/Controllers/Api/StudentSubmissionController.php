@@ -211,8 +211,7 @@ class StudentSubmissionController extends Controller
      */
     public function index(SectionSubmission $submission)
     {
-        $teacher = $this->resolveTeacher();
-        $this->assertTeacherOwnsSubmission($submission, $teacher);
+        $this->authorize('viewAny', [StudentSubmission::class, $submission]);
 
         $studentSubmissions = StudentSubmission::with([
             'student.user',
@@ -246,9 +245,8 @@ class StudentSubmissionController extends Controller
      */
     public function show(StudentSubmission $studentSubmission)
     {
+        $this->authorize('view', [StudentSubmission::class, $studentSubmission]);
         $studentSubmission->loadMissing(['student.user', 'submission.section']);
-
-        $this->assertCanViewSubmission($studentSubmission);
 
         return $this->success(
             'Student submission retrieved successfully.',
@@ -280,10 +278,11 @@ class StudentSubmissionController extends Controller
      */
     public function grade(GradeStudentSubmissionRequest $request, StudentSubmission $studentSubmission)
     {
-        $teacher = $this->resolveTeacher();
+        $this->authorize('grade', [StudentSubmission::class, $studentSubmission]);
+
+        $teacher = $request->user()->teacher;
 
         $studentSubmission->loadMissing('submission.section');
-        $this->assertTeacherOwnsSubmission($studentSubmission->submission, $teacher);
 
         $validated = $request->validated();
 
@@ -300,55 +299,5 @@ class StudentSubmissionController extends Controller
             'Submission graded successfully.',
             (new StudentSubmissionResource($studentSubmission))->resolve()
         );
-    }
-
-    /**
-     * Resolve the authenticated user's teacher profile.
-     */
-    private function resolveTeacher()
-    {
-        $teacher = auth()->user()->teacher;
-
-        abort_unless(
-            $teacher,
-            403,
-            'Only accounts with a teacher profile can access this resource.'
-        );
-
-        return $teacher;
-    }
-
-    /**
-     * Confirm the given teacher is the one assigned to the section.
-     */
-    private function assertTeacherOwnsSubmission(SectionSubmission $submission, $teacher): void
-    {
-        $submission->loadMissing('section');
-
-        abort_unless(
-            $submission->section && $submission->section->teacher_id === $teacher->id,
-            403,
-            "You are not the lecturer assigned to this assignment's section."
-        );
-    }
-
-    /**
-     * Authorization for show(): lecturer owns section OR student owns submission.
-     */
-    private function assertCanViewSubmission(StudentSubmission $studentSubmission): void
-    {
-        $user = auth()->user();
-
-        $teacher = $user->teacher;
-        if ($teacher && $studentSubmission->submission?->section?->teacher_id === $teacher->id) {
-            return;
-        }
-
-        $student = $user->student;
-        if ($student && $studentSubmission->student_id === $student->id) {
-            return;
-        }
-
-        abort(403, 'You are not authorized to view this submission.');
     }
 }
