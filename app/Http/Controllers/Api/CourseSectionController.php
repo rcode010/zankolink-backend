@@ -188,6 +188,8 @@ class CourseSectionController extends Controller
      */
     public function destroy(CourseSection $section)
     {
+        $this->authorize('delete', $section);
+
         $section->delete();
 
         return $this->ok('Course section deleted successfully.');
