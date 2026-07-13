@@ -23,10 +23,9 @@ class UpdateStudentCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'grade' => 'sometimes|numeric|between:0,100',
-            'status' => 'sometimes|numeric|in:enrolled,passed,failed,withdrawn',
-            'academic_year_id' => 'nullable|exists:academic_years,id',
-            'enrolled_at' => 'sometimes|date',
+            'status' => 'sometimes|string|in:enrolled,passed,failed,withdrawn',
+            'academic_year_id' => 'sometimes|nullable|exists:academic_years,id',
+            'enrolled_at' => 'sometimes|nullable|date',
         ];
     }
 }
