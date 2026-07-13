@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\CourseAssessments;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -30,6 +31,32 @@ class StoreCourseAssessmentRequest extends FormRequest
             'weight' => 'required|numeric|min:0',
             'due_at' => 'nullable|date',
             'is_published' => 'required|boolean',
+        ];
+    }
+    public function after(): array
+    {
+        return [
+            function ($validator) {
+                $course = $this->route('course');
+
+                $academicYearId = $this->input('academic_year_id');
+
+                $currentTotalWeight = CourseAssessments::query()
+                    ->where('course_id', $course->id)
+                    ->when($academicYearId, function ($query) use ($academicYearId) {
+                        $query->where('academic_year_id', $academicYearId);
+                    })
+                    ->sum('weight');
+
+                $newTotalWeight = $currentTotalWeight + $this->input('weight');
+
+                if ($newTotalWeight > 100) {
+                    $validator->errors()->add(
+                        'weight',
+                        'Total assessment weight for this course cannot exceed 100%.'
+                    );
+                }
+            },
         ];
     }
 }
