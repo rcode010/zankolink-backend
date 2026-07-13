@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreDepartmentRequest extends FormRequest
+class UpdateCourseSelectionSettingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,6 @@ class StoreDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'admin_id' => 'nullable|exists:users,id',
-            'faculty_id' => 'required|exists:faculties,id',
-            'is_active' => 'nullable|boolean',
             'course_selection_starts_at' => 'required|date_format:Y-m-d',
             'course_selection_ends_at' => 'required|date_format:Y-m-d|after:course_selection_starts_at',
         ];

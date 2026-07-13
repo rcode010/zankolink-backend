@@ -19,6 +19,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->bigInteger('seat_available')->nullable();
             $table->timestamps();
+            $table->timestamp('course_selection_starts_at')->nullable();
+            $table->timestamp('course_selection_ends_at')->nullable();
             $table->softDeletes();
 
 
