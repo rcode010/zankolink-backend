@@ -37,16 +37,4 @@ class StudentSubmission extends Model
     {
         return $this->belongsTo(Student::class);
     }
-
-    
-    public function gradedBy(): BelongsTo
-    {
-        return $this->belongsTo(Teacher::class, 'graded_by');
-    }
-
-   
-    public function isGraded(): bool
-    {
-        return ! is_null($this->graded_at);
-    }
 }
