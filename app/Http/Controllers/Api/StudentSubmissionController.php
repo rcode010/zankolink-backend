@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentSubmissionRequest;
 use App\Http\Resources\StudentSubmissionResource;
 use App\Models\SectionSubmission;
+use App\Models\Student;
 use App\Models\StudentSubmission;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
@@ -71,7 +72,7 @@ class StudentSubmissionController extends Controller
     {
         $student = auth()->user()->student;
 
-        if (now()->greaterThan($submission->course_assessment->due_at)) {
+        if (now()->greaterThan($submission->courseAssessment->due_at)) {
             return $this->error('Assignment deadline has passed', 422);
         }
 
@@ -239,15 +240,19 @@ class StudentSubmissionController extends Controller
      * "data": null
      * }
      */
-    public function show(StudentSubmission $studentSubmission)
+    public function show(SectionSubmission $submission, Student $student)
     {
-        $studentSubmission->loadMissing(['student.user', 'submission.section']);
-
-        $this->assertCanViewSubmission($studentSubmission);
+        $studentSubmissions = StudentSubmission::with([
+            'student',
+            'submission',
+        ])
+            ->where('submission_id', $submission->id)
+            ->where('student_id', $student->id)
+            ->get();
 
         return $this->success(
-            'Student submission retrieved successfully.',
-            (new StudentSubmissionResource($studentSubmission))->resolve()
+            'Submission retrieved successfully',
+            StudentSubmissionResource::collection($studentSubmissions)->resolve()
         );
     }
 
