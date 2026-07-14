@@ -20,6 +20,7 @@ return new class extends Migration
                 'Present',
                 'Excused Absence',
                 'Late',
+                'Holiday'
             ]);
             $table->string('note')->nullable();
 
