@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('section_submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('course_section_id')->constrained('course_sections')->onDelete('cascade');
-            $table->string('title');
+            $table->foreignId('course_assessment_id')->constrained('course_assessments')->onDelete('cascade');
             $table->text('description')->nullable();
-            $table->dateTime('deadline');
-            $table->decimal('weight', 5, 2)->nullable();
             $table->timestamps();
         });
     }

@@ -19,6 +19,7 @@ use Faker\Generator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -28,24 +29,49 @@ class DatabaseSeeder extends Seeder
     private Generator $faker;
 
     private ?AcademicYear $activeAcademicYear = null;
+    private string $defaultPassword = 'Password@123';
+    private string $hashedDefaultPassword;
+    private int $teacherNumber = 1;
+
+    private int $universitiesCount = 3;
+    private int $facultiesPerUniversity = 3;
+    private int $departmentsPerFaculty = 4;
+    private int $teachersPerDepartment = 5;
+    private int $studentsPerDepartment = 10;
+    private int $coursesPerDepartment = 5;
+    private int $lettersCount = 30;
+
+    private function userCode(int $number): string
+    {
+        return str_pad($number, 3, '0', STR_PAD_LEFT);
+    }
+
+    private function positionCode(int $universityNumber, int $facultyNumber = 0, int $departmentNumber = 0): string
+    {
+        return "{$universityNumber}{$facultyNumber}{$departmentNumber}";
+    }
+    private function emailNumber(int $number): string
+    {
+        return str_pad($number, 3, '0', STR_PAD_LEFT);
+    }
 
     public function run(): void
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
-
+        $this->hashedDefaultPassword = Hash::make($this->defaultPassword);
         $this->faker = FakerFactory::create();
         $this->seedRoles();
 
         $this->call(AcademicYearSeeder::class);
         $this->activeAcademicYear = AcademicYear::where('is_active', true)->first();
 
-        $this->seedMinistryAdmin();
+        $this->seedMinistryUsers();
         $this->seedUniversities();
 
         $this->seedLetters();
         $this->createMoodleDemoUsers();
 
-        Artisan::call('zankolink:seed-frontend-users');
+//        Artisan::call('zankolink:seed-frontend-users');
     }
 
     private function seedRoles(): void
@@ -276,67 +302,131 @@ class DatabaseSeeder extends Seeder
         ?int $scopeId = null,
         ?string $phone = null
     ): User {
-        $user = User::factory()->create([
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone ?? $this->faker->phoneNumber(),
-        ]);
+        $user = User::updateOrCreate(
+            ['email' => strtolower($email)],
+            [
+                'name' => $name,
+                'password' => $this->hashedDefaultPassword,
+                'phone' => $phone ?? '07700000000',
+                'is_active' => true,
+                'is_two_factor_enabled' => false,
+            ]
+        );
 
-        $role = Role::where('name', $roleName)->firstOrFail();
-        $user->assignRole($role);
+        $user->syncRoles([$roleName]);
 
-        UserScope::create([
-            'user_id' => $user->id,
-            'role_id' => $role->id,
-            'scope_type' => $scopeType,
-            'scope_id' => $scopeId,
-        ]);
+        $this->createUserScope(
+            $user,
+            $roleName,
+            $scopeType,
+            $scopeId
+        );
 
         return $user;
     }
 
-    private function seedMinistryAdmin(): void
+    private function seedMinistryUsers(): void
     {
         $this->createScopedUser(
-            name: $this->faker->name(),
-            email: 'admin@ministry.gov',
+            name: 'Ministry Admin',
+            email: 'ministry.admin@zankolink.test',
             roleName: 'MINISTRY_ADMIN',
             scopeType: 'MINISTRY',
             scopeId: null,
-            phone: '07701234567'
+            phone: '07700000001'
+        );
+
+        $this->createScopedUser(
+            name: 'Ministry Import Export Staff',
+            email: 'ministry.import-export@zankolink.test',
+            roleName: 'MINISTRY_IMPORT_EXPORT_STAFF',
+            scopeType: 'MINISTRY',
+            scopeId: null,
+            phone: '07700000002'
+        );
+
+        $this->createScopedUser(
+            name: 'Ministry Administration Head',
+            email: 'ministry.administration-head@zankolink.test',
+            roleName: 'MINISTRY_ADMINISTRATION_HEAD',
+            scopeType: 'MINISTRY',
+            scopeId: null,
+            phone: '07700000003'
+        );
+
+        $this->createScopedUser(
+            name: 'High School Graduate',
+            email: 'graduate001@zankolink.test',
+            roleName: 'HIGH_SCHOOL_GRADUATE',
+            scopeType: 'MINISTRY',
+            scopeId: null,
+            phone: '07700000004'
         );
     }
 
     private function seedUniversities(): void
     {
         University::factory()
-            ->count(3)
+            ->count($this->universitiesCount)
             ->create(['academic_year_id' => $this->activeAcademicYear->id])
-            ->each(function (University $university) {
+            ->each(function (University $university, int $index) {
+                $u = $index + 1;
+
+                $positionCode = $this->positionCode($u, 0, 0);
+                $userCode = $this->userCode(1);
+
                 $admin = $this->createScopedUser(
-                    name: $this->faker->name(),
-                    email: "university-admin-{$university->id}@test.com",
+                    name: "University Admin {$u}",
+                    email: "university.admin{$userCode}{$positionCode}@zankolink.test",
                     roleName: 'UNIVERSITY_ADMIN',
+                    scopeType: 'UNIVERSITY',
+                    scopeId: $university->id
+                );
+
+                $this->createScopedUser(
+                    name: "University Administration Staff {$u}",
+                    email: "university.administration{$userCode}{$positionCode}@zankolink.test",
+                    roleName: 'UNIVERSITY_ADMIN_ADMINISTRATION',
+                    scopeType: 'UNIVERSITY',
+                    scopeId: $university->id
+                );
+
+                $this->createScopedUser(
+                    name: "University Students Staff {$u}",
+                    email: "university.students{$userCode}{$positionCode}@zankolink.test",
+                    roleName: 'UNIVERSITY_ADMIN_STUDENTS',
+                    scopeType: 'UNIVERSITY',
+                    scopeId: $university->id
+                );
+
+                $this->createScopedUser(
+                    name: "University Science Staff {$u}",
+                    email: "university.science{$userCode}{$positionCode}@zankolink.test",
+                    roleName: 'UNIVERSITY_ADMIN_SCIENCE',
                     scopeType: 'UNIVERSITY',
                     scopeId: $university->id
                 );
 
                 $university->update(['admin_id' => $admin->id]);
 
-                $this->seedFaculties($university);
+                $this->seedFaculties($university, $u);
             });
     }
-
-    private function seedFaculties(University $university): void
+    private function seedFaculties(University $university, int $u): void
     {
         Faculty::factory()
-            ->count(2)
+            ->count($this->facultiesPerUniversity)
             ->for($university)
             ->create()
-            ->each(function (Faculty $faculty) {
+            ->each(function (Faculty $faculty, int $index) use ($u) {
+                $f = $index + 1;
+
+                $positionCode = $this->positionCode($u, $f, 0);
+                $userCode = $this->userCode(1);
+
                 $admin = $this->createScopedUser(
-                    name: $this->faker->name(),
-                    email: "faculty-dean-{$faculty->id}@test.com",
+                    name: "Dean U{$u} F{$f}",
+                    email: "dean{$userCode}{$positionCode}@zankolink.test",
                     roleName: 'DEAN',
                     scopeType: 'FACULTY',
                     scopeId: $faculty->id
@@ -344,20 +434,24 @@ class DatabaseSeeder extends Seeder
 
                 $faculty->update(['admin_id' => $admin->id]);
 
-                $this->seedDepartments($faculty);
+                $this->seedDepartments($faculty, $u, $f);
             });
     }
-
-    private function seedDepartments(Faculty $faculty): void
+    private function seedDepartments(Faculty $faculty, int $u, int $f): void
     {
         Department::factory()
-            ->count(3)
+            ->count($this->departmentsPerFaculty)
             ->for($faculty)
             ->create()
-            ->each(function (Department $department) {
+            ->each(function (Department $department, int $index) use ($u, $f) {
+                $d = $index + 1;
+
+                $positionCode = $this->positionCode($u, $f, $d);
+                $userCode = $this->userCode(1);
+
                 $admin = $this->createScopedUser(
-                    name: $this->faker->name(),
-                    email: "department-head-{$department->id}@test.com",
+                    name: "Head of Department U{$u} F{$f} D{$d}",
+                    email: "hod{$userCode}{$positionCode}@zankolink.test",
                     roleName: 'HEAD_OF_DEPARTMENT',
                     scopeType: 'DEPARTMENT',
                     scopeId: $department->id
@@ -366,51 +460,84 @@ class DatabaseSeeder extends Seeder
                 $department->update(['admin_id' => $admin->id]);
 
                 $this->seedTeachers($department);
-                $this->seedStudents($department);
+                $this->seedStudents($department, $u, $f, $d);
                 $this->seedCourses($department);
             });
     }
-
     private function seedTeachers(Department $department): void
     {
-        Teacher::factory()
-            ->count(5)
-            ->create()
-            ->each(function (Teacher $teacher) use ($department) {
-                $teacher->user->assignRole('lecturer');
+        for ($i = 1; $i <= $this->teachersPerDepartment; $i++) {
+            $number = $this->emailNumber($this->teacherNumber);
 
-                UserScope::create([
-                    'user_id' => $teacher->user_id,
-                    'role_id' => Role::where('name', 'lecturer')->firstOrFail()->id,
-                    'scope_type' => 'DEPARTMENT',
-                    'scope_id' => $department->id,
-                ]);
+            $user = $this->createScopedUser(
+                name: "Teacher {$number}",
+                email: "teacher{$number}@zankolink.test",
+                roleName: 'lecturer',
+                scopeType: 'DEPARTMENT',
+                scopeId: $department->id
+            );
 
-                $department->teachers()->attach($teacher);
-            });
+            $teacher = Teacher::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'title' => $this->faker->randomElement(['mr', 'ms', 'dr', 'lecturer']),
+                    'speciality' => $this->faker->randomElement([
+                        'Software Engineering',
+                        'Computer Science',
+                        'Artificial Intelligence',
+                        'Networks',
+                        'Cyber Security',
+                        'Database Systems',
+                    ]),
+                ]
+            );
+
+            DB::table('teacher_department')->updateOrInsert(
+                [
+                    'teacher_id' => $teacher->id,
+                    'department_id' => $department->id,
+                ],
+                [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            $this->teacherNumber++;
+        }
     }
 
-    private function seedStudents(Department $department): void
+    private function seedStudents(Department $department, int $u, int $f, int $d): void
     {
-        Student::factory()
-            ->count(20)
-            ->create(['department_id' => $department->id])
-            ->each(function (Student $student) use ($department) {
-                $student->user->assignRole('student');
+        $positionCode = $this->positionCode($u, $f, $d);
 
-                UserScope::create([
-                    'user_id' => $student->user_id,
-                    'role_id' => Role::where('name', 'student')->firstOrFail()->id,
-                    'scope_type' => 'DEPARTMENT',
-                    'scope_id' => $department->id,
-                ]);
-            });
+        for ($i = 1; $i <= $this->studentsPerDepartment; $i++) {
+            $studentCode = $this->userCode($i);
+
+            $user = $this->createScopedUser(
+                name: "Student {$studentCode}",
+                email: "student{$studentCode}{$positionCode}@zankolink.test",
+                roleName: 'student',
+                scopeType: 'DEPARTMENT',
+                scopeId: $department->id
+            );
+
+            Student::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'department_id' => $department->id,
+                    'enrollment_type' => $this->faker->randomElement(['morning', 'parallel', 'evening']),
+                    'student_number' => "ST{$studentCode}{$positionCode}",
+                    'stage' => $this->faker->numberBetween(1, 4),
+                    'status' => 'active',
+                ]
+            );
+        }
     }
-
     private function seedCourses(Department $department): void
     {
         Course::factory()
-            ->count(5)
+            ->count($this->coursesPerDepartment)
             ->for($department)
             ->create()
             ->each(function (Course $course) use ($department) {
@@ -429,7 +556,17 @@ class DatabaseSeeder extends Seeder
         foreach ($teachers as $index => $teacher) {
             $roles = ['primary_lecturer', 'assistant_lecturer', 'lab_instructor'];
 
-            $course->teachers()->attach($teacher->id, ['role' => $roles[$index]]);
+            DB::table('course_teacher')->updateOrInsert(
+                [
+                    'course_id' => $course->id,
+                    'teacher_id' => $teacher->id,
+                    'role' => $roles[$index],
+                ],
+                [
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         }
     }
 
@@ -437,15 +574,24 @@ class DatabaseSeeder extends Seeder
     {
         $students = Student::where('department_id', $department->id)
             ->inRandomOrder()
-            ->limit($this->faker->numberBetween(8, 15))
+            ->limit($this->faker->numberBetween(8, 10))
             ->get();
 
         foreach ($students as $student) {
-            $course->students()->attach($student->id, [
-                'academic_year_id' => $this->activeAcademicYear->id,
-                'grade' => $this->faker->optional()->numberBetween(50, 100),
-                'enrolled_at' => now(),
-            ]);
+            DB::table('course_student')->updateOrInsert(
+                [
+                    'course_id' => $course->id,
+                    'student_id' => $student->id,
+                    'academic_year_id' => $this->activeAcademicYear->id,
+                ],
+                [
+                    'grade' => $this->faker->optional()->numberBetween(50, 100),
+                    'status' => 'enrolled',
+                    'enrolled_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         }
     }
 
@@ -454,7 +600,7 @@ class DatabaseSeeder extends Seeder
         $users = User::all();
 
         Letter::factory()
-            ->count(30)
+            ->count($this->lettersCount)
             ->make(['academic_year_id' => $this->activeAcademicYear->id])
             ->each(function ($letter) use ($users) {
                 $sender = $users->random();
@@ -530,7 +676,7 @@ class DatabaseSeeder extends Seeder
                 ['email' => $teacherData['email']],
                 [
                     'name' => $teacherData['name'],
-                    'password' => 'Password@123',
+                    'password' => $this->hashedDefaultPassword,
                     'phone' => $teacherData['phone'],
                     'is_active' => true,
                 ]

@@ -19,13 +19,6 @@ return new class extends Migration
             $table->string('file_type');
             $table->unsignedBigInteger('file_size');
             $table->text('file_url');
-            $table->decimal('grade', 5, 2)->nullable();
-            $table->text('feedback')->nullable();
-            $table->timestamp('graded_at')->nullable();
-            $table->foreignId('graded_by')
-                ->nullable()
-                ->constrained('teachers')
-                ->onDelete('set null');
             $table->timestamps();
         });
     }

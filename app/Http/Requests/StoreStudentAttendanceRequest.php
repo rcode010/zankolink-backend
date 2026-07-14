@@ -25,7 +25,7 @@ class StoreStudentAttendanceRequest extends FormRequest
         return [
             'attendance' => 'required|array|min:1',
             'attendance.*.student_id' => 'required|exists:students,id',
-            'attendance.*.status' => 'required|in:Present,Absent,Late,Excused Absence',
+            'attendance.*.status' => 'required|in:Present,Absent,Late,Excused Absence,Holiday',
             'attendance.*.note' => 'nullable|string',
         ];
     }
