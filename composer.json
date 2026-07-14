@@ -21,6 +21,7 @@
         "spatie/laravel-query-builder": "^7.3"
     },
     "require-dev": {
+        "itsgoingd/clockwork": "^5.3",
         "knuckleswtf/scribe": "^5.11",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
