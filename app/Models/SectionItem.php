@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SectionItem extends Model
 {
-   
+
 
     protected $fillable = [
         'section_id',
+        'title',
+        'description',
         'material_file_type',
         'material_file_name',
         'material_file_url',

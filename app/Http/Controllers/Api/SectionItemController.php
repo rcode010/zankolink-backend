@@ -39,79 +39,79 @@ class SectionItemController extends Controller
 
         return $this->ok(
             'Section items retrieved successfully',
-            SectionItemResource::collection($items)->toArray($request)
+            SectionItemResource::collection($items)->resolve()
         );
     }
 
     /**
-     * Add Section Item
-     * Uploads a physical file or stores an external link as a section material.
+     * Add a section material.
      *
-     * Use this endpoint when the frontend needs to create a file-based material
-     * or a URL-based material inside a course section. The created resource is
-     * returned in the normalized `SectionItemResource` format for immediate UI use.
+     * Creates a new section item. A material may contain:
+     * - Title only
+     * - Title and description
+     * - A file attachment
+     * - An external URL
      *
-     * * @urlParam section int required The ID of the course section. Example: 1
+     * Only the title is required.
      *
-     * @bodyParam file file The physical document or media file to upload (Max 50MB). Required if url is omitted.
-     * @bodyParam url string The full external link/URL. Required if file is omitted. Example: https://example.com/slide.pdf
-     * @bodyParam material_file_name string Custom display name for the material. Required only if url is provided. Example: Lecture 1 Slides
+     * @group Course Sections
+     *
+     * @authenticated
+     *
+     * @urlParam section integer required The ID of the course section. Example: 5
+     *
+     * @bodyParam title string required The material title. Example: Week 1 Slides
+     * @bodyParam description string Optional description for the material. Example: Slides covering the first lecture.
+     * @bodyParam file file Optional file to upload.
+     * @bodyParam url string Optional external URL. Example: https://example.com/slides
+     * @bodyParam material_file_name string Optional custom display name for the file or link. Example: Lecture Slides
+     *
+     * @response 201 {
+     * "success": true,
+     * "message": "Material added successfully.",
+     * "data": {
+     * "id": 16,
+     * "section_id": 1,
+     * "title": "title",
+     * "description": "this is the description",
+     * "type": "note",
+     * "material_file_type": null,
+     * "material_file_name": null,
+     * "material_file_url": null,
+     * "created_at": "2026-07-14 15:01:42",
+     * "updated_at": "2026-07-14 15:01:42"
+     * }
+     * }
      */
     public function store(StoreSectionItemRequest $request, CourseSection $section)
     {
         $validated = $request->validated();
 
+        $data = [
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+        ];
+
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $path = $file->store('section-items', 'public');
 
-            $item = $section->items()->create([
-                'material_file_type' => $file->getClientOriginalExtension(),
-                'material_file_name' => $validated['material_file_name'] ?? $file->getClientOriginalName(),
-                'material_file_url' => $path,
-            ]);
-        } else {
-            $item = $section->items()->create([
-                'material_file_type' => 'link',
-                'material_file_name' => $validated['material_file_name'],
-                'material_file_url' => $validated['url'],
-            ]);
+            $data['material_file_type'] = $file->getClientOriginalExtension();
+            $data['material_file_name'] = $validated['material_file_name'] ?? $file->getClientOriginalName();
+            $data['material_file_url'] = $path;
         }
+
+        if (!empty($validated['url'])) {
+            $data['material_file_type'] = 'link';
+            $data['material_file_name'] = $validated['material_file_name'];
+            $data['material_file_url'] = $validated['url'];
+        }
+
+        $item = $section->items()->create($data);
 
         return $this->success(
             'Material added successfully.',
-            (new SectionItemResource($item))->toArray($request),
-            201
-        );
-    }
-
-    /**
-     * Add note to a section
-     * Creates a note-style section item with a title and content body.
-     *
-     * This endpoint is specifically for lecture notes and instructor comments that
-     * should be rendered as note cards in the frontend UI instead of as uploaded
-     * files or links.
-     *
-     * @bodyParam title string required The note title. Example: Week 1 Notes
-     * @bodyParam content string required The note body text. Example: Review chapters 1-3 before the next class.
-     */
-    public function storeNote(Request $request, CourseSection $section)
-    {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string', 'max:5000'],
-        ]);
-
-        $item = $section->items()->create([
-            'material_file_type' => 'note',
-            'material_file_name' => $validated['title'],
-            'material_file_url' => $validated['content'],
-        ]);
-
-        return $this->success(
-            'Note added successfully.',
-            (new SectionItemResource($item))->toArray($request),
+            (new SectionItemResource($item))->resolve(),
             201
         );
     }
@@ -129,7 +129,7 @@ class SectionItemController extends Controller
     {
         return $this->ok(
             'Section item retrieved successfully',
-            (new SectionItemResource($item))->toArray($request)
+            (new SectionItemResource($item))->resolve()
         );
     }
 
@@ -154,23 +154,96 @@ class SectionItemController extends Controller
     }
 
     /**
-     * Update Section Item
-     * Updates metadata such as the display name for an existing section item.
+     * Update a section material.
      *
-     * Re-uploading a file should be handled through delete + create flow instead
-     * of this metadata-only update endpoint.
+     * Updates a section item's title, description, or attached material.
      *
-     * * @urlParam item int required The ID of the section item. Example: 5
+     * You may:
+     * - Replace the existing file.
+     * - Replace the existing URL.
+     * - Remove the existing material.
+     * - Update only the title or description.
      *
-     * @bodyParam material_file_name string The updated custom name for the material. Example: Updated Lecture 1 Slides
+     * @group Course Sections
+     *
+     * @authenticated
+     *
+     * @urlParam section integer required The ID of the course section. Example: 5
+     * @urlParam item integer required The ID of the section item. Example: 12
+     *
+     * @bodyParam title string The material title. Example: Updated Week 1 Slides
+     * @bodyParam description string Optional description. Example: Updated lecture notes.
+     * @bodyParam file file Optional replacement file.
+     * @bodyParam url string Optional replacement URL. Example: https://example.com/new-slides
+     * @bodyParam material_file_name string Optional custom display name. Example: Updated Slides
+     * @bodyParam remove_material boolean Remove the existing file or URL. Cannot be used together with file or url. Example: true
+     *
+     * @response {
+  "success": true,
+  "message": "Section item updated successfully.",
+  "data": {
+    "id": 16,
+    "section_id": 1,
+    "title": "new title",
+    "description": "new description",
+    "type": "link",
+    "material_file_type": "link",
+    "material_file_name": "hilo",
+    "material_file_url": "http://google.com",
+    "created_at": "2026-07-14 15:01:42",
+    "updated_at": "2026-07-14 15:47:36"
+  }
+}
      */
     public function update(UpdateSectionItemRequest $request, SectionItem $item)
     {
-        $item->update($request->validated());
+        $validated = $request->validated();
+
+        $data = [
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+        ];
+
+        if ($request->hasFile('file'))
+        {
+            if ($item->material_file_type !== 'link' && $item->material_file_url)
+            {
+                Storage::disk('public')->delete($item->material_file_url);
+            }
+
+            $file = $request->file('file');
+            $path = $file->store('section-items', 'public');
+
+            $data['material_file_type'] = $file->getClientOriginalExtension();
+            $data['material_file_name'] = $validated['material_file_name'] ?? $file->getClientOriginalName();
+            $data['material_file_url'] = $path;
+
+        } elseif (!empty($validated['url']))
+        {
+            if ($item->material_file_type !== 'link' && $item->material_file_url) {
+                Storage::disk('public')->delete($item->material_file_url);
+            }
+
+            $data['material_file_type'] = 'link';
+            $data['material_file_name'] = $validated['material_file_name'];
+            $data['material_file_url'] = $validated['url'];
+
+        } elseif (!empty($validated['remove_material']))
+        {
+            if ($item->material_file_type !== 'link' && $item->material_file_url) {
+                Storage::disk('public')->delete($item->material_file_url);
+            }
+
+            $data['material_file_type'] = null;
+            $data['material_file_name'] = null;
+            $data['material_file_url'] = null;
+        }
+
+        $item->update($data);
 
         return $this->ok(
             'Section item updated successfully.',
-            (new SectionItemResource($item->fresh()))->toArray($request)
+            (new SectionItemResource($item->fresh()))->resolve()
         );
     }
 

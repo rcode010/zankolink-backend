@@ -14,14 +14,11 @@ class StoreSectionItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Handle file upload validation rules
-            'file' => 'required_without:url|prohibits:url|file|max:51200|mimes:pdf,jpg,jpeg,png,gif,mp4,mov,avi,doc,docx,ppt,pptx,xls,xlsx',
-            
-            // Handle external URL validation rules
-            'url' => 'required_without:file|prohibits:file|url',
-            
-            // Required only if file is missing, meaning a link is being submitted
-            'material_file_name' => 'required_without:file|string|max:255',
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'file' => 'nullable|prohibits:url|file|max:51200|mimes:pdf,jpg,jpeg,png,gif,mp4,mov,avi,doc,docx,ppt,pptx,xls,xlsx',
+            'url' => 'nullable|prohibits:file|url',
+            'material_file_name' => 'nullable|string|max:255',
         ];
     }
 }

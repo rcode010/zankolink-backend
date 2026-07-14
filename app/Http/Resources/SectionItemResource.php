@@ -14,11 +14,9 @@ class SectionItemResource extends JsonResource
         return [
             'id' => $this->id,
             'section_id' => $this->section_id,
-            'title' => $this->material_file_name,
+            'title' => $this->title,
+            'description' => $this->description,
             'type' => $this->resolveType(),
-            'url' => $this->resolveUrl(),
-            'content' => $this->resolveContent(),
-            'size' => $this->resolveHumanReadableSize(),
             'material_file_type' => $this->material_file_type,
             'material_file_name' => $this->material_file_name,
             'material_file_url' => $this->resolveUrl(),
@@ -33,20 +31,11 @@ class SectionItemResource extends JsonResource
             return 'link';
         }
 
-        if ($this->material_file_type === 'note') {
+        if ($this->material_file_type === null) {
             return 'note';
         }
 
         return strtoupper($this->material_file_type);
-    }
-
-    protected function resolveContent(): ?string
-    {
-        if ($this->material_file_type !== 'note') {
-            return null;
-        }
-
-        return $this->material_file_url;
     }
 
     /**
@@ -56,7 +45,7 @@ class SectionItemResource extends JsonResource
      */
     protected function resolveUrl(): ?string
     {
-        if ($this->material_file_type === 'note') {
+        if ($this->material_file_type === null) {
             return null;
         }
 
@@ -65,35 +54,5 @@ class SectionItemResource extends JsonResource
         }
 
         return Storage::disk('public')->url($this->material_file_url);
-    }
-
-    protected function resolveHumanReadableSize(): ?string
-    {
-        if ($this->material_file_type === 'link' || $this->material_file_type === 'note') {
-            return null;
-        }
-
-        if (Str::startsWith($this->material_file_url, ['http://', 'https://'])) {
-            return null;
-        }
-
-        if (! Storage::disk('public')->exists($this->material_file_url)) {
-            return null;
-        }
-
-        return $this->formatBytes(Storage::disk('public')->size($this->material_file_url));
-    }
-
-    protected function formatBytes(int $bytes): string
-    {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $index = 0;
-
-        while ($bytes >= 1024 && $index < count($units) - 1) {
-            $bytes /= 1024;
-            $index++;
-        }
-
-        return sprintf('%s %s', number_format($bytes, $index === 0 ? 0 : 1, '.', ''), $units[$index]);
     }
 }
