@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateStudentMarkRequest;
 use App\Models\Course;
 use App\Models\CourseAssessments;
 use App\Models\StudentMarks;
+use App\Services\StudentCourseGradeCalculator;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -99,10 +100,17 @@ class StudentMarksController extends Controller
      *   }
      * }
      */
-    public function store(StoreStudentMarkRequest $request, CourseAssessments $assessment)
+    public function store(StoreStudentMarkRequest $request, CourseAssessments $assessment, StudentCourseGradeCalculator $studentCourseGrade)
     {
         $teacher = $request->user()->teacher;
-        $marks = collect($request->validated()['marks'])
+        $validatedMarks = collect($request->validated()['marks']);
+
+        $studentIds = $validatedMarks
+            ->pluck('student_id')
+            ->unique()
+            ->values()
+            ->all();
+        $marks = $validatedMarks
             ->map(fn ($mark) => [
                 'course_assessment_id' => $assessment->id,
                 'student_id' => $mark['student_id'],
@@ -116,11 +124,27 @@ class StudentMarksController extends Controller
             ])
             ->toArray();
 
-        DB::table('student_marks')->upsert(
+        DB::transaction(function () use (
             $marks,
-            ['course_assessment_id', 'student_id'], // unique columns to match on
-            ['mark', 'feedback', 'updated_at'] // columns to update if row exists
-        );
+            $assessment,
+            $studentIds,
+            $studentCourseGrade
+        ) {
+            DB::table('student_marks')->upsert(
+                $marks,
+                ['course_assessment_id', 'student_id'],
+                [
+                    'mark',
+                    'feedback',
+                    'status',
+                    'graded_by',
+                    'graded_at',
+                    'updated_at',
+                ]
+            );
+
+            $studentCourseGrade->execute($assessment, $studentIds);
+        });
 
         return $this->ok('Marks submitted successfully.', $marks);
     }
@@ -238,21 +262,35 @@ class StudentMarksController extends Controller
      *   }
      * }
      */
-    public function update(UpdateStudentMarkRequest $request, StudentMarks $mark)
-    {
+    public function update(
+        UpdateStudentMarkRequest $request,
+        StudentMarks $mark,
+        StudentCourseGradeCalculator $studentCourseGrade
+    ) {
         $credentials = $request->validated();
-
         $teacher = $request->user()->teacher;
 
-        $mark->update([
-            'mark' => $credentials['mark'],
-            'feedback' => $credentials['feedback'],
-            'status' => $credentials['status'],
-            'graded_by' => $teacher->id,
-            'graded_at' => now(),
-        ]);
+        $assessment = $mark->courseAssessment;
 
-        return $this->ok('Mark updated successfully.', $mark->fresh()->toArray());
+        DB::transaction(function () use ($mark, $credentials, $teacher, $assessment, $studentCourseGrade) {
+            $mark->update([
+                'mark' => $credentials['mark'],
+                'feedback' => $credentials['feedback'],
+                'status' => $credentials['status'],
+                'graded_by' => $teacher->id,
+                'graded_at' => now(),
+            ]);
+
+            $studentCourseGrade->execute(
+                $assessment,
+                [$mark->student_id]
+            );
+        });
+
+        return $this->ok(
+            'Mark updated successfully.',
+            $mark->fresh()->toArray()
+        );
     }
 
     /**
