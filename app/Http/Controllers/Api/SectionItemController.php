@@ -61,56 +61,30 @@ class SectionItemController extends Controller
     {
         $validated = $request->validated();
 
+        $data = [
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+        ];
+
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $path = $file->store('section-items', 'public');
 
-            $item = $section->items()->create([
-                'material_file_type' => $file->getClientOriginalExtension(),
-                'material_file_name' => $validated['material_file_name'] ?? $file->getClientOriginalName(),
-                'material_file_url' => $path,
-            ]);
-        } else {
-            $item = $section->items()->create([
-                'material_file_type' => 'link',
-                'material_file_name' => $validated['material_file_name'],
-                'material_file_url' => $validated['url'],
-            ]);
+            $data['material_file_type'] = $file->getClientOriginalExtension();
+            $data['material_file_name'] = $validated['material_file_name'] ?? $file->getClientOriginalName();
+            $data['material_file_url'] = $path;
         }
+
+        if (!empty($validated['url'])) {
+            $data['material_file_type'] = 'link';
+            $data['material_file_name'] = $validated['material_file_name'];
+            $data['material_file_url'] = $validated['url'];
+        }
+
+        $item = $section->items()->create($data);
 
         return $this->success(
             'Material added successfully.',
-            (new SectionItemResource($item))->toArray($request),
-            201
-        );
-    }
-
-    /**
-     * Add note to a section
-     * Creates a note-style section item with a title and content body.
-     *
-     * This endpoint is specifically for lecture notes and instructor comments that
-     * should be rendered as note cards in the frontend UI instead of as uploaded
-     * files or links.
-     *
-     * @bodyParam title string required The note title. Example: Week 1 Notes
-     * @bodyParam content string required The note body text. Example: Review chapters 1-3 before the next class.
-     */
-    public function storeNote(Request $request, CourseSection $section)
-    {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string', 'max:5000'],
-        ]);
-
-        $item = $section->items()->create([
-            'material_file_type' => 'note',
-            'material_file_name' => $validated['title'],
-            'material_file_url' => $validated['content'],
-        ]);
-
-        return $this->success(
-            'Note added successfully.',
             (new SectionItemResource($item))->toArray($request),
             201
         );

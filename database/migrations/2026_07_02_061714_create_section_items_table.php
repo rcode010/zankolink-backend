@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('section_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('section_id')->constrained('course_sections')->onDelete('cascade');
-            $table->string('material_file_type'); // e.g. pdf, image, video, document, link
-            $table->string('material_file_name');
-            $table->string('material_file_url');
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->string('material_file_type')->nullable(); // e.g. pdf, image, video, document, link
+            $table->string('material_file_name')->nullable();
+            $table->string('material_file_url')->nullable();
             $table->timestamps();
 
 
