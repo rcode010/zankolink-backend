@@ -22,10 +22,9 @@ class SectionSubmissionResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'title' => $this->title,
             'description' => $this->description,
-            'deadline' => $this->deadline,
-            'weight' => $this->weight,
+
+            'course_assessment' => $this->whenLoaded('course_assessment'),
 
             'section' => $this->whenLoaded(
                 'section',
@@ -45,10 +44,6 @@ class SectionSubmissionResource extends JsonResource
                     'file_url' => $attachment->file_url,
                 ])
             ),
-
-            'grade' => $latestStudentSubmission?->grade,
-            'feedback' => $latestStudentSubmission?->feedback,
-            'graded_at' => $latestStudentSubmission?->graded_at?->toDateTimeString(),
 
             'my_submissions' => $this->whenLoaded(
                 'studentSubmissions',
