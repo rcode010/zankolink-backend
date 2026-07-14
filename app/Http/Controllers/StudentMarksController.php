@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GetGradebookRequest;
 use App\Http\Requests\StoreStudentMarkRequest;
 use App\Http\Requests\UpdateStudentMarkRequest;
+use App\Models\Course;
 use App\Models\CourseAssessments;
 use App\Models\StudentMarks;
 use App\Traits\ApiResponses;
@@ -251,5 +253,220 @@ class StudentMarksController extends Controller
         ]);
 
         return $this->ok('Mark updated successfully.', $mark->fresh()->toArray());
+    }
+
+    /**
+     * Get course gradebook
+     *
+     * Retrieves all assessments for the selected course and academic year,
+     * together with the enrolled students and their marks for every assessment.
+     *
+     * Students who have not been graded are still returned with null mark,
+     * status, and feedback values.
+     *
+     * The total_grade value represents the student's automatically calculated
+     * weighted grade for the course.
+     *
+     * @group Student Marks
+     *
+     * @authenticated
+     *
+     * @urlParam course integer required The ID of the course. Example: 1
+     *
+     * @queryParam academic_year_id integer required The ID of the academic year. Example: 1
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Retrieved gradebook",
+     *   "data": {
+     *     "assessments": [
+     *       {
+     *         "id": 1,
+     *         "title": "Quiz",
+     *         "type": "midterm",
+     *         "max_mark": 20,
+     *         "weight": 30
+     *       },
+     *       {
+     *         "id": 2,
+     *         "title": "Assignment 1",
+     *         "type": "assignment",
+     *         "max_mark": 10,
+     *         "weight": 10
+     *       }
+     *     ],
+     *     "students": [
+     *       {
+     *         "id": 361,
+     *         "name": "Demo Student One",
+     *         "total_grade": null,
+     *         "enrollment_status": "enrolled",
+     *         "marks": [
+     *           {
+     *             "assessment_id": 1,
+     *             "mark": null,
+     *             "status": null,
+     *             "feedback": null
+     *           },
+     *           {
+     *             "assessment_id": 2,
+     *             "mark": null,
+     *             "status": null,
+     *             "feedback": null
+     *           }
+     *         ]
+     *       },
+     *       {
+     *         "id": 3,
+     *         "name": "Student 003",
+     *         "total_grade": 72,
+     *         "enrollment_status": "enrolled",
+     *         "marks": [
+     *           {
+     *             "assessment_id": 1,
+     *             "mark": 16,
+     *             "status": "valid",
+     *             "feedback": "Excellent work."
+     *           },
+     *           {
+     *             "assessment_id": 2,
+     *             "mark": 8,
+     *             "status": "valid",
+     *             "feedback": null
+     *           }
+     *         ]
+     *       }
+     *     ]
+     *   }
+     * }
+     *
+     * @response 422 {
+     *   "message": "The academic year id field is required.",
+     *   "errors": {
+     *     "academic_year_id": [
+     *       "The academic year id field is required."
+     *     ]
+     *   }
+     * }
+     */
+    public function gradeBook(GetGradebookRequest $request, Course $course)
+    {
+        $credentials = $request->validated();
+
+
+        $assessments = CourseAssessments::query()
+            ->where('course_id', $course->id)
+            ->where('academic_year_id', $credentials['academic_year_id'])
+            ->orderBy('id')
+            ->get([
+                'id',
+                'title',
+                'type',
+                'max_mark',
+                'weight',
+            ]);
+
+
+        $rows = DB::table('course_student')
+            ->join(
+                'students',
+                'students.id',
+                '=',
+                'course_student.student_id'
+            )
+            ->join(
+                'users',
+                'users.id',
+                '=',
+                'students.user_id'
+            )
+            ->leftJoin('student_marks', function ($join) use ($assessments) {
+                $join->on(
+                    'student_marks.student_id',
+                    '=',
+                    'students.id'
+                );
+
+                if ($assessments->isNotEmpty()) {
+                    $join->whereIn(
+                        'student_marks.course_assessment_id',
+                        $assessments->pluck('id')->all()
+                    );
+                } else {
+                    $join->whereRaw('1 = 0');
+                }
+            })
+            ->where('course_student.course_id', $course->id)
+            ->where(
+                'course_student.academic_year_id',
+                $credentials['academic_year_id']
+            )
+            ->select([
+                'students.id as student_id',
+                'users.name as student_name',
+
+                'course_student.grade as total_grade',
+                'course_student.status as enrollment_status',
+
+                'student_marks.course_assessment_id as assessment_id',
+                'student_marks.mark',
+                'student_marks.status as mark_status',
+                'student_marks.feedback',
+            ])
+            ->orderBy('users.name')
+            ->get();
+
+
+        $students = $rows
+            ->groupBy('student_id')
+            ->map(function ($studentRows) use ($assessments) {
+                $student = $studentRows->first();
+
+                return [
+                    'id' => $student->student_id,
+                    'name' => $student->student_name,
+                    'total_grade' => $student->total_grade !== null
+                        ? (float) $student->total_grade
+                        : null,
+                    'enrollment_status' => $student->enrollment_status,
+
+                    'marks' => $assessments
+                        ->map(function ($assessment) use ($studentRows) {
+                            $mark = $studentRows->firstWhere(
+                                'assessment_id',
+                                $assessment->id
+                            );
+
+                            return [
+                                'assessment_id' => $assessment->id,
+                                'mark' => $mark?->mark !== null
+                                    ? (float) $mark->mark
+                                    : null,
+                                'status' => $mark?->mark_status,
+                                'feedback' => $mark?->feedback,
+                            ];
+                        })
+                        ->values(),
+                ];
+            })
+            ->values();
+
+        return $this->ok('Retrieved gradebook',
+            [
+                'assessments' => $assessments->map(function ($assessment) {
+                    return [
+                        'id' => $assessment->id,
+                        'title' => $assessment->title,
+                        'type' => $assessment->type,
+                        'max_mark' => (float) $assessment->max_mark,
+                        'weight' => $assessment->weight !== null
+                            ? (float) $assessment->weight
+                            : null,
+                    ];
+                })->values(),
+
+                'students' => $students,
+            ]
+        );
     }
 }
