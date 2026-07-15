@@ -435,4 +435,66 @@ class CourseController extends Controller
             'Course deleted successfully.'
         );
     }
+
+    /**
+     * Get course teachers
+     *
+     * Retrieves all teachers assigned to the specified course, including
+     * their assigned course role and user account information.
+     *
+     * @group Course Teachers
+     *
+     * @authenticated
+     *
+     * @urlParam course integer required The ID of the course. Example: 1
+     *
+     * @response 200 {
+     *   "success": true,
+     *   "message": "Course Teacher retrieved",
+     *   "data": [
+     *     {
+     *       "id": 5,
+     *       "user_id": 15,
+     *       "pivot": {
+     *         "course_id": 1,
+     *         "teacher_id": 5,
+     *         "role": "primary_lecturer",
+     *         "created_at": "2026-07-14T06:36:34.000000Z",
+     *         "updated_at": "2026-07-14T06:36:34.000000Z"
+     *       },
+     *       "user": {
+     *         "id": 15,
+     *         "name": "Teacher 005",
+     *         "email": "teacher005@zankolink.test"
+     *       }
+     *     },
+     *     {
+     *       "id": 2,
+     *       "user_id": 12,
+     *       "pivot": {
+     *         "course_id": 1,
+     *         "teacher_id": 2,
+     *         "role": "assistant_lecturer",
+     *         "created_at": "2026-07-14T06:36:34.000000Z",
+     *         "updated_at": "2026-07-14T06:36:34.000000Z"
+     *       },
+     *       "user": {
+     *         "id": 12,
+     *         "name": "Teacher 002",
+     *         "email": "teacher002@zankolink.test"
+     *       }
+     *     }
+     *   ]
+     * }
+     *
+     * @response 404 {
+     *   "message": "No query results for model [App\\Models\\Course] 999."
+     * }
+     */
+    public function getTeachers (Course $course){
+        $teachers = $course->teachers()
+            ->with('user:id,name,email')
+            ->get(['teachers.id', 'teachers.user_id']);
+        return $this->ok("Course Teacher retrieved",$teachers->toArray());
+    }
 }

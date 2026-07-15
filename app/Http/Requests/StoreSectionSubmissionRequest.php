@@ -23,10 +23,8 @@ class StoreSectionSubmissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
+            'course_assessment_id' => 'required|exists:course_assessments,id',
             'description' => 'nullable|string',
-            'deadline' => 'required|date|after:|date_format:Y-m-d',
-            'weight' => 'nullable|numeric|min:0|max:100',
 
             'files' => 'nullable|array',
             'files.*' => 'file|max:10240|mimes:doc,docx,pdf,ppt,pptx,jpg,jpeg,png',

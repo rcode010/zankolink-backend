@@ -23,7 +23,7 @@ class UpdateStudentAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|in:Present,Absent,Excused Absence,Late',
+            'status' => 'required|in:Present,Absent,Excused Absence,Late,Holiday',
             'note' => 'nullable|string',
         ];
     }

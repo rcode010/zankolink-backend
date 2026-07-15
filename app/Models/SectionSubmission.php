@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SectionSubmission extends Model
 {
-    protected $fillable = ['course_section_id', 'title', 'description', 'deadline','weight'];
+    protected $fillable = ['course_section_id', 'course_assessment_id', 'title', 'description', 'deadline','weight'];
 
      protected function casts(): array
     {
@@ -32,6 +32,11 @@ class SectionSubmission extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(SectionSubmissionAttachment::class);
+    }
+
+    public function courseAssessment(): BelongsTo
+    {
+        return $this->belongsTo(CourseAssessments::class, 'course_assessment_id');
     }
 
 }

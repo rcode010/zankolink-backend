@@ -23,8 +23,8 @@ class UpdateCourseAttendanceSessionsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'session_date' => 'sometimes|date|after:now',
-            'start_at' => 'sometimes|date|after:now',
+            'session_date' => 'sometimes|date|after_or_equal:today',
+            'start_at' => 'sometimes|date',
             'end_at' => 'sometimes|date|after:start_at',
             'title' => 'nullable|string',
         ];

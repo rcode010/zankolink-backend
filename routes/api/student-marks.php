@@ -8,6 +8,7 @@ Route::prefix('moodle')->group(function () {
     Route::post('/course-assessments/{assessment}/marks/bulk', [StudentMarksController::class, 'store'])->middleware('permission:create student marks');
     Route::get('/student-marks/{mark}', [StudentMarksController::class, 'show'])->middleware('permission:view student mark');
     Route::patch('/student-marks/{mark}', [StudentMarksController::class, 'update'])->middleware('permission:update student mark');
+    Route::get('/courses/{course}/gradebook', [StudentMarksController::class, 'gradeBook']);
 
     Route::get('/courses/{course}/my-marks', [CourseMarkController::class, 'myMarks'])->middleware('permission:view own marks');
 });

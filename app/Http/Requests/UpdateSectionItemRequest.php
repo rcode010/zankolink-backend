@@ -14,9 +14,12 @@ class UpdateSectionItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Metadata-only update — the file/link itself is not replaced here.
-            // (Re-uploading a new file would go through destroy() + store() instead.)
-            'material_file_name' => 'sometimes|required|string|max:255',
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'file' => 'nullable|file|prohibits:url|prohibited_if:remove_material,true',
+            'url' => 'nullable|url|prohibits:file|prohibited_if:remove_material,true',
+            'material_file_name' => 'nullable|string|max:255',
+            'remove_material' => 'sometimes|boolean',
         ];
     }
 }

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GradeStudentSubmissionRequest;
 use App\Http\Requests\StoreStudentSubmissionRequest;
 use App\Http\Resources\StudentSubmissionResource;
 use App\Models\SectionSubmission;
+use App\Models\Student;
 use App\Models\StudentSubmission;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
@@ -73,7 +73,7 @@ class StudentSubmissionController extends Controller
         $this->authorize('create', [StudentSubmission::class, $submission]);
         $student = auth()->user()->student;
 
-        if (now()->greaterThan($submission->deadline)) {
+        if (now()->greaterThan($submission->courseAssessment->due_at)) {
             return $this->error('Assignment deadline has passed', 422);
         }
 
@@ -243,61 +243,25 @@ class StudentSubmissionController extends Controller
      * "data": null
      * }
      */
-    public function show(StudentSubmission $studentSubmission)
+    public function show(StudentSubmission $studentSubmission, SectionSubmission $submission, Student $student)
     {
         $this->authorize('view', [StudentSubmission::class, $studentSubmission]);
-        $studentSubmission->loadMissing(['student.user', 'submission.section']);
+
+        $studentSubmissions = StudentSubmission::with([
+            'student',
+            'submission',
+        ])
+            ->where('submission_id', $submission->id)
+            ->where('student_id', $student->id)
+            ->get();
 
         return $this->success(
-            'Student submission retrieved successfully.',
-            (new StudentSubmissionResource($studentSubmission))->resolve()
-        );
-    }
-
-    /**
-     * Grade A Student Submission
-     *
-     * Assigns a grade and optional feedback to a student's submission.
-     * Only the lecturer assigned to the section this assignment belongs to may grade it.
-     *
-     * NOTE: this endpoint does NOT set the assignment's weight — that's
-     * done via SectionSubmissionController::store()/update() when the
-     * lecturer creates/edits the assignment itself.
-     *
-     * @authenticated
-     *
-     * @urlParam studentSubmission integer required The ID of the student submission. Example: 9
-     * @bodyParam grade numeric required The numeric mark (0-100). Example: 85
-     * @bodyParam feedback string The lecturer's written feedback. Example: Good work.
-     *
-     * @response status=403 scenario="not the assigned lecturer" {
-     * "status": "error",
-     * "message": "You are not the lecturer assigned to this assignment's section.",
-     * "data": null
-     * }
-     */
-    public function grade(GradeStudentSubmissionRequest $request, StudentSubmission $studentSubmission)
-    {
-        $this->authorize('grade', [StudentSubmission::class, $studentSubmission]);
-
-        $teacher = $request->user()->teacher;
-
-        $studentSubmission->loadMissing('submission.section');
-
-        $validated = $request->validated();
-
-        $studentSubmission->update([
-            'grade' => $validated['grade'],
-            'feedback' => $validated['feedback'] ?? null,
-            'graded_at' => now(),
-            'graded_by' => $teacher->id,
-        ]);
-
-        $studentSubmission->refresh()->load('student.user', 'submission');
-
-        return $this->success(
-            'Submission graded successfully.',
-            (new StudentSubmissionResource($studentSubmission))->resolve()
+            'Submission retrieved successfully',
+            StudentSubmissionResource::collection($studentSubmissions)->resolve()
         );
     }
 }
+
+
+
+

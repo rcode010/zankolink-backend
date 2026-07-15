@@ -42,6 +42,8 @@ class UserScopeResolverService
 
                 'departments.id as department_id',
                 'departments.name as department_name',
+                'departments.course_selection_starts_at',
+                'departments.course_selection_ends_at',
 
                 'department_faculties.id as department_faculty_id',
                 'department_faculties.name as department_faculty_name',
@@ -101,6 +103,8 @@ class UserScopeResolverService
             'DEPARTMENT' => [
                 'id' => $scope->department_id,
                 'name' => $scope->department_name,
+                'course_selection_starts_at' => $scope->course_selection_starts_at,
+                'course_selection_ends_at' => $scope->course_selection_ends_at,
                 'faculty' => [
                     'id' => $scope->department_faculty_id,
                     'name' => $scope->department_faculty_name,

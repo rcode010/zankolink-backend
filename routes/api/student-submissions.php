@@ -10,6 +10,5 @@ Route::prefix('moodle')->group(function () {
 
     // --- Lecturer-facing: submission review & grading ---
    Route::get('/section-submissions/{submission}/student-submissions', [StudentSubmissionController::class, 'index'])->middleware('permission:view student submissions');
-    Route::get('/student-submissions/{studentSubmission}', [StudentSubmissionController::class, 'show'])->middleware('permission:view student submission');
-    Route::put('/student-submissions/{studentSubmission}/grade', [StudentSubmissionController::class, 'grade'])->middleware('permission:update student submission');
+    Route::get('/section-submissions/{submission}/student/{student}', [StudentSubmissionController::class, 'show'])->middleware('permission:view student submission');
 });
