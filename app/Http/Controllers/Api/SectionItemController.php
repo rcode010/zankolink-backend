@@ -107,7 +107,8 @@ class SectionItemController extends Controller
 
         if (!empty($validated['url'])) {
             $data['material_file_type'] = 'link';
-            $data['material_file_name'] = $validated['material_file_name'];
+            $data['material_file_name'] = $validated['material_file_name']
+                ?? parse_url($validated['url'], PHP_URL_HOST);
             $data['material_file_url'] = $validated['url'];
         }
 
