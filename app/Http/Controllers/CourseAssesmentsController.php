@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BulkUpdateCourseAssessmentsRequest;
 use App\Http\Requests\StoreCourseAssessmentRequest;
 use App\Http\Requests\SyncCourseAssessmentsRequest;
 use App\Http\Requests\UpdateCourseAssessmentRequest;
@@ -10,7 +9,6 @@ use App\Models\Course;
 use App\Models\CourseAssessments;
 use App\Services\StudentCourseGradeCalculator;
 use App\Traits\ApiResponses;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -57,7 +55,7 @@ class CourseAssesmentsController extends Controller
      *   ]
      * }
      */
-    public function index(Request $request, Course $course)
+    public function index(Course $course)
     {
         $this->authorize('viewAny', [CourseAssessments::class, $course]);
 
@@ -174,7 +172,7 @@ class CourseAssesmentsController extends Controller
      *   "message": "Assessment does not belong to this course."
      * }
      */
-    public function update(UpdateCourseAssessmentRequest $request, Course $course, CourseAssessments $assessment)
+    public function update(UpdateCourseAssessmentRequest $request, CourseAssessments $assessment)
     {
         $this->authorize('update', $assessment);
 
@@ -321,94 +319,161 @@ class CourseAssesmentsController extends Controller
         $validated = $request->validated();
 
         $academicYearId = (int) $validated['academic_year_id'];
-        $items = collect($validated['assessments']);
 
-        $teacher = $request->user()->teacher;
+        $createItems = collect($validated['create'] ?? []);
+        $updateItems = collect($validated['update'] ?? []);
 
-        if (! $teacher) {
-            return $this->error('Teacher profile not found.', 404);
-        }
+        $deleteIds = collect($validated['delete'] ?? [])
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values();
 
-        $existingIds = $items
+        $updateIds = $updateItems
             ->pluck('id')
-            ->filter(fn ($id) => $id !== null)
             ->map(fn ($id) => (int) $id)
             ->values();
+
+        $referencedIds = $updateIds
+            ->merge($deleteIds)
+            ->unique()
+            ->values();
+
 
         $existingAssessments = CourseAssessments::query()
             ->where('course_id', $course->id)
             ->where('academic_year_id', $academicYearId)
-            ->whereIn('id', $existingIds)
+            ->whereIn('id', $referencedIds)
             ->get()
             ->keyBy('id');
 
-        if ($existingAssessments->count() !== $existingIds->count()) {
+        if (
+            $existingAssessments->count()
+            !== $referencedIds->count()
+        ) {
             return $this->error(
                 'One or more assessments do not belong to this course and academic year.',
                 422
             );
         }
 
-        foreach ($existingAssessments as $assessment) {
-            $this->authorize('update', $assessment);
-        }
-
-        $newItems = $items->filter(
-            fn (array $item) => empty($item['id'])
-        );
-
-        if ($newItems->isNotEmpty()) {
+        if ($createItems->isNotEmpty()) {
             $this->authorize(
                 'create',
                 [CourseAssessments::class, $course]
             );
+
+            $teacher = $request->user()->teacher;
+
+            if (! $teacher) {
+                return $this->error(
+                    'Teacher profile not found.',
+                    404
+                );
+            }
         }
 
 
-        $deleteQuery = CourseAssessments::query()
-            ->where('course_id', $course->id)
-            ->where('academic_year_id', $academicYearId);
-
-        if ($existingIds->isNotEmpty()) {
-            $deleteQuery->whereNotIn('id', $existingIds);
+        foreach ($updateIds as $assessmentId) {
+            $this->authorize(
+                'update',
+                $existingAssessments->get($assessmentId)
+            );
         }
 
-        $assessmentsToDelete = $deleteQuery->get();
-
-        foreach ($assessmentsToDelete as $assessment) {
-            $this->authorize('delete', $assessment);
+        foreach ($deleteIds as $assessmentId) {
+            $this->authorize(
+                'delete',
+                $existingAssessments->get($assessmentId)
+            );
         }
 
         $now = now();
 
+        $updateRows = $updateItems
+            ->map(function (array $item) use (
+                $existingAssessments,
+                $now
+            ) {
+                $assessment = $existingAssessments->get(
+                    (int) $item['id']
+                );
+
+                return [
+                    'id' => $assessment->id,
+                    'course_id' => $assessment->course_id,
+                    'teacher_id' => $assessment->teacher_id,
+                    'academic_year_id' =>
+                        $assessment->academic_year_id,
+
+                    'title' => array_key_exists('title', $item)
+                        ? $item['title']
+                        : $assessment->title,
+
+                    'type' => array_key_exists('type', $item)
+                        ? $item['type']
+                        : $assessment->type,
+
+                    'max_mark' => array_key_exists(
+                        'max_mark',
+                        $item
+                    )
+                        ? $item['max_mark']
+                        : $assessment->max_mark,
+
+                    'weight' => array_key_exists('weight', $item)
+                        ? $item['weight']
+                        : $assessment->weight,
+
+                    'due_at' => array_key_exists('due_at', $item)
+                        ? $item['due_at']
+                        : $assessment->due_at,
+
+                    'is_published' => array_key_exists(
+                        'is_published',
+                        $item
+                    )
+                        ? $item['is_published']
+                        : $assessment->is_published,
+
+                    'created_at' => $assessment->created_at,
+                    'updated_at' => $now,
+                ];
+            })
+            ->values();
+
+        $createRows = $createItems
+            ->map(fn (array $item) => [
+                'course_id' => $course->id,
+                'teacher_id' => $teacher->id,
+                'academic_year_id' => $academicYearId,
+                'title' => $item['title'],
+                'type' => $item['type'],
+                'max_mark' => $item['max_mark'],
+                'weight' => $item['weight'],
+                'due_at' => $item['due_at'] ?? null,
+                'is_published' => $item['is_published'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])
+            ->values();
+
+        $shouldRecalculateGrades =
+            $deleteIds->isNotEmpty()
+            || $updateItems->contains(
+                fn (array $item) =>
+                    array_key_exists('weight', $item)
+                    || array_key_exists('max_mark', $item)
+            );
+
         DB::transaction(function () use (
-            $items,
-            $existingIds,
-            $assessmentsToDelete,
+            $updateRows,
+            $createRows,
+            $deleteIds,
+            $shouldRecalculateGrades,
             $course,
             $academicYearId,
-            $teacher,
-            $gradeCalculator,
-            $now
+            $gradeCalculator
         ) {
-
-            $updateRows = $items
-                ->filter(fn (array $item) => ! empty($item['id']))
-                ->map(fn (array $item) => [
-                    'id' => (int) $item['id'],
-                    'course_id' => $course->id,
-                    'teacher_id' => $teacher->id,
-                    'academic_year_id' => $academicYearId,
-                    'title' => $item['title'],
-                    'type' => $item['type'],
-                    'max_mark' => $item['max_mark'],
-                    'weight' => $item['weight'],
-                    'due_at' => $item['due_at'],
-                    'is_published' => $item['is_published'],
-                    'updated_at' => $now,
-                ])
-                ->values();
-
             if ($updateRows->isNotEmpty()) {
                 CourseAssessments::query()->upsert(
                     $updateRows->all(),
@@ -425,49 +490,40 @@ class CourseAssesmentsController extends Controller
                 );
             }
 
-
-            $insertRows = $items
-                ->filter(fn (array $item) => empty($item['id']))
-                ->map(fn (array $item) => [
-                    'course_id' => $course->id,
-                    'teacher_id' => $teacher->id,
-                    'academic_year_id' => $academicYearId,
-                    'title' => $item['title'],
-                    'type' => $item['type'],
-                    'max_mark' => $item['max_mark'],
-                    'weight' => $item['weight'],
-                    'due_at' => $item['due_at'],
-                    'is_published' => $item['is_published'],
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ])
-                ->values();
-
-            if ($insertRows->isNotEmpty()) {
+            if ($createRows->isNotEmpty()) {
                 CourseAssessments::query()->insert(
-                    $insertRows->all()
+                    $createRows->all()
                 );
             }
 
-            if ($assessmentsToDelete->isNotEmpty()) {
+            if ($deleteIds->isNotEmpty()) {
                 CourseAssessments::query()
-                    ->whereKey($assessmentsToDelete->modelKeys())
+                    ->where('course_id', $course->id)
+                    ->where(
+                        'academic_year_id',
+                        $academicYearId
+                    )
+                    ->whereIn('id', $deleteIds)
                     ->delete();
             }
 
+            if ($shouldRecalculateGrades) {
+                $studentIds = DB::table('course_student')
+                    ->where('course_id', $course->id)
+                    ->where(
+                        'academic_year_id',
+                        $academicYearId
+                    )
+                    ->pluck('student_id')
+                    ->map(fn ($id) => (int) $id)
+                    ->all();
 
-            $studentIds = DB::table('course_student')
-                ->where('course_id', $course->id)
-                ->where('academic_year_id', $academicYearId)
-                ->pluck('student_id')
-                ->map(fn ($id) => (int) $id)
-                ->all();
-
-            $gradeCalculator->recalculateForCourse(
-                $course,
-                $academicYearId,
-                $studentIds
-            );
+                $gradeCalculator->recalculateForCourse(
+                    $course,
+                    $academicYearId,
+                    $studentIds
+                );
+            }
         });
 
         $assessments = CourseAssessments::query()
@@ -481,7 +537,6 @@ class CourseAssesmentsController extends Controller
             $assessments->toArray()
         );
     }
-
     /**
      * Show course assessment
      *

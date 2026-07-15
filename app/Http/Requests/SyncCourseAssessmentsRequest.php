@@ -23,57 +23,111 @@ class SyncCourseAssessmentsRequest extends FormRequest
                 'exists:academic_years,id',
             ],
 
-            'assessments' => [
-                'required',
-                'array',
-            ],
-
-            'assessments.*' => [
-                'required',
-                'array',
-            ],
-
-            // Missing or null ID means create a new assessment.
-            'assessments.*.id' => [
+            'create' => [
                 'sometimes',
-                'nullable',
-                'integer',
+                'array',
             ],
 
-            'assessments.*.title' => [
+            'create.*' => [
+                'required',
+                'array',
+            ],
+
+            'create.*.title' => [
                 'required',
                 'string',
                 'max:255',
             ],
 
-            'assessments.*.type' => [
+            'create.*.type' => [
                 'required',
                 'string',
                 'in:quiz,assignment,final,midterm,project,activity',
             ],
 
-            'assessments.*.max_mark' => [
+            'create.*.max_mark' => [
                 'required',
                 'numeric',
                 'gt:0',
             ],
 
-            'assessments.*.weight' => [
+            'create.*.weight' => [
                 'required',
                 'numeric',
                 'min:0',
                 'max:100',
             ],
 
-            'assessments.*.due_at' => [
-                'present',
+            'create.*.due_at' => [
                 'nullable',
                 'date',
             ],
 
-            'assessments.*.is_published' => [
+            'create.*.is_published' => [
                 'required',
                 'boolean',
+            ],
+
+            'update' => [
+                'sometimes',
+                'array',
+            ],
+
+            'update.*' => [
+                'required',
+                'array',
+            ],
+
+            'update.*.id' => [
+                'required',
+                'integer',
+                'distinct',
+            ],
+
+            'update.*.title' => [
+                'sometimes',
+                'string',
+                'max:255',
+            ],
+
+            'update.*.type' => [
+                'sometimes',
+                'string',
+                'in:quiz,assignment,final,midterm,project,activity',
+            ],
+
+            'update.*.max_mark' => [
+                'sometimes',
+                'numeric',
+                'gt:0',
+            ],
+
+            'update.*.weight' => [
+                'sometimes',
+                'numeric',
+                'min:0',
+                'max:100',
+            ],
+
+            'update.*.due_at' => [
+                'sometimes',
+                'nullable',
+                'date',
+            ],
+
+            'update.*.is_published' => [
+                'sometimes',
+                'boolean',
+            ],
+
+            'delete' => [
+                'sometimes',
+                'array',
+            ],
+
+            'delete.*' => [
+                'integer',
+                'distinct',
             ],
         ];
     }
@@ -96,51 +150,150 @@ class SyncCourseAssessmentsRequest extends FormRequest
                     return;
                 }
 
-                $items = collect($this->input('assessments', []));
-
-                $totalWeight = $items->sum(
-                    fn (array $item) => (float) $item['weight']
+                $academicYearId = (int) $this->input(
+                    'academic_year_id'
                 );
 
-                if ($totalWeight > 100) {
+                $createItems = collect(
+                    $this->input('create', [])
+                );
+
+                $updateItems = collect(
+                    $this->input('update', [])
+                );
+
+                $deleteIds = collect(
+                    $this->input('delete', [])
+                )->map(fn ($id) => (int) $id);
+
+                if (
+                    $createItems->isEmpty()
+                    && $updateItems->isEmpty()
+                    && $deleteIds->isEmpty()
+                ) {
                     $validator->errors()->add(
-                        'assessments',
-                        'The total assessment weight may not exceed 100.'
+                        'operations',
+                        'At least one create, update, or delete operation is required.'
                     );
+
+                    return;
                 }
 
-                $assessmentIds = $items
+
+                $editableFields = [
+                    'title',
+                    'type',
+                    'max_mark',
+                    'weight',
+                    'due_at',
+                    'is_published',
+                ];
+
+                foreach ($updateItems as $index => $item) {
+                    $hasUpdateField = collect($editableFields)
+                        ->contains(
+                            fn ($field) => array_key_exists(
+                                $field,
+                                $item
+                            )
+                        );
+
+                    if (! $hasUpdateField) {
+                        $validator->errors()->add(
+                            "update.$index",
+                            'At least one assessment field must be provided for update.'
+                        );
+                    }
+                }
+
+                if ($validator->errors()->isNotEmpty()) {
+                    return;
+                }
+
+                $updateIds = $updateItems
                     ->pluck('id')
-                    ->filter(fn ($id) => $id !== null)
                     ->map(fn ($id) => (int) $id)
                     ->values();
 
-                if ($assessmentIds->duplicates()->isNotEmpty()) {
+
+                $overlappingIds = $updateIds->intersect(
+                    $deleteIds
+                );
+
+                if ($overlappingIds->isNotEmpty()) {
                     $validator->errors()->add(
-                        'assessments',
-                        'The same assessment cannot appear more than once.'
+                        'operations',
+                        'The same assessment cannot be updated and deleted in one request.'
                     );
 
                     return;
                 }
 
-                if ($assessmentIds->isEmpty()) {
-                    return;
-                }
 
-                $validAssessmentCount = CourseAssessments::query()
+                $existingAssessments = CourseAssessments::query()
                     ->where('course_id', $course->id)
                     ->where(
                         'academic_year_id',
-                        (int) $this->input('academic_year_id')
+                        $academicYearId
                     )
-                    ->whereIn('id', $assessmentIds)
-                    ->count();
+                    ->get([
+                        'id',
+                        'weight',
+                    ])
+                    ->keyBy('id');
 
-                if ($validAssessmentCount !== $assessmentIds->count()) {
+
+                $referencedIds = $updateIds
+                    ->merge($deleteIds)
+                    ->unique()
+                    ->values();
+
+                $invalidIds = $referencedIds->reject(
+                    fn ($id) => $existingAssessments->has($id)
+                );
+
+                if ($invalidIds->isNotEmpty()) {
                     $validator->errors()->add(
-                        'assessments',
+                        'operations',
                         'One or more assessments do not belong to this course and academic year.'
+                    );
+
+                    return;
+                }
+
+
+                $finalWeights = $existingAssessments
+                    ->mapWithKeys(
+                        fn ($assessment) => [
+                            (int) $assessment->id =>
+                                (float) $assessment->weight,
+                        ]
+                    );
+
+                foreach ($deleteIds as $assessmentId) {
+                    $finalWeights->forget($assessmentId);
+                }
+
+                foreach ($updateItems as $item) {
+                    if (array_key_exists('weight', $item)) {
+                        $finalWeights->put(
+                            (int) $item['id'],
+                            (float) $item['weight']
+                        );
+                    }
+                }
+
+                $createdWeight = $createItems->sum(
+                    fn ($item) => (float) $item['weight']
+                );
+
+                $totalWeight = $finalWeights->sum()
+                    + $createdWeight;
+
+                if ($totalWeight > 100.00001) {
+                    $validator->errors()->add(
+                        'operations',
+                        'The final total assessment weight may not exceed 100.'
                     );
                 }
             },
