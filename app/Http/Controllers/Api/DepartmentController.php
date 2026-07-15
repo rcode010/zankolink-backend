@@ -63,7 +63,7 @@ class DepartmentController extends Controller
                 AllowedFilter::exact('faculty_id'),
                 'is_active',
             )
-            ->with('faculty:id,name', 'admin:id,name')
+            ->with('faculty:id,name,university_id,is_active', 'admin:id,name')
             ->latest()
             ->paginate($per_page);
 
