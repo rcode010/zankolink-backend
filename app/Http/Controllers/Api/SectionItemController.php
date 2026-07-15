@@ -265,7 +265,9 @@ class SectionItemController extends Controller
     public function destroy(SectionItem $item)
     {
         $this->authorize('delete', $item);
-        if ($item->material_file_type !== 'link' && Storage::disk('public')->exists($item->material_file_url)) {
+        if ($item->material_file_type !== 'link' &&
+            !is_null($item->material_file_url) &&
+            Storage::disk('public')->exists($item->material_file_url)) {
             Storage::disk('public')->delete($item->material_file_url);
         }
 
