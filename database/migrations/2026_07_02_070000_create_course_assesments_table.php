@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('academic_year_id')->constrained()->cascadeOnDelete();
 
             $table->string('title');
-            $table->enum('type', ['quiz', 'assignment', 'final', 'midterm', 'project', 'activity']);
             $table->decimal('max_mark', 5, 2);
             $table->decimal('weight', 5, 2)->nullable();
 

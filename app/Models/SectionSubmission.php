@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SectionSubmission extends Model
 {
-    protected $fillable = ['course_section_id', 'course_assessment_id', 'title', 'description', 'deadline','weight'];
+    protected $fillable = ['course_section_id', 'course_assessment_id', 'description'];
 
      protected function casts(): array
     {

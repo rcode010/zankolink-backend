@@ -24,7 +24,7 @@ class SectionSubmissionResource extends JsonResource
             'id' => $this->id,
             'description' => $this->description,
 
-            'course_assessment' => $this->whenLoaded('course_assessment'),
+            'course_assessment' => $this->whenLoaded('courseAssessment'),
 
             'section' => $this->whenLoaded(
                 'section',
