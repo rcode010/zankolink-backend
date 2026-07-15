@@ -52,7 +52,7 @@ class FacultyController extends Controller
                 AllowedFilter::exact('university_id'),
                 'is_active',
             )
-            ->with('university:id,name', 'admin:id,name')
+            ->with('university', 'admin:id,name')
             ->latest()
             ->paginate($per_page);
 
