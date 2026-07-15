@@ -56,7 +56,7 @@ class TeacherController extends Controller
                     });
                 }),
             )
-            ->with('user:id,name', 'departments:id,name')
+            ->with('user:id,name,email', 'departments:id,name')
             ->latest()
             ->paginate($perPage);
 
