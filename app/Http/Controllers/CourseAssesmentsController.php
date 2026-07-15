@@ -57,6 +57,7 @@ class CourseAssesmentsController extends Controller
      */
     public function index(Request $request, Course $course)
     {
+        $this->authorize('viewAny', [CourseAssessments::class, $course]);
 
         $assessments = QueryBuilder::for(CourseAssessments::class)
             ->where('course_id', $course->id)
@@ -112,6 +113,8 @@ class CourseAssesmentsController extends Controller
      */
     public function store(StoreCourseAssessmentRequest $request, Course $course)
     {
+        $this->authorize('create', [CourseAssessments::class, $course]);
+
         $credentials = $request->validated();
         $teacher = $request->user()->teacher;
         $courseAssessment = CourseAssessments::create([
@@ -171,9 +174,8 @@ class CourseAssesmentsController extends Controller
      */
     public function update(UpdateCourseAssessmentRequest $request, Course $course, CourseAssessments $assessment)
     {
-        if ((int) $assessment->course_id !== (int) $course->id) {
-            return $this->error('Assessment does not belong to this course.', 404);
-        }
+        $this->authorize('update', $assessment);
+
         $credentials = $request->validated();
 
         $assessment->update($credentials);
@@ -288,6 +290,10 @@ class CourseAssesmentsController extends Controller
             );
         }
 
+        foreach ($assessments as $assessment) {
+            $this->authorize('update', $assessment);
+        }
+
         DB::transaction(function () use ($items, $assessments) {
             foreach ($items as $item) {
                 $assessment = $assessments->get((int) $item['id']);
@@ -359,9 +365,7 @@ class CourseAssesmentsController extends Controller
      */
     public function show(Course $course, CourseAssessments $assessment)
     {
-        if ((int) $assessment->course_id !== (int) $course->id) {
-            return $this->error('Assessment does not belong to this course.', 404);
-        }
+        $this->authorize('view', $assessment);
 
         $assessment->load([
             'course:id,name',
@@ -397,9 +401,8 @@ class CourseAssesmentsController extends Controller
      */
     public function destroy(Course $course, CourseAssessments $assessment)
     {
-        if ((int) $assessment->course_id !== (int) $course->id) {
-            return $this->error('Assessment does not belong to this course.', 404);
-        }
+        $this->authorize('delete', $assessment);
+
         $assessment->delete();
 
         return $this->deleted('Course Assessment deleted successfully');

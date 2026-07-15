@@ -64,6 +64,7 @@ class SectionSubmissionController extends Controller
      */
     public function index(CourseSection $section)
     {
+        $this->authorize('viewAny', [SectionSubmission::class, $section]);
         $submission = $section->submissions()->with(['attachments', 'section:id,title', 'courseAssessment'])->get();
 
         return $this->success(
@@ -115,6 +116,7 @@ class SectionSubmissionController extends Controller
      */
     public function store(StoreSectionSubmissionRequest $request, CourseSection $section)
     {
+        $this->authorize('create', [SectionSubmission::class, $section]);
         $data = $request->validated();
 
         DB::beginTransaction();
@@ -198,6 +200,8 @@ class SectionSubmissionController extends Controller
      */
     public function show(SectionSubmission $submission)
     {
+        $this->authorize('view', $submission);
+
         return $this->success(
             'Assignment retrieved successfully.',
             (new SectionSubmissionResource($submission->load([
@@ -259,6 +263,7 @@ class SectionSubmissionController extends Controller
      */
     public function update(UpdateSectionSubmissionRequest $request, SectionSubmission $submission)
     {
+        $this->authorize('update', $submission);
         $data = $request->validated();
         DB::beginTransaction();
         try {
@@ -315,6 +320,8 @@ class SectionSubmissionController extends Controller
      */
     public function destroy(SectionSubmission $submission)
     {
+        $this->authorize('delete', $submission);
+
         foreach ($submission->attachments as $attachment) {
             Storage::disk('public')->delete($attachment->file_url);
         }

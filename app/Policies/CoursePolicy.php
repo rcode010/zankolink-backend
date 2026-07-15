@@ -100,4 +100,30 @@ class CoursePolicy
     {
         return false;
     }
+
+    public function viewAsStudent(User $user, Course $course): bool
+    {
+        $student = $user->student;
+
+        if (! $student) {
+            return false;
+        }
+
+        return $student->courses()
+            ->whereKey($course->id)
+            ->exists();
+    }
+
+    public function viewAsLecturer(User $user, Course $course): bool
+    {
+        $teacher = $user->teacher;
+
+        if (! $teacher) {
+            return false;
+        }
+
+        return $course->teachers()
+            ->whereKey($teacher->id)
+            ->exists();
+    }
 }

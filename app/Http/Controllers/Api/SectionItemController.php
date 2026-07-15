@@ -35,6 +35,8 @@ class SectionItemController extends Controller
      */
     public function index(Request $request, CourseSection $section)
     {
+        $this->authorize('viewAny', [SectionItem::class, $section]);
+
         $items = $section->items()->latest()->get();
 
         return $this->ok(
@@ -85,6 +87,8 @@ class SectionItemController extends Controller
      */
     public function store(StoreSectionItemRequest $request, CourseSection $section)
     {
+        $this->authorize('create', [SectionItem::class, $section]);
+
         $validated = $request->validated();
 
         $data = [
@@ -127,6 +131,7 @@ class SectionItemController extends Controller
      */
     public function show(Request $request, SectionItem $item)
     {
+        $this->authorize('view', $item);
         return $this->ok(
             'Section item retrieved successfully',
             (new SectionItemResource($item))->resolve()
@@ -142,6 +147,8 @@ class SectionItemController extends Controller
      */
     public function download(SectionItem $item)
     {
+        $this->authorize('download', $item);
+
         if ($item->material_file_type === 'link' || Str::startsWith($item->material_file_url, ['http://', 'https://'])) {
             return redirect()->away($item->material_file_url);
         }
@@ -197,6 +204,7 @@ class SectionItemController extends Controller
      */
     public function update(UpdateSectionItemRequest $request, SectionItem $item)
     {
+        $this->authorize('update', $item);
         $validated = $request->validated();
 
         $data = [
@@ -256,6 +264,7 @@ class SectionItemController extends Controller
      */
     public function destroy(SectionItem $item)
     {
+        $this->authorize('delete', $item);
         if ($item->material_file_type !== 'link' && Storage::disk('public')->exists($item->material_file_url)) {
             Storage::disk('public')->delete($item->material_file_url);
         }

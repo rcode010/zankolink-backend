@@ -52,15 +52,10 @@ class StudentAttendanceController extends Controller
      */
     public function store(StoreStudentAttendanceRequest $request, CourseAttendanceSessions $session)
     {
+        $this->authorize('create', [StudentAttendance::class, $session]);
+
         $data = $request->validated();
         $teacher = $request->user()->teacher;
-
-        if ($session->teacher_id != $teacher->id) {
-            return $this->error(
-                'You are not authorized to record attendance for this session.',
-                403
-            );
-        }
 
         $enrolledStudentIds = $session->course
             ->students()
@@ -163,14 +158,8 @@ class StudentAttendanceController extends Controller
      */
     public function getAttendance(CourseAttendanceSessions $session, Request $request)
     {
+        $this->authorize('viewAny', [StudentAttendance::class, $session]);
         $teacher = $request->user()->teacher;
-
-        if ($session->teacher_id != $teacher->id) {
-            return $this->error(
-                'You are not authorized to record attendance for this session.',
-                403
-            );
-        }
 
         $session->load('attendance.student.user');
 
@@ -253,6 +242,8 @@ class StudentAttendanceController extends Controller
      */
     public function myAttendance(Request $request)
     {
+        $this->authorize('viewOwn', StudentAttendance::class);
+
         $student = $request->user()->student;
 
         $per_page = $request->query('per_page', 15);
@@ -335,14 +326,8 @@ class StudentAttendanceController extends Controller
      */
     public function updateStudentAttendance(UpdateStudentAttendanceRequest $request, CourseAttendanceSessions $session, Student $student)
     {
+        $this->authorize('update', [StudentAttendance::class, $session]);
         $teacher = $request->user()->teacher;
-
-        if ($session->teacher_id !== $teacher->id) {
-            return $this->error(
-                'You are not authorized to update attendance for this session.',
-                403
-            );
-        }
 
         $attendance = StudentAttendance::where('attendance_session_id', $session->id)
             ->where('student_id', $student->id)

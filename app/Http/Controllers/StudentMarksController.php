@@ -53,6 +53,7 @@ class StudentMarksController extends Controller
      */
     public function AllAssessmentMarks(Request $request, CourseAssessments $assessment)
     {
+        $this->authorize('viewAny', [StudentMarks::class, $assessment]);
 
         $marks = QueryBuilder::for(StudentMarks::class)
             ->where('course_assessment_id', $assessment->id)
@@ -102,6 +103,8 @@ class StudentMarksController extends Controller
      */
     public function store(StoreStudentMarkRequest $request, CourseAssessments $assessment, StudentCourseGradeCalculator $studentCourseGrade)
     {
+        $this->authorize('create', [StudentMarks::class, $assessment]);
+
         $teacher = $request->user()->teacher;
         $validatedMarks = collect($request->validated()['marks']);
 
@@ -223,6 +226,8 @@ class StudentMarksController extends Controller
             'gradedBy.user:id,name,email',
         ]);
 
+        $this->authorize('view', $mark);
+
         return $this->ok('Retrieved marks', $mark->toArray());
     }
 
@@ -267,6 +272,8 @@ class StudentMarksController extends Controller
         StudentMarks $mark,
         StudentCourseGradeCalculator $studentCourseGrade
     ) {
+        $this->authorize('update', $mark);
+
         $credentials = $request->validated();
         $teacher = $request->user()->teacher;
 

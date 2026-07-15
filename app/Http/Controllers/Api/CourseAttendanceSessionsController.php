@@ -100,6 +100,8 @@ class CourseAttendanceSessionsController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', CourseAttendanceSessions::class);
+
         $teacher = $request->user()->teacher;
 
         $per_page = $request->query('per_page', 15);
@@ -208,22 +210,15 @@ class CourseAttendanceSessionsController extends Controller
      */
     public function store(StoreCourseAttendanceSessionsRequest $request)
     {
+        $course = Course::findOrFail($request->course_id);
+        $this->authorize('create', [CourseAttendanceSessions::class, $course]);
+
         $data = $request->validated();
         $teacher = $request->user()->teacher;
         $academicYear = AcademicYear::where('is_active', true)->firstOrFail();
 
         $data['teacher_id'] = $teacher->id;
         $data['academic_year_id'] = $academicYear->id;
-
-        $course = Course::whereKey($data['course_id'])
-            ->whereHas('teachers', function ($query) use ($teacher) {
-                $query->where('teachers.id', $teacher->id);
-            })
-            ->first();
-
-        if (! $course) {
-            return $this->error('You are not assigned to this course', 403);
-        }
 
         $session = CourseAttendanceSessions::create($data);
 
@@ -288,14 +283,8 @@ class CourseAttendanceSessionsController extends Controller
      */
     public function show(CourseAttendanceSessions $session, Request $request)
     {
+        $this->authorize('view', $session);
         $teacher = $request->user()->teacher;
-
-        if ($session->teacher_id !== $teacher->id) {
-            return $this->error(
-                'You are not authorized to view this attendance session.',
-                403
-            );
-        }
 
         $session->load('course', 'teacher.user', 'academicYear');
 
@@ -362,14 +351,9 @@ class CourseAttendanceSessionsController extends Controller
      */
     public function update(UpdateCourseAttendanceSessionsRequest $request, CourseAttendanceSessions $session)
     {
-        $teacher = $request->user()->teacher;
+        $this->authorize('update', $session);
 
-        if ($session->teacher_id !== $teacher->id) {
-            return $this->error(
-                'You are not authorized to update this attendance session.',
-                403
-            );
-        }
+        $teacher = $request->user()->teacher;
 
         $session->update($request->validated());
 
@@ -404,14 +388,9 @@ class CourseAttendanceSessionsController extends Controller
      */
     public function destroy(CourseAttendanceSessions $session, Request $request)
     {
-        $teacher = $request->user()->teacher;
+        $this->authorize('delete', $session);
 
-        if ($session->teacher_id !== $teacher->id) {
-            return $this->error(
-                'You are not authorized to delete this attendance session.',
-                403
-            );
-        }
+        $teacher = $request->user()->teacher;
 
         $session->delete();
 

@@ -70,6 +70,7 @@ class StudentSubmissionController extends Controller
      */
     public function store(StoreStudentSubmissionRequest $request, SectionSubmission $submission)
     {
+        $this->authorize('create', [StudentSubmission::class, $submission]);
         $student = auth()->user()->student;
 
         if (now()->greaterThan($submission->courseAssessment->due_at)) {
@@ -142,6 +143,7 @@ class StudentSubmissionController extends Controller
      */
     public function mySubmission(SectionSubmission $submission)
     {
+        $this->authorize('view', $submission);
         $student = auth()->user()->student;
 
         $studentSubmissions = StudentSubmission::with([
@@ -167,6 +169,7 @@ class StudentSubmissionController extends Controller
      */
     public function download(StudentSubmission $studentSubmission)
     {
+        $this->authorize('download', $studentSubmission);
         return Storage::disk('public')->download(
             $studentSubmission->file_url,
             $studentSubmission->file_name
@@ -182,6 +185,7 @@ class StudentSubmissionController extends Controller
      */
     public function destroy(StudentSubmission $studentSubmission)
     {
+        $this->authorize('delete', $studentSubmission);
         Storage::disk('public')->delete($studentSubmission->file_url);
 
         $studentSubmission->delete();
@@ -207,8 +211,7 @@ class StudentSubmissionController extends Controller
      */
     public function index(SectionSubmission $submission)
     {
-        $teacher = $this->resolveTeacher();
-        $this->assertTeacherOwnsSubmission($submission, $teacher);
+        $this->authorize('viewAny', [StudentSubmission::class, $submission]);
 
         $studentSubmissions = StudentSubmission::with([
             'student.user',
@@ -240,8 +243,10 @@ class StudentSubmissionController extends Controller
      * "data": null
      * }
      */
-    public function show(SectionSubmission $submission, Student $student)
+    public function show(StudentSubmission $studentSubmission, SectionSubmission $submission, Student $student)
     {
+        $this->authorize('view', [StudentSubmission::class, $studentSubmission]);
+
         $studentSubmissions = StudentSubmission::with([
             'student',
             'submission',
@@ -255,54 +260,8 @@ class StudentSubmissionController extends Controller
             StudentSubmissionResource::collection($studentSubmissions)->resolve()
         );
     }
-
-    /**
-     * Resolve the authenticated user's teacher profile.
-     */
-    private function resolveTeacher()
-    {
-        $teacher = auth()->user()->teacher;
-
-        abort_unless(
-            $teacher,
-            403,
-            'Only accounts with a teacher profile can access this resource.'
-        );
-
-        return $teacher;
-    }
-
-    /**
-     * Confirm the given teacher is the one assigned to the section.
-     */
-    private function assertTeacherOwnsSubmission(SectionSubmission $submission, $teacher): void
-    {
-        $submission->loadMissing('section');
-
-        abort_unless(
-            $submission->section && $submission->section->teacher_id === $teacher->id,
-            403,
-            "You are not the lecturer assigned to this assignment's section."
-        );
-    }
-
-    /**
-     * Authorization for show(): lecturer owns section OR student owns submission.
-     */
-    private function assertCanViewSubmission(StudentSubmission $studentSubmission): void
-    {
-        $user = auth()->user();
-
-        $teacher = $user->teacher;
-        if ($teacher && $studentSubmission->submission?->section?->teacher_id === $teacher->id) {
-            return;
-        }
-
-        $student = $user->student;
-        if ($student && $studentSubmission->student_id === $student->id) {
-            return;
-        }
-
-        abort(403, 'You are not authorized to view this submission.');
-    }
 }
+
+
+
+

@@ -63,11 +63,7 @@ class MoodleStudentCourseController extends Controller
      */
     public function showCourse(Course $course)
     {
-        $student = $this->resolveStudent();
-
-        $isEnrolled = $student->courses()->whereKey($course->id)->exists();
-
-        abort_unless($isEnrolled, 403, 'You are not enrolled in this course.');
+        $this->authorize('viewAsStudent', $course);
 
         $course->load(['department', 'teachers.user']);
 
@@ -91,11 +87,9 @@ class MoodleStudentCourseController extends Controller
      */
     public function sections(Course $course)
     {
+        $this->authorize('viewAsStudent', $course);
+
         $student = $this->resolveStudent();
-
-        $isEnrolled = $student->courses()->whereKey($course->id)->exists();
-
-        abort_unless($isEnrolled, 403, 'You are not enrolled in this course.');
 
         $sections = CourseSection::query()
             ->where('course_id', $course->id)
