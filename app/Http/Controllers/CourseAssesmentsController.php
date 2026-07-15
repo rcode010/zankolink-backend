@@ -186,75 +186,135 @@ class CourseAssesmentsController extends Controller
 
     }
     /**
-     * Bulk update course assessments
+     * Synchronize course assessments
      *
-     * Update multiple assessments belonging to the same course in one request.
-     * Each assessment object must include its assessment ID and at least one field to update.
+     * Save the final assessment structure for a course and academic year in one request.
      *
-     * @group Course Assessments
+     * Existing assessments with an ID are updated, assessments without an ID are created,
+     * and existing assessments omitted from the submitted list are soft deleted.
+     *
+     * The total weight of all submitted assessments must not exceed 100.
+     * Student course grades are recalculated after the assessments are synchronized.
+     *
      * @authenticated
      *
      * @urlParam course integer required The ID of the course. Example: 1
      *
-     * @bodyParam assessments array required The assessments to update.
-     * @bodyParam assessments.*.id integer required The ID of the assessment. Example: 1
-     * @bodyParam assessments.*.academic_year_id integer optional The academic year ID. Example: 1
-     * @bodyParam assessments.*.title string optional The assessment title. Example: Updated Quiz 1
-     * @bodyParam assessments.*.type string optional The assessment type. Must be one of: quiz, assignment, final, midterm, project, activity. Example: midterm
-     * @bodyParam assessments.*.max_mark number optional The maximum assessment mark. Example: 20
-     * @bodyParam assessments.*.weight number optional The assessment weight. Example: 10
-     * @bodyParam assessments.*.due_at datetime nullable The assessment due date and time. Example: 2026-07-20 10:00:00
-     * @bodyParam assessments.*.is_published boolean optional Whether the assessment is published. Example: true
+     * @bodyParam academic_year_id integer required The ID of the academic year. Example: 1
+     *
+     * @bodyParam assessments array required The final list of assessments for the course and academic year.
+     *
+     * @bodyParam assessments.*.id integer nullable The assessment ID. Provide an existing ID to update an assessment. Send null or omit the ID to create a new assessment. Example: 10
+     *
+     * @bodyParam assessments.*.title string required The assessment title. Maximum 255 characters. Example: Assignment 2
+     *
+     * @bodyParam assessments.*.type string required The assessment type. Allowed values: quiz, assignment, final, midterm, project, activity. Example: assignment
+     *
+     * @bodyParam assessments.*.max_mark number required The maximum mark available for the assessment. Must be greater than 0. Example: 10
+     *
+     * @bodyParam assessments.*.weight number required The assessment's contribution to the final course grade. Must be between 0 and 100. The combined weight of all assessments must not exceed 100. Example: 10
+     *
+     * @bodyParam assessments.*.due_at datetime nullable The assessment due date and time. Example: 2026-07-30 23:59:00
+     *
+     * @bodyParam assessments.*.is_published boolean required Whether the assessment is visible to students. Example: true
      *
      * @response 200 {
      *   "success": true,
-     *   "message": "Course assessments updated successfully.",
+     *   "message": "Course assessments saved successfully.",
      *   "data": [
      *     {
-     *       "id": 1,
+     *       "id": 10,
      *       "course_id": 1,
-     *       "teacher_id": 91,
+     *       "teacher_id": 1,
      *       "academic_year_id": 1,
-     *       "title": "Updated Quiz 1",
-     *       "type": "midterm",
-     *       "max_mark": 20,
+     *       "title": "Assignment 2",
+     *       "type": "assignment",
+     *       "max_mark": 10,
      *       "weight": 10,
-     *       "due_at": "2026-07-20 10:00:00",
+     *       "due_at": null,
      *       "is_published": 1,
-     *       "created_at": "2026-07-11T19:20:42.000000Z",
-     *       "updated_at": "2026-07-11T19:25:17.000000Z",
+     *       "created_at": "2026-07-15T07:34:24.000000Z",
+     *       "updated_at": "2026-07-15T07:44:13.000000Z",
      *       "deleted_at": null
      *     },
      *     {
-     *       "id": 2,
+     *       "id": 16,
      *       "course_id": 1,
-     *       "teacher_id": 91,
+     *       "teacher_id": 1,
      *       "academic_year_id": 1,
-     *       "title": "Updated Midterm",
+     *       "title": "Assignment 1",
+     *       "type": "assignment",
+     *       "max_mark": 10,
+     *       "weight": 10,
+     *       "due_at": null,
+     *       "is_published": 1,
+     *       "created_at": "2026-07-15T07:42:28.000000Z",
+     *       "updated_at": "2026-07-15T07:44:13.000000Z",
+     *       "deleted_at": null
+     *     },
+     *     {
+     *       "id": 22,
+     *       "course_id": 1,
+     *       "teacher_id": 1,
+     *       "academic_year_id": 1,
+     *       "title": "Midterm",
      *       "type": "midterm",
      *       "max_mark": 30,
-     *       "weight": 30,
-     *       "due_at": "2026-08-20 10:00:00",
+     *       "weight": 25,
+     *       "due_at": null,
+     *       "is_published": 1,
+     *       "created_at": "2026-07-15T07:43:24.000000Z",
+     *       "updated_at": "2026-07-15T07:44:13.000000Z",
+     *       "deleted_at": null
+     *     },
+     *     {
+     *       "id": 26,
+     *       "course_id": 1,
+     *       "teacher_id": 1,
+     *       "academic_year_id": 1,
+     *       "title": "Activity 5",
+     *       "type": "activity",
+     *       "max_mark": 10,
+     *       "weight": 5,
+     *       "due_at": null,
      *       "is_published": 0,
-     *       "created_at": "2026-07-11T19:20:44.000000Z",
-     *       "updated_at": "2026-07-11T19:25:17.000000Z",
+     *       "created_at": "2026-07-15T07:44:13.000000Z",
+     *       "updated_at": "2026-07-15T07:44:13.000000Z",
      *       "deleted_at": null
      *     }
      *   ]
      * }
      *
-     * @response 404 {
-     *   "success": false,
-     *   "message": "One or more assessments do not belong to this course."
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "assessments": [
+     *       "The total assessment weight may not exceed 100."
+     *     ]
+     *   }
      * }
      *
      * @response 422 {
-     *   "message": "The assessments field is required.",
+     *   "message": "The given data was invalid.",
      *   "errors": {
      *     "assessments": [
-     *       "The assessments field is required."
+     *       "One or more assessments do not belong to this course and academic year."
      *     ]
      *   }
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "assessments": [
+     *       "The same assessment cannot appear more than once."
+     *     ]
+     *   }
+     * }
+     *
+     * @response 404 {
+     *   "success": false,
+     *   "message": "Teacher profile not found."
      * }
      */
     public function syncAssessments(SyncCourseAssessmentsRequest $request, Course $course, StudentCourseGradeCalculator $gradeCalculator) {
@@ -364,7 +424,6 @@ class CourseAssesmentsController extends Controller
                     ]
                 );
             }
-//            dd("here...");
 
 
             $insertRows = $items
