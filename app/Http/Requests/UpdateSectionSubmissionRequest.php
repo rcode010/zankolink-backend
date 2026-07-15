@@ -23,11 +23,16 @@ class UpdateSectionSubmissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'course_assessment_id' => 'sometimes|exists:course_assessments,id',
             'description' => 'nullable|string',
 
             'files' => 'nullable|array',
             'files.*' => 'file|max:10240|mimes:doc,docx,pdf,ppt,pptx,jpg,jpeg,png',
+
+
+            'title' => 'sometimes|string',
+            'max_mark' => 'sometimes|numeric|min:0',
+            'weight' => 'sometimes|numeric|min:0',
+            'due_at' => 'nullable|date',
         ];
     }
 }

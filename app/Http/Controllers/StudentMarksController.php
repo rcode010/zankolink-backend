@@ -195,7 +195,6 @@ class StudentMarksController extends Controller
      *       "course_id": 1,
      *       "teacher_id": 1,
      *       "title": "Quiz",
-     *       "type": "midterm",
      *       "max_mark": 30,
      *       "teacher": {
      *         "id": 1,
@@ -222,7 +221,7 @@ class StudentMarksController extends Controller
     public function show(Request $request, StudentMarks $mark)
     {
         $mark->load([
-            'courseAssessment:id,course_id,teacher_id,title,type,max_mark',
+            'courseAssessment:id,course_id,teacher_id,title,max_mark',
             'courseAssessment.teacher:id,user_id',
             'courseAssessment.teacher.user:id,name,email',
 
@@ -338,14 +337,12 @@ class StudentMarksController extends Controller
      *       {
      *         "id": 1,
      *         "title": "Quiz",
-     *         "type": "midterm",
      *         "max_mark": 20,
      *         "weight": 30
      *       },
      *       {
      *         "id": 2,
      *         "title": "Assignment 1",
-     *         "type": "assignment",
      *         "max_mark": 10,
      *         "weight": 10
      *       }
@@ -414,7 +411,6 @@ class StudentMarksController extends Controller
             ->get([
                 'id',
                 'title',
-                'type',
                 'max_mark',
                 'weight',
             ]);
@@ -508,7 +504,6 @@ class StudentMarksController extends Controller
                     return [
                         'id' => $assessment->id,
                         'title' => $assessment->title,
-                        'type' => $assessment->type,
                         'max_mark' => (float) $assessment->max_mark,
                         'weight' => $assessment->weight !== null
                             ? (float) $assessment->weight

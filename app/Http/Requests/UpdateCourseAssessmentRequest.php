@@ -25,7 +25,6 @@ class UpdateCourseAssessmentRequest extends FormRequest
         return [
             'academic_year_id' => 'sometimes|exists:academic_years,id',
             'title' => 'sometimes|string|max:255',
-            'type' => 'sometimes|string|in:quiz,assignment,final,midterm,project,activity',
             'max_mark' => 'sometimes|numeric|min:0',
             'weight' => 'sometimes|numeric|min:0',
             'due_at' => 'nullable|date',
