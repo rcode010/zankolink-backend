@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\GetGradebookRequest;
+use App\Http\Requests\StoreGradebookMarksRequest;
 use App\Http\Requests\StoreStudentMarkRequest;
 use App\Http\Requests\UpdateStudentMarkRequest;
 use App\Models\Course;
@@ -103,6 +104,9 @@ class StudentMarksController extends Controller
     public function store(StoreStudentMarkRequest $request, CourseAssessments $assessment, StudentCourseGradeCalculator $studentCourseGrade)
     {
         $teacher = $request->user()->teacher;
+        if (! $teacher) {
+            return $this->error('Teacher profile not found.', 404);
+        }
         $validatedMarks = collect($request->validated()['marks']);
 
         $studentIds = $validatedMarks
@@ -143,7 +147,10 @@ class StudentMarksController extends Controller
                 ]
             );
 
-            $studentCourseGrade->execute($assessment, $studentIds);
+            $studentCourseGrade->recalculateForAssessment(
+                $assessment,
+                $studentIds
+            );
         });
 
         return $this->ok('Marks submitted successfully.', $marks);
@@ -269,6 +276,9 @@ class StudentMarksController extends Controller
     ) {
         $credentials = $request->validated();
         $teacher = $request->user()->teacher;
+        if (! $teacher) {
+            return $this->error('Teacher profile not found.', 404);
+        }
 
         $assessment = $mark->courseAssessment;
 
@@ -281,7 +291,7 @@ class StudentMarksController extends Controller
                 'graded_at' => now(),
             ]);
 
-            $studentCourseGrade->execute(
+            $studentCourseGrade->recalculateForAssessment(
                 $assessment,
                 [$mark->student_id]
             );
@@ -377,7 +387,6 @@ class StudentMarksController extends Controller
      *     ]
      *   }
      * }
-     *
      * @response 422 {
      *   "message": "The academic year id field is required.",
      *   "errors": {
@@ -391,7 +400,6 @@ class StudentMarksController extends Controller
     {
         $credentials = $request->validated();
 
-
         $assessments = CourseAssessments::query()
             ->where('course_id', $course->id)
             ->where('academic_year_id', $credentials['academic_year_id'])
@@ -403,7 +411,6 @@ class StudentMarksController extends Controller
                 'max_mark',
                 'weight',
             ]);
-
 
         $rows = DB::table('course_student')
             ->join(
@@ -453,7 +460,6 @@ class StudentMarksController extends Controller
             ])
             ->orderBy('users.name')
             ->get();
-
 
         $students = $rows
             ->groupBy('student_id')
@@ -506,5 +512,71 @@ class StudentMarksController extends Controller
                 'students' => $students,
             ]
         );
+    }
+
+    public function storeGradebook(StoreGradebookMarksRequest $request, Course $course, StudentCourseGradeCalculator $gradeCalculator)
+    {
+        $teacher = $request->user()->teacher;
+
+        if (! $teacher) {
+            return $this->error('Teacher profile not found.', 404);
+        }
+
+        $validated = $request->validated();
+
+        $academicYearId = (int) $validated['academic_year_id'];
+        $now = now();
+
+        $marks = collect($validated['marks'])
+            ->map(fn (array $mark) => [
+                'course_assessment_id' => (int) $mark['assessment_id'],
+                'student_id' => (int) $mark['student_id'],
+                'mark' => $mark['mark'] !== null
+                    ? (float) $mark['mark']
+                    : null,
+                'feedback' => $mark['feedback'] ?? null,
+                'graded_by' => $teacher->id,
+                'status' => $mark['status'] ?? 'valid',
+                'graded_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])
+            ->values();
+
+        $studentIds = $marks
+            ->pluck('student_id')
+            ->unique()
+            ->values()
+            ->all();
+
+        DB::transaction(function () use ($marks, $course, $academicYearId, $studentIds, $gradeCalculator) {
+
+            DB::table('student_marks')->upsert(
+                $marks->all(),
+                [
+                    'course_assessment_id',
+                    'student_id',
+                ],
+                [
+                    'mark',
+                    'feedback',
+                    'status',
+                    'graded_by',
+                    'graded_at',
+                    'updated_at',
+                ]
+            );
+
+            $gradeCalculator->recalculateForCourse(
+                $course,
+                $academicYearId,
+                $studentIds
+            );
+        });
+
+        return $this->ok('Gradebook marks saved successfully.', [
+            'saved_marks_count' => $marks->count(),
+            'recalculated_students_count' => count($studentIds),
+        ]);
     }
 }

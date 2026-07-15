@@ -9,12 +9,12 @@ use App\Http\Resources\SectionSubmissionResource;
 use App\Models\CourseSection;
 use App\Models\SectionSubmission;
 use App\Traits\ApiResponses;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
-
 
 /**
  * @group Section-Submission
@@ -141,7 +141,7 @@ class SectionSubmissionController extends Controller
                     $submission->load([
                         'section:id,title',
                         'attachments',
-                        'courseAssessment'
+                        'courseAssessment',
                     ])
                 ))->resolve(),
                 201
@@ -203,7 +203,7 @@ class SectionSubmissionController extends Controller
             (new SectionSubmissionResource($submission->load([
                 'attachments',
                 'section:id,title',
-                'courseAssessment'
+                'courseAssessment',
             ])
             ))->resolve()
         );
@@ -283,7 +283,7 @@ class SectionSubmissionController extends Controller
                 (new SectionSubmissionResource($submission->load([
                     'section:id,title',
                     'attachments',
-                    'courseAssessment'
+                    'courseAssessment',
                 ])))->resolve()
             );
         } catch (\Exception $e) {
@@ -324,6 +324,7 @@ class SectionSubmissionController extends Controller
             'Assignment deleted successfully.',
         );
     }
+
     /**
      * Get my assignments
      *
@@ -371,27 +372,75 @@ class SectionSubmissionController extends Controller
      *   ]
      * }
      */
-    public function myAssignments(Request $request){
+    public function myAssignments(Request $request)
+    {
         $student = $request->user()->student;
 
-        $assignments = QueryBuilder::for(SectionSubmission::class)
-            ->whereNotNull('deadline')
-            ->where('deadline', '>=', now())
-            ->whereHas('section.course.students', function ($query) use ($student) {
-                $query->where('students.id', $student->id);
-            })
+        if (! $student) {
+            return $this->error('Student profile not found.', 404);
+        }
+
+        $query = QueryBuilder::for(
+            SectionSubmission::query()
+                ->select('section_submissions.*')
+                ->join(
+                    'course_assessments',
+                    'course_assessments.id',
+                    '=',
+                    'section_submissions.course_assessment_id'
+                )
+                ->whereNull('course_assessments.deleted_at')
+                ->whereNotNull('course_assessments.due_at')
+                ->where('course_assessments.due_at', '>=', now())
+                ->where('course_assessments.is_published', true)
+                ->whereHas('section.course.students', function ($query) use ($student) {
+                    $query->where('students.id', $student->id);
+                })
+        )
             ->with([
                 'section.course:id,name,code',
+
+                'courseAssessment:id,course_id,title,type,max_mark,weight,due_at,is_published,academic_year_id',
+
                 'studentSubmissions' => fn ($query) => $query
                     ->where('student_id', $student->id),
             ])
             ->allowedFilters(
-                AllowedFilter::exact('course_section_id'),
-            )
-            ->allowedSorts('deadline')
-            ->defaultSort('deadline')
-            ->get();
+                AllowedFilter::exact(
+                    'course_section_id',
+                    'section_submissions.course_section_id'
+                ),
 
-        return $this->ok("Assignments retrieved successfully.", $assignments->toArray());
+                AllowedFilter::exact(
+                    'course_assessment_id',
+                    'section_submissions.course_assessment_id'
+                ),
+
+                AllowedFilter::exact(
+                    'academic_year_id',
+                    'course_assessments.academic_year_id'
+                ),
+            )
+            ->allowedSorts(
+                AllowedSort::field(
+                    'due_at',
+                    'course_assessments.due_at'
+                ),
+            );
+
+        /*
+         * Apply the nearest due date first when the frontend
+         * does not provide a sort parameter.
+         */
+        if (! $request->filled('sort')) {
+            $query->orderBy('course_assessments.due_at');
+        }
+
+        $assignments = $query->get();
+
+        return $this->ok(
+            'Assignments retrieved successfully.',
+            $assignments->toArray()
+        );
     }
 }
