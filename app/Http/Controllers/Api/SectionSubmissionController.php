@@ -240,27 +240,12 @@ class SectionSubmissionController extends Controller
      * }
      * }
      */
-    public function update(UpdateSectionSubmissionRequest $request, SectionSubmission $submission)
+    public function update(UpdateSectionSubmissionRequest $request, SectionSubmission $submission, SectionSubmissionService $service)
     {
         $this->authorize('update', $submission);
-        $data = $request->validated();
-        DB::beginTransaction();
+
         try {
-            $submission->update($data);
-
-            if ($request->hasFile('files')) {
-                foreach ($request->file('files') as $file) {
-                    $path = $file->store('section-submission', 'public');
-                    $submission->attachments()->create([
-                        'file_name' => $file->getClientOriginalName(),
-                        'file_type' => $file->getClientMimeType(),
-                        'file_size' => $file->getSize(),
-                        'file_url' => $path,
-                    ]);
-                }
-            }
-
-            DB::commit();
+            $submission = $service->update($submission, $request->validated(), $request->file('files', []));
 
             return $this->success(
                 'Assignment updated successfully.',
@@ -304,6 +289,7 @@ class SectionSubmissionController extends Controller
         foreach ($submission->attachments as $attachment) {
             Storage::disk('public')->delete($attachment->file_url);
         }
+        $submission->courseAssessment()->delete();
         $submission->delete();
 
         return $this->success(

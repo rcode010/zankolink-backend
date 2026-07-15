@@ -57,4 +57,29 @@ class SectionSubmissionService
         });
     }
 
+
+    public function update(SectionSubmission $submission, array $data, array $files = []): SectionSubmission
+    {
+        return DB::transaction(function () use ($submission, $data, $files) {
+
+            $submission->courseAssessment->update([
+                'title' => $data['title'],
+                'max_mark' => $data['max_mark'],
+                'weight' => $data['weight'],
+                'due_at' => $data['due_at'],
+                'is_published' => $data['is_published'] ?? false,
+            ]);
+
+            $submission->update([
+                'description' => $data['description'],
+            ]);
+
+            return $submission->load([
+                'section:id,title',
+                'attachments',
+                'courseAssessment',
+            ]);
+        });
+    }
+
 }
