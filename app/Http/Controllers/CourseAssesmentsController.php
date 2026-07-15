@@ -25,14 +25,13 @@ class CourseAssesmentsController extends Controller
     /**
      * List course assessments
      *
-     * Retrieve all assessments for a specific course. Supports filtering by title and assessment type.
+     * Retrieve all assessments for a specific course. Supports filtering by title.
      *
      * @authenticated
      *
      * @urlParam course integer required The ID of the course. Example: 1
      *
      * @queryParam filter[title] string Filter assessments by partial title. Example: Quiz
-     * @queryParam filter[type] string Filter assessments by exact type. Must be one of: quiz, assignment, final, midterm, project, activity. Example: quiz
      *
      * @response 200 {
      *   "success": true,
@@ -44,7 +43,6 @@ class CourseAssesmentsController extends Controller
      *       "teacher_id": 2,
      *       "academic_year_id": 1,
      *       "title": "Quiz 1",
-     *       "type": "quiz",
      *       "max_mark": "10.00",
      *       "weight": "5.00",
      *       "due_at": "2026-07-20 10:00:00",
@@ -63,7 +61,6 @@ class CourseAssesmentsController extends Controller
             ->where('course_id', $course->id)
             ->allowedFilters(
                 AllowedFilter::partial('title'),
-                AllowedFilter::exact('type'),
             )->get();
 
         return $this->ok('Course Assessments retrieved successfully', $assessments->toArray());
@@ -80,7 +77,6 @@ class CourseAssesmentsController extends Controller
      *
      * @bodyParam academic_year_id integer required The ID of the academic year. Example: 1
      * @bodyParam title string required The assessment title. Example: Quiz 1
-     * @bodyParam type string required The assessment type. Must be one of: quiz, assignment, final, midterm, project, activity. Example: quiz
      * @bodyParam max_mark number required The maximum mark for this assessment. Example: 10
      * @bodyParam weight number required The assessment weight. Example: 5
      * @bodyParam due_at datetime nullable The due date and time of the assessment. Example: 2026-07-20 10:00:00
@@ -95,7 +91,6 @@ class CourseAssesmentsController extends Controller
      *     "teacher_id": 2,
      *     "academic_year_id": 1,
      *     "title": "Quiz 1",
-     *     "type": "quiz",
      *     "max_mark": "10.00",
      *     "weight": "5.00",
      *     "due_at": "2026-07-20 10:00:00",
@@ -120,7 +115,6 @@ class CourseAssesmentsController extends Controller
         $courseAssessment = CourseAssessments::create([
             'course_id' => $course->id,
             'academic_year_id' => $credentials['academic_year_id'],
-            'type' => $credentials['type'],
             'max_mark' => $credentials['max_mark'],
             'title' => $credentials['title'],
             'weight' => $credentials['weight'],
@@ -145,7 +139,6 @@ class CourseAssesmentsController extends Controller
      *
      * @bodyParam academic_year_id integer optional The ID of the academic year. Example: 1
      * @bodyParam title string optional The assessment title. Example: Midterm Exam
-     * @bodyParam type string optional The assessment type. Must be one of: quiz, assignment, final, midterm, project, activity. Example: midterm
      * @bodyParam max_mark number optional The maximum mark for this assessment. Example: 30
      * @bodyParam weight number optional The assessment weight. Example: 20
      * @bodyParam due_at datetime nullable The due date and time of the assessment. Example: 2026-08-01 09:00:00
@@ -160,7 +153,6 @@ class CourseAssesmentsController extends Controller
      *     "teacher_id": 2,
      *     "academic_year_id": 1,
      *     "title": "Midterm Exam",
-     *     "type": "midterm",
      *     "max_mark": "30.00",
      *     "weight": "20.00",
      *     "due_at": "2026-08-01 09:00:00",
@@ -184,15 +176,19 @@ class CourseAssesmentsController extends Controller
 
     }
     /**
-     * Synchronize course assessments
+     * Apply bulk course assessment changes
      *
-     * Save the final assessment structure for a course and academic year in one request.
+     * Create new assessments, update existing assessments, and delete selected
+     * assessments for the same course and academic year in one request.
      *
-     * Existing assessments with an ID are updated, assessments without an ID are created,
-     * and existing assessments omitted from the submitted list are soft deleted.
+     * Only assessments included in the create, update, or delete operations are
+     * changed. Assessments not included in the request remain unchanged.
      *
-     * The total weight of all submitted assessments must not exceed 100.
-     * Student course grades are recalculated after the assessments are synchronized.
+     * All operations are executed inside one database transaction. If any
+     * operation fails, all changes are rolled back.
+     *
+     * Student course grades are recalculated when an assessment is deleted or
+     * when an assessment's maximum mark or weight is updated.
      *
      * @authenticated
      *
@@ -200,84 +196,108 @@ class CourseAssesmentsController extends Controller
      *
      * @bodyParam academic_year_id integer required The ID of the academic year. Example: 1
      *
-     * @bodyParam assessments array required The final list of assessments for the course and academic year.
+     * @bodyParam create array optional Assessments that should be created.
      *
-     * @bodyParam assessments.*.id integer nullable The assessment ID. Provide an existing ID to update an assessment. Send null or omit the ID to create a new assessment. Example: 10
+     * @bodyParam create.*.title string required The assessment title. Maximum 255 characters. Example: Activity 5
      *
-     * @bodyParam assessments.*.title string required The assessment title. Maximum 255 characters. Example: Assignment 2
+     * @bodyParam create.*.max_mark number required The maximum available mark. Must be greater than 0. Example: 10
      *
-     * @bodyParam assessments.*.type string required The assessment type. Allowed values: quiz, assignment, final, midterm, project, activity. Example: assignment
+     * @bodyParam create.*.weight number required The assessment's contribution to the final course grade. Must be between 0 and 100. Example: 5
      *
-     * @bodyParam assessments.*.max_mark number required The maximum mark available for the assessment. Must be greater than 0. Example: 10
+     * @bodyParam create.*.due_at datetime nullable The assessment due date and time. Example: 2026-08-01 10:00:00
      *
-     * @bodyParam assessments.*.weight number required The assessment's contribution to the final course grade. Must be between 0 and 100. The combined weight of all assessments must not exceed 100. Example: 10
+     * @bodyParam create.*.is_published boolean required Whether the assessment is published to students. Example: false
      *
-     * @bodyParam assessments.*.due_at datetime nullable The assessment due date and time. Example: 2026-07-30 23:59:00
+     * @bodyParam update array optional Existing assessments that should be updated.
      *
-     * @bodyParam assessments.*.is_published boolean required Whether the assessment is visible to students. Example: true
+     * @bodyParam update.*.id integer required The ID of the assessment that should be updated. Example: 1
+     *
+     * @bodyParam update.*.title string optional The updated assessment title. Maximum 255 characters. Example: Updated Midterm
+     *
+     * @bodyParam update.*.max_mark number optional The updated maximum available mark. Must be greater than 0. Example: 20
+     *
+     * @bodyParam update.*.weight number optional The updated assessment weight. Must be between 0 and 100. Example: 30
+     *
+     * @bodyParam update.*.due_at datetime nullable The updated due date and time. Send null to remove the due date. Example: 2026-08-01 10:00:00
+     *
+     * @bodyParam update.*.is_published boolean optional Whether the assessment should be published to students. Example: true
+     *
+     * @bodyParam delete array optional IDs of assessments that should be soft deleted. Example: [3,4]
+     *
+     * @bodyParam delete.* integer required The ID of an assessment that should be deleted. Example: 3
      *
      * @response 200 {
      *   "success": true,
      *   "message": "Course assessments saved successfully.",
      *   "data": [
      *     {
-     *       "id": 10,
+     *       "id": 1,
      *       "course_id": 1,
-     *       "teacher_id": 1,
+     *       "teacher_id": 5,
      *       "academic_year_id": 1,
-     *       "title": "Assignment 2",
-     *       "type": "assignment",
-     *       "max_mark": 10,
-     *       "weight": 10,
-     *       "due_at": null,
+     *       "title": "asdf 2 sdf",
+     *       "max_mark": 20,
+     *       "weight": 30,
+     *       "due_at": "2026-08-01 10:00:00",
      *       "is_published": 1,
-     *       "created_at": "2026-07-15T07:34:24.000000Z",
-     *       "updated_at": "2026-07-15T07:44:13.000000Z",
+     *       "created_at": "2026-07-15T10:50:03.000000Z",
+     *       "updated_at": "2026-07-15T10:54:09.000000Z",
      *       "deleted_at": null
      *     },
      *     {
-     *       "id": 16,
+     *       "id": 2,
      *       "course_id": 1,
-     *       "teacher_id": 1,
+     *       "teacher_id": 5,
      *       "academic_year_id": 1,
-     *       "title": "Assignment 1",
-     *       "type": "assignment",
-     *       "max_mark": 10,
-     *       "weight": 10,
-     *       "due_at": null,
+     *       "title": "Quiz",
+     *       "max_mark": 20,
+     *       "weight": 30,
+     *       "due_at": "2026-08-01 10:00:00",
      *       "is_published": 1,
-     *       "created_at": "2026-07-15T07:42:28.000000Z",
-     *       "updated_at": "2026-07-15T07:44:13.000000Z",
+     *       "created_at": "2026-07-15T10:50:03.000000Z",
+     *       "updated_at": "2026-07-15T10:53:57.000000Z",
      *       "deleted_at": null
      *     },
      *     {
-     *       "id": 22,
+     *       "id": 5,
      *       "course_id": 1,
-     *       "teacher_id": 1,
-     *       "academic_year_id": 1,
-     *       "title": "Midterm",
-     *       "type": "midterm",
-     *       "max_mark": 30,
-     *       "weight": 25,
-     *       "due_at": null,
-     *       "is_published": 1,
-     *       "created_at": "2026-07-15T07:43:24.000000Z",
-     *       "updated_at": "2026-07-15T07:44:13.000000Z",
-     *       "deleted_at": null
-     *     },
-     *     {
-     *       "id": 26,
-     *       "course_id": 1,
-     *       "teacher_id": 1,
+     *       "teacher_id": 5,
      *       "academic_year_id": 1,
      *       "title": "Activity 5",
-     *       "type": "activity",
      *       "max_mark": 10,
      *       "weight": 5,
      *       "due_at": null,
      *       "is_published": 0,
-     *       "created_at": "2026-07-15T07:44:13.000000Z",
-     *       "updated_at": "2026-07-15T07:44:13.000000Z",
+     *       "created_at": "2026-07-15T10:53:01.000000Z",
+     *       "updated_at": "2026-07-15T10:53:01.000000Z",
+     *       "deleted_at": null
+     *     },
+     *     {
+     *       "id": 6,
+     *       "course_id": 1,
+     *       "teacher_id": 5,
+     *       "academic_year_id": 1,
+     *       "title": "asdf 5",
+     *       "max_mark": 10,
+     *       "weight": 5,
+     *       "due_at": null,
+     *       "is_published": 0,
+     *       "created_at": "2026-07-15T10:53:26.000000Z",
+     *       "updated_at": "2026-07-15T10:53:26.000000Z",
+     *       "deleted_at": null
+     *     },
+     *     {
+     *       "id": 7,
+     *       "course_id": 1,
+     *       "teacher_id": 5,
+     *       "academic_year_id": 1,
+     *       "title": "asdf 5",
+     *       "max_mark": 10,
+     *       "weight": 30,
+     *       "due_at": null,
+     *       "is_published": 0,
+     *       "created_at": "2026-07-15T10:53:37.000000Z",
+     *       "updated_at": "2026-07-15T10:54:09.000000Z",
      *       "deleted_at": null
      *     }
      *   ]
@@ -286,8 +306,8 @@ class CourseAssesmentsController extends Controller
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
-     *     "assessments": [
-     *       "The total assessment weight may not exceed 100."
+     *     "operations": [
+     *       "At least one create, update, or delete operation is required."
      *     ]
      *   }
      * }
@@ -295,7 +315,16 @@ class CourseAssesmentsController extends Controller
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
-     *     "assessments": [
+     *     "operations": [
+     *       "The same assessment cannot be updated and deleted in one request."
+     *     ]
+     *   }
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "operations": [
      *       "One or more assessments do not belong to this course and academic year."
      *     ]
      *   }
@@ -304,8 +333,17 @@ class CourseAssesmentsController extends Controller
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
-     *     "assessments": [
-     *       "The same assessment cannot appear more than once."
+     *     "operations": [
+     *       "The final total assessment weight may not exceed 100."
+     *     ]
+     *   }
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "update.0": [
+     *       "At least one assessment field must be provided for update."
      *     ]
      *   }
      * }
@@ -313,6 +351,10 @@ class CourseAssesmentsController extends Controller
      * @response 404 {
      *   "success": false,
      *   "message": "Teacher profile not found."
+     * }
+     *
+     * @response 403 {
+     *   "message": "This action is unauthorized."
      * }
      */
     public function syncAssessments(SyncCourseAssessmentsRequest $request, Course $course, StudentCourseGradeCalculator $gradeCalculator) {
@@ -409,10 +451,6 @@ class CourseAssesmentsController extends Controller
                         ? $item['title']
                         : $assessment->title,
 
-                    'type' => array_key_exists('type', $item)
-                        ? $item['type']
-                        : $assessment->type,
-
                     'max_mark' => array_key_exists(
                         'max_mark',
                         $item
@@ -447,7 +485,6 @@ class CourseAssesmentsController extends Controller
                 'teacher_id' => $teacher->id,
                 'academic_year_id' => $academicYearId,
                 'title' => $item['title'],
-                'type' => $item['type'],
                 'max_mark' => $item['max_mark'],
                 'weight' => $item['weight'],
                 'due_at' => $item['due_at'] ?? null,
@@ -480,7 +517,6 @@ class CourseAssesmentsController extends Controller
                     ['id'],
                     [
                         'title',
-                        'type',
                         'max_mark',
                         'weight',
                         'due_at',
@@ -556,7 +592,6 @@ class CourseAssesmentsController extends Controller
      *     "teacher_id": 2,
      *     "academic_year_id": 1,
      *     "title": "Quiz 1",
-     *     "type": "quiz",
      *     "max_mark": "10.00",
      *     "weight": "5.00",
      *     "due_at": "2026-07-20 10:00:00",

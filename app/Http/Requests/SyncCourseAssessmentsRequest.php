@@ -39,12 +39,6 @@ class SyncCourseAssessmentsRequest extends FormRequest
                 'max:255',
             ],
 
-            'create.*.type' => [
-                'required',
-                'string',
-                'in:quiz,assignment,final,midterm,project,activity',
-            ],
-
             'create.*.max_mark' => [
                 'required',
                 'numeric',
@@ -88,12 +82,6 @@ class SyncCourseAssessmentsRequest extends FormRequest
                 'sometimes',
                 'string',
                 'max:255',
-            ],
-
-            'update.*.type' => [
-                'sometimes',
-                'string',
-                'in:quiz,assignment,final,midterm,project,activity',
             ],
 
             'update.*.max_mark' => [
@@ -182,7 +170,6 @@ class SyncCourseAssessmentsRequest extends FormRequest
 
                 $editableFields = [
                     'title',
-                    'type',
                     'max_mark',
                     'weight',
                     'due_at',
