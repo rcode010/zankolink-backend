@@ -33,3 +33,4 @@ Thumbs.db
 /lang/scribe.php
 /storage/app/public/student-submissions/*
 /storage/app/public/section-submission-attachments/*
+/storage/clockwork
