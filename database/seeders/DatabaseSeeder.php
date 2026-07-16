@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\AcademicYear;
 use App\Models\Attachment;
 use App\Models\Course;
+use App\Models\CourseSection;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Letter;
@@ -543,6 +544,7 @@ class DatabaseSeeder extends Seeder
             ->each(function (Course $course) use ($department) {
                 $this->seedCourseTeachers($course, $department);
                 $this->seedCourseStudents($course, $department);
+                $this->seedCourseSection($course);
             });
     }
 
@@ -836,4 +838,32 @@ class DatabaseSeeder extends Seeder
             ]
         );
     }
+    private function seedCourseSection(Course $course): void{
+        $teachers = $course->teachers()
+            ->inRandomOrder()
+            ->get();
+
+        foreach ($teachers as $teacher) {
+            for($i = 0; $i < 4; $i++) {
+
+                CourseSection::factory()
+                    ->for($course)
+                    ->for($teacher)
+                    ->create();
+            }
+        }
+    }
+    private function seedCourseAssessment(){
+
+    }
+    private function seedSectionSubmission(){
+
+    }
+    private function seedStudentSubmission(){
+
+    }
+    private function seedStudentMark(){
+
+    }
+
 }
