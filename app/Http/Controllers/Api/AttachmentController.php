@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreAttachmentRequest;
-use App\Http\Resources\AttachmentResource;
 use App\Models\Attachment;
 use App\Models\Letter;
 use App\Traits\ApiResponses;
@@ -18,36 +16,6 @@ use Illuminate\Support\Facades\Storage;
 class AttachmentController extends Controller
 {
     use ApiResponses;
-
-    /**
-     * Upload attachment to a letter.
-     */
-    public function store(StoreAttachmentRequest $request, Letter $letter): JsonResponse
-    {
-        $attachments = collect();
-
-        foreach ($request->file('file') as $file) {
-            $path = $file->store(
-                "attachments/letters/{$letter->id}",
-                'public'
-            );
-
-            $attachments->push(
-                Attachment::create([
-                    'letter_id' => $letter->id,
-                    'file_name' => $file->getClientOriginalName(),
-                    'file_type' => $file->getClientOriginalExtension(),
-                    'file_size' => $file->getSize(),
-                    'file_url' => $path,
-                ])
-            );
-        }
-
-        return $this->created(
-            'Attachments uploaded successfully.',
-            AttachmentResource::collection($attachments)->resolve()
-        );
-    }
 
     /**
      * Download attachment.
