@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CourseAssessments extends Model
 {
-    //
+    use HasFactory;
+
     protected $fillable = ['course_id', 'academic_year_id', 'title', 'type', 'max_mark', 'weight', 'due_at', 'teacher_id', 'is_published'];
 
     public function course()

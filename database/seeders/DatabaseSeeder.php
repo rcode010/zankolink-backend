@@ -11,6 +11,7 @@ use App\Models\Faculty;
 use App\Models\Letter;
 use App\Models\LetterSignature;
 use App\Models\SectionItem;
+use App\Models\SectionSubmission;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\University;
@@ -864,6 +865,7 @@ class DatabaseSeeder extends Seeder
                     ->for($teacher)
                     ->create();
                 $this->seedSectionItem($section);
+                $this->seedSectionSubmission($section);
             }
         }
 
@@ -878,9 +880,16 @@ class DatabaseSeeder extends Seeder
         }
     }
 
-    private function seedCourseAssessment() {}
+    private function seedSectionSubmission(CourseSection $section)
+    {
+        for ($i = 0; $i < 3; $i++) {
+            SectionSubmission::factory()
+                ->for($section, 'section')
+                ->create();
+        }
+    }
 
-    private function seedSectionSubmission() {}
+    private function seedCourseAssessment() {}
 
     private function seedStudentSubmission() {}
 

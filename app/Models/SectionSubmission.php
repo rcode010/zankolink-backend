@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SectionSubmission extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['course_section_id', 'course_assessment_id', 'description'];
 
-     protected function casts(): array
+    protected function casts(): array
     {
         return [
             'weight' => 'decimal:2',
-            'deadline' => 'datetime'
+            'deadline' => 'datetime',
 
         ];
     }
@@ -38,5 +41,4 @@ class SectionSubmission extends Model
     {
         return $this->belongsTo(CourseAssessments::class, 'course_assessment_id');
     }
-
 }
