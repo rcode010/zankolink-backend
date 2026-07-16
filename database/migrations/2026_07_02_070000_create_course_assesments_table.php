@@ -23,7 +23,6 @@ return new class extends Migration
             $table->decimal('weight', 5, 2)->nullable();
 
             $table->dateTime('due_at')->nullable();
-            $table->boolean('is_published')->default(false);
 
             $table->timestamps();
             $table->softDeletes();
