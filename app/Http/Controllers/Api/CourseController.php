@@ -216,7 +216,6 @@ class CourseController extends Controller
             'department:id,name',
             'prerequisites:id,name,code',
         ]);
-        //        dd("here...");
 
         return $this->success(
             'Course created successfully.',
