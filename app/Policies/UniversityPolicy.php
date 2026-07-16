@@ -12,7 +12,7 @@ class UniversityPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasPermissionTo('view universities') || $user->hasPermissionTo('view universities');
+        return $user->hasPermissionTo('view universities');
     }
 
     /**
@@ -20,7 +20,7 @@ class UniversityPolicy
      */
     public function view(User $user, University $university): bool
     {
-        if ($user->hasRole('MINISTRY_ADMIN') || $user->hasRole('view universities')) {
+        if ($user->hasRole('MINISTRY_ADMIN') || $user->hasRole('UNIVERSITY_ADMIN_IMPORT_EXPORT')) {
             return true;
         }
 
