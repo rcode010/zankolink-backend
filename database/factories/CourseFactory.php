@@ -32,6 +32,7 @@ class CourseFactory extends Factory
             'Cyber Security',
             'Software Quality Assurance',
         ];
+
         $yearLevel = $this->faker->numberBetween(1, 4);
 
         $prefix = $this->faker->randomElement(['KOU', 'UOS', 'SUE']);
@@ -44,6 +45,7 @@ class CourseFactory extends Factory
             'year_level' => $yearLevel,
             'credit_hours' => $this->faker->randomElement([2, 3, 4]),
             'is_active' => $this->faker->randomElement([true, false]),
+            'color' => $this->faker->unique()->safeHexColor(),
         ];
     }
 }
