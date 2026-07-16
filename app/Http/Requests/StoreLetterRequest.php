@@ -21,7 +21,6 @@ class StoreLetterRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array|string>
      */
-
     public function rules(): array
     {
         $type = $this->input('type');
@@ -44,6 +43,17 @@ class StoreLetterRequest extends FormRequest
             'academic_year_id' => ['required', 'exists:academic_years,id'],
 
             'payload' => ['required', 'array'],
+
+            'file' => [
+                'nullable',
+                'array',
+            ],
+
+            'file.*' => [
+                'file',
+                'mimes:pdf,doc,docx,jpg,jpeg,png',
+                'max:5120',
+            ],
 
             ...$this->payloadRules($type),
         ];
@@ -87,4 +97,5 @@ class StoreLetterRequest extends FormRequest
 
             default => [],
         };
-    }}
+    }
+}

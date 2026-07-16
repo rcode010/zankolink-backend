@@ -12,6 +12,7 @@ use App\Models\Letter;
 use App\Models\LetterBroadcast;
 use App\Models\LetterFlow;
 use App\Models\LetterSignature;
+use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
 use App\Traits\ApiResponses;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+
 /**
  * @group Letters
  *
@@ -53,6 +55,7 @@ class LetterController extends Controller
             ->with([
                 'sender:id,name',
                 'receiver:id,name',
+                'attachments',
             ])
             ->latest()
             ->paginate($per_page);
@@ -61,17 +64,9 @@ class LetterController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreLetterRequest $request, QrCodeService $qrCodeService,LetterVerificationHashService $letterVerificationHashService)
+    public function store(StoreLetterRequest $request, QrCodeService $qrCodeService, LetterVerificationHashService $letterVerificationHashService, LetterService $letterService)
     {
         $this->authorize('create', Letter::class);
         $user = $request->user();
@@ -81,25 +76,9 @@ class LetterController extends Controller
         $data['sender_id'] = $user->id;
         $data['status'] = 'pending';
 
-        $data['letter_uuid'] = (string)Str::uuid();
-        $letter = DB::transaction(function () use ($data, $qrCodeService, $user, $letterVerificationHashService) {
+        $data['letter_uuid'] = (string) Str::uuid();
 
-            $letter = Letter::create($data)->fresh();
-
-            $hashData = $letterVerificationHashService->generate($letter);
-
-            $qrCodePath = $qrCodeService->generate($letter, 'public', 'qr-codes', 400);
-            $letter->update([
-                'verification_hash' => $hashData,
-                'qr_code_path' => $qrCodePath,
-            ]);
-            LetterSignature::create([
-                'letter_id' => $letter->id,
-                'user_id' => $user->id,
-            ]);
-
-            return $letter;
-        });
+        $letter = $letterService->create($data, $qrCodeService, $user, $letterVerificationHashService, $request->file('files', []));
 
         if ($letter) {
             return $this->ok(
@@ -108,6 +87,7 @@ class LetterController extends Controller
                     $letter->fresh()->load([
                         'sender:id,name',
                         'receiver:id,name',
+                        'attachments',
                     ])
                 ))->resolve()
             );
@@ -129,17 +109,10 @@ class LetterController extends Controller
                 $letter->load([
                     'sender:id,name',
                     'receiver:id,name',
+                    'attachments',
                 ])
             ))->resolve()
         );
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Letter $letter)
-    {
-        //
     }
 
     /**
@@ -162,6 +135,7 @@ class LetterController extends Controller
                 $letter->load([
                     'sender:id,name',
                     'receiver:id,name',
+                    'attachments'
                 ])
             ))->resolve()
         );
@@ -174,6 +148,7 @@ class LetterController extends Controller
         $letters = Letter::with([
             'sender:id,name',
             'receiver:id,name',
+            'attachments',
         ])
             ->where('receiver_id', $user->id)
             ->latest()
@@ -305,11 +280,4 @@ class LetterController extends Controller
         return $this->ok('Outbox letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Letter $letter)
-    {
-        //
-    }
 }
