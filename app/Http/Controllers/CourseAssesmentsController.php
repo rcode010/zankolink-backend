@@ -46,7 +46,6 @@ class CourseAssesmentsController extends Controller
      *       "max_mark": "10.00",
      *       "weight": "5.00",
      *       "due_at": "2026-07-20 10:00:00",
-     *       "is_published": true,
      *       "created_at": "2026-07-08T09:00:00.000000Z",
      *       "updated_at": "2026-07-08T09:00:00.000000Z"
      *     }
@@ -80,7 +79,6 @@ class CourseAssesmentsController extends Controller
      * @bodyParam max_mark number required The maximum mark for this assessment. Example: 10
      * @bodyParam weight number required The assessment weight. Example: 5
      * @bodyParam due_at datetime nullable The due date and time of the assessment. Example: 2026-07-20 10:00:00
-     * @bodyParam is_published boolean required Whether the assessment is visible/published. Example: true
      *
      * @response 201 {
      *   "success": true,
@@ -94,7 +92,6 @@ class CourseAssesmentsController extends Controller
      *     "max_mark": "10.00",
      *     "weight": "5.00",
      *     "due_at": "2026-07-20 10:00:00",
-     *     "is_published": true,
      *     "created_at": "2026-07-08T09:00:00.000000Z",
      *     "updated_at": "2026-07-08T09:00:00.000000Z"
      *   }
@@ -120,7 +117,6 @@ class CourseAssesmentsController extends Controller
             'weight' => $credentials['weight'],
             'due_at' => $credentials['due_at'] ?? null,
             'teacher_id' => $teacher->id,
-            'is_published' => $credentials['is_published'] ?? false,
         ]);
 
         return $this->created('Course Assessment created successfully', $courseAssessment->toArray());
@@ -142,7 +138,6 @@ class CourseAssesmentsController extends Controller
      * @bodyParam max_mark number optional The maximum mark for this assessment. Example: 30
      * @bodyParam weight number optional The assessment weight. Example: 20
      * @bodyParam due_at datetime nullable The due date and time of the assessment. Example: 2026-08-01 09:00:00
-     * @bodyParam is_published boolean optional Whether the assessment is visible/published. Example: true
      *
      * @response 200 {
      *   "success": true,
@@ -156,7 +151,6 @@ class CourseAssesmentsController extends Controller
      *     "max_mark": "30.00",
      *     "weight": "20.00",
      *     "due_at": "2026-08-01 09:00:00",
-     *     "is_published": true
      *   }
      * }
      * @response 404 {
@@ -206,8 +200,6 @@ class CourseAssesmentsController extends Controller
      *
      * @bodyParam create.*.due_at datetime nullable The assessment due date and time. Example: 2026-08-01 10:00:00
      *
-     * @bodyParam create.*.is_published boolean required Whether the assessment is published to students. Example: false
-     *
      * @bodyParam update array optional Existing assessments that should be updated.
      *
      * @bodyParam update.*.id integer required The ID of the assessment that should be updated. Example: 1
@@ -219,8 +211,6 @@ class CourseAssesmentsController extends Controller
      * @bodyParam update.*.weight number optional The updated assessment weight. Must be between 0 and 100. Example: 30
      *
      * @bodyParam update.*.due_at datetime nullable The updated due date and time. Send null to remove the due date. Example: 2026-08-01 10:00:00
-     *
-     * @bodyParam update.*.is_published boolean optional Whether the assessment should be published to students. Example: true
      *
      * @bodyParam delete array optional IDs of assessments that should be soft deleted. Example: [3,4]
      *
@@ -239,7 +229,6 @@ class CourseAssesmentsController extends Controller
      *       "max_mark": 20,
      *       "weight": 30,
      *       "due_at": "2026-08-01 10:00:00",
-     *       "is_published": 1,
      *       "created_at": "2026-07-15T10:50:03.000000Z",
      *       "updated_at": "2026-07-15T10:54:09.000000Z",
      *       "deleted_at": null
@@ -253,7 +242,6 @@ class CourseAssesmentsController extends Controller
      *       "max_mark": 20,
      *       "weight": 30,
      *       "due_at": "2026-08-01 10:00:00",
-     *       "is_published": 1,
      *       "created_at": "2026-07-15T10:50:03.000000Z",
      *       "updated_at": "2026-07-15T10:53:57.000000Z",
      *       "deleted_at": null
@@ -267,7 +255,6 @@ class CourseAssesmentsController extends Controller
      *       "max_mark": 10,
      *       "weight": 5,
      *       "due_at": null,
-     *       "is_published": 0,
      *       "created_at": "2026-07-15T10:53:01.000000Z",
      *       "updated_at": "2026-07-15T10:53:01.000000Z",
      *       "deleted_at": null
@@ -281,7 +268,6 @@ class CourseAssesmentsController extends Controller
      *       "max_mark": 10,
      *       "weight": 5,
      *       "due_at": null,
-     *       "is_published": 0,
      *       "created_at": "2026-07-15T10:53:26.000000Z",
      *       "updated_at": "2026-07-15T10:53:26.000000Z",
      *       "deleted_at": null
@@ -295,7 +281,6 @@ class CourseAssesmentsController extends Controller
      *       "max_mark": 10,
      *       "weight": 30,
      *       "due_at": null,
-     *       "is_published": 0,
      *       "created_at": "2026-07-15T10:53:37.000000Z",
      *       "updated_at": "2026-07-15T10:54:09.000000Z",
      *       "deleted_at": null
@@ -466,13 +451,6 @@ class CourseAssesmentsController extends Controller
                         ? $item['due_at']
                         : $assessment->due_at,
 
-                    'is_published' => array_key_exists(
-                        'is_published',
-                        $item
-                    )
-                        ? $item['is_published']
-                        : $assessment->is_published,
-
                     'created_at' => $assessment->created_at,
                     'updated_at' => $now,
                 ];
@@ -488,7 +466,6 @@ class CourseAssesmentsController extends Controller
                 'max_mark' => $item['max_mark'],
                 'weight' => $item['weight'],
                 'due_at' => $item['due_at'] ?? null,
-                'is_published' => $item['is_published'],
                 'created_at' => $now,
                 'updated_at' => $now,
             ])
@@ -520,7 +497,6 @@ class CourseAssesmentsController extends Controller
                         'max_mark',
                         'weight',
                         'due_at',
-                        'is_published',
                         'updated_at',
                     ]
                 );
@@ -595,7 +571,6 @@ class CourseAssesmentsController extends Controller
      *     "max_mark": "10.00",
      *     "weight": "5.00",
      *     "due_at": "2026-07-20 10:00:00",
-     *     "is_published": true,
      *     "course": {
      *       "id": 1,
      *       "name": "Database Systems"

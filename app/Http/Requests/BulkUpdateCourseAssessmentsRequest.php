@@ -59,12 +59,7 @@ class BulkUpdateCourseAssessmentsRequest extends FormRequest
                 'sometimes',
                 'nullable',
                 'date',
-            ],
-
-            'assessments.*.is_published' => [
-                'sometimes',
-                'boolean',
-            ],
+            ]
         ];
     }
 

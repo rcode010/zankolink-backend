@@ -58,7 +58,6 @@ class CalendarEventsController extends Controller
                 'section_submissions.course_assessment_id'
             )
             ->whereNull('course_assessments.deleted_at')
-            ->where('course_assessments.is_published', true)
             ->where(
                 'course_assessments.academic_year_id',
                 $academicYearId

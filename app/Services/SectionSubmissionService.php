@@ -26,7 +26,6 @@ class SectionSubmissionService
                 'max_mark' => $data['max_mark'],
                 'weight' => $data['weight'],
                 'due_at' => $data['due_at'],
-                'is_published' => $data['is_published'] ?? false,
                 'teacher_id' => $teacher->id,
                 'course_id' => $section->course->id,
             ]);
@@ -67,7 +66,6 @@ class SectionSubmissionService
                 'max_mark' => $data['max_mark'],
                 'weight' => $data['weight'],
                 'due_at' => $data['due_at'],
-                'is_published' => $data['is_published'] ?? false,
             ]);
 
             $submission->update([
