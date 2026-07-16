@@ -245,6 +245,10 @@ class DatabaseSeeder extends Seeder
                 'create stamps', 'view stamps',
                 'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
             ],
+            'UNIVERSITY_ADMIN_IMPORT_EXPORT'=>[
+                'view university', 'view universities', 'view faculties', 'view faculty','forward letters', 'view letter broadcast',
+                'view letters','view stamps','view signatures'
+            ],
 
             // Faculty
             'DEAN' => [
@@ -450,7 +454,13 @@ class DatabaseSeeder extends Seeder
                     scopeType: 'UNIVERSITY',
                     scopeId: $university->id
                 );
-
+                $this->createScopedUser(
+                    name: "University Import-Export Staff {$u}",
+                    email: "university.import-export{$userCode}{$positionCode}@zankolink.test",
+                    roleName: 'UNIVERSITY_ADMIN_IMPORT_EXPORT',
+                    scopeType: 'UNIVERSITY',
+                    scopeId: $university->id
+                );
                 $university->update(['admin_id' => $admin->id]);
 
                 $this->seedFaculties($university, $u);
