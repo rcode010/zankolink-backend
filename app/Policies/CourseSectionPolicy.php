@@ -31,7 +31,7 @@ class CourseSectionPolicy
      */
     public function create(User $user, Course $course): bool
     {
-        return $this->teacherBelongsToCourse($user, $course);
+        return $this->teacherBelongsToCourse($user, $course) && $this->is_primary_lecturer($user, $course);
     }
 
     /**
@@ -86,5 +86,12 @@ class CourseSectionPolicy
     {
         return $user->teacher
             && $courseSection->teacher_id === $user->teacher->id;
+    }
+    private function is_primary_lecturer(User $user, Course $course): bool{
+        return $course->teachers()
+                ->whereKey($user->teacher->id)
+                ->where('role', 'primary_lecturer')
+                ->exists();
+
     }
 }
