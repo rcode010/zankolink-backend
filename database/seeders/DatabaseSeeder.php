@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\AcademicYear;
 use App\Models\Attachment;
 use App\Models\Course;
+use App\Models\CourseAssessments;
 use App\Models\CourseSection;
 use App\Models\Department;
 use App\Models\Faculty;
@@ -13,12 +14,14 @@ use App\Models\LetterSignature;
 use App\Models\SectionItem;
 use App\Models\SectionSubmission;
 use App\Models\Student;
+use App\Models\StudentMarks;
 use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
@@ -51,6 +54,11 @@ class DatabaseSeeder extends Seeder
 
     private int $lettersCount = 30;
 
+    /** @var array<string, int> */
+    private array $roleIds = [];
+
+    private int $bulkInsertSize = 1000;
+
     private function userCode(int $number): string
     {
         return str_pad($number, 3, '0', STR_PAD_LEFT);
@@ -68,21 +76,31 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        DB::disableQueryLog();
+
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
         $this->hashedDefaultPassword = Hash::make($this->defaultPassword);
-        $this->faker = FakerFactory::create();
-        $this->seedRoles();
+        $this->faker = FakerFactory::create('en_US');
 
-        $this->call(AcademicYearSeeder::class);
-        $this->activeAcademicYear = AcademicYear::where('is_active', true)->first();
+        DB::transaction(function (): void {
+            $this->seedRoles();
 
-        $this->seedMinistryUsers();
-        $this->seedUniversities();
+            $this->call(AcademicYearSeeder::class);
 
-        $this->seedLetters();
-        $this->createMoodleDemoUsers();
+            $this->activeAcademicYear = AcademicYear::query()
+                ->where('is_active', true)
+                ->firstOrFail();
 
-        //        Artisan::call('zankolink:seed-frontend-users');
+            $this->seedMinistryUsers();
+            $this->seedUniversities();
+            $this->seedLetters();
+            $this->createMoodleDemoUsers();
+        });
+
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        // Artisan::call('zankolink:seed-frontend-users');
     }
 
     private function seedRoles(): void
@@ -153,12 +171,21 @@ class DatabaseSeeder extends Seeder
 
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate([
-                'name' => $permission,
-                'guard_name' => 'web',
-            ]);
-        }
+        $now = now();
+
+        Permission::query()->upsert(
+            array_map(
+                static fn (string $permission): array => [
+                    'name' => $permission,
+                    'guard_name' => 'web',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ],
+                $permissions
+            ),
+            ['name', 'guard_name'],
+            ['updated_at']
+        );
 
         $roles = [
             // Ministry
@@ -303,6 +330,12 @@ class DatabaseSeeder extends Seeder
 
             $role->syncPermissions($rolePermissions);
         }
+
+        $this->roleIds = Role::query()
+            ->where('guard_name', 'web')
+            ->pluck('id', 'name')
+            ->map(static fn ($id): int => (int) $id)
+            ->all();
     }
 
     private function createScopedUser(
@@ -480,6 +513,9 @@ class DatabaseSeeder extends Seeder
 
     private function seedTeachers(Department $department): void
     {
+        $departmentLinks = [];
+        $now = now();
+
         for ($i = 1; $i <= $this->teachersPerDepartment; $i++) {
             $number = $this->emailNumber($this->teacherNumber);
 
@@ -506,19 +542,21 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            DB::table('teacher_department')->updateOrInsert(
-                [
-                    'teacher_id' => $teacher->id,
-                    'department_id' => $department->id,
-                ],
-                [
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
-            );
+            $departmentLinks[] = [
+                'teacher_id' => $teacher->id,
+                'department_id' => $department->id,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
 
             $this->teacherNumber++;
         }
+
+        DB::table('teacher_department')->upsert(
+            $departmentLinks,
+            ['teacher_id', 'department_id'],
+            ['updated_at']
+        );
     }
 
     private function seedStudents(Department $department, int $u, int $f, int $d): void
@@ -558,6 +596,7 @@ class DatabaseSeeder extends Seeder
             ->each(function (Course $course) use ($department) {
                 $this->seedCourseTeachers($course, $department);
                 $this->seedCourseStudents($course, $department);
+
                 $this->seedCourseSection($course);
             });
     }
@@ -567,48 +606,61 @@ class DatabaseSeeder extends Seeder
         $teachers = $department->teachers()
             ->inRandomOrder()
             ->limit($this->faker->numberBetween(1, 3))
-            ->get();
+            ->get(['teachers.id']);
 
-        foreach ($teachers as $index => $teacher) {
-            $roles = ['primary_lecturer', 'assistant_lecturer', 'lab_instructor'];
-
-            DB::table('course_teacher')->updateOrInsert(
-                [
-                    'course_id' => $course->id,
-                    'teacher_id' => $teacher->id,
-                    'role' => $roles[$index],
-                ],
-                [
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
-            );
+        if ($teachers->isEmpty()) {
+            return;
         }
+
+        $roles = ['primary_lecturer', 'assistant_lecturer', 'lab_instructor'];
+        $now = now();
+
+        $rows = $teachers
+            ->values()
+            ->map(static fn (Teacher $teacher, int $index): array => [
+                'course_id' => $course->id,
+                'teacher_id' => $teacher->id,
+                'role' => $roles[$index],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])
+            ->all();
+
+        DB::table('course_teacher')->insert($rows);
     }
 
     private function seedCourseStudents(Course $course, Department $department): void
     {
-        $students = Student::where('department_id', $department->id)
+        $students = Student::query()
+            ->where('department_id', $department->id)
             ->inRandomOrder()
             ->limit($this->faker->numberBetween(8, 10))
-            ->get();
+            ->get(['id']);
 
-        foreach ($students as $student) {
-            DB::table('course_student')->updateOrInsert(
-                [
-                    'course_id' => $course->id,
-                    'student_id' => $student->id,
-                    'academic_year_id' => $this->activeAcademicYear->id,
-                ],
-                [
-                    'grade' => $this->faker->optional()->numberBetween(50, 100),
-                    'status' => 'enrolled',
-                    'enrolled_at' => now(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]
-            );
+        if ($students->isEmpty()) {
+            return;
         }
+
+        $now = now();
+
+        $rows = $students
+            ->map(fn (Student $student): array => [
+                'course_id' => $course->id,
+                'student_id' => $student->id,
+                'academic_year_id' => $this->activeAcademicYear->id,
+                'grade' => $this->faker->optional()->numberBetween(50, 100),
+                'status' => 'enrolled',
+                'enrolled_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])
+            ->all();
+
+        DB::table('course_student')->upsert(
+            $rows,
+            ['course_id', 'student_id', 'academic_year_id'],
+            ['grade', 'status', 'enrolled_at', 'updated_at']
+        );
     }
 
     private function seedLetters(): void
@@ -828,7 +880,8 @@ class DatabaseSeeder extends Seeder
 
     private function createUserScope(User $user, string $roleName, string $scopeType, ?int $scopeId): void
     {
-        $roleId = DB::table('roles')
+        $roleId = $this->roleIds[$roleName]
+            ??= (int) Role::query()
             ->where('name', $roleName)
             ->where('guard_name', 'web')
             ->value('id');
@@ -854,44 +907,112 @@ class DatabaseSeeder extends Seeder
     private function seedCourseSection(Course $course): void
     {
         $teachers = $course->teachers()
-            ->inRandomOrder()
-            ->get();
+            ->get(['teachers.id']);
+
+        $students = $course->students()
+            ->wherePivot('academic_year_id', $this->activeAcademicYear->id)
+            ->get(['students.id']);
+
+        if ($teachers->isEmpty() || $students->isEmpty()) {
+            return;
+        }
+
+        $assessments = collect();
 
         foreach ($teachers as $teacher) {
-            for ($i = 0; $i < 4; $i++) {
+            for ($i = 1; $i <= 4; $i++) {
+                $section = CourseSection::factory()->create([
+                    'course_id' => $course->id,
+                    'teacher_id' => $teacher->id,
+                    'title' => "Section {$i}",
+                ]);
 
-                $section = CourseSection::factory()
-                    ->for($course)
-                    ->for($teacher)
-                    ->create();
-                $this->seedSectionItem($section);
-                $this->seedSectionSubmission($section);
+                $this->seedSectionItems($section);
+                $assessments->push($this->seedSectionSubmission($section));
             }
         }
 
+        $this->seedStudentMarks($assessments, $students);
     }
 
-    private function seedSectionItem(CourseSection $section)
+    private function seedSectionItems(CourseSection $section): void
     {
-        for ($i = 0; $i < 3; $i++) {
+        $now = now();
+
+        $rows = collect(
             SectionItem::factory()
-                ->for($section, 'section')
-                ->create();
-        }
+                ->count(3)
+                ->raw(['section_id' => $section->id])
+        )
+            ->map(static fn (array $row): array => [
+                ...$row,
+                'section_id' => $section->id,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])
+            ->all();
+
+        DB::table('section_items')->insert($rows);
     }
 
-    private function seedSectionSubmission(CourseSection $section)
+    private function seedSectionSubmission(CourseSection $section): CourseAssessments
     {
-        for ($i = 0; $i < 3; $i++) {
-            SectionSubmission::factory()
-                ->for($section, 'section')
-                ->create();
-        }
+        $assessment = CourseAssessments::factory()->create([
+            'course_id' => $section->course_id,
+            'teacher_id' => $section->teacher_id,
+            'academic_year_id' => $this->activeAcademicYear->id,
+        ]);
+
+        SectionSubmission::factory()->create([
+            'course_section_id' => $section->id,
+            'course_assessment_id' => $assessment->id,
+        ]);
+
+        return $assessment;
     }
 
-    private function seedCourseAssessment() {}
+    private function seedStudentMarks(Collection $assessments, Collection $students): void
+    {
+        if ($assessments->isEmpty() || $students->isEmpty()) {
+            return;
+        }
 
-    private function seedStudentSubmission() {}
+        $now = now();
+        $rows = [];
 
-    private function seedStudentMark() {}
+        foreach ($assessments as $assessment) {
+            foreach ($students as $student) {
+                $status = $this->faker->randomElement([
+                    'valid',
+                    'valid',
+                    'valid',
+                    'absent',
+                    'excused',
+                    'under_review',
+                ]);
+
+                $rows[] = [
+                    'course_assessment_id' => $assessment->id,
+                    'student_id' => $student->id,
+                    'mark' => $status === 'valid'
+                        ? $this->faker->randomFloat(
+                            2,
+                            0,
+                            (float) $assessment->max_mark
+                        )
+                        : null,
+                    'feedback' => null,
+                    'graded_by' => $assessment->teacher_id,
+                    'graded_at' => $now,
+                    'status' => $status,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            }
+        }
+
+        foreach (array_chunk($rows, $this->bulkInsertSize) as $chunk) {
+            DB::table('student_marks')->insert($chunk);
+        }
+    }
 }
