@@ -57,32 +57,30 @@ class CourseSectionController extends Controller
      *
      * @responseFromApiResource App\Http\Resources\CourseSectionResource collection
      */
-   public function index(Request $request, Course $course)
+    public function index(Request $request, Course $course)
     {
         $this->authorize('viewAny', [CourseSection::class, $course]);
 
-        $per_page = (int) $request->input('per_page', 15);
-        $per_page = max(1, min($per_page, 100));
+        $perPage = (int) $request->input('per_page', 15);
+        $perPage = max(1, min($perPage, 100));
 
-        $query = $course->sections();
-
-        if($teacher = $request->user()->teacher)
-        {
-            $query->where('teacher_id', $teacher->id);
-        }
-
-       $sections = QueryBuilder::for($query)
-           ->allowedFilters(
+        $sections = QueryBuilder::for($course->sections())
+            ->allowedFilters(
                 AllowedFilter::partial('title'),
                 AllowedFilter::exact('teacher_id'),
             )
-           ->with(['course', 'items', 'submissions.attachments'])
-           ->latest()
-           ->paginate($per_page);
+            ->with([
+                'course',
+                'teacher',
+                'items',
+                'submissions.attachments',
+            ])
+            ->latest()
+            ->paginate($perPage);
 
         return $this->ok(
             'Course sections retrieved successfully',
-            (CourseSectionResource::collection($sections))->resolve()
+            CourseSectionResource::collection($sections)->resolve()
         );
     }
 
