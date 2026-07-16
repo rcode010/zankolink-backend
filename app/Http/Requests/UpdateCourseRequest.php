@@ -39,6 +39,7 @@ class UpdateCourseRequest extends FormRequest
             'is_active' => 'nullable|boolean',
             'prerequisites' => ['sometimes', 'array'],
             'prerequisites.*' => ['integer', 'exists:courses,id'],
+            'color' => 'sometimes|string|max:255',
         ];
     }
 }
