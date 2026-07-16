@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class StudentMarks extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['student_marks', 'course_assessment_id', 'student_id', 'mark', 'feedback', 'graded_by', 'graded_at'];
 
     public function courseAssessment()
