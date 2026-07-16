@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AcademicYear;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 /**
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\DB;
  */
 class AcademicYearController extends Controller
 {
+    use ApiResponses;
     /**
      * Update the current academic year and create a new one.
      * Route: POST /api/academic-year/update
@@ -43,5 +45,15 @@ class AcademicYearController extends Controller
         return response()->json([
             'message' => 'Academic year updated successfully. New year is now active.',
         ], 200);
+    }
+
+    public function retrieveActiveAcademicYear()
+    {
+        $academicYear = AcademicYear::query()->where('is_active', true)->first();
+
+        return $this->ok(
+            'Active Academic Year retrieved successfully.',
+            $academicYear->toArray(),
+        );
     }
 }
