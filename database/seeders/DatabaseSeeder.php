@@ -597,6 +597,7 @@ class DatabaseSeeder extends Seeder
                 $this->seedCourseTeachers($course, $department);
                 $this->seedCourseStudents($course, $department);
 
+                $this->seedCourseAttendance($course);
                 $this->seedCourseSection($course);
             });
     }
@@ -1013,6 +1014,120 @@ class DatabaseSeeder extends Seeder
 
         foreach (array_chunk($rows, $this->bulkInsertSize) as $chunk) {
             DB::table('student_marks')->insert($chunk);
+        }
+    }
+    private function seedCourseAttendance(Course $course): void
+    {
+        $teacherId = DB::table('course_teacher')
+            ->where('course_id', $course->id)
+            ->value('teacher_id');
+
+        $studentIds = DB::table('course_student')
+            ->where('course_id', $course->id)
+            ->where(
+                'academic_year_id',
+                $this->activeAcademicYear->id
+            )
+            ->pluck('student_id');
+
+        if (! $teacherId || $studentIds->isEmpty()) {
+            return;
+        }
+
+        for ($i = 1; $i <= 2; $i++) {
+            // Creates two recent sessions: one week ago and two weeks ago.
+            $sessionDate = now()
+                ->subWeeks($i)
+                ->startOfDay();
+
+            $startHour = $this->faker->randomElement([
+                8,
+                10,
+                12,
+                14,
+            ]);
+
+            $startAt = $sessionDate
+                ->copy()
+                ->setTime($startHour, 0);
+
+            $endAt = $startAt
+                ->copy()
+                ->addMinutes(90);
+
+
+            $isHoliday = $this->faker->boolean(5);
+
+            $sessionId = DB::table(
+                'course_attendance_sessions'
+            )->insertGetId([
+                'course_id' => $course->id,
+                'academic_year_id' => $this->activeAcademicYear->id,
+                'teacher_id' => $teacherId,
+                'session_date' => $sessionDate->toDateString(),
+                'start_at' => $startAt,
+                'end_at' => $endAt,
+                'title' => $isHoliday
+                    ? 'Holiday'
+                    : "Attendance Session {$i}",
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $this->seedAttendanceRecords(
+                $sessionId,
+                $studentIds,
+                $isHoliday
+            );
+        }
+    }
+    private function seedAttendanceRecords(
+        int $sessionId,
+        Collection $studentIds,
+        bool $isHoliday
+    ): void {
+        $now = now();
+        $rows = [];
+
+        foreach ($studentIds as $studentId) {
+            $status = $isHoliday
+                ? 'Holiday'
+                : $this->faker->randomElement([
+                    // Repeated values make Present more common.
+                    'Present',
+                    'Present',
+                    'Present',
+                    'Present',
+                    'Present',
+                    'Present',
+                    'Late',
+                    'Late',
+                    'Absent',
+                    'Excused Absence',
+                ]);
+
+            $rows[] = [
+                'attendance_session_id' => $sessionId,
+                'student_id' => $studentId,
+                'status' => $status,
+                'note' => match ($status) {
+                    'Late' => 'Student arrived late.',
+                    'Absent' => $this->faker->optional(0.3)->sentence(),
+                    'Excused Absence' => 'Absence was excused.',
+                    'Holiday' => 'No class was held.',
+                    default => null,
+                },
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+
+        foreach (
+            array_chunk($rows, $this->bulkInsertSize)
+            as $chunk
+        ) {
+            DB::table('student_attendances')
+                ->insert($chunk);
         }
     }
 }
