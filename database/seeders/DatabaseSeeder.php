@@ -10,15 +10,14 @@ use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Letter;
 use App\Models\LetterSignature;
+use App\Models\SectionItem;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
-use App\Models\UserScope;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
@@ -30,16 +29,25 @@ class DatabaseSeeder extends Seeder
     private Generator $faker;
 
     private ?AcademicYear $activeAcademicYear = null;
+
     private string $defaultPassword = 'Password@123';
+
     private string $hashedDefaultPassword;
+
     private int $teacherNumber = 1;
 
     private int $universitiesCount = 3;
+
     private int $facultiesPerUniversity = 3;
+
     private int $departmentsPerFaculty = 4;
+
     private int $teachersPerDepartment = 5;
+
     private int $studentsPerDepartment = 10;
+
     private int $coursesPerDepartment = 5;
+
     private int $lettersCount = 30;
 
     private function userCode(int $number): string
@@ -51,6 +59,7 @@ class DatabaseSeeder extends Seeder
     {
         return "{$universityNumber}{$facultyNumber}{$departmentNumber}";
     }
+
     private function emailNumber(int $number): string
     {
         return str_pad($number, 3, '0', STR_PAD_LEFT);
@@ -72,14 +81,14 @@ class DatabaseSeeder extends Seeder
         $this->seedLetters();
         $this->createMoodleDemoUsers();
 
-//        Artisan::call('zankolink:seed-frontend-users');
+        //        Artisan::call('zankolink:seed-frontend-users');
     }
 
     private function seedRoles(): void
     {
         $permissions = [
             // Letter Broadcast
-            'view letter broadcast','create letter broadcast',
+            'view letter broadcast', 'create letter broadcast',
             // Universities
             'view universities', 'view university', 'create universities', 'update universities', 'delete universities',
             // Faculties
@@ -159,54 +168,54 @@ class DatabaseSeeder extends Seeder
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
                 'create stamps', 'view stamps',
-                'approve letters', 'decline letters', 'forward letters','view letter broadcast'
+                'approve letters', 'decline letters', 'forward letters', 'view letter broadcast',
             ],
 
             'MINISTRY_ADMINISTRATION_HEAD' => [
-                'view letters', 'update letters', 'raise letters','create letters',
+                'view letters', 'update letters', 'raise letters', 'create letters',
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
                 'create stamps', 'view stamps',
-                'view reports', 'forward letters','view letter broadcast'
+                'view reports', 'forward letters', 'view letter broadcast',
             ],
 
             // University
             'UNIVERSITY_ADMIN' => [
-                'view university', 'view faculties', 'view faculty','create faculties', 'update faculties',
+                'view university', 'view faculties', 'view faculty', 'create faculties', 'update faculties',
                 'view departments', 'view department', 'create departments', 'update departments',
                 'view users', 'create users', 'update users', 'activate users', 'deactivate users',
                 'view teachers', 'view students', 'view courses', 'view reports',
-                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
+                'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
                 'upload attachments', 'download attachments',
                 'create stamps', 'view stamps',
-                'view signatures', 'create signatures', 'forward letters','view letter broadcast'
+                'view signatures', 'create signatures', 'forward letters', 'view letter broadcast',
             ],
 
             'UNIVERSITY_ADMIN_ADMINISTRATION' => [
                 'view university', 'view faculties', 'view faculty', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
-                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
-                'create signatures','view signatures',
+                'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
+                'create signatures', 'view signatures',
                 'create stamps', 'view stamps',
-                'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
+                'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
             ],
 
             'UNIVERSITY_ADMIN_STUDENTS' => [
                 'view university', 'view faculties', 'view faculty', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
-                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
-                'create signatures','view signatures',
+                'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
+                'create signatures', 'view signatures',
                 'create stamps', 'view stamps',
-                'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
+                'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
             ],
 
             'UNIVERSITY_ADMIN_SCIENCE' => [
                 'view university', 'view faculties', 'view faculty', 'view departments', 'view users',
                 'view teachers', 'view students', 'view courses',
-                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
-                'create signatures','view signatures',
+                'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
+                'create signatures', 'view signatures',
                 'create stamps', 'view stamps',
-                'upload attachments', 'download attachments', 'forward letters','view letter broadcast'
+                'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
             ],
 
             // Faculty
@@ -214,16 +223,16 @@ class DatabaseSeeder extends Seeder
                 'view university', 'view faculty', 'view departments', 'create departments', 'update departments',
                 'view teachers', 'view teacher', 'create teachers', 'update teachers', 'assign teachers',
                 'view students', 'view courses', 'create courses', 'update courses',
-                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
+                'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
                 'upload attachments', 'download attachments',
                 'create stamps', 'view stamps',
-                'view signatures','create signatures',
-                'view reports','forward letters','view letter broadcast'
+                'view signatures', 'create signatures',
+                'view reports', 'forward letters', 'view letter broadcast',
             ],
 
             // Department
             'HEAD_OF_DEPARTMENT' => [
-                'view department','view faculty','view university', 'view teachers', 'view teacher', 'assign teachers', 'unassign teachers',
+                'view department', 'view faculty', 'view university', 'view teachers', 'view teacher', 'assign teachers', 'unassign teachers',
                 'view students',
                 'view courses', 'create courses', 'update courses',
                 'assign course teachers', 'view course teachers',
@@ -231,10 +240,10 @@ class DatabaseSeeder extends Seeder
                 'update department seats', 'assign course students',
                 'view course students',
                 'create stamps', 'view stamps',
-                'view signatures','create signatures',
+                'view signatures', 'create signatures',
                 'update course students', 'delete course students',
-                'view letters', 'create letters', 'raise letters','approve letters', 'decline letters',
-                'upload attachments', 'download attachments', 'forward letters','view letter broadcast',
+                'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
+                'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
                 'view academic requests', 'view academic request',
             ],
 
@@ -413,6 +422,7 @@ class DatabaseSeeder extends Seeder
                 $this->seedFaculties($university, $u);
             });
     }
+
     private function seedFaculties(University $university, int $u): void
     {
         Faculty::factory()
@@ -438,6 +448,7 @@ class DatabaseSeeder extends Seeder
                 $this->seedDepartments($faculty, $u, $f);
             });
     }
+
     private function seedDepartments(Faculty $faculty, int $u, int $f): void
     {
         Department::factory()
@@ -465,6 +476,7 @@ class DatabaseSeeder extends Seeder
                 $this->seedCourses($department);
             });
     }
+
     private function seedTeachers(Department $department): void
     {
         for ($i = 1; $i <= $this->teachersPerDepartment; $i++) {
@@ -535,6 +547,7 @@ class DatabaseSeeder extends Seeder
             );
         }
     }
+
     private function seedCourses(Department $department): void
     {
         Course::factory()
@@ -630,6 +643,7 @@ class DatabaseSeeder extends Seeder
                 }
             });
     }
+
     private function createMoodleDemoUsers(): void
     {
         $department = Department::first();
@@ -652,7 +666,6 @@ class DatabaseSeeder extends Seeder
         }
 
         // Teachers
-
 
         $teacherUsersData = [
             [
@@ -723,7 +736,6 @@ class DatabaseSeeder extends Seeder
 
         // Assign Teachers To Multiple Courses
 
-
         foreach ($courses as $course) {
             foreach ($teachers as $teacher) {
                 DB::table('course_teacher')->updateOrInsert(
@@ -741,7 +753,6 @@ class DatabaseSeeder extends Seeder
         }
 
         // Students
-
 
         $studentUsersData = [
             [
@@ -796,7 +807,6 @@ class DatabaseSeeder extends Seeder
 
         //  Enroll Students Into Multiple Courses
 
-
         foreach ($courses as $course) {
             foreach ($students as $student) {
                 DB::table('course_student')->updateOrInsert(
@@ -814,6 +824,7 @@ class DatabaseSeeder extends Seeder
             }
         }
     }
+
     private function createUserScope(User $user, string $roleName, string $scopeType, ?int $scopeId): void
     {
         $roleId = DB::table('roles')
@@ -838,32 +849,40 @@ class DatabaseSeeder extends Seeder
             ]
         );
     }
-    private function seedCourseSection(Course $course): void{
+
+    private function seedCourseSection(Course $course): void
+    {
         $teachers = $course->teachers()
             ->inRandomOrder()
             ->get();
 
         foreach ($teachers as $teacher) {
-            for($i = 0; $i < 4; $i++) {
+            for ($i = 0; $i < 4; $i++) {
 
-                CourseSection::factory()
+                $section = CourseSection::factory()
                     ->for($course)
                     ->for($teacher)
                     ->create();
+                $this->seedSectionItem($section);
             }
         }
-    }
-    private function seedCourseAssessment(){
-
-    }
-    private function seedSectionSubmission(){
-
-    }
-    private function seedStudentSubmission(){
-
-    }
-    private function seedStudentMark(){
 
     }
 
+    private function seedSectionItem(CourseSection $section)
+    {
+        for ($i = 0; $i < 3; $i++) {
+            SectionItem::factory()
+                ->for($section, 'section')
+                ->create();
+        }
+    }
+
+    private function seedCourseAssessment() {}
+
+    private function seedSectionSubmission() {}
+
+    private function seedStudentSubmission() {}
+
+    private function seedStudentMark() {}
 }
