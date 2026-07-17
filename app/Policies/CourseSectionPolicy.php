@@ -83,10 +83,8 @@ class CourseSectionPolicy
     }
 
     private function is_primary_lecturer(User $user, Course $course): bool{
-        if (! $user->teacher) {
-            return false;
-        }
-        return $course->teachers()
+
+        return $user->teacher && $course->teachers()
                 ->whereKey($user->teacher->id)
                 ->where('role', 'primary_lecturer')
                 ->exists();
