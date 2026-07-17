@@ -50,7 +50,17 @@ class LetterWorkflowController extends Controller
             $letterActionService->execute($letter);
         });
 
-        return $this->ok('Letter approved successfully.', (new LetterResource($letter->fresh()))->resolve());    }
+        return $this->ok('Letter approved successfully.',
+            (new LetterResource($letter
+                ->fresh()
+                ->load(
+                    'sender:id,name',
+                    'receiver:id,name',
+                    'attachments'
+                )))
+                ->resolve()
+        );
+    }
 
     /**
      * Decline a letter and log the activity.
@@ -83,7 +93,16 @@ class LetterWorkflowController extends Controller
 
         $letter->refresh();
 
-        return $this->ok('Letter declined successfully.', (new LetterResource($letter->fresh()))->resolve());
+        return $this->ok('Letter declined successfully.',
+            (new LetterResource($letter
+                ->fresh()
+                ->load(
+                    'sender:id,name',
+                    'receiver:id,name',
+                    'attachments'
+                )))
+                ->resolve()
+        );
     }
 
     /**
@@ -124,7 +143,16 @@ class LetterWorkflowController extends Controller
 
         $letter->refresh();
 
-        return $this->ok('Letter forwarded successfully.', (new LetterResource($letter->fresh()))->resolve());
+        return $this->ok('Letter forwarded successfully.',
+            (new LetterResource($letter
+                ->fresh()
+                ->load(
+                    'sender:id,name',
+                    'receiver:id,name',
+                    'attachments'
+                )))
+                ->resolve()
+        );
     }
 
 

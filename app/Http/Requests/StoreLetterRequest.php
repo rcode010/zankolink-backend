@@ -21,7 +21,6 @@ class StoreLetterRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array|string>
      */
-
     public function rules(): array
     {
         $type = $this->input('type');
@@ -45,6 +44,17 @@ class StoreLetterRequest extends FormRequest
 
             'payload' => ['required', 'array'],
 
+            'file' => [
+                'nullable',
+                'array',
+            ],
+
+            'file.*' => [
+                'file',
+                'mimes:pdf,doc,docx,jpg,jpeg,png',
+                'max:5120',
+            ],
+
             ...$this->payloadRules($type),
         ];
     }
@@ -55,7 +65,7 @@ class StoreLetterRequest extends FormRequest
             'hire_teacher' => [
                 'payload.name' => ['required', 'string', 'max:255'],
                 'payload.email' => ['required', 'email', 'unique:users,email'],
-                'payload.phone' => ['nullable', 'string', 'max:50'],
+                'payload.phone' => ['nullable', 'string', 'max:50', 'regex:/^07[0-9]{9}$/'],
                 'payload.department_id' => ['required', 'exists:departments,id'],
                 'payload.title' => ['required', 'string', 'max:255'],
                 'payload.speciality' => ['required', 'string', 'max:255'],
@@ -87,4 +97,5 @@ class StoreLetterRequest extends FormRequest
 
             default => [],
         };
-    }}
+    }
+}

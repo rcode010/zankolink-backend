@@ -32,6 +32,7 @@ class CourseSectionPolicy
     public function create(User $user, Course $course): bool
     {
         return $this->is_primary_lecturer($user, $course);
+
     }
 
     /**
@@ -88,6 +89,7 @@ class CourseSectionPolicy
                 ->whereKey($user->teacher->id)
                 ->where('role', 'primary_lecturer')
                 ->exists();
+
 
     }
 }

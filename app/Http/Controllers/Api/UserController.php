@@ -57,7 +57,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'phone' => 'sometimes|string|max:20',
+            'phone' => 'sometimes|string|max:20|regex:/^07[0-9]{9}$/',
         ]);
 
         $user->update($validated);

@@ -364,7 +364,6 @@ class SectionSubmissionController extends Controller
                 ->whereNull('course_assessments.deleted_at')
                 ->whereNotNull('course_assessments.due_at')
                 ->where('course_assessments.due_at', '>=', now())
-                ->where('course_assessments.is_published', true)
                 ->whereHas('section.course.students', function ($query) use ($student) {
                     $query->where('students.id', $student->id);
                 })
@@ -372,7 +371,7 @@ class SectionSubmissionController extends Controller
             ->with([
                 'section.course:id,name,code',
 
-                'courseAssessment:id,course_id,title,type,max_mark,weight,due_at,is_published,academic_year_id',
+                'courseAssessment:id,course_id,title,type,max_mark,weight,due_at,academic_year_id',
 
                 'studentSubmissions' => fn ($query) => $query
                     ->where('student_id', $student->id),
