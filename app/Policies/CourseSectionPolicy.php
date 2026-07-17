@@ -22,7 +22,7 @@ class CourseSectionPolicy
      */
     public function view(User $user, CourseSection $courseSection): bool
     {
-        return $this->ownsSection($user, $courseSection)
+        return $this->teacherBelongsToCourse($user, $courseSection->course)
             || $this->studentBelongsToCourse($user, $courseSection->course);
     }
 
@@ -31,7 +31,7 @@ class CourseSectionPolicy
      */
     public function create(User $user, Course $course): bool
     {
-        return $this->teacherBelongsToCourse($user, $course) && $this->is_primary_lecturer($user, $course);
+        return $this->is_primary_lecturer($user, $course);
     }
 
     /**
@@ -39,7 +39,7 @@ class CourseSectionPolicy
      */
     public function update(User $user, CourseSection $courseSection): bool
     {
-        return $this->ownsSection($user, $courseSection);
+        return $this->teacherBelongsToCourse($user, $courseSection->course);
     }
 
     /**
@@ -47,7 +47,7 @@ class CourseSectionPolicy
      */
     public function delete(User $user, CourseSection $courseSection): bool
     {
-        return $this->ownsSection($user, $courseSection);
+        return $this->teacherBelongsToCourse($user, $courseSection->course);
     }
 
     /**
@@ -82,12 +82,10 @@ class CourseSectionPolicy
                 ->exists();
     }
 
-    private function ownsSection(User $user, CourseSection $courseSection): bool
-    {
-        return $user->teacher
-            && $courseSection->teacher_id === $user->teacher->id;
-    }
     private function is_primary_lecturer(User $user, Course $course): bool{
+        if (! $user->teacher) {
+            return false;
+        }
         return $course->teachers()
                 ->whereKey($user->teacher->id)
                 ->where('role', 'primary_lecturer')
