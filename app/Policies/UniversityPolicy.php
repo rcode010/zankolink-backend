@@ -20,7 +20,7 @@ class UniversityPolicy
      */
     public function view(User $user, University $university): bool
     {
-        if ($user->hasRole('MINISTRY_ADMIN')) {
+        if ($user->hasRole('MINISTRY_ADMIN') || $user->hasRole('UNIVERSITY_ADMIN_IMPORT_EXPORT')) {
             return true;
         }
 

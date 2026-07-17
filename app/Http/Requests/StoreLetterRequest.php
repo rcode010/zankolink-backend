@@ -65,7 +65,7 @@ class StoreLetterRequest extends FormRequest
             'hire_teacher' => [
                 'payload.name' => ['required', 'string', 'max:255'],
                 'payload.email' => ['required', 'email', 'unique:users,email'],
-                'payload.phone' => ['nullable', 'string', 'max:50'],
+                'payload.phone' => ['nullable', 'string', 'max:50', 'regex:/^07[0-9]{9}$/'],
                 'payload.department_id' => ['required', 'exists:departments,id'],
                 'payload.title' => ['required', 'string', 'max:255'],
                 'payload.speciality' => ['required', 'string', 'max:255'],

@@ -85,7 +85,7 @@ class CalendarEventsController extends Controller
                 }
             )
             ->with([
-                'courseAssessment:id,course_id,title,type,due_at,max_mark,weight',
+                'courseAssessment:id,course_id,title,due_at,max_mark,weight',
                 'section.course:id,name,code',
 
                 'studentSubmissions' => fn ($query) => $query
@@ -104,7 +104,6 @@ class CalendarEventsController extends Controller
                 'assessment_id' => $assessment->id,
                 'title' => $assessment->title,
                 'description' => $assignment->description,
-                'type' => $assessment->type,
                 'due_at' => $assessment->due_at,
 
                 'course' => [
