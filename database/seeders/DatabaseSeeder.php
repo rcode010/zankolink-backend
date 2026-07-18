@@ -14,7 +14,6 @@ use App\Models\LetterSignature;
 use App\Models\SectionItem;
 use App\Models\SectionSubmission;
 use App\Models\Student;
-use App\Models\StudentMarks;
 use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
@@ -245,9 +244,9 @@ class DatabaseSeeder extends Seeder
                 'create stamps', 'view stamps',
                 'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
             ],
-            'UNIVERSITY_ADMIN_IMPORT_EXPORT'=>[
-                'view university', 'view universities', 'view faculties', 'view faculty','forward letters', 'view letter broadcast',
-                'view letters','view stamps','view signatures'
+            'UNIVERSITY_ADMIN_IMPORT_EXPORT' => [
+                'view university', 'view universities', 'view faculties', 'view faculty', 'forward letters', 'view letter broadcast',
+                'view letters', 'view stamps', 'view signatures',
             ],
 
             // Faculty
@@ -266,7 +265,7 @@ class DatabaseSeeder extends Seeder
             'HEAD_OF_DEPARTMENT' => [
                 'view department', 'view faculty', 'view university', 'view teachers', 'view teacher', 'assign teachers', 'unassign teachers',
                 'view students',
-                'view courses', 'create courses', 'update courses','delete courses',
+                'view courses', 'create courses', 'update courses', 'delete courses',
                 'assign course teachers', 'view course teachers',
                 'update course teachers', 'delete course teachers',
                 'update department seats', 'assign course students',
@@ -893,9 +892,9 @@ class DatabaseSeeder extends Seeder
     {
         $roleId = $this->roleIds[$roleName]
             ??= (int) Role::query()
-            ->where('name', $roleName)
-            ->where('guard_name', 'web')
-            ->value('id');
+                ->where('name', $roleName)
+                ->where('guard_name', 'web')
+                ->value('id');
 
         if (! $roleId) {
             return;
@@ -921,14 +920,17 @@ class DatabaseSeeder extends Seeder
             ->get(['teachers.id']);
 
         $students = $course->students()
-            ->wherePivot('academic_year_id', $this->activeAcademicYear->id)
+            ->wherePivot(
+                'academic_year_id',
+                $this->activeAcademicYear->id
+            )
             ->get(['students.id']);
 
         if ($teachers->isEmpty() || $students->isEmpty()) {
             return;
         }
 
-        $assessments = collect();
+        $sections = collect();
 
         foreach ($teachers as $teacher) {
             for ($i = 1; $i <= 4; $i++) {
@@ -939,11 +941,50 @@ class DatabaseSeeder extends Seeder
                 ]);
 
                 $this->seedSectionItems($section);
-                $assessments->push($this->seedSectionSubmission($section));
+
+                $sections->push($section);
             }
         }
 
-        $this->seedStudentMarks($assessments, $students);
+
+        $submissionPlan = collect();
+
+        foreach ($sections as $section) {
+            $submissionCount = $this->faker->numberBetween(1, 3);
+
+            for ($i = 0; $i < $submissionCount; $i++) {
+                $submissionPlan->push($section);
+            }
+        }
+
+        $totalSubmissions = $submissionPlan->count();
+
+        if ($totalSubmissions === 0) {
+            return;
+        }
+
+
+        $baseWeight = intdiv(100, $totalSubmissions);
+        $remainder = 100 % $totalSubmissions;
+
+        $assessments = collect();
+
+        foreach ($submissionPlan->values() as $index => $section) {
+            $weight = $baseWeight
+                + ($index < $remainder ? 1 : 0);
+
+            $assessment = $this->seedSectionSubmission(
+                $section,
+                $weight
+            );
+
+            $assessments->push($assessment);
+        }
+
+        $this->seedStudentMarks(
+            $assessments,
+            $students
+        );
     }
 
     private function seedSectionItems(CourseSection $section): void
@@ -966,12 +1007,12 @@ class DatabaseSeeder extends Seeder
         DB::table('section_items')->insert($rows);
     }
 
-    private function seedSectionSubmission(CourseSection $section): CourseAssessments
-    {
+    private function seedSectionSubmission(CourseSection $section, int $weight): CourseAssessments {
         $assessment = CourseAssessments::factory()->create([
             'course_id' => $section->course_id,
             'teacher_id' => $section->teacher_id,
             'academic_year_id' => $this->activeAcademicYear->id,
+            'weight' => $weight,
         ]);
 
         SectionSubmission::factory()->create([
@@ -1026,6 +1067,7 @@ class DatabaseSeeder extends Seeder
             DB::table('student_marks')->insert($chunk);
         }
     }
+
     private function seedCourseAttendance(Course $course): void
     {
         $teacherId = DB::table('course_teacher')
@@ -1065,7 +1107,6 @@ class DatabaseSeeder extends Seeder
                 ->copy()
                 ->addMinutes(90);
 
-
             $isHoliday = $this->faker->boolean(5);
 
             $sessionId = DB::table(
@@ -1091,6 +1132,7 @@ class DatabaseSeeder extends Seeder
             );
         }
     }
+
     private function seedAttendanceRecords(
         int $sessionId,
         Collection $studentIds,
@@ -1133,8 +1175,7 @@ class DatabaseSeeder extends Seeder
         }
 
         foreach (
-            array_chunk($rows, $this->bulkInsertSize)
-            as $chunk
+            array_chunk($rows, $this->bulkInsertSize) as $chunk
         ) {
             DB::table('student_attendances')
                 ->insert($chunk);
