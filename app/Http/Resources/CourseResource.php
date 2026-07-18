@@ -22,6 +22,7 @@ class CourseResource extends JsonResource
             'year_level' => $this->year_level,
             'is_active' => $this->is_active,
             'department_id' => $this->department_id,
+            'color'=>$this->color,
             'semester' => $this->semester,
             'students_count' => $this->whenCounted('students'),
             'sections_count' => $this->whenCounted('sections'),
