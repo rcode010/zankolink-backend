@@ -27,7 +27,7 @@ class StudentCourseController extends Controller
         $per_page = $request->query('per_page', 15);
 
         $students = $department->students()
-            ->with('user:id,name')
+            ->with('user:id,name,email')
             ->paginate($per_page);
 
         return $this->ok(
