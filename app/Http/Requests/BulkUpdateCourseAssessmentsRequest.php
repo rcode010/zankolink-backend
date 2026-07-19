@@ -37,12 +37,6 @@ class BulkUpdateCourseAssessmentsRequest extends FormRequest
                 'max:255',
             ],
 
-            'assessments.*.type' => [
-                'sometimes',
-                'string',
-                'in:quiz,assignment,final,midterm,project,activity',
-            ],
-
             'assessments.*.max_mark' => [
                 'sometimes',
                 'numeric',

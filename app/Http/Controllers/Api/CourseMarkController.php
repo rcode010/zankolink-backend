@@ -40,7 +40,6 @@ class CourseMarkController extends Controller
      *       {
      *         "assessment_id": 1,
      *         "title": "Quiz 1",
-     *         "type": "quiz",
      *         "max_mark": "10.00",
      *         "weight": "5.00",
      *         "mark_id": 1,
@@ -52,7 +51,6 @@ class CourseMarkController extends Controller
      *       {
      *         "assessment_id": 2,
      *         "title": "Final Exam",
-     *         "type": "final",
      *         "max_mark": "60.00",
      *         "weight": "50.00",
      *         "mark_id": null,
@@ -86,7 +84,6 @@ class CourseMarkController extends Controller
             return [
                 'assessment_id' => $assessment->id,
                 'title' => $assessment->title,
-                'type' => $assessment->type,
                 'max_mark' => $assessment->max_mark,
                 'weight' => $assessment->weight,
 
