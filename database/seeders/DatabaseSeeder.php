@@ -940,7 +940,7 @@ class DatabaseSeeder extends Seeder
                     'title' => "Section {$i}",
                 ]);
 
-                $this->seedSectionItems($section);
+                $this->seedSectionItems($section,$teacher);
 
                 $sections->push($section);
             }
@@ -987,18 +987,19 @@ class DatabaseSeeder extends Seeder
         );
     }
 
-    private function seedSectionItems(CourseSection $section): void
-    {
+    private function seedSectionItems(CourseSection $section, Teacher $teacher): void {
         $now = now();
 
         $rows = collect(
             SectionItem::factory()
                 ->count(3)
-                ->raw(['section_id' => $section->id])
+                ->raw([
+                    'section_id' => $section->id,
+                    'created_by_teacher_id' => $teacher->id,
+                ])
         )
             ->map(static fn (array $row): array => [
                 ...$row,
-                'section_id' => $section->id,
                 'created_at' => $now,
                 'updated_at' => $now,
             ])
