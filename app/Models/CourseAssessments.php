@@ -9,7 +9,7 @@ class CourseAssessments extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['course_id', 'academic_year_id', 'title', 'type', 'max_mark', 'weight', 'due_at', 'teacher_id'];
+    protected $fillable = ['course_id', 'academic_year_id', 'title', 'max_mark', 'weight', 'due_at', 'teacher_id'];
 
     public function course()
     {
