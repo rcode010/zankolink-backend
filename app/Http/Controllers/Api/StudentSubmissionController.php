@@ -257,7 +257,7 @@ class StudentSubmissionController extends Controller
      * }
      *
      */
-    public function show(StudentSubmission $studentSubmission, SectionSubmission $submission, Student $student)
+    public function show(SectionSubmission $submission, Student $student)
     {
         $studentSubmissions = StudentSubmission::with([
             'student',
@@ -268,7 +268,7 @@ class StudentSubmissionController extends Controller
             ->get();
 
         foreach ($studentSubmissions as $studentSubmission) {
-            $this->authorize('view', [StudentSubmission::class, $studentSubmission]);
+            $this->authorize('view', $studentSubmission);
         }
 
         return $this->success(
