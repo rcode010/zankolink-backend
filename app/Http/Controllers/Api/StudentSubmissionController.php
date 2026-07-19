@@ -132,35 +132,6 @@ class StudentSubmissionController extends Controller
     }
 
     /**
-     * Show authenticated student's submission
-     *
-     * Returns all files submitted by the authenticated student
-     * for the specified assignment.
-     *
-     * @authenticated
-     *
-     * @urlParam submission integer required The ID of the assignment. Example: 1
-     */
-    public function mySubmission(SectionSubmission $submission)
-    {
-        $this->authorize('view', $submission);
-        $student = auth()->user()->student;
-
-        $studentSubmissions = StudentSubmission::with([
-            'student.user',
-            'submission',
-        ])
-            ->where('submission_id', $submission->id)
-            ->where('student_id', $student->id)
-            ->get();
-
-        return $this->success(
-            'Submission retrieved successfully',
-            StudentSubmissionResource::collection($studentSubmissions)->resolve()
-        );
-    }
-
-    /**
      * Delete submitted file
      *
      * @authenticated
@@ -286,10 +257,8 @@ class StudentSubmissionController extends Controller
      * }
      *
      */
-    public function show(StudentSubmission $studentSubmission, SectionSubmission $submission, Student $student)
+    public function show(SectionSubmission $submission, Student $student)
     {
-        $this->authorize('view', [StudentSubmission::class, $studentSubmission]);
-
         $studentSubmissions = StudentSubmission::with([
             'student',
             'submission',
@@ -297,6 +266,10 @@ class StudentSubmissionController extends Controller
             ->where('submission_id', $submission->id)
             ->where('student_id', $student->id)
             ->get();
+
+        foreach ($studentSubmissions as $studentSubmission) {
+            $this->authorize('view', $studentSubmission);
+        }
 
         return $this->success(
             'Submission retrieved successfully',

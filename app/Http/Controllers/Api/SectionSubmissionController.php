@@ -371,7 +371,7 @@ class SectionSubmissionController extends Controller
             ->with([
                 'section.course:id,name,code',
 
-                'courseAssessment:id,course_id,title,type,max_mark,weight,due_at,academic_year_id',
+                'courseAssessment:id,course_id,title,max_mark,weight,due_at,academic_year_id',
 
                 'studentSubmissions' => fn ($query) => $query
                     ->where('student_id', $student->id),
