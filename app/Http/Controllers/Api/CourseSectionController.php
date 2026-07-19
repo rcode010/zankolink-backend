@@ -74,6 +74,7 @@ class CourseSectionController extends Controller
                 'teacher',
                 'items',
                 'submissions.attachments',
+                'submissions.courseAssessment',
             ])
             ->latest()
             ->paginate($perPage);
