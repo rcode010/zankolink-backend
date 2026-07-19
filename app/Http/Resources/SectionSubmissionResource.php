@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class SectionSubmissionResource extends JsonResource
 {
@@ -41,7 +42,7 @@ class SectionSubmissionResource extends JsonResource
                     'file_name' => $attachment->file_name,
                     'file_type' => $attachment->file_type,
                     'file_size' => $attachment->file_size,
-                    'file_url' => $attachment->file_url,
+                    'file_url' => Storage::disk('public')->url($attachment->file_url),
                 ])
             ),
 

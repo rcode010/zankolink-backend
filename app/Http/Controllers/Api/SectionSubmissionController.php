@@ -54,7 +54,7 @@ class SectionSubmissionController extends Controller
      * "file_name": "Screenshot 2026-07-04 142426.png",
      * "file_type": "image/png",
      * "file_size": 233,
-     * "file_url": "section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
+     * "file_url": "http://localhost/storage/section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
      * }
      * ],
      * "created_at": "2026-07-09 10:03:24",
@@ -107,7 +107,7 @@ class SectionSubmissionController extends Controller
      *  "file_name": "Screenshot 2026-07-04 142426.png",
      *  "file_type": "image/png",
      *  "file_size": 233,
-     *  "file_url": "section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
+     *  "file_url": "http://localhost/storage/section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
      *  }
      *  ],
      *  "created_at": "2026-07-09 10:03:24",
@@ -169,7 +169,7 @@ class SectionSubmissionController extends Controller
      * "file_name": "Screenshot 2026-07-04 142426.png",
      * "file_type": "image/png",
      * "file_size": 233,
-     * "file_url": "section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
+     * "file_url": "http://localhost/storage/section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
      * }
      * ],
      * "created_at": "2026-07-09 10:03:24",
@@ -225,14 +225,14 @@ class SectionSubmissionController extends Controller
      * "file_name": "Screenshot 2026-07-04 142426.png",
      * "file_type": "image/png",
      * "file_size": 233,
-     * "file_url": "section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
+     * "file_url": "http://localhost/storage/section-submission/mdhyJuDmImO3lGxQ4JPtb13K2BXyIhkWjho1YYvp.png"
      * },
      * {
      * "id": 2,
      * "file_name": "Screenshot 2026-07-04 142426.png",
      * "file_type": "image/png",
      * "file_size": 233,
-     * "file_url": "section-submission/KGq4P6aFWYL9o8Vvj2yEZQusc3HS8sSuiRiI37Ut.png"
+     * "file_url": "http://localhost/storage/section-submission/KGq4P6aFWYL9o8Vvj2yEZQusc3HS8sSuiRiI37Ut.png"
      * }
      * ],
      * "created_at": "2026-07-09 10:03:24",

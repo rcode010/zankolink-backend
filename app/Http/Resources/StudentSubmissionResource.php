@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class StudentSubmissionResource extends JsonResource
 {
@@ -29,7 +30,7 @@ class StudentSubmissionResource extends JsonResource
             'file_name' => $this->file_name,
             'file_type' => $this->file_type,
             'file_size' => $this->file_size,
-            'file_url' => $this->file_url,
+            'file_url' => Storage::disk('public')->url($this->file_url),
 
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
