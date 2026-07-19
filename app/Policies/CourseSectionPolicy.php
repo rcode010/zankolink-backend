@@ -22,7 +22,7 @@ class CourseSectionPolicy
      */
     public function view(User $user, CourseSection $courseSection): bool
     {
-        return $this->ownsSection($user, $courseSection)
+        return $this->teacherBelongsToCourse($user, $courseSection->course)
             || $this->studentBelongsToCourse($user, $courseSection->course);
     }
 
