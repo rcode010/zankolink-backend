@@ -70,7 +70,7 @@ class StudentController extends Controller
             'Student created successfully.',
             (new StudentResource(
                 $student->load([
-                    'user:id,name',
+                    'user:id,name,email',
                     'department:id,name',
                 ])
             ))->toArray($request),
@@ -84,7 +84,7 @@ class StudentController extends Controller
     public function show(Student $student)
     {
         $student->load([
-            'user:id,name',
+            'user:id,name,email',
             'department:id,name',
         ]);
 
@@ -100,15 +100,13 @@ class StudentController extends Controller
      */
     public function update(UpdateStudentRequest $request, Student $student)
     {
-        $student->update(
-            $request->validated()
-        );
+        $student->update($request->validated());
 
         return $this->ok(
             'Student updated successfully.',
             (new StudentResource(
                 $student->fresh()->load([
-                    'user:id,name',
+                    'user:id,name,email',
                     'department:id,name',
                 ])
             ))->toArray($request)
