@@ -24,7 +24,7 @@ class SectionItemPolicy
      */
     public function view(User $user, SectionItem $sectionItem): bool
     {
-        return $this->ownsSection($user, $sectionItem->section)
+        return $this->teacherBelongsToCourse($user, $sectionItem->section->course)
             || $this->studentBelongsToCourse($user, $sectionItem->section->course);
     }
 
@@ -33,7 +33,7 @@ class SectionItemPolicy
      */
     public function create(User $user, CourseSection $courseSection): bool
     {
-        return $this->ownsSection($user, $courseSection);
+        return $this->teacherBelongsToCourse($user, $courseSection->course);
     }
 
     /**
@@ -41,7 +41,7 @@ class SectionItemPolicy
      */
     public function update(User $user, SectionItem $sectionItem): bool
     {
-        return $this->ownsSection($user, $sectionItem->section);
+        return $this->is_primary($user,$sectionItem->section->course) || $this->ownsItem($user, $sectionItem);
     }
 
     /**
@@ -49,7 +49,7 @@ class SectionItemPolicy
      */
     public function delete(User $user, SectionItem $sectionItem): bool
     {
-        return $this->ownsSection($user, $sectionItem->section);
+        return $this->is_primary($user,$sectionItem->section->course)|| $this->ownsItem($user, $sectionItem);
     }
 
     public function download(User $user, SectionItem $sectionItem): bool
@@ -95,5 +95,13 @@ class SectionItemPolicy
     {
         return $user->teacher
             && $courseSection->teacher_id === $user->teacher->id;
+    }
+    private function ownsItem(User $user, SectionItem $sectionItem): bool{
+        return $user->teacher &&
+            $sectionItem->created_by_teacher_id === $user->teacher->id;
+    }
+    private function is_primary(User $user, Course $course): bool{
+        return $user->teacher &&
+            $course->teachers()->whereKey($user->teacher->id)->where('role','primary_lecturer')->exists();
     }
 }

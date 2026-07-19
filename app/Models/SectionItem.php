@@ -13,6 +13,7 @@ class SectionItem extends Model
     protected $fillable = [
         'section_id',
         'title',
+        'created_by_teacher_id',
         'description',
         'material_file_type',
         'material_file_name',
@@ -22,5 +23,12 @@ class SectionItem extends Model
     public function section(): BelongsTo
     {
         return $this->belongsTo(CourseSection::class, 'section_id');
+    }
+    public function creator()
+    {
+        return $this->belongsTo(
+            Teacher::class,
+            'created_by_teacher_id'
+        );
     }
 }

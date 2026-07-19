@@ -940,10 +940,7 @@ class DatabaseSeeder extends Seeder
 
         $sections = collect();
 
-        /*
-         * Sections are course weeks/modules, so create them once
-         * for the course—not once for every teacher.
-         */
+       
         for ($i = 1; $i <= 4; $i++) {
             $section = CourseSection::factory()->create([
                 'course_id' => $course->id,
@@ -951,10 +948,9 @@ class DatabaseSeeder extends Seeder
                 'title' => "Section {$i}",
             ]);
 
-            /*
-             * Any course teacher may create section items.
-             */
+
             $itemCreator = $teachers->random();
+
 
             $this->seedSectionItems(
                 $section,
