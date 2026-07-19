@@ -930,30 +930,56 @@ class DatabaseSeeder extends Seeder
             return;
         }
 
-        $sections = collect();
+        $primaryTeacher = $course->teachers()
+            ->wherePivot('role', 'primary_lecturer')
+            ->first();
 
-        foreach ($teachers as $teacher) {
-            for ($i = 1; $i <= 4; $i++) {
-                $section = CourseSection::factory()->create([
-                    'course_id' => $course->id,
-                    'teacher_id' => $teacher->id,
-                    'title' => "Section {$i}",
-                ]);
-
-                $this->seedSectionItems($section);
-
-                $sections->push($section);
-            }
+        if (! $primaryTeacher) {
+            return;
         }
 
+        $sections = collect();
 
+        /*
+         * Sections are course weeks/modules, so create them once
+         * for the course—not once for every teacher.
+         */
+        for ($i = 1; $i <= 4; $i++) {
+            $section = CourseSection::factory()->create([
+                'course_id' => $course->id,
+                'teacher_id' => $primaryTeacher->id,
+                'title' => "Section {$i}",
+            ]);
+
+            /*
+             * Any course teacher may create section items.
+             */
+            $itemCreator = $teachers->random();
+
+            $this->seedSectionItems(
+                $section,
+                $itemCreator
+            );
+
+            $sections->push($section);
+        }
+
+        /*
+         * Prepare all planned submissions before calculating weights.
+         *
+         * Store both the section and the teacher who creates
+         * each submission.
+         */
         $submissionPlan = collect();
 
         foreach ($sections as $section) {
             $submissionCount = $this->faker->numberBetween(1, 3);
 
             for ($i = 0; $i < $submissionCount; $i++) {
-                $submissionPlan->push($section);
+                $submissionPlan->push([
+                    'section' => $section,
+                    'teacher' => $teachers->random(),
+                ]);
             }
         }
 
@@ -963,19 +989,19 @@ class DatabaseSeeder extends Seeder
             return;
         }
 
-
         $baseWeight = intdiv(100, $totalSubmissions);
         $remainder = 100 % $totalSubmissions;
 
         $assessments = collect();
 
-        foreach ($submissionPlan->values() as $index => $section) {
+        foreach ($submissionPlan->values() as $index => $plan) {
             $weight = $baseWeight
                 + ($index < $remainder ? 1 : 0);
 
             $assessment = $this->seedSectionSubmission(
-                $section,
-                $weight
+                $plan['section'],
+                $weight,
+                $plan['teacher']
             );
 
             $assessments->push($assessment);
@@ -987,18 +1013,19 @@ class DatabaseSeeder extends Seeder
         );
     }
 
-    private function seedSectionItems(CourseSection $section): void
-    {
+    private function seedSectionItems(CourseSection $section, Teacher $teacher): void {
         $now = now();
 
         $rows = collect(
             SectionItem::factory()
                 ->count(3)
-                ->raw(['section_id' => $section->id])
+                ->raw([
+                    'section_id' => $section->id,
+                    'created_by_teacher_id' => $teacher->id,
+                ])
         )
             ->map(static fn (array $row): array => [
                 ...$row,
-                'section_id' => $section->id,
                 'created_at' => $now,
                 'updated_at' => $now,
             ])
@@ -1007,10 +1034,10 @@ class DatabaseSeeder extends Seeder
         DB::table('section_items')->insert($rows);
     }
 
-    private function seedSectionSubmission(CourseSection $section, int $weight): CourseAssessments {
+    private function seedSectionSubmission(CourseSection $section,int $weight,Teacher $teacher): CourseAssessments {
         $assessment = CourseAssessments::factory()->create([
             'course_id' => $section->course_id,
-            'teacher_id' => $section->teacher_id,
+            'teacher_id' => $teacher->id,
             'academic_year_id' => $this->activeAcademicYear->id,
             'weight' => $weight,
         ]);
@@ -1018,6 +1045,7 @@ class DatabaseSeeder extends Seeder
         SectionSubmission::factory()->create([
             'course_section_id' => $section->id,
             'course_assessment_id' => $assessment->id,
+            'created_by_teacher_id' => $teacher->id,
         ]);
 
         return $assessment;
