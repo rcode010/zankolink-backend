@@ -17,6 +17,12 @@ class SectionItemResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'type' => $this->resolveType(),
+            'created_by' => $this->whenLoaded('creator', function () {
+                return [
+                    'id' => $this->creator->id,
+                    'name' => $this->creator->user?->name,
+                ];
+            }),
             'material_file_type' => $this->material_file_type,
             'material_file_name' => $this->material_file_name,
             'material_file_url' => $this->resolveUrl(),

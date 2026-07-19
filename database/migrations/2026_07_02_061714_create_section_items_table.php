@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('section_id')->constrained('course_sections')->onDelete('cascade');
             $table->string('title');
+            $table->foreignId('created_by_teacher_id')->constrained('teachers')->onDelete('cascade');
             $table->text('description')->nullable();
             $table->string('material_file_type')->nullable(); // e.g. pdf, image, video, document, link
             $table->string('material_file_name')->nullable();
