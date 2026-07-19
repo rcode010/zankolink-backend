@@ -9,7 +9,6 @@ Route::prefix('moodle')->group(function () {
     Route::prefix('course-sections/{section}')->group(function () {
         Route::get('/items', [SectionItemController::class, 'index'])->middleware('permission:view section items');
         Route::post('/items', [SectionItemController::class, 'store'])->middleware('permission:create section items');
-        Route::post('/notes', [SectionItemController::class, 'storeNote'])->middleware('permission:create section notes');
     });
 
     // Standalone entity operations on discrete section items/materials
