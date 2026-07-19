@@ -10,6 +10,5 @@ Route::prefix('moodle')->group(function () {
     Route::get('/section-submissions/{submission}', [SectionSubmissionController::class, 'show'])->middleware('permission:view section submission');
     Route::put('/section-submissions/{submission}', [SectionSubmissionController::class, 'update'])->middleware('permission:update section submissions');
     Route::delete('/section-submissions/{submission}', [SectionSubmissionController::class, 'destroy'])->middleware('permission:delete section submissions');
-    Route::get('/section-submission-attachments/{attachment}/download', [SectionSubmissionAttachmentController::class, 'download'])->middleware('permission:download section submission attachments');
     Route::delete('/section-submission-attachments/{attachment}', [SectionSubmissionAttachmentController::class, 'destroy'])->middleware('permission:delete section submission attachments');
 });

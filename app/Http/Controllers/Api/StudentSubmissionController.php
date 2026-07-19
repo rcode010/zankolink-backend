@@ -61,7 +61,7 @@ class StudentSubmissionController extends Controller
      * "file_name": "Screenshot 2026-07-04 142426.png",
      * "file_type": "image/png",
      * "file_size": 233,
-     * "file_url": "student-submissions/g5Npk4t6LxqNnoJYQMbXQ2bmG4zbaqpP8zc4VQpj.png",
+     * "file_url": "http://localhost/storage/student-submissions/g5Npk4t6LxqNnoJYQMbXQ2bmG4zbaqpP8zc4VQpj.png",
      * "created_at": "2026-07-09 10:11:49",
      * "updated_at": "2026-07-09 10:11:49"
      * }
@@ -161,22 +161,6 @@ class StudentSubmissionController extends Controller
     }
 
     /**
-     * Download submitted file
-     *
-     * @authenticated
-     *
-     * @urlParam studentSubmission integer required The ID of the submitted file. Example: 1
-     */
-    public function download(StudentSubmission $studentSubmission)
-    {
-        $this->authorize('download', $studentSubmission);
-        return Storage::disk('public')->download(
-            $studentSubmission->file_url,
-            $studentSubmission->file_name
-        );
-    }
-
-    /**
      * Delete submitted file
      *
      * @authenticated
@@ -203,10 +187,39 @@ class StudentSubmissionController extends Controller
      *
      * @urlParam submission integer required The ID of the assignment. Example: 1
      *
-     * @response status=403 scenario="not the assigned lecturer" {
-     * "status": "error",
-     * "message": "You are not the lecturer assigned to this assignment's section.",
-     * "data": null
+     * @response 200 {
+     * "success": true,
+     * "message": "Student submissions retrieved successfully.",
+     * "data": [
+     * {
+     * "id": 1,
+     * "student": {
+     * "id": 1,
+     * "name": "Student 001"
+     * },
+     * "submission_id": 1,
+     * "file_name": "Screenshot 2026-07-04 142426.png",
+     * "file_type": "image/png",
+     * "file_size": 233,
+     * "file_url": "http://localhost/storage/student-submissions/tpuh7I2g0Z7dKcv0gx39UOONYdypLBA0zj4ZAMuo.png",
+     * "created_at": "2026-07-19 08:48:53",
+     * "updated_at": "2026-07-19 08:48:53"
+     * },
+     * {
+     * "id": 2,
+     * "student": {
+     * "id": 1,
+     * "name": "Student 001"
+     * },
+     * "submission_id": 1,
+     * "file_name": "Screenshot 2026-07-04 142426.png",
+     * "file_type": "image/png",
+     * "file_size": 233,
+     * "file_url": "http://localhost/storage/student-submissions/0wSOIUxz9KpFtW6NfJN5jWFfiLDrQgourPU0ijQG.png",
+     * "created_at": "2026-07-19 08:48:53",
+     * "updated_at": "2026-07-19 08:48:53"
+     * }
+     * ]
      * }
      */
     public function index(SectionSubmission $submission)
@@ -237,11 +250,41 @@ class StudentSubmissionController extends Controller
      *
      * @urlParam studentSubmission integer required The ID of the student submission. Example: 9
      *
-     * @response status=403 scenario="not authorized" {
-     * "status": "error",
-     * "message": "You are not authorized to view this submission.",
-     * "data": null
+     * @response 200 {
+     * "success": true,
+     * "message": "Submission retrieved successfully",
+     * "data": [
+     * {
+     * "id": 1,
+     * "student": {
+     * "id": 1,
+     * "name": "Student 001"
+     * },
+     * "submission_id": 1,
+     * "file_name": "Screenshot 2026-07-04 142426.png",
+     * "file_type": "image/png",
+     * "file_size": 233,
+     * "file_url": "http://localhost/storage/student-submissions/tpuh7I2g0Z7dKcv0gx39UOONYdypLBA0zj4ZAMuo.png",
+     * "created_at": "2026-07-19 08:48:53",
+     * "updated_at": "2026-07-19 08:48:53"
+     * },
+     * {
+     * "id": 2,
+     * "student": {
+     * "id": 1,
+     * "name": "Student 001"
+     * },
+     * "submission_id": 1,
+     * "file_name": "Screenshot 2026-07-04 142426.png",
+     * "file_type": "image/png",
+     * "file_size": 233,
+     * "file_url": "http://localhost/storage/student-submissions/0wSOIUxz9KpFtW6NfJN5jWFfiLDrQgourPU0ijQG.png",
+     * "created_at": "2026-07-19 08:48:53",
+     * "updated_at": "2026-07-19 08:48:53"
      * }
+     * ]
+     * }
+     *
      */
     public function show(StudentSubmission $studentSubmission, SectionSubmission $submission, Student $student)
     {
