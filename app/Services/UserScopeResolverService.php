@@ -103,6 +103,8 @@ class UserScopeResolverService
             'DEPARTMENT' => [
                 'id' => $scope->department_id,
                 'name' => $scope->department_name,
+                'course_selection_starts_at' => $scope->course_selection_starts_at,
+                'course_selection_ends_at' => $scope->course_selection_ends_at,
                 'is_open' =>
                     $scope->course_selection_starts_at &&
                     $scope->course_selection_ends_at &&
