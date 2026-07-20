@@ -23,22 +23,48 @@ class UpdateStudentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $student = $this->route('student');
+
         return [
-            'user_id' => [
-                'sometimes', 'exists:users,id',
-                Rule::unique('students', 'user_id')->ignore($this->student),
+            'name' => "sometimes|string|max:255",
+
+            'email' => [
+                'sometimes',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')
+                    ->ignore($student->user_id),
             ],
 
-            'department_id' => 'sometimes|exists:departments,id',
-            'enrollment_type' => 'sometimes|in:morning,parallel,evening',
-            'stage' => 'sometimes|integer',
+            'phone' => "sometimes|string|regex:/^07[0-9]{9}$/",
+
+            'department_id' => "sometimes|exists:departments,id",
+
+            'enrollment_type' => [
+                'sometimes',
+                Rule::in(['morning', 'parallel', 'evening']),
+            ],
+
+            'stage' => "sometimes|integer|between:1,6",
 
             'student_number' => [
-                'sometimes', 'string', 'max:50',
-                Rule::unique('students', 'student_number')->ignore($this->student),
+                'sometimes',
+                'string',
+                'max:50',
+                Rule::unique('students', 'student_number')
+                    ->ignore($student->id),
             ],
 
-            'status' => 'sometimes|in:active,inactive,on_leave,suspended,graduated',
+            'status' => [
+                'sometimes',
+                Rule::in([
+                    'active',
+                    'inactive',
+                    'on_leave',
+                    'suspended',
+                    'graduated',
+                ]),
+            ],
         ];
     }
 }
