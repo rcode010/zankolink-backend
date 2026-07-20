@@ -50,6 +50,7 @@ class StoreLetterRequest extends FormRequest
             ],
 
             'file.*' => [
+                'nullable',
                 'file',
                 'mimes:pdf,doc,docx,jpg,jpeg,png',
                 'max:5120',

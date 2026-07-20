@@ -70,6 +70,6 @@ class QrCodeService
 
     protected function buildQrData(Model $model): string
     {
-        return config('app.frontend_url').'/verify/letters/'.$model->letter_uuid;
+        return $model->verification_url;
     }
 }
