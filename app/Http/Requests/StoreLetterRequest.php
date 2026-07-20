@@ -37,6 +37,7 @@ class StoreLetterRequest extends FormRequest
                     'open_faculty',
                     'close_faculty',
                     'create_course',
+                    'delete_course',
                 ]),
             ],
             'title' => ['required', 'string', 'max:255'],
@@ -107,6 +108,9 @@ class StoreLetterRequest extends FormRequest
                 'payload.prerequisites'=>['nullable', 'array'],
                 'payload.prerequisites.*'=>['required', 'integer', 'exists:courses,id'],
                 'payload.color'=>['required', 'string', 'max:255'],
+            ],
+            'delete_course'=>[
+                'payload.id' => ['required', 'exists:courses,id'],
             ],
 
             default => [],
