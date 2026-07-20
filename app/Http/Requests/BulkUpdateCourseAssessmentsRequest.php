@@ -53,6 +53,7 @@ class BulkUpdateCourseAssessmentsRequest extends FormRequest
                 'sometimes',
                 'nullable',
                 'date',
+                'after:now'
             ]
         ];
     }

@@ -28,7 +28,7 @@ class StoreCourseAssessmentRequest extends FormRequest
             'title' => 'required|string',
             'max_mark' => 'required|numeric|min:0',
             'weight' => 'required|numeric|min:0',
-            'due_at' => 'nullable|date',
+            'due_at' => 'nullable|date|after:now',
         ];
     }
     public function after(): array

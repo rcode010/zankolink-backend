@@ -55,6 +55,7 @@ class SyncCourseAssessmentsRequest extends FormRequest
             'create.*.due_at' => [
                 'nullable',
                 'date',
+                'after:now',
             ],
 
             'update' => [
@@ -96,6 +97,7 @@ class SyncCourseAssessmentsRequest extends FormRequest
                 'sometimes',
                 'nullable',
                 'date',
+                'after:now',
             ],
 
             'delete' => [

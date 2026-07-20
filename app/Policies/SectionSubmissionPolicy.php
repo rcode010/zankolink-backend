@@ -33,7 +33,7 @@ class SectionSubmissionPolicy
      */
     public function create(User $user, CourseSection $courseSection): bool
     {
-        return $this->teacherBelongsToCourse($user, $courseSection->section->course);
+        return $this->teacherBelongsToCourse($user, $courseSection->course);
     }
 
     /**
