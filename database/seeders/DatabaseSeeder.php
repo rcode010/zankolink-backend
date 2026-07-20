@@ -150,7 +150,7 @@ class DatabaseSeeder extends Seeder
             'download section submission attachments', 'delete section submission attachments',
             // Student Submission
             'create student submissions', 'view student submissions', 'download student submissions', 'delete student submissions',
-            'view student submission', 'update student submissions',
+            'view student submission', 'update student submissions', 'view own submission',
             // Academic Request
             'view academic requests', 'view academic request', 'create academic requests',
             // Attendance Sessions
@@ -312,7 +312,7 @@ class DatabaseSeeder extends Seeder
                 'view section items', 'view section item',
                 'download section attachments', 'view section submissions',
                 'view section submission', 'download section submission attachments',
-                'create student submissions', 'view student submission',
+                'create student submissions', 'view own submission',
                 'download student submissions', 'delete student submissions',
                 'view academic requests', 'view academic request',
                 'create academic requests', 'view own attendance records',

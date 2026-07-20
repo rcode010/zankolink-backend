@@ -21,10 +21,9 @@ class StudentSubmissionPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, StudentSubmission $studentSubmission): bool
+    public function view(User $user, SectionSubmission $sectionSubmission): bool
     {
-        return $this->ownsSubmission($user, $studentSubmission)
-            || $this->ownsSectionSubmission($user, $studentSubmission->submission);
+        return $this->ownsSectionSubmission($user, $sectionSubmission);
     }
 
     /**
@@ -34,6 +33,7 @@ class StudentSubmissionPolicy
     {
         return $this->studentBelongsToCourse($user, $sectionSubmission->section->course);
     }
+
     /**
      * Determine whether the user can delete the model.
      */
@@ -46,6 +46,11 @@ class StudentSubmissionPolicy
     {
         return $this->ownsSubmission($user, $studentSubmission)
             || $this->ownsSectionSubmission($user, $studentSubmission->submission);
+    }
+
+    public function viewOwn(User $user, StudentSubmission $studentSubmission): bool
+    {
+        return $this->ownsSubmission($user, $studentSubmission);
     }
 
     public function grade(User $user, StudentSubmission $studentSubmission): bool
