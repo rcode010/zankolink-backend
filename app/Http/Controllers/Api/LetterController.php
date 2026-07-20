@@ -271,5 +271,26 @@ class LetterController extends Controller
 
         return $this->ok('Outbox letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
     }
+    public function archived(Request $request){
+        $this->authorize('viewAny', Letter::class);
+        $user = $request->user();
+
+        $letters = QueryBuilder::for(Letter::class)
+            ->where('original_sender_id', $user->id)
+            ->orWhere('receiver_id', $user->id)
+            ->with([
+                'sender:id,name',
+                'receiver:id,name',
+                'attachments',
+                'signatures',
+            ])
+            ->get();
+        // ToDo: Ministry admin
+
+        return $this->ok(
+            'Archived letters retrieved successfully',
+            $letters->toArray()
+        );
+    }
 
 }
