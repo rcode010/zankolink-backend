@@ -87,13 +87,14 @@ class SectionItemController extends Controller
      */
     public function store(StoreSectionItemRequest $request, CourseSection $section)
     {
+        $teacher = $request->user()->teacher;
         $this->authorize('create', [SectionItem::class, $section]);
-
         $validated = $request->validated();
 
         $data = [
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
+            'created_by_teacher_id' => $teacher->id,
         ];
 
         if ($request->hasFile('file')) {
@@ -112,7 +113,7 @@ class SectionItemController extends Controller
             $data['material_file_url'] = $validated['url'];
         }
 
-        $item = $section->items()->create($data);
+        $item = $section->items()->create($data)->load('creator');
 
         return $this->success(
             'Material added successfully.',
