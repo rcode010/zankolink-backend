@@ -15,7 +15,8 @@ class StudentMarksPolicy
      */
     public function viewAny(User $user, CourseAssessments $courseAssessments): bool
     {
-        return $this->teacherOwnsAssessment($user, $courseAssessments);
+        return $this->teacherOwnsAssessment($user, $courseAssessments)
+            || $this->teacherIsPrimaryLecturer($user, $courseAssessments);
     }
 
     /**
@@ -23,7 +24,10 @@ class StudentMarksPolicy
      */
     public function view(User $user, StudentMarks $studentMarks): bool
     {
-        return $this->teacherOwnsAssessment($user, $studentMarks->courseAssessment);
+        $assessment = $studentMarks->courseAssessment;
+
+        return $this->teacherOwnsAssessment($user, $assessment)
+            || $this->teacherIsPrimaryLecturer($user, $assessment);
     }
 
     /**
@@ -31,7 +35,8 @@ class StudentMarksPolicy
      */
     public function create(User $user, CourseAssessments $courseAssessments): bool
     {
-        return $this->teacherOwnsAssessment($user, $courseAssessments);
+        return $this->teacherOwnsAssessment($user, $courseAssessments)
+            || $this->teacherIsPrimaryLecturer($user, $courseAssessments);
     }
 
     /**
@@ -39,7 +44,10 @@ class StudentMarksPolicy
      */
     public function update(User $user, StudentMarks $studentMarks): bool
     {
-        return $this->teacherOwnsAssessment($user, $studentMarks->courseAssessment);
+        $assessment = $studentMarks->courseAssessment;
+
+        return $this->teacherOwnsAssessment($user, $assessment)
+            || $this->teacherIsPrimaryLecturer($user, $assessment);
     }
 
     /**
@@ -78,5 +86,13 @@ class StudentMarksPolicy
     {
         return $user->teacher &&
             $assessment->teacher_id === $user->teacher->id;
+    }
+
+    private function teacherIsPrimaryLecturer(User $user, CourseAssessments $assessment)
+    {
+        return $assessment->course->teachers()
+            ->where('teachers.id', $user->teacher->id)
+            ->wherePivot('role', 'primary_lecturer')
+            ->exists();
     }
 }
