@@ -110,7 +110,7 @@ class StoreLetterRequest extends FormRequest
                 'payload.color'=>['required', 'string', 'max:255'],
             ],
             'delete_course'=>[
-                'payload.id' => ['required', 'exists:courses,id'],
+                'payload.course_id' => ['required', 'exists:courses,id'],
             ],
 
             default => [],

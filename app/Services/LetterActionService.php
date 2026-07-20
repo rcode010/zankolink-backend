@@ -34,6 +34,7 @@ class LetterActionService
                 'open_faculty' => $this->openFaculty($payload),
                 'close_faculty' => $this->closeFaculty($payload),
                 'create_course'=>$this->createCourse($payload),
+                'delete_course'=>$this->deleteCourse($payload),
                 default => throw new RuntimeException("Unsupported letter action type: {$letter->type}"),
             };
 
@@ -158,6 +159,10 @@ class LetterActionService
         $course->prerequisites()->sync($payload['prerequisites']);
     }
 
+    public function deleteCourse(array $payload): void{
+        $course = Course::findOrFail($this->required($payload, 'course_id'));
+        $course->delete();
+    }
     private function lecturerRole(): Role
     {
         return Role::where('name', 'lecturer')
