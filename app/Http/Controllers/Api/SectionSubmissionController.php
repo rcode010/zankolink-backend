@@ -124,7 +124,7 @@ class SectionSubmissionController extends Controller
 
             return $this->success(
                 'Assignment created successfully',
-                (new SectionSubmissionResource($submission))->resolve(),
+                (new SectionSubmissionResource($submission->load('creator')))->resolve(),
                 201
             );
         } catch (\Exception $e) {

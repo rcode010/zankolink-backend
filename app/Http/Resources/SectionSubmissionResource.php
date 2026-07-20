@@ -26,7 +26,6 @@ class SectionSubmissionResource extends JsonResource
             'description' => $this->description,
 
             'course_assessment' => $this->whenLoaded('courseAssessment'),
-            'created_by_teacher_id'=>$this->created_by_teacher_id,
             'section' => $this->whenLoaded(
                 'section',
                 fn () => [
@@ -34,7 +33,12 @@ class SectionSubmissionResource extends JsonResource
                     'title' => $this->section->title,
                 ]
             ),
-
+            'created_by' => $this->whenLoaded('creator', function () {
+                return [
+                    'id' => $this->creator->id,
+                    'name' => $this->creator->user?->name,
+                ];
+            }),
             'attachments' => $this->whenLoaded(
                 'attachments',
                 fn () => $this->attachments->map(fn ($attachment) => [
