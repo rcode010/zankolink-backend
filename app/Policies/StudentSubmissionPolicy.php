@@ -15,7 +15,8 @@ class StudentSubmissionPolicy
      */
     public function viewAny(User $user, SectionSubmission $sectionSubmission): bool
     {
-        return $this->ownsSectionSubmission($user, $sectionSubmission);
+        return $this->ownsSectionSubmission($user, $sectionSubmission)
+            || $this->teacherIsPrimaryLecturer($user, $sectionSubmission);
     }
 
     /**
@@ -23,7 +24,8 @@ class StudentSubmissionPolicy
      */
     public function view(User $user, SectionSubmission $sectionSubmission): bool
     {
-        return $this->ownsSectionSubmission($user, $sectionSubmission);
+        return $this->ownsSectionSubmission($user, $sectionSubmission)
+            || $this->teacherIsPrimaryLecturer($user, $sectionSubmission);
     }
 
     /**
@@ -42,20 +44,9 @@ class StudentSubmissionPolicy
         return $this->ownsSubmission($user, $studentSubmission);
     }
 
-    public function download(User $user, StudentSubmission $studentSubmission): bool
-    {
-        return $this->ownsSubmission($user, $studentSubmission)
-            || $this->ownsSectionSubmission($user, $studentSubmission->submission);
-    }
-
     public function viewOwn(User $user, StudentSubmission $studentSubmission): bool
     {
         return $this->ownsSubmission($user, $studentSubmission);
-    }
-
-    public function grade(User $user, StudentSubmission $studentSubmission): bool
-    {
-        return $this->ownsSectionSubmission($user, $studentSubmission->submission);
     }
 
     private function studentBelongsToCourse(User $user, Course $course): bool
@@ -76,5 +67,13 @@ class StudentSubmissionPolicy
     {
         return $user->teacher
             && $sectionSubmission->section->teacher_id === $user->teacher->id;
+    }
+
+    private function teacherIsPrimaryLecturer(User $user, SectionSubmission $sectionSubmission): bool
+    {
+        return $sectionSubmission->section->course->teachers()
+            ->where('teachers.id', $user->teacher->id)
+            ->wherePivot('role', 'primary_lecturer')
+            ->exists();
     }
 }
