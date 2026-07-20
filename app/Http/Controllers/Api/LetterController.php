@@ -257,10 +257,7 @@ class LetterController extends Controller
             return $this->ok('Broadcast letters fetched successfully', $broadcasts->toArray());
         }
         $letters = QueryBuilder::for(Letter::class)
-            ->where(function ($query) use ($user) {
-                $query->where('sender_id', $user->id)
-                    ->orWhere('original_sender_id', $user->id);
-            })
+            ->Where('original_sender_id', $user->id)
             ->with([
                 'sender:id,name',
                 'receiver:id,name',
