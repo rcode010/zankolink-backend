@@ -16,6 +16,7 @@ class SectionItemResource extends JsonResource
             'section_id' => $this->section_id,
             'title' => $this->title,
             'description' => $this->description,
+            'created_by_teacher_id'=>$this->created_by_teacher_id,
             'type' => $this->resolveType(),
             'created_by' => $this->whenLoaded('creator', function () {
                 return [
