@@ -113,7 +113,7 @@ class SectionItemController extends Controller
             $data['material_file_url'] = $validated['url'];
         }
 
-        $item = $section->items()->create($data);
+        $item = $section->items()->create($data)->load('creator');
 
         return $this->success(
             'Material added successfully.',
