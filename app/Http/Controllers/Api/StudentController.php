@@ -9,8 +9,11 @@ use App\Http\Resources\StudentResource;
 use App\Models\Student;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+
 /**
  * @group Student
  *
@@ -100,16 +103,39 @@ class StudentController extends Controller
      */
     public function update(UpdateStudentRequest $request, Student $student)
     {
-        $student->update($request->validated());
+        $validated = $request->validated();
+
+        $userData = Arr::only($validated, [
+            'name',
+            'email',
+            'phone',
+        ]);
+
+        $studentData = Arr::only($validated, [
+            'department_id',
+            'enrollment_type',
+            'stage',
+            'student_number',
+            'status',
+        ]);
+
+        DB::transaction(function () use ($student, $userData, $studentData) {
+            if ($userData !== []) {
+                $student->user->update($userData);
+            }
+            if ($studentData !== []) {
+                $student->update($studentData);
+            }
+        });
 
         return $this->ok(
             'Student updated successfully.',
             (new StudentResource(
                 $student->fresh()->load([
-                    'user:id,name,email',
+                    'user:id,name,email,phone',
                     'department:id,name',
                 ])
-            ))->toArray($request)
+            ))->resolve($request)
         );
     }
 
