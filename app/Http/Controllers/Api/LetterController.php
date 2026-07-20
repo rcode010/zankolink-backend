@@ -171,11 +171,6 @@ class LetterController extends Controller
         DB::transaction(function () use ($letter, $user, $credentials) {
             $oldReceiverId = $letter->receiver_id;
 
-            LetterSignature::create([
-                'letter_id' => $letter->id,
-                'user_id' => $user->id,
-            ]);
-
             $letter->update([
                 'sender_id' => $user->id,
                 'receiver_id' => $credentials['receiver_id'],
