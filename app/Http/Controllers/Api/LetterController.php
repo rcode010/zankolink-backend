@@ -276,8 +276,11 @@ class LetterController extends Controller
         $user = $request->user();
 
         $letters = QueryBuilder::for(Letter::class)
-            ->where('original_sender_id', $user->id)
-            ->orWhere('receiver_id', $user->id)
+            ->where('status', '!=', 'pending')
+            ->where(function ($query) use ($user) {
+                $query->where('original_sender_id', $user->id)
+                    ->orWhere('receiver_id', $user->id);
+            })
             ->with([
                 'sender:id,name',
                 'receiver:id,name',
