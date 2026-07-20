@@ -35,6 +35,7 @@ class LetterResource extends JsonResource
             'qr_code_url' => $this->qr_code_path
                 ? Storage::disk('public')->url($this->qr_code_path)
                 : null,
+            'verification_page'=>$this->verificationUrl,
             'payload' => $this->payload,
 
             'created_at' => $this->created_at,

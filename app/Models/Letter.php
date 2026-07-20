@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -76,5 +77,14 @@ class Letter extends Model
     public function is_executed(): bool
     {
         return $this->executed_at ? true : false;
+    }
+
+    protected function verificationUrl(): Attribute
+    {
+        return Attribute::get(
+            fn () => config('app.frontend_url')
+                .'/verify/letters/'
+                .$this->letter_uuid
+        );
     }
 }
