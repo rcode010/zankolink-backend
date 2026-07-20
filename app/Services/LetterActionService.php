@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\AccountCreatedMail;
 use App\Models\AcademicYear;
+use App\Models\Course;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Letter;
@@ -32,6 +33,7 @@ class LetterActionService
                 'close_department' => $this->closeDepartment($payload),
                 'open_faculty' => $this->openFaculty($payload),
                 'close_faculty' => $this->closeFaculty($payload),
+                'create_course'=>$this->createCourse($payload),
                 default => throw new RuntimeException("Unsupported letter action type: {$letter->type}"),
             };
 
@@ -139,6 +141,21 @@ class LetterActionService
             $faculty->update([
                 'is_active' => false,
             ]);
+    }
+
+    public function createCourse(array $payload): void{
+        $department = Department::findOrFail($this->required($payload, 'department_id'));
+        $course = Course::create([
+            'name' => $payload['name'],
+            'department_id' => $department->id,
+            'code' => $payload['code'],
+            'semester' => $payload['semester'],
+            'credit_hours' => $payload['credit_hours'],
+            'year_level' => $payload['year_level'],
+            'is_active' => $payload['is_active'],
+            'color' => $payload['color'],
+        ]);
+        $course->prerequisites()->sync($payload['prerequisites']);
     }
 
     private function lecturerRole(): Role

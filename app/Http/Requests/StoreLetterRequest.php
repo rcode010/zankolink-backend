@@ -103,7 +103,7 @@ class StoreLetterRequest extends FormRequest
                 'payload.semester'=>['required', 'string','in:fall,spring'],
                 'payload.credit_hours'=>['required', 'integer', 'min:1'],
                 'payload.year_level'=>['required', 'integer', 'min:1'],
-                'payload.is_active'=>['nullable', 'boolean'],
+                'payload.is_active'=>['required', 'boolean'],
                 'payload.prerequisites'=>['nullable', 'array'],
                 'payload.prerequisites.*'=>['required', 'integer', 'exists:courses,id'],
                 'payload.color'=>['required', 'string', 'max:255'],
