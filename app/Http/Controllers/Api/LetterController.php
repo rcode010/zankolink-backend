@@ -196,6 +196,7 @@ class LetterController extends Controller
 
         $letters = QueryBuilder::for(Letter::class)
             ->where('receiver_id', $user->id)
+            ->where('status','pending')
             ->with([
                 'sender:id,name',
                 'receiver:id,name',
