@@ -74,6 +74,11 @@ class Letter extends Model
         return $this->hasMany(LetterStamp::class);
     }
 
+    public function recipients()
+    {
+        return $this->hasMany(LetterRecipient::class);
+    }
+
     public function is_executed(): bool
     {
         return $this->executed_at ? true : false;
