@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAcademicYearRequest;
 use App\Models\AcademicYear;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -18,33 +19,49 @@ class AcademicYearController extends Controller
      * Update the current academic year and create a new one.
      * Route: POST /api/academic-year/update
      */
-    public function updateAcademicYear(Request $request)
+    public function updateAcademicYear(StoreAcademicYearRequest $request)
     {
-        // 1. Validate the incoming request data from frontend
-        $request->validate([
-            'year' => 'required|string', // e.g., "2026-2027"
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
-        ]);
+        $validated = $request->validated();
 
-        // Use a database transaction to ensure both operations succeed or fail together
-        DB::transaction(function () use ($request) {
+        $academicYear = DB::transaction(function () use ($validated) {
+            $isActive = $validated['is_active'];
 
-            // 2. Set all previous academic years to inactive
-            AcademicYear::where('is_active', true)->update(['is_active' => false]);
+            if ($isActive) {
+                AcademicYear::query()
+                    ->where('is_active', true)
+                    ->when(
+                        isset($validated['id']),
+                        fn ($query) => $query->whereKeyNot($validated['id'])
+                    )
+                    ->update([
+                        'is_active' => false,
+                    ]);
+            }
+            if (isset($validated['id'])) {
+                $academicYear = AcademicYear::findOrFail(
+                    $validated['id']
+                );
+                unset($validated['id']);
 
-            // 3. Create the new academic year and set it as active
-            AcademicYear::create([
-                'year' => $request->year,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
-                'is_active' => true,
+                $academicYear->update($validated);
+
+                return $academicYear->fresh();
+            }
+
+            return AcademicYear::create([
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+                'year' => $validated['year'],
+                'is_active' => $validated['is_active'],
             ]);
         });
 
-        return response()->json([
-            'message' => 'Academic year updated successfully. New year is now active.',
-        ], 200);
+        return $this->ok(
+            isset($validated['id'])
+                ? 'Academic year updated successfully.'
+                : 'Academic year created successfully.',
+            $academicYear->toArray()
+        );
     }
 
     public function retrieveActiveAcademicYear()
