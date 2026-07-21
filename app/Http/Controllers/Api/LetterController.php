@@ -295,6 +295,11 @@ class LetterController extends Controller
 
         $broadcasts = QueryBuilder::for(LetterBroadcast::class)
             ->with('attachments')
+            ->allowedFilters(
+                AllowedFilter::partial('created_at'),
+                AllowedFilter::partial('title'),
+            )
+            ->defaultSort('-created_at')
             ->get();
 
         return $this->ok('Broadcast letters fetched successfully', $broadcasts->toArray());
@@ -307,6 +312,10 @@ class LetterController extends Controller
         $letters = QueryBuilder::for(Letter::class)
             ->where('receiver_id', null)
             ->with(['sender:id,name', 'attachments', 'recipients'])
+            ->allowedFilters(
+                AllowedFilter::partial('created_at'),
+                AllowedFilter::partial('title'),
+            )
             ->defaultSort('-created_at')
             ->get();
 
