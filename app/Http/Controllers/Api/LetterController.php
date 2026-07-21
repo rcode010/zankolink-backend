@@ -270,14 +270,7 @@ class LetterController extends Controller
     {
         $this->authorize('viewAny', Letter::class);
         $user = $request->user();
-        if ($user->isMinistryAdmin()) {
-            $broadcasts = LetterBroadcast::query()
-                ->with('attachments')
-                ->latest()
-                ->get();
 
-            return $this->ok('Broadcast letters fetched successfully', $broadcasts->toArray());
-        }
         $letters = QueryBuilder::for(Letter::class)
             ->Where('original_sender_id', $user->id)
             ->with([
@@ -294,6 +287,19 @@ class LetterController extends Controller
 
         return $this->ok('Outbox letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
     }
+
+    public function broadcastOutbox(Request $request)
+    {
+        $this->authorize('viewBroadcast', Letter::class);
+
+        $broadcasts = QueryBuilder::for(LetterBroadcast::class)
+            ->with('attachments')
+            ->get();
+
+        return $this->ok('Broadcast letters fetched successfully', $broadcasts->toArray());
+    }
+
+
     public function archived(Request $request){
         $this->authorize('viewAny', Letter::class);
         $user = $request->user();
