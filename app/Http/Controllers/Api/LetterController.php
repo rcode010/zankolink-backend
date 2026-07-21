@@ -14,6 +14,7 @@ use App\Models\LetterBroadcast;
 use App\Models\LetterFlow;
 use App\Models\LetterRecipient;
 use App\Models\LetterSignature;
+use App\QueryFilters\MultiRecipientUniversityFilter;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
@@ -314,7 +315,10 @@ class LetterController extends Controller
             ->with(['sender:id,name', 'attachments', 'recipients'])
             ->allowedFilters(
                 AllowedFilter::partial('created_at'),
-                AllowedFilter::partial('title'),
+                AllowedFilter::custom(
+                    'university',
+                    new MultiRecipientUniversityFilter()
+                )
             )
             ->defaultSort('-created_at')
             ->get();
