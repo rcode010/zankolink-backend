@@ -7,10 +7,12 @@ use App\Http\Requests\RaiseLetterRequest;
 use App\Http\Requests\StoreLetterRequest;
 use App\Http\Requests\UpdateLetterRequest;
 use App\Http\Resources\LetterBroadcastResource;
+use App\Http\Resources\LetterRecipientsResource;
 use App\Http\Resources\LetterResource;
 use App\Models\Letter;
 use App\Models\LetterBroadcast;
 use App\Models\LetterFlow;
+use App\Models\LetterRecipient;
 use App\Models\LetterSignature;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
@@ -217,6 +219,7 @@ class LetterController extends Controller
             });
 
         $broadcasts = collect();
+        $multiRecipientLetters = collect();
 
         if (! $user->isMinistryAdmin()) {
             $broadcasts = LetterBroadcast::query()
@@ -231,12 +234,31 @@ class LetterController extends Controller
                         'data' => (new LetterBroadcastResource($broadcast))->resolve($request),
                     ];
                 });
+
+            $multiRecipientLetters = LetterRecipient::query()
+                ->where('recipient_id', $user->id)
+                ->with([
+                    'letter.sender:id,name',
+                    'letter.attachments',
+                ])
+                ->latest()
+                ->get()
+                ->map(function ($recipient) use ($request) {
+                    return [
+                        'inbox_type' => 'multi_recipient_letter',
+                        'created_at' => $recipient->letter->created_at,
+                        'data' => (new LetterRecipientsResource($recipient->letter))->resolve($request),
+                    ];
+                });
         }
 
         $inbox = $letters
             ->concat($broadcasts)
+            ->concat($multiRecipientLetters)
             ->sortByDesc('created_at')
             ->values();
+
+
 
         return $this->ok(
             'Inbox letters fetched successfully',
