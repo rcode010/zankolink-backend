@@ -24,7 +24,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->string('color');
             $table->timestamps();
-            $table->softDeletes();
 
             $table->index(['department_id', 'is_active', 'deleted_at'], 'courses_department_active_deleted_idx');
             $table->index(['department_id', 'type', 'is_active'], 'courses_department_type_active_idx');
