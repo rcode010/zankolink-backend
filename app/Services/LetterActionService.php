@@ -8,6 +8,8 @@ use App\Models\Course;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Letter;
+use App\Models\Student;
+use App\Models\StudentMarks;
 use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
@@ -33,6 +35,7 @@ class LetterActionService
                 'close_department' => $this->closeDepartment($payload),
                 'open_faculty' => $this->openFaculty($payload),
                 'close_faculty' => $this->closeFaculty($payload),
+                'remove_student'=>$this->removeStudent($payload),
                 'create_course'=>$this->createCourse($payload),
                 'delete_course'=>$this->deleteCourse($payload),
                 default => throw new RuntimeException("Unsupported letter action type: {$letter->type}"),
@@ -142,6 +145,28 @@ class LetterActionService
             $faculty->update([
                 'is_active' => false,
             ]);
+    }
+    public function removeStudent(array $payload): void{
+        $student = Student::findOrFail($payload ['student_id']);
+        $user = User::findOrFail($student->user_id);
+
+        $academicYear= AcademicYear::where('is_active',true)->first();
+
+        StudentMarks::query()
+            ->where('student_id', $student->id)
+            ->whereHas('courseAssessment', function ($query) use ($academicYear) {
+                $query->where(
+                    'academic_year_id',
+                    $academicYear->id
+                );
+            })
+            ->update([
+                'mark' => 0,
+                'status' => 'voided',
+            ]);
+
+        $student->delete();
+        $user->delete();
     }
 
     public function createCourse(array $payload): void{

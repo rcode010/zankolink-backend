@@ -36,6 +36,7 @@ class StoreLetterRequest extends FormRequest
                     'close_department',
                     'open_faculty',
                     'close_faculty',
+                    'remove_student',
                     'create_course',
                     'delete_course',
                 ]),
@@ -97,6 +98,9 @@ class StoreLetterRequest extends FormRequest
             'close_faculty' => [
                 'payload.faculty_id' => ['required', 'exists:faculties,id'],
             ],
+            'remove_student' => [
+                'payload.student_id' => ['required', 'exists:students,id'],
+
             'create_course'=>[
                 'payload.name' => ['required', 'string', 'max:255'],
                 'payload.department_id' => ['required', 'exists:departments,id'],
