@@ -26,6 +26,7 @@ return new class extends Migration
                 'close_faculty',
                 'open_university',
                 'close_university',
+                'remove_student'
             ]);
             $table->string('title');
             $table->longText('body');
