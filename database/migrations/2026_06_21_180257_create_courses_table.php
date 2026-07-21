@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('color');
             $table->timestamps();
 
-            $table->index(['department_id', 'is_active', 'deleted_at'], 'courses_department_active_deleted_idx');
+            $table->index(['department_id', 'is_active'], 'courses_department_active_deleted_idx');
             $table->index(['department_id', 'type', 'is_active'], 'courses_department_type_active_idx');
             $table->index(['department_id', 'year_level'], 'courses_department_year_level_idx');
             $table->unique(['department_id', 'color'], 'courses_department_color_unique');
