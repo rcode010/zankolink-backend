@@ -20,6 +20,12 @@ class LetterPolicy
     {
         return $user->hasRole('MINISTRY_ADMIN');
     }
+
+    public function viewMultiRecipientLetter(User $user): bool
+    {
+        return $user->hasRole('MINISTRY_ADMIN');
+    }
+
     /**
      * Determine whether the user can view a specific letter.
      */

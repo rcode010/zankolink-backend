@@ -272,7 +272,8 @@ class LetterController extends Controller
         $user = $request->user();
 
         $letters = QueryBuilder::for(Letter::class)
-            ->Where('original_sender_id', $user->id)
+            ->where('original_sender_id', $user->id)
+            ->where('receiver_id','!=', null)
             ->with([
                 'sender:id,name',
                 'receiver:id,name',
@@ -299,6 +300,18 @@ class LetterController extends Controller
         return $this->ok('Broadcast letters fetched successfully', $broadcasts->toArray());
     }
 
+    public function multiRecipientOutbox(Request $request)
+    {
+        $this->authorize('viewMultiRecipientLetter', Letter::class);
+
+        $letters = QueryBuilder::for(Letter::class)
+            ->where('receiver_id', null)
+            ->with(['sender:id,name', 'attachments', 'recipients'])
+            ->defaultSort('-created_at')
+            ->get();
+
+        return $this->ok('Multi-Recipient letters fetched successfully', LetterRecipientsResource::collection($letters)->response()->getData(true));
+    }
 
     public function archived(Request $request){
         $this->authorize('viewAny', Letter::class);
