@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory;
 
     protected $fillable = ['department_id', 'name', 'code', 'credit_hours', 'year_level', 'is_active', 'type', 'seats', 'semester', 'color'];
 

@@ -178,7 +178,7 @@ class LetterController extends Controller
 
             LetterFlow::create([
                 'letter_id' => $letter->id,
-                'action' => 'signed and raised',
+                'action' => 'raised',
                 'actor_id' => $user->id,
                 'from_recipient_id' => $oldReceiverId,
                 'to_recipient_id' => $credentials['receiver_id'],
