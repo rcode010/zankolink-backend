@@ -86,6 +86,20 @@ class StudentSelectionController extends Controller
         $studentStage = (int) $student->stage;
         $departmentId = $student->department_id;
 
+       // Check if course selection is open
+        $department = $student->department;
+
+        if (
+            ! $department->course_selection_starts_at ||
+            ! $department->course_selection_ends_at ||
+            now()->lt($department->course_selection_starts_at) ||
+            now()->gte($department->course_selection_ends_at)
+        ) {
+            return response()->json([
+                'message' => 'Course selection is currently closed.'
+            ], 403);
+        }
+
         // 2. Validate academic year
         $request->validate([
             'academic_year_id' => 'required|exists:academic_years,id',

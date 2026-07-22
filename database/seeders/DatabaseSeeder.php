@@ -281,7 +281,6 @@ class DatabaseSeeder extends Seeder
 
             'lecturer' => [
                 'view courses', 'view students',
-                'view letters', 'create letters', 'raise letters',
                 'upload attachments', 'download attachments',
                 'view course sections', 'view course section',
                 'create course sections', 'update course sections',
@@ -307,7 +306,6 @@ class DatabaseSeeder extends Seeder
 
             'student' => [
                 'view courses',
-                'view letters', 'create letters',
                 'upload attachments', 'download attachments',
                 'view course sections', 'view course section',
                 'view section items', 'view section item',
@@ -676,14 +674,14 @@ class DatabaseSeeder extends Seeder
 
     private function seedLetters(): void
     {
-        $users = User::all();
+        $allowedSenders = User::permission('create letters')->get();
 
         Letter::factory()
             ->count($this->lettersCount)
             ->make(['academic_year_id' => $this->activeAcademicYear->id])
-            ->each(function ($letter) use ($users) {
-                $sender = $users->random();
-                $receiver = $users->where('id', '!=', $sender->id)->random();
+            ->each(function ($letter) use ($allowedSenders) {
+                $sender = $allowedSenders->random();
+                $receiver = $allowedSenders->where('id', '!=', $sender->id)->random();
 
                 $letter->original_sender_id = $sender->id;
                 $letter->sender_id = $sender->id;
@@ -694,7 +692,7 @@ class DatabaseSeeder extends Seeder
                     ->count($this->faker->numberBetween(0, 3))
                     ->create(['letter_id' => $letter->id]);
 
-                $signers = $users
+                $signers = $allowedSenders
                     ->where('id', '!=', $sender->id)
                     ->shuffle()
                     ->take($this->faker->numberBetween(1, 2));
