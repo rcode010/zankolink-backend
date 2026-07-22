@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PublishAssessmentsRequest;
 use App\Http\Requests\StoreCourseAssessmentRequest;
 use App\Http\Requests\SyncCourseAssessmentsRequest;
 use App\Http\Requests\UpdateCourseAssessmentRequest;
@@ -558,6 +559,17 @@ class CourseAssesmentsController extends Controller
         return $this->ok(
             'Course assessments saved successfully.',
             $assessments->toArray()
+        );
+    }
+
+    public function publishAssessments(PublishAssessmentsRequest $request, Course $course)
+    {
+        $course->assessments()->update([
+            'is_published' => $request->boolean('is_published'),
+        ]);
+
+        return $this->ok(
+            'Course assessments sent to Head of Department successfully.',
         );
     }
     /**
