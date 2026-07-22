@@ -38,6 +38,7 @@ class LetterActionService
                 'remove_student'=>$this->removeStudent($payload),
                 'create_course'=>$this->createCourse($payload),
                 'delete_course'=>$this->deleteCourse($payload),
+                'general'=> null,
                 default => throw new RuntimeException("Unsupported letter action type: {$letter->type}"),
             };
 
@@ -197,6 +198,9 @@ class LetterActionService
 
     private function getPayload(Letter $letter): array
     {
+        if($letter->type === 'general'){
+            return [];
+        }
         $payload = $letter->payload;
 
         if (is_string($payload)) {
