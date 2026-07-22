@@ -24,7 +24,7 @@ class StoreStudentSubmissionRequest extends FormRequest
     {
         return [
             'files' => 'required|array|min:1',
-            'files.*' => 'file|max:1024|mimes:doc,docx,pdf,jpg,jpeg,png,ppt,pptx',
+            'files.*' => 'file|max:51200|mimes:doc,docx,pdf,jpg,jpeg,png,ppt,pptx',
         ];
     }
 }
