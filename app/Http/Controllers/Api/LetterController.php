@@ -6,14 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RaiseLetterRequest;
 use App\Http\Requests\StoreLetterRequest;
 use App\Http\Requests\UpdateLetterRequest;
-use App\Http\Resources\LetterBroadcastResource;
 use App\Http\Resources\LetterRecipientsResource;
 use App\Http\Resources\LetterResource;
 use App\Models\Letter;
-use App\Models\LetterBroadcast;
 use App\Models\LetterFlow;
 use App\Models\LetterRecipient;
-use App\Models\LetterSignature;
 use App\QueryFilters\MultiRecipientUniversityFilter;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
@@ -219,23 +216,9 @@ class LetterController extends Controller
                 ];
             });
 
-        $broadcasts = collect();
         $multiRecipientLetters = collect();
 
         if (! $user->isMinistryAdmin()) {
-            $broadcasts = LetterBroadcast::query()
-                ->with('attachments')
-                ->where('is_active', true)
-                ->latest()
-                ->get()
-                ->map(function ($broadcast) use ($request) {
-                    return [
-                        'inbox_type' => 'letter_broadcast',
-                        'created_at' => $broadcast->created_at,
-                        'data' => (new LetterBroadcastResource($broadcast))->resolve($request),
-                    ];
-                });
-
             $multiRecipientLetters = LetterRecipient::query()
                 ->where('recipient_id', $user->id)
                 ->with([
@@ -254,7 +237,6 @@ class LetterController extends Controller
         }
 
         $inbox = $letters
-            ->concat($broadcasts)
             ->concat($multiRecipientLetters)
             ->sortByDesc('created_at')
             ->values();
@@ -290,21 +272,6 @@ class LetterController extends Controller
         return $this->ok('Outbox letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
     }
 
-    public function broadcastOutbox(Request $request)
-    {
-        $this->authorize('viewBroadcast', Letter::class);
-
-        $broadcasts = QueryBuilder::for(LetterBroadcast::class)
-            ->with('attachments')
-            ->allowedFilters(
-                AllowedFilter::partial('created_at'),
-                AllowedFilter::partial('title'),
-            )
-            ->defaultSort('-created_at')
-            ->get();
-
-        return $this->ok('Broadcast letters fetched successfully', $broadcasts->toArray());
-    }
 
     public function multiRecipientOutbox(Request $request)
     {
