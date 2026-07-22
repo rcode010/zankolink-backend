@@ -18,8 +18,6 @@ class LetterRecipientsResource extends JsonResource
         return [
             'id' => $this->id,
             'letter_number' => $this->letter_number,
-            'original_sender_id' => $this->original_sender_id,
-            'sender_id' => $this->sender_id,
 
             'type' => $this->type,
             'title' => $this->title,

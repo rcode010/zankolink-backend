@@ -251,6 +251,7 @@ class LetterController extends Controller
     {
         $this->authorize('viewAny', Letter::class);
         $user = $request->user();
+        $type = $request->query('type', 'all');
 
         $letters = QueryBuilder::for(Letter::class)
             ->where('original_sender_id', $user->id)
@@ -268,7 +269,7 @@ class LetterController extends Controller
             ->get()
             ->map(function ($letter) use ($request) {
                 return [
-                    'outbox_type' => 'letter',
+                    'outbox_type' => 'direct',
                     'created_at' => $letter->created_at,
                     'data' => (new LetterResource($letter))->resolve($request),
                 ];
@@ -291,7 +292,7 @@ class LetterController extends Controller
                 ->get()
                 ->map(function ($letter) use ($request) {
                     return [
-                        'outbox_type' => 'multi_recipient_letter',
+                        'outbox_type' => 'multi-recipient',
                         'created_at' => $letter->created_at,
                         'data' => (new LetterRecipientsResource($letter))->resolve($request),
                     ];
@@ -299,31 +300,17 @@ class LetterController extends Controller
         }
 
         $outbox = $letters
-            ->concat($multiRecipientLetters)
+            ->concat($multiRecipientLetters);
+
+        if ($type !== 'all') {
+            $outbox = $outbox->where('outbox_type', $type);
+        }
+
+        $outbox = $outbox
             ->sortByDesc('created_at')
             ->values();
 
         return $this->ok('Outbox letters retrieved successfully', $outbox->toArray());
-    }
-
-    public function multiRecipientOutbox(Request $request)
-    {
-        $this->authorize('viewMultiRecipientLetter', Letter::class);
-
-        $letters = QueryBuilder::for(Letter::class)
-            ->where('receiver_id', null)
-            ->with(['sender:id,name', 'attachments', 'recipients'])
-            ->allowedFilters(
-                AllowedFilter::partial('created_at'),
-                AllowedFilter::custom(
-                    'university',
-                    new MultiRecipientUniversityFilter()
-                )
-            )
-            ->defaultSort('-created_at')
-            ->get();
-
-        return $this->ok('Multi-Recipient letters fetched successfully', LetterRecipientsResource::collection($letters)->response()->getData(true));
     }
 
     public function archived(Request $request)
