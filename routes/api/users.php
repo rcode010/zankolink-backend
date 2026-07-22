@@ -6,6 +6,7 @@ Route::prefix('users')->group(function () {
     Route::get('/', [UserController::class, 'index'])->middleware('permission:view users');
     Route::get('/superior-roles', [UserController::class, 'superiorRole']);
     Route::get('/same-level', [UserController::class, 'sameLevel']);
+    Route::get('/children', [UserController::class, 'children']);
     Route::get('/{user}', [UserController::class, 'show'])->middleware('permission:view user');
     Route::patch('/{user}', [UserController::class, 'update'])->middleware('permission:update users');
     Route::post('/{user}/activate', [UserController::class, 'activate'])->middleware('permission:activate users');

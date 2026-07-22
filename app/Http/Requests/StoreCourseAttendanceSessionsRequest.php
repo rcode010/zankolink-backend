@@ -24,7 +24,7 @@ class StoreCourseAttendanceSessionsRequest extends FormRequest
     {
         return [
             'course_id' => 'required|exists:courses,id',
-            'session_date' => 'required|date|after_or_equal:today',
+            'session_date' => 'required|date',
             'start_at' => 'required|date',
             'end_at' => 'required|date|after:start_at',
             'title' => 'nullable|string|max:255',
