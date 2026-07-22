@@ -100,7 +100,7 @@ class StoreLetterRequest extends FormRequest
             ],
             'remove_student' => [
                 'payload.student_id' => ['required', 'exists:students,id'],
-
+            ],
             'create_course'=>[
                 'payload.name' => ['required', 'string', 'max:255'],
                 'payload.department_id' => ['required', 'exists:departments,id'],
