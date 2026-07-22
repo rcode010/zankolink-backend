@@ -26,7 +26,7 @@ class UpdateSectionSubmissionRequest extends FormRequest
             'description' => 'nullable|string',
 
             'files' => 'nullable|array',
-            'files.*' => 'file|max:51200|mimes:doc,docx,pdf,ppt,pptx,jpg,jpeg,png',
+            'files.*' => 'file|max:51200|mimes:doc,docx,pdf,ppt,pptx,jpg,jpeg,png,txt',
 
 
             'title' => 'sometimes|string',
