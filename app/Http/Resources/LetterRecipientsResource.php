@@ -19,7 +19,6 @@ class LetterRecipientsResource extends JsonResource
             'id' => $this->id,
             'letter_number' => $this->letter_number,
 
-            'type' => $this->type,
             'title' => $this->title,
             'body' => $this->body,
 

@@ -38,17 +38,6 @@ class StoreLetterRecipientRequest extends FormRequest
                 'distinct',
             ],
 
-            'type' => [
-                'required',
-                Rule::in([
-                    'hire_teacher',
-                    'fire_teacher',
-                    'create_department',
-                    'close_department',
-                    'open_faculty',
-                    'close_faculty',
-                ]),
-            ],
             'title' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
 
