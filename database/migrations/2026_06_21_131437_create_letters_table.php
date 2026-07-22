@@ -26,7 +26,7 @@ return new class extends Migration
                 'close_faculty',
                 'open_university',
                 'close_university',
-                'remove_student'
+                'remove_student',
                 'create_course',
                 'delete_course',
             ]);
