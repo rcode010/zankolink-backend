@@ -39,6 +39,7 @@ class StoreLetterRequest extends FormRequest
                     'remove_student',
                     'create_course',
                     'delete_course',
+                    'general'
                 ]),
             ],
             'title' => ['required', 'string', 'max:255'],
@@ -115,6 +116,9 @@ class StoreLetterRequest extends FormRequest
             ],
             'delete_course'=>[
                 'payload.course_id' => ['required', 'exists:courses,id'],
+            ],
+            'general' => [
+                'payload'=>['nullable']
             ],
 
             default => [],
