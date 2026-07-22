@@ -12,6 +12,5 @@ Route::post('/letters/{letter}/raise', [LetterController::class, 'raiseLetter'])
 
 Route::get('letters/inbox', [LetterController::class, 'inbox']);
 Route::get('letters/outbox', [LetterController::class, 'outbox']);
-Route::get('letters/outbox/multi-recipients', [LetterController::class, 'multiRecipientOutbox']);
 Route::get('letters/archived', [LetterController::class, 'archived']);
 Route::get('letters/dispatched',[LetterController::class, 'dispatched']);
