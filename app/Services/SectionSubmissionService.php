@@ -35,6 +35,7 @@ class SectionSubmissionService
                 'created_by_teacher_id' => $teacher->id,
                 'description' => $data['description'] ?? null,
                 'due_at' => $data['due_at'] ?? null,
+                'is_published' => $data['is_published'] ?? false,
             ]);
 
             foreach ($files as $file) {
@@ -66,6 +67,7 @@ class SectionSubmissionService
                 'max_mark' => $data['max_mark'],
                 'weight' => $data['weight'],
                 'due_at' => $data['due_at'],
+                'is_published' => $data['is_published'] ?? false,
             ]);
 
             $submission->update([

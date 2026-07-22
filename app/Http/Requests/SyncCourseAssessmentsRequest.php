@@ -58,6 +58,11 @@ class SyncCourseAssessmentsRequest extends FormRequest
                 'after:now',
             ],
 
+            'create.*.is_published' => [
+                'required',
+                'boolean',
+            ],
+
             'update' => [
                 'sometimes',
                 'array',
@@ -98,6 +103,11 @@ class SyncCourseAssessmentsRequest extends FormRequest
                 'nullable',
                 'date',
                 'after:now',
+            ],
+
+            'update.*.is_published' => [
+                'sometimes',
+                'boolean',
             ],
 
             'delete' => [
@@ -165,6 +175,7 @@ class SyncCourseAssessmentsRequest extends FormRequest
                     'max_mark',
                     'weight',
                     'due_at',
+                    'is_published',
                 ];
 
                 foreach ($updateItems as $index => $item) {

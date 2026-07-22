@@ -117,6 +117,7 @@ class CourseAssesmentsController extends Controller
             'weight' => $credentials['weight'],
             'due_at' => $credentials['due_at'] ?? null,
             'teacher_id' => $teacher->id,
+            'is_published' => $credentials['is_published'] ?? false,
         ]);
 
         return $this->created('Course Assessment created successfully', $courseAssessment->toArray());
@@ -451,6 +452,14 @@ class CourseAssesmentsController extends Controller
                         ? $item['due_at']
                         : $assessment->due_at,
 
+                    'is_published' => array_key_exists(
+                        'is_published',
+                        $item
+                    )
+                        ? $item['is_published']
+                        : $assessment->is_published,
+
+
                     'created_at' => $assessment->created_at,
                     'updated_at' => $now,
                 ];
@@ -466,6 +475,7 @@ class CourseAssesmentsController extends Controller
                 'max_mark' => $item['max_mark'],
                 'weight' => $item['weight'],
                 'due_at' => $item['due_at'] ?? null,
+                'is_published' => $item['is_published'],
                 'created_at' => $now,
                 'updated_at' => $now,
             ])
@@ -497,6 +507,7 @@ class CourseAssesmentsController extends Controller
                         'max_mark',
                         'weight',
                         'due_at',
+                        'is_published',
                         'updated_at',
                     ]
                 );

@@ -28,6 +28,7 @@ class UpdateCourseAssessmentRequest extends FormRequest
             'max_mark' => 'sometimes|numeric|min:0',
             'weight' => 'sometimes|numeric|min:0',
             'due_at' => 'nullable|date|after:now',
+            'is_published' => 'sometimes|boolean',
         ];
     }
 }
