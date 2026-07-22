@@ -223,6 +223,7 @@ class DepartmentController extends Controller
             'student_id' => $studentId,
             'academic_year_id' => $academicYearId,
             'enrolled_courses' => $pendingSelections->map(fn ($selection) => [
+                'selection_id' => $selection->id,
                 'id' => $selection->course->id,
                 'name' => $selection->course->name,
                 'code' => $selection->course->code,
@@ -271,7 +272,7 @@ class DepartmentController extends Controller
         $selections = $query->latest()->get();
 
         if ($selections->isEmpty()) {
-            return $this->error('No pending course selections found.', 404);
+            return $this->ok('No pending course selections found.', []);
         }
 
         $selectedCourses = $selections->map(function ($selection) {

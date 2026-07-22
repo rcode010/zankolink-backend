@@ -72,6 +72,17 @@ class SectionSubmissionService
                 'description' => $data['description'],
             ]);
 
+            foreach ($files as $file) {
+                $path = $file->store('section-submission', 'public');
+
+                $submission->attachments()->create([
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_type' => $file->getClientMimeType(),
+                    'file_size' => $file->getSize(),
+                    'file_url' => $path,
+                ]);
+            }
+
             return $submission->load([
                 'section:id,title',
                 'attachments',
