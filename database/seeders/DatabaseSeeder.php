@@ -95,6 +95,7 @@ class DatabaseSeeder extends Seeder
             $this->seedUniversities();
             $this->seedLetters();
             $this->createMoodleDemoUsers();
+            $this->createQaCourseUsers();
         });
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
@@ -940,7 +941,7 @@ class DatabaseSeeder extends Seeder
 
         $sections = collect();
 
-       
+
         for ($i = 1; $i <= 4; $i++) {
             $section = CourseSection::factory()->create([
                 'course_id' => $course->id,
@@ -1203,6 +1204,165 @@ class DatabaseSeeder extends Seeder
         ) {
             DB::table('student_attendances')
                 ->insert($chunk);
+        }
+    }
+    private function createQaCourseUsers(): void
+    {
+        $department = Department::query()
+            ->where('name', 'Software Engineering')
+            ->first()
+            ?? Department::query()->firstOrFail();
+
+        $academicYearId = $this->activeAcademicYear->id;
+        $now = now();
+
+
+        $course = Course::query()->updateOrCreate(
+            [
+                'code' => 'QA-SWE-001',
+            ],
+            [
+                'department_id' => $department->id,
+                'name' => 'QA Software Engineering Course',
+                'credit_hours' => 3,
+                'year_level' => 3,
+                'semester' => 'fall',
+                'type' => 'mandatory',
+                'is_active' => true,
+                'color'=>'red'
+            ]
+        );
+
+
+        $teacherData = [
+            [
+                'name' => 'QA Primary Lecturer',
+                'email' => 'qa.primary@zankolink.test',
+                'phone' => '07500000001',
+                'title' => 'dr',
+                'speciality' => 'Software Engineering',
+                'course_role' => 'primary_lecturer',
+            ],
+            [
+                'name' => 'QA Assistant Lecturer',
+                'email' => 'qa.assistant@zankolink.test',
+                'phone' => '07500000002',
+                'title' => 'lecturer',
+                'speciality' => 'Software Engineering',
+                'course_role' => 'assistant_lecturer',
+            ],
+            [
+                'name' => 'QA Lab Instructor',
+                'email' => 'qa.lab@zankolink.test',
+                'phone' => '07500000003',
+                'title' => 'lecturer',
+                'speciality' => 'Software Engineering',
+                'course_role' => 'lab_instructor',
+            ],
+        ];
+
+        foreach ($teacherData as $data) {
+            $user = $this->createScopedUser(
+                name: $data['name'],
+                email: $data['email'],
+                roleName: 'lecturer',
+                scopeType: 'DEPARTMENT',
+                scopeId: $department->id,
+                phone: $data['phone']
+            );
+
+            $teacher = Teacher::query()->updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                ],
+                [
+                    'title' => $data['title'],
+                    'speciality' => $data['speciality'],
+                ]
+            );
+
+            DB::table('teacher_department')->updateOrInsert(
+                [
+                    'teacher_id' => $teacher->id,
+                    'department_id' => $department->id,
+                ],
+                [
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]
+            );
+
+            DB::table('course_teacher')->updateOrInsert(
+                [
+                    'course_id' => $course->id,
+                    'teacher_id' => $teacher->id,
+                ],
+                [
+                    'role' => $data['course_role'],
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]
+            );
+        }
+
+
+        $studentData = [
+            [
+                'name' => 'QA Student One',
+                'email' => 'qa.student1@zankolink.test',
+                'phone' => '07500000011',
+                'student_number' => 'QA-ST-001',
+            ],
+            [
+                'name' => 'QA Student Two',
+                'email' => 'qa.student2@zankolink.test',
+                'phone' => '07500000012',
+                'student_number' => 'QA-ST-002',
+            ],
+            [
+                'name' => 'QA Student Three',
+                'email' => 'qa.student3@zankolink.test',
+                'phone' => '07500000013',
+                'student_number' => 'QA-ST-003',
+            ],
+        ];
+
+        foreach ($studentData as $data) {
+            $user = $this->createScopedUser(
+                name: $data['name'],
+                email: $data['email'],
+                roleName: 'student',
+                scopeType: 'DEPARTMENT',
+                scopeId: $department->id,
+                phone: $data['phone']
+            );
+
+            $student = Student::query()->updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                ],
+                [
+                    'department_id' => $department->id,
+                    'enrollment_type' => 'morning',
+                    'student_number' => $data['student_number'],
+                    'stage' => 3,
+                    'status' => 'active',
+                ]
+            );
+
+            DB::table('course_student')->updateOrInsert(
+                [
+                    'course_id' => $course->id,
+                    'student_id' => $student->id,
+                    'academic_year_id' => $academicYearId,
+                ],
+                [
+                    'status' => 'enrolled',
+                    'enrolled_at' => $now,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]
+            );
         }
     }
 }

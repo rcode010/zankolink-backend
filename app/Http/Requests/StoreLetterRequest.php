@@ -36,6 +36,9 @@ class StoreLetterRequest extends FormRequest
                     'close_department',
                     'open_faculty',
                     'close_faculty',
+                    'remove_student',
+                    'create_course',
+                    'delete_course',
                 ]),
             ],
             'title' => ['required', 'string', 'max:255'],
@@ -94,6 +97,24 @@ class StoreLetterRequest extends FormRequest
 
             'close_faculty' => [
                 'payload.faculty_id' => ['required', 'exists:faculties,id'],
+            ],
+            'remove_student' => [
+                'payload.student_id' => ['required', 'exists:students,id'],
+
+            'create_course'=>[
+                'payload.name' => ['required', 'string', 'max:255'],
+                'payload.department_id' => ['required', 'exists:departments,id'],
+                'payload.code'=>['required', 'string', 'max:50','unique:courses,code'],
+                'payload.semester'=>['required', 'string','in:fall,spring'],
+                'payload.credit_hours'=>['required', 'integer', 'min:1'],
+                'payload.year_level'=>['required', 'integer', 'min:1'],
+                'payload.is_active'=>['required', 'boolean'],
+                'payload.prerequisites'=>['nullable', 'array'],
+                'payload.prerequisites.*'=>['required', 'integer', 'exists:courses,id'],
+                'payload.color'=>['required', 'string', 'max:255'],
+            ],
+            'delete_course'=>[
+                'payload.course_id' => ['required', 'exists:courses,id'],
             ],
 
             default => [],

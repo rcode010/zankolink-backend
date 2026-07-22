@@ -4,9 +4,12 @@ namespace App\Services;
 
 use App\Mail\AccountCreatedMail;
 use App\Models\AcademicYear;
+use App\Models\Course;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Letter;
+use App\Models\Student;
+use App\Models\StudentMarks;
 use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
@@ -32,6 +35,9 @@ class LetterActionService
                 'close_department' => $this->closeDepartment($payload),
                 'open_faculty' => $this->openFaculty($payload),
                 'close_faculty' => $this->closeFaculty($payload),
+                'remove_student'=>$this->removeStudent($payload),
+                'create_course'=>$this->createCourse($payload),
+                'delete_course'=>$this->deleteCourse($payload),
                 default => throw new RuntimeException("Unsupported letter action type: {$letter->type}"),
             };
 
@@ -140,7 +146,48 @@ class LetterActionService
                 'is_active' => false,
             ]);
     }
+    public function removeStudent(array $payload): void{
+        $student = Student::findOrFail($payload ['student_id']);
+        $user = User::findOrFail($student->user_id);
 
+        $academicYear= AcademicYear::where('is_active',true)->first();
+
+        StudentMarks::query()
+            ->where('student_id', $student->id)
+            ->whereHas('courseAssessment', function ($query) use ($academicYear) {
+                $query->where(
+                    'academic_year_id',
+                    $academicYear->id
+                );
+            })
+            ->update([
+                'mark' => 0,
+                'status' => 'voided',
+            ]);
+
+        $student->delete();
+        $user->delete();
+    }
+
+    public function createCourse(array $payload): void{
+        $department = Department::findOrFail($this->required($payload, 'department_id'));
+        $course = Course::create([
+            'name' => $payload['name'],
+            'department_id' => $department->id,
+            'code' => $payload['code'],
+            'semester' => $payload['semester'],
+            'credit_hours' => $payload['credit_hours'],
+            'year_level' => $payload['year_level'],
+            'is_active' => $payload['is_active'],
+            'color' => $payload['color'],
+        ]);
+        $course->prerequisites()->sync($payload['prerequisites']);
+    }
+
+    public function deleteCourse(array $payload): void{
+        $course = Course::findOrFail($this->required($payload, 'course_id'));
+        $course->delete();
+    }
     private function lecturerRole(): Role
     {
         return Role::where('name', 'lecturer')

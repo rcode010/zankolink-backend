@@ -178,7 +178,7 @@ class LetterController extends Controller
 
             LetterFlow::create([
                 'letter_id' => $letter->id,
-                'action' => 'signed and raised',
+                'action' => 'raised',
                 'actor_id' => $user->id,
                 'from_recipient_id' => $oldReceiverId,
                 'to_recipient_id' => $credentials['receiver_id'],
@@ -338,4 +338,22 @@ class LetterController extends Controller
             $letters->toArray()
         );
     }
+    public function dispatched(Request $request){
+        $this->authorize('viewAny', Letter::class);
+
+        $user = $request->user();
+
+        $letters = QueryBuilder::for(Letter::class)
+            ->where('sender_id', $user->id)
+            ->with([
+                'sender:id,name',
+                'receiver:id,name',
+                'attachments',
+                'signatures',
+            ])
+            ->get();
+
+        return $this->ok('Dispatched letters retrieved successfully', $letters->toArray());
+    }
+
 }

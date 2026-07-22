@@ -10,6 +10,7 @@ use App\Models\Course;
 use App\Models\CourseSection;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -65,6 +66,13 @@ class CourseSectionController extends Controller
         $perPage = max(1, min($perPage, 100));
 
         $sections = QueryBuilder::for($course->sections())
+            ->addSelect([
+                'teacher_role' => DB::table('course_teacher')
+                    ->select('role')
+                    ->whereColumn('course_teacher.course_id', 'course_sections.course_id')
+                    ->whereColumn('course_teacher.teacher_id', 'course_sections.teacher_id')
+                    ->limit(1),
+            ])
             ->allowedFilters(
                 AllowedFilter::partial('title'),
                 AllowedFilter::exact('teacher_id'),

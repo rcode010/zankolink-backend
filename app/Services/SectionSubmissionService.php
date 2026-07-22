@@ -17,7 +17,6 @@ class SectionSubmissionService
         Teacher $teacher
     ): SectionSubmission
     {
-
         return DB::transaction(function () use ($section, $data, $files, $teacher) {
 
             $assessment = $section->course->assessments()->create([
@@ -33,6 +32,7 @@ class SectionSubmissionService
             $submission = $section->submissions()->create([
                 'course_assessment_id' => $assessment->id,
                 'title' => $data['title'],
+                'created_by_teacher_id' => $teacher->id,
                 'description' => $data['description'] ?? null,
                 'due_at' => $data['due_at'] ?? null,
             ]);

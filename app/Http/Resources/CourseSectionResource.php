@@ -14,10 +14,12 @@ class CourseSectionResource extends JsonResource
             'title' => $this->title,
 
             'course' => new CourseResource($this->whenLoaded('course')),
-            'teacher' => $this->whenLoaded(
-                'teacher',
-                fn () => $this->teacher ? new TeacherResource($this->teacher) : null
-            ),
+            'teacher' => $this->whenLoaded('teacher', function () use ($request) {
+                $teacher = (new TeacherResource($this->teacher))->resolve($request);
+                $teacher['role'] = $this->teacher_role;
+
+                return $teacher;
+            }),
             'items' => SectionItemResource::collection($this->whenLoaded('items')),
             'submissions' => SectionSubmissionResource::collection($this->whenLoaded('submissions')),
 
