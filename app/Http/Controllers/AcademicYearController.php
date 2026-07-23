@@ -52,6 +52,7 @@ class AcademicYearController extends Controller
             return AcademicYear::create([
                 'start_date' => $validated['start_date'],
                 'end_date' => $validated['end_date'],
+                'semester' => $validated['semester'],
                 'year' => $validated['year'],
                 'is_active' => $validated['is_active'],
             ]);

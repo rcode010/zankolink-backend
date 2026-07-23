@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('year');          // 2025-2026
 
             $table->date('start_date');
+            $table->enum('semester',['fall','spring']);
 
             $table->date('end_date');
 

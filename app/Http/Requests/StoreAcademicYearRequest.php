@@ -36,6 +36,13 @@ class StoreAcademicYearRequest extends FormRequest
                     ->ignore($academicYearId),
             ],
 
+            'semester' => [
+                Rule::requiredIf($isCreating),
+                'nullable',
+                'string',
+                Rule::in(['fall', 'spring']),
+            ],
+
             'start_date' => [
                 Rule::requiredIf($isCreating),
                 'required_with:end_date',
