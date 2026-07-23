@@ -311,13 +311,45 @@ class AuthController extends Controller
             'email' => 'required|string|email',
         ]);
 
-        $user = User::where('email', $credentials['email'])->first();
+        $keyPrefix = strtolower($credentials['email']).'|'.$request->ip();
+
+        $minuteKey = "forgot-password:minute:{$keyPrefix}";
+        $hourKey   = "forgot-password:hour:{$keyPrefix}";
+        $dayKey    = "forgot-password:day:{$keyPrefix}";
+
+        if (RateLimiter::tooManyAttempts($minuteKey, 1)) {
+            return $this->error(
+                'Please wait before requesting another password reset email.',
+                429
+            );
+        }
+
+        if (RateLimiter::tooManyAttempts($hourKey, 5)) {
+            return $this->error(
+                'You have reached the hourly password reset limit.',
+                429
+            );
+        }
+
+        if (RateLimiter::tooManyAttempts($dayKey, 10)) {
+            return $this->error(
+                'You have reached the daily password reset limit.',
+                429
+            );
+        }
 
         $status = Password::sendResetLink(['email' => $credentials['email']]);
 
-        return $status === Password::RESET_LINK_SENT
-            ? $this->ok('Password reset link sent to your email.')
-            : $this->error('Unable to snd reset link.', 400);
+        if ($status === Password::RESET_LINK_SENT) {
+
+            RateLimiter::hit($minuteKey, 60);
+            RateLimiter::hit($hourKey, 60 * 60);
+            RateLimiter::hit($dayKey, 24 * 60 * 60);
+
+            return $this->ok('Password reset link sent to your email.');
+        }
+
+        return $this->error('Unable to send reset link.', 400);
     }
 
     // Reset Password
