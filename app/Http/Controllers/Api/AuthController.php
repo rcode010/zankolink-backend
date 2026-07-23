@@ -179,7 +179,13 @@ class AuthController extends Controller
         $fails = cache()->get($failKey, 0);
 
         if ($fails >= 5) {
+            $user->update([
+            'two_factor_code' => null,
+            'two_factor_expires_at' => null,
+            ]);
+
             cache()->forget("2fa_challenge_{$request->challenge_token}");
+            cache()->forget($failKey);
 
             return $this->error('Too many attempts, please login again', 429);
         }
