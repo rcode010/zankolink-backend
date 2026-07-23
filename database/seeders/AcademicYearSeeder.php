@@ -16,6 +16,7 @@ class AcademicYearSeeder extends Seeder
             'year' => '2026-2027',
             'start_date' => '2026-09-01',
             'end_date' => '2027-08-31',
+            'semester' => 'fall',
             'is_active' => true,
         ]);
     }
