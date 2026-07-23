@@ -64,6 +64,11 @@ class Letter extends Model
             ->orderBy('created_at', 'asc');
     }
 
+    public function latestFlow()
+    {
+        return $this->hasOne(LetterFlow::class)
+            ->latestOfMany();
+    }
     public function signatures()
     {
         return $this->hasMany(LetterSignature::class);
