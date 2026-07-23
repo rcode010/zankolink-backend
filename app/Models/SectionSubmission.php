@@ -11,7 +11,7 @@ class SectionSubmission extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['course_section_id', 'course_assessment_id', 'description','created_by_teacher_id'];
+    protected $fillable = ['course_section_id', 'course_assessment_id', 'description', 'created_by_teacher_id'];
 
     protected function casts(): array
     {
@@ -41,6 +41,7 @@ class SectionSubmission extends Model
     {
         return $this->belongsTo(CourseAssessments::class, 'course_assessment_id');
     }
+
     public function creator()
     {
         return $this->belongsTo(

@@ -6,7 +6,6 @@ use App\Models\Course;
 use App\Models\SectionSubmission;
 use App\Models\StudentSubmission;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class StudentSubmissionPolicy
 {

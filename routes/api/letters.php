@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\LetterController;
-use App\Http\Controllers\LetterVerificationController;
 
 Route::post('/letters', [LetterController::class, 'store'])->middleware('permission:create letters');
 Route::get('/letters', [LetterController::class, 'index'])->middleware('permission:view letters');
@@ -13,4 +12,4 @@ Route::post('/letters/{letter}/raise', [LetterController::class, 'raiseLetter'])
 Route::get('letters/inbox', [LetterController::class, 'inbox']);
 Route::get('letters/outbox', [LetterController::class, 'outbox']);
 Route::get('letters/archived', [LetterController::class, 'archived']);
-Route::get('letters/dispatched',[LetterController::class, 'dispatched']);
+Route::get('letters/dispatched', [LetterController::class, 'dispatched']);

@@ -32,6 +32,7 @@ class StoreCourseAssessmentRequest extends FormRequest
             'is_published' => 'nullable|boolean',
         ];
     }
+
     public function after(): array
     {
         return [

@@ -24,6 +24,7 @@ class SectionItem extends Model
     {
         return $this->belongsTo(CourseSection::class, 'section_id');
     }
+
     public function creator()
     {
         return $this->belongsTo(

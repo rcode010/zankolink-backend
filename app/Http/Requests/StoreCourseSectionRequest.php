@@ -22,7 +22,7 @@ class StoreCourseSectionRequest extends FormRequest
     {
         return [
             'title.required' => 'Please provide a title for the section.',
-            'title.max'      => 'The section title must not exceed 255 characters.',
+            'title.max' => 'The section title must not exceed 255 characters.',
         ];
     }
 }

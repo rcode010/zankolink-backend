@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\University;
+use App\Models\User;
 
 trait ResolvesLetterScope
 {
@@ -60,7 +61,7 @@ trait ResolvesLetterScope
      */
     protected function userIdsForMinistry()
     {
-        return \App\Models\User::whereHas('userScopes', function ($q) {
+        return User::whereHas('userScopes', function ($q) {
             $q->where('scope_type', 'MINISTRY');
         })->pluck('id');
     }

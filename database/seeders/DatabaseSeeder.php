@@ -265,7 +265,7 @@ class DatabaseSeeder extends Seeder
             // Department
             'HEAD_OF_DEPARTMENT' => [
                 'view department', 'view faculty', 'view university', 'view teachers', 'view teacher', 'assign teachers', 'unassign teachers',
-                'view students','update students',
+                'view students', 'update students',
                 'view courses', 'create courses', 'update courses', 'delete courses',
                 'assign course teachers', 'view course teachers',
                 'update course teachers', 'delete course teachers',
@@ -939,7 +939,6 @@ class DatabaseSeeder extends Seeder
 
         $sections = collect();
 
-
         for ($i = 1; $i <= 4; $i++) {
             $section = CourseSection::factory()->create([
                 'course_id' => $course->id,
@@ -947,9 +946,7 @@ class DatabaseSeeder extends Seeder
                 'title' => "Section {$i}",
             ]);
 
-
             $itemCreator = $teachers->random();
-
 
             $this->seedSectionItems(
                 $section,
@@ -1008,7 +1005,8 @@ class DatabaseSeeder extends Seeder
         );
     }
 
-    private function seedSectionItems(CourseSection $section, Teacher $teacher): void {
+    private function seedSectionItems(CourseSection $section, Teacher $teacher): void
+    {
         $now = now();
 
         $rows = collect(
@@ -1029,7 +1027,8 @@ class DatabaseSeeder extends Seeder
         DB::table('section_items')->insert($rows);
     }
 
-    private function seedSectionSubmission(CourseSection $section,int $weight,Teacher $teacher): CourseAssessments {
+    private function seedSectionSubmission(CourseSection $section, int $weight, Teacher $teacher): CourseAssessments
+    {
         $assessment = CourseAssessments::factory()->create([
             'course_id' => $section->course_id,
             'teacher_id' => $teacher->id,
@@ -1204,6 +1203,7 @@ class DatabaseSeeder extends Seeder
                 ->insert($chunk);
         }
     }
+
     private function createQaCourseUsers(): void
     {
         $department = Department::query()
@@ -1213,7 +1213,6 @@ class DatabaseSeeder extends Seeder
 
         $academicYearId = $this->activeAcademicYear->id;
         $now = now();
-
 
         $course = Course::query()->updateOrCreate(
             [
@@ -1227,10 +1226,9 @@ class DatabaseSeeder extends Seeder
                 'semester' => 'fall',
                 'type' => 'mandatory',
                 'is_active' => true,
-                'color'=>'red'
+                'color' => 'red',
             ]
         );
-
 
         $teacherData = [
             [
@@ -1302,7 +1300,6 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
-
 
         $studentData = [
             [

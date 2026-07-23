@@ -6,7 +6,7 @@ use App\Http\Requests\LetterVerificationRequest;
 use App\Models\Letter;
 use App\Services\LetterVerificationHashService;
 use App\Traits\ApiResponses;
-use Illuminate\Support\Str;
+
 /**
  * @group Letter Verification
  *
@@ -15,7 +15,9 @@ use Illuminate\Support\Str;
 class LetterVerificationController extends Controller
 {
     use ApiResponses;
-    public function getLetterVerification(LetterVerificationRequest $request,LetterVerificationHashService $letterVerificationHashService){
+
+    public function getLetterVerification(LetterVerificationRequest $request, LetterVerificationHashService $letterVerificationHashService)
+    {
         $credentials = $request->validated();
 
         $letter = Letter::where('letter_uuid', $credentials['letter_uuid'])
@@ -66,20 +68,18 @@ class LetterVerificationController extends Controller
             ])
             ->firstOrFail();
 
-
-
-        return $this->ok("Letter verification retrieved successfully", [
-            'letter_number'=>$letter->letter_number,
-            'title'=>$letter->title,
-            'status'=>$letter->status,
-            'content_verified'=>$letterVerificationHashService->verify($letter),
-            'created_at'=>$letter->created_at,
-            'flows'=>$letter->flows,
-            'receiver'=>$letter->receiver,
-            'sender'=>$letter->sender,
-            'signatures'=>$letter->signatures,
-            'stamps'=>$letter->stamps,
-            'letter_uuid'=>$letter->letter_uuid,
+        return $this->ok('Letter verification retrieved successfully', [
+            'letter_number' => $letter->letter_number,
+            'title' => $letter->title,
+            'status' => $letter->status,
+            'content_verified' => $letterVerificationHashService->verify($letter),
+            'created_at' => $letter->created_at,
+            'flows' => $letter->flows,
+            'receiver' => $letter->receiver,
+            'sender' => $letter->sender,
+            'signatures' => $letter->signatures,
+            'stamps' => $letter->stamps,
+            'letter_uuid' => $letter->letter_uuid,
         ]);
     }
 }

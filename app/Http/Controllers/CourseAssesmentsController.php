@@ -171,6 +171,7 @@ class CourseAssesmentsController extends Controller
         return $this->ok('Course Assessment updated successfully', $assessment->toArray());
 
     }
+
     /**
      * Apply bulk course assessment changes
      *
@@ -191,31 +192,18 @@ class CourseAssesmentsController extends Controller
      * @urlParam course integer required The ID of the course. Example: 1
      *
      * @bodyParam academic_year_id integer required The ID of the academic year. Example: 1
-     *
      * @bodyParam create array optional Assessments that should be created.
-     *
      * @bodyParam create.*.title string required The assessment title. Maximum 255 characters. Example: Activity 5
-     *
      * @bodyParam create.*.max_mark number required The maximum available mark. Must be greater than 0. Example: 10
-     *
      * @bodyParam create.*.weight number required The assessment's contribution to the final course grade. Must be between 0 and 100. Example: 5
-     *
      * @bodyParam create.*.due_at datetime nullable The assessment due date and time. Example: 2026-08-01 10:00:00
-     *
      * @bodyParam update array optional Existing assessments that should be updated.
-     *
      * @bodyParam update.*.id integer required The ID of the assessment that should be updated. Example: 1
-     *
      * @bodyParam update.*.title string optional The updated assessment title. Maximum 255 characters. Example: Updated Midterm
-     *
      * @bodyParam update.*.max_mark number optional The updated maximum available mark. Must be greater than 0. Example: 20
-     *
      * @bodyParam update.*.weight number optional The updated assessment weight. Must be between 0 and 100. Example: 30
-     *
      * @bodyParam update.*.due_at datetime nullable The updated due date and time. Send null to remove the due date. Example: 2026-08-01 10:00:00
-     *
      * @bodyParam delete array optional IDs of assessments that should be soft deleted. Example: [3,4]
-     *
      * @bodyParam delete.* integer required The ID of an assessment that should be deleted. Example: 3
      *
      * @response 200 {
@@ -289,7 +277,6 @@ class CourseAssesmentsController extends Controller
      *     }
      *   ]
      * }
-     *
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
@@ -298,7 +285,6 @@ class CourseAssesmentsController extends Controller
      *     ]
      *   }
      * }
-     *
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
@@ -307,7 +293,6 @@ class CourseAssesmentsController extends Controller
      *     ]
      *   }
      * }
-     *
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
@@ -316,7 +301,6 @@ class CourseAssesmentsController extends Controller
      *     ]
      *   }
      * }
-     *
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
@@ -325,7 +309,6 @@ class CourseAssesmentsController extends Controller
      *     ]
      *   }
      * }
-     *
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
@@ -334,17 +317,16 @@ class CourseAssesmentsController extends Controller
      *     ]
      *   }
      * }
-     *
      * @response 404 {
      *   "success": false,
      *   "message": "Teacher profile not found."
      * }
-     *
      * @response 403 {
      *   "message": "This action is unauthorized."
      * }
      */
-    public function syncAssessments(SyncCourseAssessmentsRequest $request, Course $course, StudentCourseGradeCalculator $gradeCalculator) {
+    public function syncAssessments(SyncCourseAssessmentsRequest $request, Course $course, StudentCourseGradeCalculator $gradeCalculator)
+    {
         $validated = $request->validated();
 
         $academicYearId = (int) $validated['academic_year_id'];
@@ -366,7 +348,6 @@ class CourseAssesmentsController extends Controller
             ->merge($deleteIds)
             ->unique()
             ->values();
-
 
         $existingAssessments = CourseAssessments::query()
             ->where('course_id', $course->id)
@@ -401,7 +382,6 @@ class CourseAssesmentsController extends Controller
             }
         }
 
-
         foreach ($updateIds as $assessmentId) {
             $this->authorize(
                 'update',
@@ -431,8 +411,7 @@ class CourseAssesmentsController extends Controller
                     'id' => $assessment->id,
                     'course_id' => $assessment->course_id,
                     'teacher_id' => $assessment->teacher_id,
-                    'academic_year_id' =>
-                        $assessment->academic_year_id,
+                    'academic_year_id' => $assessment->academic_year_id,
 
                     'title' => array_key_exists('title', $item)
                         ? $item['title']
@@ -460,7 +439,6 @@ class CourseAssesmentsController extends Controller
                         ? $item['is_published']
                         : $assessment->is_published,
 
-
                     'created_at' => $assessment->created_at,
                     'updated_at' => $now,
                 ];
@@ -485,8 +463,7 @@ class CourseAssesmentsController extends Controller
         $shouldRecalculateGrades =
             $deleteIds->isNotEmpty()
             || $updateItems->contains(
-                fn (array $item) =>
-                    array_key_exists('weight', $item)
+                fn (array $item) => array_key_exists('weight', $item)
                     || array_key_exists('max_mark', $item)
             );
 
@@ -572,6 +549,7 @@ class CourseAssesmentsController extends Controller
             'Course assessments sent to Head of Department successfully.',
         );
     }
+
     /**
      * Show course assessment
      *

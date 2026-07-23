@@ -14,7 +14,6 @@ use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
 use App\Models\UserScope;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -28,21 +27,21 @@ class LetterActionService
 
         $payload = $this->getPayload($letter);
 
-            match ($letter->type) {
-                'hire_teacher' => $this->hireTeacher($payload),
-                'fire_teacher' => $this->fireTeacher($payload),
-                'create_department' => $this->createDepartment($payload),
-                'close_department' => $this->closeDepartment($payload),
-                'open_faculty' => $this->openFaculty($payload),
-                'close_faculty' => $this->closeFaculty($payload),
-                'remove_student'=>$this->removeStudent($payload),
-                'create_course'=>$this->createCourse($payload),
-                'delete_course'=>$this->deleteCourse($payload),
-                'general'=> null,
-                default => throw new RuntimeException("Unsupported letter action type: {$letter->type}"),
-            };
+        match ($letter->type) {
+            'hire_teacher' => $this->hireTeacher($payload),
+            'fire_teacher' => $this->fireTeacher($payload),
+            'create_department' => $this->createDepartment($payload),
+            'close_department' => $this->closeDepartment($payload),
+            'open_faculty' => $this->openFaculty($payload),
+            'close_faculty' => $this->closeFaculty($payload),
+            'remove_student' => $this->removeStudent($payload),
+            'create_course' => $this->createCourse($payload),
+            'delete_course' => $this->deleteCourse($payload),
+            'general' => null,
+            default => throw new RuntimeException("Unsupported letter action type: {$letter->type}"),
+        };
 
-            $letter->update(['executed_at' => now()]);
+        $letter->update(['executed_at' => now()]);
     }
 
     private function hireTeacher(array $payload): void
@@ -139,19 +138,21 @@ class LetterActionService
     {
         $faculty = Faculty::findOrFail($this->required($payload, 'faculty_id'));
 
-            $faculty->departments()->update([
-                'is_active' => false,
-            ]);
+        $faculty->departments()->update([
+            'is_active' => false,
+        ]);
 
-            $faculty->update([
-                'is_active' => false,
-            ]);
+        $faculty->update([
+            'is_active' => false,
+        ]);
     }
-    public function removeStudent(array $payload): void{
-        $student = Student::findOrFail($payload ['student_id']);
+
+    public function removeStudent(array $payload): void
+    {
+        $student = Student::findOrFail($payload['student_id']);
         $user = User::findOrFail($student->user_id);
 
-        $academicYear= AcademicYear::where('is_active',true)->first();
+        $academicYear = AcademicYear::where('is_active', true)->first();
 
         StudentMarks::query()
             ->where('student_id', $student->id)
@@ -170,7 +171,8 @@ class LetterActionService
         $user->delete();
     }
 
-    public function createCourse(array $payload): void{
+    public function createCourse(array $payload): void
+    {
         $department = Department::findOrFail($this->required($payload, 'department_id'));
         $course = Course::create([
             'name' => $payload['name'],
@@ -185,10 +187,12 @@ class LetterActionService
         $course->prerequisites()->sync($payload['prerequisites']);
     }
 
-    public function deleteCourse(array $payload): void{
+    public function deleteCourse(array $payload): void
+    {
         $course = Course::findOrFail($this->required($payload, 'course_id'));
         $course->delete();
     }
+
     private function lecturerRole(): Role
     {
         return Role::where('name', 'lecturer')
@@ -198,7 +202,7 @@ class LetterActionService
 
     private function getPayload(Letter $letter): array
     {
-        if($letter->type === 'general'){
+        if ($letter->type === 'general') {
             return [];
         }
         $payload = $letter->payload;

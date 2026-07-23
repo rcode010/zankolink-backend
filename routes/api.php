@@ -62,6 +62,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 });
 
-Route::middleware(['auth:sanctum','ability:moodle,admin'])->group(function () {
-   require __DIR__.'/api/shared.php';
+Route::middleware(['auth:sanctum', 'ability:moodle,admin'])->group(function () {
+    require __DIR__.'/api/shared.php';
 });

@@ -169,7 +169,6 @@ class SyncCourseAssessmentsRequest extends FormRequest
                     return;
                 }
 
-
                 $editableFields = [
                     'title',
                     'max_mark',
@@ -204,7 +203,6 @@ class SyncCourseAssessmentsRequest extends FormRequest
                     ->map(fn ($id) => (int) $id)
                     ->values();
 
-
                 $overlappingIds = $updateIds->intersect(
                     $deleteIds
                 );
@@ -218,7 +216,6 @@ class SyncCourseAssessmentsRequest extends FormRequest
                     return;
                 }
 
-
                 $existingAssessments = CourseAssessments::query()
                     ->where('course_id', $course->id)
                     ->where(
@@ -230,7 +227,6 @@ class SyncCourseAssessmentsRequest extends FormRequest
                         'weight',
                     ])
                     ->keyBy('id');
-
 
                 $referencedIds = $updateIds
                     ->merge($deleteIds)
@@ -250,12 +246,10 @@ class SyncCourseAssessmentsRequest extends FormRequest
                     return;
                 }
 
-
                 $finalWeights = $existingAssessments
                     ->mapWithKeys(
                         fn ($assessment) => [
-                            (int) $assessment->id =>
-                                (float) $assessment->weight,
+                            (int) $assessment->id => (float) $assessment->weight,
                         ]
                     );
 

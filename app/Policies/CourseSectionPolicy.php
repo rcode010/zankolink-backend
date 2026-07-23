@@ -39,7 +39,7 @@ class CourseSectionPolicy
      */
     public function update(User $user, CourseSection $courseSection): bool
     {
-        return $this->is_primary($user,$courseSection->course) || $this->ownsSection($user, $courseSection);
+        return $this->is_primary($user, $courseSection->course) || $this->ownsSection($user, $courseSection);
     }
 
     /**
@@ -47,7 +47,7 @@ class CourseSectionPolicy
      */
     public function delete(User $user, CourseSection $courseSection): bool
     {
-        return $this->is_primary($user,$courseSection->course) || $this->ownsSection($user, $courseSection);
+        return $this->is_primary($user, $courseSection->course) || $this->ownsSection($user, $courseSection);
     }
 
     /**
@@ -87,8 +87,10 @@ class CourseSectionPolicy
         return $user->teacher
             && $courseSection->teacher_id === $user->teacher->id;
     }
-    private function is_primary(User $user, Course $course): bool{
+
+    private function is_primary(User $user, Course $course): bool
+    {
         return $user->teacher &&
-            $course->teachers()->whereKey($user->teacher->id)->where('role','primary_lecturer')->exists();
+            $course->teachers()->whereKey($user->teacher->id)->where('role', 'primary_lecturer')->exists();
     }
 }

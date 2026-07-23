@@ -13,6 +13,7 @@ use App\Models\Student;
 use App\Services\CoursePrerequisiteEligibilityService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+
 /**
  * @group Student-Course
  *
@@ -53,6 +54,7 @@ class StudentCourseController extends Controller
                 ->getData(true)
         );
     }
+
     /**
      * Assign student to course
      *
@@ -61,6 +63,7 @@ class StudentCourseController extends Controller
      * If the course has prerequisites, the student must have passed all prerequisite courses with status `passed` and grade greater than or equal to 50.
      *
      * @group Student Courses
+     *
      * @authenticated
      *
      * @urlParam course integer required The ID of the course. Example: 1
@@ -72,19 +75,17 @@ class StudentCourseController extends Controller
      *   "message": "Student assigned successfully.",
      *   "data": []
      * }
-     *
      * @response 400 {
      *   "success": false,
      *   "message": "Student cannot enroll outside their department."
      * }
-     *
      * @response 422 {
      *   "success": false,
      *   "message": "Student has not passed all prerequisite courses.",
      *   "missing_prerequisites": [2, 4]
      * }
      */
-    public function store(AssignStudentCourseRequest $request, Course $course,CoursePrerequisiteEligibilityService $service)
+    public function store(AssignStudentCourseRequest $request, Course $course, CoursePrerequisiteEligibilityService $service)
     {
         $student = Student::findOrFail($request->validated('student_id'));
 
@@ -95,7 +96,7 @@ class StudentCourseController extends Controller
             );
         }
         $activeAcademicYearId = AcademicYear::where('is_active', true)->value('id');
-        $eligibility =$service->check($student, $course);
+        $eligibility = $service->check($student, $course);
         if (! $eligibility['eligible']) {
             return response()->json([
                 'success' => false,
@@ -104,13 +105,12 @@ class StudentCourseController extends Controller
             ], 422);
         }
 
-
         $course->students()
             ->syncWithoutDetaching([
                 $student->id => [
                     'academic_year_id' => $activeAcademicYearId,
                     'enrolled_at' => now(),
-                    'status'=>"enrolled"
+                    'status' => 'enrolled',
                 ],
             ]);
 

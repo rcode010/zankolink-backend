@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\Course;
 use App\Models\CourseAssessments;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CourseAssessmentsPolicy
 {

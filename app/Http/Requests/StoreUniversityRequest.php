@@ -42,7 +42,6 @@ class StoreUniversityRequest extends FormRequest
             'faculties.*.is_active' => ['nullable', 'boolean'],
             'faculties.*.admin_id' => ['nullable', 'exists:users,id'],
 
-
             // Departments inside each faculty
             'faculties.*.departments' => ['required', 'array', 'min:1'],
 

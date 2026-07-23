@@ -26,7 +26,7 @@ class UpdateStudentRequest extends FormRequest
         $student = $this->route('student');
 
         return [
-            'name' => "sometimes|string|max:255",
+            'name' => 'sometimes|string|max:255',
 
             'email' => [
                 'sometimes',
@@ -36,16 +36,16 @@ class UpdateStudentRequest extends FormRequest
                     ->ignore($student->user_id),
             ],
 
-            'phone' => "sometimes|string|regex:/^07[0-9]{9}$/",
+            'phone' => 'sometimes|string|regex:/^07[0-9]{9}$/',
 
-            'department_id' => "sometimes|exists:departments,id",
+            'department_id' => 'sometimes|exists:departments,id',
 
             'enrollment_type' => [
                 'sometimes',
                 Rule::in(['morning', 'parallel', 'evening']),
             ],
 
-            'stage' => "sometimes|integer|between:1,6",
+            'stage' => 'sometimes|integer|between:1,6',
 
             'student_number' => [
                 'sometimes',

@@ -5,7 +5,6 @@ namespace App\Policies;
 use App\Models\CourseAttendanceSessions;
 use App\Models\StudentAttendance;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class StudentAttendancePolicy
 {

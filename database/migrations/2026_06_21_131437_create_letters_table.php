@@ -29,9 +29,9 @@ return new class extends Migration
                 'remove_student',
                 'create_course',
                 'delete_course',
-                'general'
+                'general',
             ])->nullable();
-          
+
             $table->string('title');
             $table->longText('body');
             $table->boolean('is_read')->default(false);

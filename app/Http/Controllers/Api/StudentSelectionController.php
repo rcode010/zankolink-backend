@@ -86,7 +86,7 @@ class StudentSelectionController extends Controller
         $studentStage = (int) $student->stage;
         $departmentId = $student->department_id;
 
-       // Check if course selection is open
+        // Check if course selection is open
         $department = $student->department;
 
         if (
@@ -96,7 +96,7 @@ class StudentSelectionController extends Controller
             now()->gte($department->course_selection_ends_at)
         ) {
             return response()->json([
-                'message' => 'Course selection is currently closed.'
+                'message' => 'Course selection is currently closed.',
             ], 403);
         }
 
