@@ -202,6 +202,7 @@ class LetterController extends Controller
                 'receiver:id,name',
                 'attachments',
                 'signatures',
+                'latestFlow:action',
             ])
             ->allowedFilters(
                 AllowedFilter::exact('status'),
@@ -224,6 +225,8 @@ class LetterController extends Controller
                 ->with([
                     'letter.sender:id,name',
                     'letter.attachments',
+                    'latestFlow:action',
+
                 ])
                 ->latest()
                 ->get()
@@ -281,7 +284,7 @@ class LetterController extends Controller
         if ($user->isMinistryAdmin()) {
             $multiRecipientLetters = QueryBuilder::for(Letter::class)
                 ->where('receiver_id', null)
-                ->with(['sender:id,name', 'attachments', 'recipients'])
+                ->with(['sender:id,name', 'attachments', 'recipients','latestFlow:action',])
                 ->allowedFilters(
                     AllowedFilter::partial('created_at'),
                     AllowedFilter::custom(
