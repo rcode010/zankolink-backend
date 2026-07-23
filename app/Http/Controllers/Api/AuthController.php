@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\RateLimiter;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\Enable2FARequest;
 use App\Http\Requests\LoginRequest;
@@ -73,10 +74,25 @@ class AuthController extends Controller
 
         $credentials = $request->validated();
 
+        $key = strtolower($credentials['email']).'|'.$request->ip();
+
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            return $this->error(
+                'Too many login attempts. Please try again in '.RateLimiter::availableIn($key).' seconds.',
+                429
+            );
+        }
+
         if (! Auth::attempt($credentials)) {
+
+            RateLimiter::hit($key, 60);
+
             return $this->error('Invalid credentials', 401);
         }
+
         $user = Auth::user();
+        RateLimiter::clear($key);
+
         if (! $user->canAccessAdminPanel()) {
             Auth::logout();
 
