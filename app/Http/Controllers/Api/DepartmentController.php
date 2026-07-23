@@ -193,7 +193,7 @@ class DepartmentController extends Controller
         DB::transaction(function () use ($selection,$student,$credentials) {
 
             $selection->update([
-                'status' => 'approved',
+                'status' => $credentials['status'],
             ]);
 
             DB::table('course_student')->insert([
