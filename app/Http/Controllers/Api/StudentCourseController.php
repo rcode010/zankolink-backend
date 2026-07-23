@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AssignStudentCourseRequest;
 use App\Http\Requests\UpdateStudentCourseRequest;
+use App\Http\Resources\CourseResource;
 use App\Http\Resources\StudentResource;
 use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Student;
 use App\Services\CoursePrerequisiteEligibilityService;
+use App\Services\StudentAvailableCoursesService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
@@ -146,6 +148,14 @@ class StudentCourseController extends Controller
 
         return $this->ok(
             'Student removed from course successfully.'
+        );
+    }
+    public function availableCourses(Request $request, StudentAvailableCoursesService $service){
+        $courses = $service->run($request->user());
+
+        return $this->ok(
+            'Available courses retrieved successfully.',
+            CourseResource::collection($courses)->resolve()
         );
     }
 }
