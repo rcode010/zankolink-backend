@@ -4,8 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreLetterBroadcastRequest extends FormRequest
+class StoreLetterRecipientRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +23,31 @@ class StoreLetterBroadcastRequest extends FormRequest
      */
     public function rules(): array
     {
+        $type = $this->input('type');
+
         return [
+            'recipient_ids' => [
+                'required',
+                'array',
+                'min:2',
+            ],
+
+            'recipient_ids.*' => [
+                'integer',
+                'exists:users,id',
+                'distinct',
+            ],
+
             'title' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
 
-            'files' => ['sometimes', 'array'],
-            'files.*' => [
+            'file' => [
+                'nullable',
+                'array',
+            ],
+
+            'file.*' => [
+                'nullable',
                 'file',
                 'mimes:pdf,doc,docx,jpg,jpeg,png',
                 'max:5120',

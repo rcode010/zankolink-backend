@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('letter_number');
             $table->foreignId('original_sender_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('sender_id')->constrained('users');
-            $table->foreignId('receiver_id')->constrained('users');
+            $table->foreignId('receiver_id')->nullable()->constrained('users');
             $table->enum('type', [
                 'hire_teacher',
                 'fire_teacher',
@@ -29,7 +29,9 @@ return new class extends Migration
                 'remove_student',
                 'create_course',
                 'delete_course',
-            ]);
+                'general'
+            ])->nullable();
+          
             $table->string('title');
             $table->longText('body');
             $table->boolean('is_read')->default(false);
