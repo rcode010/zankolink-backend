@@ -261,6 +261,7 @@ class LetterController extends Controller
                 'receiver:id,name',
                 'attachments',
                 'signatures',
+                'latestFlow:action'
             ])
             ->allowedFilters(
                 AllowedFilter::exact('status')
