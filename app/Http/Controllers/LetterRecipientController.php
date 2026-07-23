@@ -27,7 +27,7 @@ class LetterRecipientController extends Controller
 
         $data['original_sender_id'] = $user->id;
         $data['sender_id'] = $user->id;
-        $data['status'] = 'pending';
+        $data['type'] = 'general';
         $data['letter_uuid'] = (string) Str::uuid();
         $data['academic_year_id'] = AcademicYear::where('is_active', true)->value('id');
 
