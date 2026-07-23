@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('letter_broadcasts', function (Blueprint $table) {
+        Schema::create('letter_recipients', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->longText('body');
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('letter_id')->constrained('letters');
+            $table->foreignId('recipient_id')->constrained('users');
             $table->timestamps();
-            $table->softDeletes();
-
-            $table->index(['is_active', 'deleted_at', 'created_at'], 'letter_broadcasts_active_deleted_created_idx');
         });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('letter_broadcasts');
+        Schema::dropIfExists('letter_recipients');
     }
 };

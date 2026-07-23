@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RaiseLetterRequest;
 use App\Http\Requests\StoreLetterRequest;
 use App\Http\Requests\UpdateLetterRequest;
-use App\Http\Resources\LetterBroadcastResource;
+use App\Http\Resources\LetterRecipientsResource;
 use App\Http\Resources\LetterResource;
 use App\Models\Letter;
-use App\Models\LetterBroadcast;
 use App\Models\LetterFlow;
-use App\Models\LetterSignature;
+use App\Models\LetterRecipient;
+use App\QueryFilters\MultiRecipientUniversityFilter;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
@@ -216,25 +216,28 @@ class LetterController extends Controller
                 ];
             });
 
-        $broadcasts = collect();
+        $multiRecipientLetters = collect();
 
         if (! $user->isMinistryAdmin()) {
-            $broadcasts = LetterBroadcast::query()
-                ->with('attachments')
-                ->where('is_active', true)
+            $multiRecipientLetters = LetterRecipient::query()
+                ->where('recipient_id', $user->id)
+                ->with([
+                    'letter.sender:id,name',
+                    'letter.attachments',
+                ])
                 ->latest()
                 ->get()
-                ->map(function ($broadcast) use ($request) {
+                ->map(function ($recipient) use ($request) {
                     return [
-                        'inbox_type' => 'letter_broadcast',
-                        'created_at' => $broadcast->created_at,
-                        'data' => (new LetterBroadcastResource($broadcast))->resolve($request),
+                        'inbox_type' => 'multi_recipient_letter',
+                        'created_at' => $recipient->letter->created_at,
+                        'data' => (new LetterRecipientsResource($recipient->letter))->resolve($request),
                     ];
                 });
         }
 
         $inbox = $letters
-            ->concat($broadcasts)
+            ->concat($multiRecipientLetters)
             ->sortByDesc('created_at')
             ->values();
 
@@ -248,16 +251,11 @@ class LetterController extends Controller
     {
         $this->authorize('viewAny', Letter::class);
         $user = $request->user();
-        if ($user->isMinistryAdmin()) {
-            $broadcasts = LetterBroadcast::query()
-                ->with('attachments')
-                ->latest()
-                ->get();
+        $type = $request->query('type', 'all');
 
-            return $this->ok('Broadcast letters fetched successfully', $broadcasts->toArray());
-        }
         $letters = QueryBuilder::for(Letter::class)
-            ->Where('original_sender_id', $user->id)
+            ->where('original_sender_id', $user->id)
+            ->where('receiver_id', '!=', null)
             ->with([
                 'sender:id,name',
                 'receiver:id,name',
@@ -268,11 +266,55 @@ class LetterController extends Controller
                 AllowedFilter::exact('status')
             )
             ->defaultSort('-created_at')
-            ->get();
+            ->get()
+            ->map(function ($letter) use ($request) {
+                return [
+                    'outbox_type' => 'direct',
+                    'created_at' => $letter->created_at,
+                    'data' => (new LetterResource($letter))->resolve($request),
+                ];
+            });
 
-        return $this->ok('Outbox letters retrieved successfully', LetterResource::collection($letters)->response()->getData(true));
+        $multiRecipientLetters = collect();
+
+        if ($user->isMinistryAdmin()) {
+            $multiRecipientLetters = QueryBuilder::for(Letter::class)
+                ->where('receiver_id', null)
+                ->with(['sender:id,name', 'attachments', 'recipients'])
+                ->allowedFilters(
+                    AllowedFilter::partial('created_at'),
+                    AllowedFilter::custom(
+                        'university',
+                        new MultiRecipientUniversityFilter
+                    )
+                )
+                ->defaultSort('-created_at')
+                ->get()
+                ->map(function ($letter) use ($request) {
+                    return [
+                        'outbox_type' => 'multi-recipient',
+                        'created_at' => $letter->created_at,
+                        'data' => (new LetterRecipientsResource($letter))->resolve($request),
+                    ];
+                });
+        }
+
+        $outbox = $letters
+            ->concat($multiRecipientLetters);
+
+        if ($type !== 'all') {
+            $outbox = $outbox->where('outbox_type', $type);
+        }
+
+        $outbox = $outbox
+            ->sortByDesc('created_at')
+            ->values();
+
+        return $this->ok('Outbox letters retrieved successfully', $outbox->toArray());
     }
-    public function archived(Request $request){
+
+    public function archived(Request $request)
+    {
         $this->authorize('viewAny', Letter::class);
         $user = $request->user();
 

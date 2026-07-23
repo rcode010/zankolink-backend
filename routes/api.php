@@ -40,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     require __DIR__.'/api/roles_permissions.php';
     require __DIR__.'/api/letter-stamp.php';
-    require __DIR__.'/api/letter-broadcast.php';
+    require __DIR__.'/api/letter-recipients.php';
 
 });
 
