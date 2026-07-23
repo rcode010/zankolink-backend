@@ -15,7 +15,7 @@ Route::prefix('departments')->group(function () {
     Route::patch('/{department}/seat', [DepartmentController::class, 'updateSeat'])->middleware('permission:update department seats');
 
     Route::get('/student-selected-courses', [DepartmentController::class, 'getStudentSelectedCourses']);
-    Route::post('/approve-selection', [DepartmentController::class, 'approveStudentSelection']);
+    Route::post('/selection', [DepartmentController::class, 'StudentSelection']);
     Route::patch('/{department}/course-selection-settings', [DepartmentController::class, 'updateCourseSelectionSettings']);
     Route::patch('/{department}/course-selection-settings/close', [DepartmentController::class, 'closeCourseSelection']);
 

@@ -166,7 +166,7 @@ class DepartmentController extends Controller
     /**
      * Approve student course selections and enroll them into the final table.
      */
-    public function approveStudentSelection(ApproveStudentSelectionRequest $request) {
+    public function StudentSelection(ApproveStudentSelectionRequest $request) {
         $credentials = $request->validated();
 
         $selection = CourseSelection::query()
