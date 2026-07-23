@@ -4,11 +4,11 @@ use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:login');
 Route::post('/auth/moodle/login', [AuthController::class, 'moodleLogin']);
 Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
-Route::post('/auth/forget-password', [AuthController::class, 'forgetPassword']);
-Route::post('/auth/verify', [AuthController::class, 'verify']);
+Route::post('/auth/forget-password', [AuthController::class, 'forgetPassword'])->middleware('throttle:forgetPassword');
+Route::post('/auth/verify', [AuthController::class, 'verify'])->middleware('throttle:verify');
 
 // Protected Routes
 Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {

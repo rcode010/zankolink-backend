@@ -8,6 +8,9 @@ use App\Observers\LetterObserver;
 use App\Observers\UniversityObserver;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +34,45 @@ class AppServiceProvider extends ServiceProvider
                 .$token
                 .'&email='
                 .urlencode($user->email);
+        });
+
+        RateLimiter::for('login', function (Request $request)
+        {
+            $key = strtolower($request->email).'|'.$request->ip();
+
+            return [
+                Limit::perMinute(5)->by($key),
+                Limit::perHour(20)->by($key),
+                Limit::perDay(50)->by($key),
+            ];
+        });
+
+        RateLimiter::for('verify', function (Request $request)
+        {
+            $key = strtolower($request->email).'|'.$request->ip();
+
+            return [
+                Limit::perMinute(1)->by($key),
+                Limit::perHour(5)->by($key),
+                Limit::perDay(10)->by($key),
+            ];
+        });
+
+        RateLimiter::for('forgetPassword', function (Request $request)
+        {
+            $key = strtolower($request->email).'|'.$request->ip();
+
+            return [
+                Limit::perMinute(1)->by($key),
+                Limit::perHour(5)->by($key),
+                Limit::perDay(10)->by($key),
+            ];
+        });
+
+        RateLimiter::for('api', function (Request $request)
+        {
+            return Limit::perMinute(60)
+                ->by($request->user()?->id ?: $request->ip());
         });
     }
 }
