@@ -10,6 +10,7 @@ class AcademicYear extends Model
         'year',
         'start_date',
         'end_date',
+        'semester',
         'is_active',
     ];
 }
