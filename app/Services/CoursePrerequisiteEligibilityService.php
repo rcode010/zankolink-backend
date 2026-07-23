@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Course;
 use App\Models\Student;
 use Illuminate\Support\Facades\DB;
-use function PHPUnit\Framework\greaterThanOrEqual;
 
 class CoursePrerequisiteEligibilityService
 {
@@ -26,13 +25,14 @@ class CoursePrerequisiteEligibilityService
             ->where('student_id', $student->id)
             ->whereIn('course_id', $prerequisiteIds)
             ->where('status', 'passed')
-            ->where('grade',">=",50)
+            ->where('grade', '>=', 50)
             ->pluck('course_id')
             ->toArray();
         $missingPrerequisites = array_values(array_diff(
             $prerequisiteIds,
             $passedPrerequisiteIds
         ));
+
         return [
             'eligible' => empty($missingPrerequisites),
             'missing_prerequisites' => $missingPrerequisites,

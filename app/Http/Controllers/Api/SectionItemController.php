@@ -106,7 +106,7 @@ class SectionItemController extends Controller
             $data['material_file_url'] = $path;
         }
 
-        if (!empty($validated['url'])) {
+        if (! empty($validated['url'])) {
             $data['material_file_type'] = 'link';
             $data['material_file_name'] = $validated['material_file_name']
                 ?? parse_url($validated['url'], PHP_URL_HOST);
@@ -134,6 +134,7 @@ class SectionItemController extends Controller
     public function show(Request $request, SectionItem $item)
     {
         $this->authorize('view', $item);
+
         return $this->ok(
             'Section item retrieved successfully',
             (new SectionItemResource($item))->resolve()
@@ -214,10 +215,8 @@ class SectionItemController extends Controller
             'description' => $validated['description'] ?? null,
         ];
 
-        if ($request->hasFile('file'))
-        {
-            if ($item->material_file_type !== 'link' && $item->material_file_url)
-            {
+        if ($request->hasFile('file')) {
+            if ($item->material_file_type !== 'link' && $item->material_file_url) {
                 Storage::disk('public')->delete($item->material_file_url);
             }
 
@@ -228,8 +227,7 @@ class SectionItemController extends Controller
             $data['material_file_name'] = $validated['material_file_name'] ?? $file->getClientOriginalName();
             $data['material_file_url'] = $path;
 
-        } elseif (!empty($validated['url']))
-        {
+        } elseif (! empty($validated['url'])) {
             if ($item->material_file_type !== 'link' && $item->material_file_url) {
                 Storage::disk('public')->delete($item->material_file_url);
             }
@@ -238,8 +236,7 @@ class SectionItemController extends Controller
             $data['material_file_name'] = $validated['material_file_name'];
             $data['material_file_url'] = $validated['url'];
 
-        } elseif (!empty($validated['remove_material']))
-        {
+        } elseif (! empty($validated['remove_material'])) {
             if ($item->material_file_type !== 'link' && $item->material_file_url) {
                 Storage::disk('public')->delete($item->material_file_url);
             }
@@ -268,7 +265,7 @@ class SectionItemController extends Controller
     {
         $this->authorize('delete', $item);
         if ($item->material_file_type !== 'link' &&
-            !is_null($item->material_file_url) &&
+            ! is_null($item->material_file_url) &&
             Storage::disk('public')->exists($item->material_file_url)) {
             Storage::disk('public')->delete($item->material_file_url);
         }

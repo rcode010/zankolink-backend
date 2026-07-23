@@ -13,7 +13,8 @@ class Department extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['faculty_id', 'name', 'admin_id', 'is_active', 'seat_available','course_selection_starts_at','course_selection_ends_at'];
+    protected $fillable = ['faculty_id', 'name', 'admin_id', 'is_active', 'seat_available', 'course_selection_starts_at', 'course_selection_ends_at'];
+
     protected function casts(): array
     {
         return [
@@ -21,6 +22,7 @@ class Department extends Model
             'course_selection_ends_at' => 'datetime',
         ];
     }
+
     public function faculty(): BelongsTo
     {
         return $this->belongsTo(Faculty::class);

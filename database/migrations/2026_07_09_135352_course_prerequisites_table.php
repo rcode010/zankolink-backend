@@ -20,7 +20,6 @@ return new class extends Migration
             $table->unique(['course_id', 'prerequisite_course_id']);
         });
 
-
     }
 
     /**

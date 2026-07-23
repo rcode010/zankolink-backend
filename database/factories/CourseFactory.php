@@ -43,7 +43,7 @@ class CourseFactory extends Factory
             'department_id' => Department::factory(),
             'code' => $code,
             'type' => $this->faker->randomElement(['mandatory', 'elective']),
-            'semester'=> $this->faker->randomElement(['fall','spring']),
+            'semester' => $this->faker->randomElement(['fall', 'spring']),
             'year_level' => $yearLevel,
             'credit_hours' => $this->faker->randomElement([2, 3, 4]),
             'is_active' => $this->faker->randomElement([true, false]),

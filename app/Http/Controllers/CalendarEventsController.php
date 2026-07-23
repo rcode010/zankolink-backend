@@ -12,7 +12,6 @@ class CalendarEventsController extends Controller
 {
     use ApiResponses;
 
-
     public function myAssignments(Request $request)
     {
         $validated = $request->validate([

@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Model;
 use App\Models\Teacher;

@@ -14,9 +14,10 @@ use App\Models\Faculty;
 use App\Models\Student;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+
 /**
  * @group Department
  *
@@ -292,6 +293,7 @@ class DepartmentController extends Controller
 
         return $this->ok('Pending courses retrieved successfully.', $selectedCourses);
     }
+
     /**
      * Update course selection settings
      *
@@ -319,11 +321,9 @@ class DepartmentController extends Controller
      *     "is_open": false
      *   }
      * }
-     *
      * @response 403 {
      *   "message": "This action is unauthorized."
      * }
-     *
      * @response 422 {
      *   "message": "The course selection ends at field must be a date after course selection starts at.",
      *   "errors": {
@@ -333,7 +333,8 @@ class DepartmentController extends Controller
      *   }
      * }
      */
-    public function updateCourseSelectionSettings(UpdateCourseSelectionSettingRequest $request, Department $department){
+    public function updateCourseSelectionSettings(UpdateCourseSelectionSettingRequest $request, Department $department)
+    {
         $credentials = $request->validated();
 
         $department->update($credentials);
@@ -352,6 +353,7 @@ class DepartmentController extends Controller
             'is_open' => $isOpen,
         ]);
     }
+
     /**
      * Close course selection
      *
@@ -376,14 +378,15 @@ class DepartmentController extends Controller
      *     "is_open": false
      *   }
      * }
-     *
      * @response 403 {
      *   "message": "This action is unauthorized."
      * }
      */
-    public function closeCourseSelection(Request $request, Department $department){
-        $department->update(['course_selection_ends_at'=> now()]);
+    public function closeCourseSelection(Request $request, Department $department)
+    {
+        $department->update(['course_selection_ends_at' => now()]);
         $department->refresh();
+
         return $this->ok('Course selection settings updated successfully.', [
             'department_id' => $department->id,
             'course_selection_starts_at' => $department->course_selection_starts_at,
@@ -392,4 +395,3 @@ class DepartmentController extends Controller
         ]);
     }
 }
-

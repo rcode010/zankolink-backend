@@ -485,15 +485,16 @@ class CourseController extends Controller
      *     }
      *   ]
      * }
-     *
      * @response 404 {
      *   "message": "No query results for model [App\\Models\\Course] 999."
      * }
      */
-    public function getTeachers (Course $course){
+    public function getTeachers(Course $course)
+    {
         $teachers = $course->teachers()
             ->with('user:id,name,email')
             ->get(['teachers.id', 'teachers.user_id']);
-        return $this->ok("Course Teacher retrieved",$teachers->toArray());
+
+        return $this->ok('Course Teacher retrieved', $teachers->toArray());
     }
 }

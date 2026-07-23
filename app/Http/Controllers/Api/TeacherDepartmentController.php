@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\Teacher;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+
 /**
  * @group Teacher-Department
  *

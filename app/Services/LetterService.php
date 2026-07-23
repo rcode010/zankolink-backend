@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Letter;
-use App\Models\LetterSignature;
 use App\Models\LetterRecipient;
+use App\Models\LetterSignature;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 

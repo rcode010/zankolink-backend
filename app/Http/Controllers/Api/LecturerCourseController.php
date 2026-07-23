@@ -24,6 +24,7 @@ class LecturerCourseController extends Controller
      * cohort and section totals without extra queries.
      *
      * @authenticated
+     *
      * @response 200 {
      *   "message": "Lecturer assigned courses retrieved successfully",
      *   "data": {
@@ -50,9 +51,9 @@ class LecturerCourseController extends Controller
             ->get();
 
         return $this->ok(
-        'Lecturer assigned courses retrieved successfully',
-        CourseResource::collection($courses)->resolve()
-    );
+            'Lecturer assigned courses retrieved successfully',
+            CourseResource::collection($courses)->resolve()
+        );
     }
 
     /**
@@ -67,6 +68,7 @@ class LecturerCourseController extends Controller
      * - `assignments` with per-assignment progress counters
      *
      * @authenticated
+     *
      * @response 200 {
      *   "message": "Course dashboard retrieved successfully",
      *   "data": {
@@ -152,6 +154,7 @@ class LecturerCourseController extends Controller
             'sections' => $sections,
         ]);
     }
+
     /**
      * GET /api/moodle/lecturer/courses/{course}/submissions-summary
      * Returns a flat summary of all assignments in the course with submission
@@ -161,6 +164,7 @@ class LecturerCourseController extends Controller
      * having to manually aggregate the nested section data.
      *
      * @authenticated
+     *
      * @response 200 {
      *   "message": "Submissions summary retrieved successfully",
      *   "data": {

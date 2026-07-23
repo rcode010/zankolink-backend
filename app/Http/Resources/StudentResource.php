@@ -24,8 +24,8 @@ class StudentResource extends JsonResource
             'user' => [
                 'id' => $this->user?->id,
                 'name' => $this->user?->name,
-                'email'=>$this->user?->email,
-                'phone'=>$this->user?->phone,
+                'email' => $this->user?->email,
+                'phone' => $this->user?->phone,
             ],
 
             'department' => new DepartmentResource(

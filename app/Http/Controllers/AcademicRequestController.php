@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 class AcademicRequestController extends Controller
 {
     use ApiResponses;
+
     /**
      * List Academic Requests
      *
@@ -59,20 +60,21 @@ class AcademicRequestController extends Controller
      *     }
      *   ]
      * }
-     *
      * @response 401 scenario="Unauthenticated" {
      *   "message": "Unauthenticated."
      * }
      */
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $user = $request->user();
         $academicRequests = AcademicRequest::where(
-            'user_id' , $user->id,
-        )->with(['attachments','user','department'])->get();
+            'user_id', $user->id,
+        )->with(['attachments', 'user', 'department'])->get();
 
-        return $this->ok("Academic Request retrieved successfully",
+        return $this->ok('Academic Request retrieved successfully',
             (AcademicRequestResource::collection($academicRequests))->resolve());
     }
+
     /**
      * Submit an Academic Request
      *
@@ -119,7 +121,6 @@ class AcademicRequestController extends Controller
      *   }
      * }
      */
-
     public function store(StoreAcademicRequest $request, AcademicRequestDepartmentResolver $departmentResolver)
     {
         $credentials = $request->validated();
@@ -129,7 +130,7 @@ class AcademicRequestController extends Controller
             $user,
             $credentials['department_id'] ?? null
         );
-        $academicRequest = DB::transaction(function () use ($departmentId, $credentials, $user,$request) {
+        $academicRequest = DB::transaction(function () use ($departmentId, $credentials, $user, $request) {
 
             $academicRequest = AcademicRequest::create([
                 'user_id' => $user->id,
@@ -153,7 +154,8 @@ class AcademicRequestController extends Controller
                 }
                 $academicRequest->attachments()->createMany($attachments);
             }
-            return $academicRequest->fresh()->load(['attachments','user','department']);
+
+            return $academicRequest->fresh()->load(['attachments', 'user', 'department']);
 
         });
 
@@ -206,17 +208,16 @@ class AcademicRequestController extends Controller
      *     "updated_at": "2026-07-09T07:36:48.000000Z"
      *   }
      * }
-     *
      * @response 404 scenario="Not found" {
      *   "message": "No query results for model [App\\Models\\AcademicRequest] 1"
      * }
-     *
      * @response 401 scenario="Unauthenticated" {
      *   "message": "Unauthenticated."
      * }
      */
-    public function show(AcademicRequest $academicRequest){
+    public function show(AcademicRequest $academicRequest)
+    {
 
-        return $this->ok("Academic Request retrieved successfully",(new AcademicRequestResource($academicRequest->load(['attachments','user','department'])))->resolve());
+        return $this->ok('Academic Request retrieved successfully', (new AcademicRequestResource($academicRequest->load(['attachments', 'user', 'department'])))->resolve());
     }
 }

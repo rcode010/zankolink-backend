@@ -4,9 +4,7 @@ namespace App\Policies;
 
 use App\Models\Course;
 use App\Models\CourseAttendanceSessions;
-use App\Models\CourseSection;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class CourseAttendanceSessionsPolicy
 {

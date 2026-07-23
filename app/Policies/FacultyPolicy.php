@@ -25,7 +25,6 @@ class FacultyPolicy
             return true;
         }
 
-
         if ($user->userScopes()
             ->where('scope_type', 'FACULTY')
             ->where('scope_id', $faculty->id)->exists()) {

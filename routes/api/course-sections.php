@@ -3,7 +3,6 @@
 use App\Http\Controllers\Api\CourseSectionController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::prefix('moodle')->group(function () {
 
     // Course-scoped routes (Scoped under a specific parent course)

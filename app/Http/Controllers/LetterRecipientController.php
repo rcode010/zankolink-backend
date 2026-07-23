@@ -16,10 +16,10 @@ class LetterRecipientController extends Controller
     use ApiResponses;
 
     public function store(
-        StoreLetterRecipientRequest   $request,
-        QrCodeService                 $qrCodeService,
+        StoreLetterRecipientRequest $request,
+        QrCodeService $qrCodeService,
         LetterVerificationHashService $hashService,
-        LetterService                 $letterService
+        LetterService $letterService
     ) {
         $user = $request->user();
 

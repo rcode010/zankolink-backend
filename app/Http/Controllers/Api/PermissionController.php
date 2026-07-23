@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponses;
 use Spatie\Permission\Models\Permission;
+
 /**
  * @group Permission
  *

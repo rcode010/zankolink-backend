@@ -95,13 +95,16 @@ class DepartmentPolicy
             ->where('scope_id', $universityId)
             ->exists();
     }
-    public function updateSeats(User $user, Department $department): bool{
+
+    public function updateSeats(User $user, Department $department): bool
+    {
         if ($user->hasRole('MINISTRY_ADMIN')) {
             return true;
         }
+
         return $user->userScopes()
-        ->where('scope_type', 'DEPARTMENT')
-        ->where('scope_id', $department->id)->exists();
+            ->where('scope_type', 'DEPARTMENT')
+            ->where('scope_id', $department->id)->exists();
     }
 
     /**
@@ -127,6 +130,7 @@ class DepartmentPolicy
     {
         return false;
     }
+
     public function createForFaculty(User $user, Faculty $faculty): bool
     {
         if ($user->hasRole('MINISTRY_ADMIN')) {
@@ -148,6 +152,7 @@ class DepartmentPolicy
             ->where('scope_id', $faculty->university_id)
             ->exists();
     }
+
     public function manageCourseSelections(User $user, Department $department): bool
     {
         if ($user->hasRole('MINISTRY_ADMIN')) {
