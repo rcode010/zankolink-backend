@@ -8,5 +8,6 @@ Route::prefix('moodle')->group(function () {
     Route::get('/courses/{course}/assessments/{assessment}', [CourseAssesmentsController::class, 'show'])->middleware('permission:view course assessment');
     Route::delete('/courses/{course}/assessments/{assessment}', [CourseAssesmentsController::class, 'destroy'])->middleware('permission:delete course assessments');
     Route::patch('/courses/{course}/assessments/sync', [CourseAssesmentsController::class, 'syncAssessments'])->middleware('permission:update course assessments');
+    Route::patch('/courses/{course}/assessments/publish', [CourseAssesmentsController::class, 'publishAssessments']);
     Route::patch('/courses/{course}/assessments/{assessment}', [CourseAssesmentsController::class, 'update'])->middleware('permission:update course assessments');
 });

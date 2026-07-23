@@ -402,6 +402,7 @@ class StudentMarksController extends Controller
      */
     public function gradeBook(GetGradebookRequest $request, Course $course)
     {
+        $user = auth()->user();
         $credentials = $request->validated();
 
         $assessments = CourseAssessments::query()
@@ -413,7 +414,12 @@ class StudentMarksController extends Controller
                 'title',
                 'max_mark',
                 'weight',
+                'is_published',
             ]);
+
+        if (! $user->teacher) {
+            $assessments = $assessments->where('is_published', true);
+        }
 
         $rows = DB::table('course_student')
             ->join(
@@ -508,6 +514,7 @@ class StudentMarksController extends Controller
                         'weight' => $assessment->weight !== null
                             ? (float) $assessment->weight
                             : null,
+                        'is_published' => $assessment->is_published,
                     ];
                 })->values(),
 

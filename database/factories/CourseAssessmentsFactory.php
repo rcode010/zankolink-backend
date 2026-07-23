@@ -37,6 +37,7 @@ class CourseAssessmentsFactory extends Factory
                 'now',
                 '+3 months'
             ),
+            'is_published' => false,
         ];
     }
 }

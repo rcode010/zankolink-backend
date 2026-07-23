@@ -94,6 +94,13 @@ class LecturerCourseController extends Controller
     {
         $this->authorize('viewAsLecturer', $course);
 
+        $teacherCourse = $request->user()
+            ->teacher
+            ->courses()
+            ->whereKey($course->id)
+            ->with('department:id,name,faculty_id')
+            ->firstOrFail();
+
         $totalStudents = $course->students()->count();
 
         $sections = $course->sections()
@@ -106,15 +113,19 @@ class LecturerCourseController extends Controller
             ->get()
             ->map(function ($section) use ($totalStudents) {
                 $filesCount = $section->items
-                    ->reject(fn ($item) => in_array($item->material_file_type, ['link', 'note'], true))
+                    ->reject(fn ($item) => in_array(
+                        $item->material_file_type,
+                        ['link', 'note'],
+                        true
+                    ))
                     ->count();
 
                 $linksCount = $section->items
-                    ->filter(fn ($item) => $item->material_file_type === 'link')
+                    ->where('material_file_type', 'link')
                     ->count();
 
                 $notesCount = $section->items
-                    ->filter(fn ($item) => $item->material_file_type === 'note')
+                    ->where('material_file_type', 'note')
                     ->count();
 
                 return [
@@ -124,19 +135,23 @@ class LecturerCourseController extends Controller
                     'assignments_count' => $section->submissions->count(),
                     'links_count' => $linksCount,
                     'notes_count' => $notesCount,
-                    'materials' => SectionItemResource::collection($section->items)->resolve(),
+                    'materials' => SectionItemResource::collection(
+                        $section->items
+                    )->resolve(),
                     'assignments' => $section->submissions->map(
-                        fn ($submission) => $this->withSubmissionCounts($submission, $totalStudents)
+                        fn ($submission) => $this->withSubmissionCounts(
+                            $submission,
+                            $totalStudents
+                        )
                     ),
                 ];
             });
 
         return $this->ok('Course dashboard retrieved successfully', [
-            'course' => (new CourseResource($course->load('department:id,name,faculty_id')))->resolve(),
+            'course' => (new CourseResource($teacherCourse))->resolve(),
             'sections' => $sections,
         ]);
     }
-
     /**
      * GET /api/moodle/lecturer/courses/{course}/submissions-summary
      * Returns a flat summary of all assignments in the course with submission
