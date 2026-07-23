@@ -18,5 +18,4 @@ class StudentAttendance extends Model
     {
         return $this->belongsTo(CourseAttendanceSessions::class, 'attendance_session_id');
     }
-
 }

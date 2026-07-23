@@ -135,7 +135,7 @@ class LetterController extends Controller
                 $letter->load([
                     'sender:id,name',
                     'receiver:id,name',
-                    'attachments'
+                    'attachments',
                 ])
             ))->resolve()
         );
@@ -196,7 +196,7 @@ class LetterController extends Controller
 
         $letters = QueryBuilder::for(Letter::class)
             ->where('receiver_id', $user->id)
-            ->where('status','pending')
+            ->where('status', 'pending')
             ->with([
                 'sender:id,name',
                 'receiver:id,name',
@@ -236,7 +236,7 @@ class LetterController extends Controller
                 });
         }
 
-        $inbox = $letters
+        $inbox = $letters->load('payload.teacher')
             ->concat($multiRecipientLetters)
             ->sortByDesc('created_at')
             ->values();
@@ -338,7 +338,9 @@ class LetterController extends Controller
             $letters->toArray()
         );
     }
-    public function dispatched(Request $request){
+
+    public function dispatched(Request $request)
+    {
         $this->authorize('viewAny', Letter::class);
 
         $user = $request->user();
@@ -355,5 +357,4 @@ class LetterController extends Controller
 
         return $this->ok('Dispatched letters retrieved successfully', $letters->toArray());
     }
-
 }

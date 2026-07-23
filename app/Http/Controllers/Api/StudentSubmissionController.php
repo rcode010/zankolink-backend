@@ -287,7 +287,6 @@ class StudentSubmissionController extends Controller
      * }
      * ]
      * }
-     *
      */
     public function show(SectionSubmission $submission, Student $student)
     {
@@ -307,7 +306,3 @@ class StudentSubmissionController extends Controller
         );
     }
 }
-
-
-
-

@@ -6,7 +6,6 @@ use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\SectionItem;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class SectionItemPolicy
 {
@@ -41,7 +40,7 @@ class SectionItemPolicy
      */
     public function update(User $user, SectionItem $sectionItem): bool
     {
-        return $this->is_primary($user,$sectionItem->section->course) || $this->ownsItem($user, $sectionItem);
+        return $this->is_primary($user, $sectionItem->section->course) || $this->ownsItem($user, $sectionItem);
     }
 
     /**
@@ -49,7 +48,7 @@ class SectionItemPolicy
      */
     public function delete(User $user, SectionItem $sectionItem): bool
     {
-        return $this->is_primary($user,$sectionItem->section->course)|| $this->ownsItem($user, $sectionItem);
+        return $this->is_primary($user, $sectionItem->section->course) || $this->ownsItem($user, $sectionItem);
     }
 
     public function download(User $user, SectionItem $sectionItem): bool
@@ -60,7 +59,6 @@ class SectionItemPolicy
     /**
      * Determine whether the user can restore the model.
      */
-
     public function restore(User $user, SectionItem $sectionItem): bool
     {
         return false;
@@ -74,13 +72,12 @@ class SectionItemPolicy
         return false;
     }
 
-
     private function teacherBelongsToCourse(User $user, Course $course): bool
     {
         return $user->teacher
             && $course->teachers()
-            ->whereKey($user->teacher->id)
-            ->exists();
+                ->whereKey($user->teacher->id)
+                ->exists();
     }
 
     private function studentBelongsToCourse(User $user, Course $course): bool
@@ -96,12 +93,16 @@ class SectionItemPolicy
         return $user->teacher
             && $courseSection->teacher_id === $user->teacher->id;
     }
-    private function ownsItem(User $user, SectionItem $sectionItem): bool{
+
+    private function ownsItem(User $user, SectionItem $sectionItem): bool
+    {
         return $user->teacher &&
             $sectionItem->created_by_teacher_id === $user->teacher->id;
     }
-    private function is_primary(User $user, Course $course): bool{
+
+    private function is_primary(User $user, Course $course): bool
+    {
         return $user->teacher &&
-            $course->teachers()->whereKey($user->teacher->id)->where('role','primary_lecturer')->exists();
+            $course->teachers()->whereKey($user->teacher->id)->where('role', 'primary_lecturer')->exists();
     }
 }

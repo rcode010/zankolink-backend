@@ -9,6 +9,7 @@ use App\Models\UserScope;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+
 /**
  * @group User-Role
  *

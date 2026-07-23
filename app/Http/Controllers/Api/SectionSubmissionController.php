@@ -119,7 +119,7 @@ class SectionSubmissionController extends Controller
     {
         $this->authorize('create', [SectionSubmission::class, $section]);
         $teacher = $request->user()->teacher;
-        try{
+        try {
             $submission = $service->create($section, $request->validated(), $request->file('files', []), $teacher);
 
             return $this->success(

@@ -105,8 +105,7 @@ class UserScopeResolverService
                 'name' => $scope->department_name,
                 'course_selection_starts_at' => $scope->course_selection_starts_at,
                 'course_selection_ends_at' => $scope->course_selection_ends_at,
-                'is_open' =>
-                    $scope->course_selection_starts_at &&
+                'is_open' => $scope->course_selection_starts_at &&
                     $scope->course_selection_ends_at &&
                     now()->gte($scope->course_selection_starts_at) &&
                     now()->lt($scope->course_selection_ends_at),

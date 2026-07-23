@@ -10,6 +10,7 @@ use App\Services\LetterActionService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 /**
  * @group Letter Workflow
  *
@@ -154,6 +155,4 @@ class LetterWorkflowController extends Controller
                 ->resolve()
         );
     }
-
-
 }

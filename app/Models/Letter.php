@@ -13,7 +13,7 @@ class Letter extends Model
     protected $fillable = [
         'letter_number', 'title', 'body', 'type', 'receiver_id', 'sender_id',
         'original_sender_id', 'status', 'academic_year_id', 'verification_hash',
-        'letter_uuid', 'qr_code_path', 'payload','executed_at',
+        'letter_uuid', 'qr_code_path', 'payload', 'executed_at',
     ];
 
     // Relationship to the person who sent the letter

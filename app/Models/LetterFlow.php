@@ -33,6 +33,7 @@ class LetterFlow extends Model
     {
         return $this->belongsTo(User::class, 'actor_id');
     }
+
     public function fromRecipient(): BelongsTo
     {
         return $this->belongsTo(User::class, 'from_recipient_id');

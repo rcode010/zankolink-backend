@@ -28,18 +28,18 @@ class OrganizationalHierarchyService
     {
         $scope = UserScope::query()->where('user_id', $user->id)->where('scope_type', 'FACULTY')->firstOrFail();
 
-        return Department::select(['admin_id','id','name'])->where('faculty_id', $scope->scope_id)->with('admin')->get();
+        return Department::select(['admin_id', 'id', 'name'])->where('faculty_id', $scope->scope_id)->with('admin')->get();
     }
 
     private function getAllUniversityFaculties(User $user)
     {
         $scope = UserScope::query()->where('user_id', $user->id)->where('scope_type', 'UNIVERSITY')->firstOrFail();
 
-        return Faculty::select(['admin_id','id','name'])->where('university_id', $scope->scope_id)->with('admin')->get();
+        return Faculty::select(['admin_id', 'id', 'name'])->where('university_id', $scope->scope_id)->with('admin')->get();
     }
 
     private function getAllUniversities()
     {
-        return University::select(['admin_id','id','name'])->with('admin')->get();
+        return University::select(['admin_id', 'id', 'name'])->with('admin')->get();
     }
 }

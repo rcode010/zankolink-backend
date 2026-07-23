@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('material_file_url')->nullable();
             $table->timestamps();
 
-
             $table->index(['section_id'], 'section_items_section_idx');
         });
     }

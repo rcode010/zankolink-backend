@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAcademicYearRequest;
 use App\Models\AcademicYear;
 use App\Traits\ApiResponses;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 /**
  * @group AcademicYear
  *
@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 class AcademicYearController extends Controller
 {
     use ApiResponses;
+
     /**
      * Update the current academic year and create a new one.
      * Route: POST /api/academic-year/update

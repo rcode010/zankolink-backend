@@ -8,9 +8,11 @@ use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Letter;
 use App\Models\University;
+use App\Models\UserScope;
 use App\Traits\ApiResponses;
 use App\Traits\ResolvesLetterScope;
 use Illuminate\Support\Facades\DB;
+
 /**
  * @group Dashboard
  *
@@ -160,7 +162,7 @@ class DashboardController extends Controller
         ];
 
         return collect($roleLabels)->map(function ($label, $roleName) use ($universityId) {
-            $userId = \App\Models\UserScope::where('scope_type', 'UNIVERSITY')
+            $userId = UserScope::where('scope_type', 'UNIVERSITY')
                 ->where('scope_id', $universityId)
                 ->whereHas('role', fn ($q) => $q->where('name', $roleName))
                 ->value('user_id');

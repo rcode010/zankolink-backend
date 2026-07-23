@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\AcademicYear;
@@ -9,14 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class SectionSubmissionService
 {
-
     public function create(
         CourseSection $section,
         array $data,
-        array $files = [],
+        array $files,
         Teacher $teacher
-    ): SectionSubmission
-    {
+    ): SectionSubmission {
         return DB::transaction(function () use ($section, $data, $files, $teacher) {
 
             $assessment = $section->course->assessments()->create([
@@ -57,7 +56,6 @@ class SectionSubmissionService
         });
     }
 
-
     public function update(SectionSubmission $submission, array $data, array $files = []): SectionSubmission
     {
         return DB::transaction(function () use ($submission, $data, $files) {
@@ -92,5 +90,4 @@ class SectionSubmissionService
             ]);
         });
     }
-
 }

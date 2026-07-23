@@ -28,7 +28,6 @@ class FacultyResource extends JsonResource
             'is_active' => $this->is_active,
             'university_id' => $this->university_id,
 
-
             'university' => new UniversityResource($this->whenLoaded('university')),
 
             'created_at' => $this->created_at?->toDateTimeString(),

@@ -22,7 +22,7 @@ class CourseResource extends JsonResource
             'year_level' => $this->year_level,
             'is_active' => $this->is_active,
             'department_id' => $this->department_id,
-            'color'=>$this->color,
+            'color' => $this->color,
             'role' => $this->pivot?->role,
             'semester' => $this->semester,
             'students_count' => $this->whenCounted('students'),

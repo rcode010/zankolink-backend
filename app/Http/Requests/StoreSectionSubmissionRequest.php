@@ -64,7 +64,7 @@ class StoreSectionSubmissionRequest extends FormRequest
                     );
                 }
 
-            }
+            },
 
         ];
     }

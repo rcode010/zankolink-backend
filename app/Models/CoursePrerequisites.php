@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class CoursePrerequisites extends Model
 {
-    protected $fillable = ['course_id','prerequisite_course_id'];
+    protected $fillable = ['course_id', 'prerequisite_course_id'];
 
-    public function course(){
+    public function course()
+    {
         return $this->belongsTo(Course::class);
     }
 }

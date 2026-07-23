@@ -50,6 +50,7 @@ class CoursePolicy
             ->where('scope_type', 'DEPARTMENT')
             ->exists();
     }
+
     public function createForDepartment(User $user, Department $department): bool
     {
         if ($user->hasRole('MINISTRY_ADMIN')) {

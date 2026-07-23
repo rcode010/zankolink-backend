@@ -18,5 +18,4 @@ class AcademicRequestAttachments extends Model
     {
         return $this->belongsTo(AcademicRequest::class);
     }
-
 }

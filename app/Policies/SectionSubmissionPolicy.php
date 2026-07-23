@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Course;
 use App\Models\CourseSection;
-use App\Models\SectionItem;
 use App\Models\SectionSubmission;
 use App\Models\User;
 
@@ -41,7 +40,7 @@ class SectionSubmissionPolicy
      */
     public function update(User $user, SectionSubmission $sectionSubmission): bool
     {
-        return $this->is_primary($user,$sectionSubmission->section->course)|| $this->ownsSubmission($user, $sectionSubmission);
+        return $this->is_primary($user, $sectionSubmission->section->course) || $this->ownsSubmission($user, $sectionSubmission);
     }
 
     /**
@@ -49,7 +48,7 @@ class SectionSubmissionPolicy
      */
     public function delete(User $user, SectionSubmission $sectionSubmission): bool
     {
-        return $this->is_primary($user,$sectionSubmission->section->course)|| $this->ownsSubmission($user, $sectionSubmission);
+        return $this->is_primary($user, $sectionSubmission->section->course) || $this->ownsSubmission($user, $sectionSubmission);
     }
 
     /**
@@ -89,12 +88,16 @@ class SectionSubmissionPolicy
         return $user->teacher
             && $courseSection->teacher_id === $user->teacher->id;
     }
-    private function ownsSubmission(User $user, SectionSubmission $sectionSubmission): bool{
+
+    private function ownsSubmission(User $user, SectionSubmission $sectionSubmission): bool
+    {
         return $user->teacher &&
             $sectionSubmission->created_by_teacher_id === $user->teacher->id;
     }
-    private function is_primary(User $user, Course $course): bool{
+
+    private function is_primary(User $user, Course $course): bool
+    {
         return $user->teacher &&
-            $course->teachers()->whereKey($user->teacher->id)->where('role','primary_lecturer')->exists();
+            $course->teachers()->whereKey($user->teacher->id)->where('role', 'primary_lecturer')->exists();
     }
 }

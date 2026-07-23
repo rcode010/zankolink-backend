@@ -23,7 +23,6 @@ return new class extends Migration
             $table->timestamp('course_selection_ends_at')->nullable();
             $table->softDeletes();
 
-
             $table->index(['faculty_id', 'is_active', 'deleted_at'], 'departments_faculty_active_deleted_idx');
             $table->index('admin_id', 'departments_admin_id_idx');
         });
