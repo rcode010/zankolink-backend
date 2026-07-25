@@ -8,6 +8,7 @@ use App\Models\AcademicYear;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
+use App\Services\LetterPayloadEnrichmentService;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Str;
 
@@ -19,7 +20,8 @@ class LetterRecipientController extends Controller
         StoreLetterRecipientRequest $request,
         QrCodeService $qrCodeService,
         LetterVerificationHashService $hashService,
-        LetterService $letterService
+        LetterService $letterService,
+        LetterPayloadEnrichmentService $enrichmentService
     ) {
         $user = $request->user();
 
@@ -35,6 +37,7 @@ class LetterRecipientController extends Controller
 
         $letter = $letterService->create(
             $data,
+            $enrichmentService,
             $qrCodeService,
             $user,
             $hashService,
