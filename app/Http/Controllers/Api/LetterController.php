@@ -15,6 +15,7 @@ use App\QueryFilters\MultiRecipientUniversityFilter;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
+use App\Services\LetterPayloadEnrichmentService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -66,7 +67,7 @@ class LetterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreLetterRequest $request, QrCodeService $qrCodeService, LetterVerificationHashService $letterVerificationHashService, LetterService $letterService)
+    public function store(StoreLetterRequest $request, LetterPayloadEnrichmentService $snapshotService, QrCodeService $qrCodeService, LetterVerificationHashService $letterVerificationHashService, LetterService $letterService)
     {
         $this->authorize('create', Letter::class);
         $user = $request->user();
@@ -77,8 +78,7 @@ class LetterController extends Controller
         $data['status'] = 'pending';
 
         $data['letter_uuid'] = (string) Str::uuid();
-
-        $letter = $letterService->create($data, $qrCodeService, $user, $letterVerificationHashService, $request->file('files', []));
+        $letter = $letterService->create($data, $snapshotService, $qrCodeService, $user, $letterVerificationHashService, $request->file('files', []));
 
         if ($letter) {
             return $this->ok(
@@ -239,7 +239,7 @@ class LetterController extends Controller
                 });
         }
 
-        $inbox = $letters->load('payload.teacher')
+        $inbox = $letters
             ->concat($multiRecipientLetters)
             ->sortByDesc('created_at')
             ->values();
