@@ -289,13 +289,9 @@ class AuthController extends Controller
             'email' => 'required|string|email',
         ]);
 
-        $user = User::where('email', $credentials['email'])->first();
+        Password::sendResetLink(['email' => $credentials['email']]);
 
-        $status = Password::sendResetLink(['email' => $credentials['email']]);
-
-        return $status === Password::RESET_LINK_SENT
-            ? $this->ok('Password reset link sent to your email.')
-            : $this->error('Unable to snd reset link.', 400);
+        return $this->ok('If that email exists, a reset link has been sent');
     }
 
     // Reset Password
