@@ -225,7 +225,7 @@ class LetterController extends Controller
                 ->with([
                     'letter.sender:id,name',
                     'letter.attachments',
-
+                    'letter.recipients.recipient:id,name',
                 ])
                 ->latest()
                 ->get()
