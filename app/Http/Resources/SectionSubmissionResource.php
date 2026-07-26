@@ -37,6 +37,7 @@ class SectionSubmissionResource extends JsonResource
                 return [
                     'id' => $this->creator->id,
                     'name' => $this->creator->user?->name,
+                    'user_id' => $this->creator->user?->id,
                 ];
             }),
             'attachments' => $this->whenLoaded(
