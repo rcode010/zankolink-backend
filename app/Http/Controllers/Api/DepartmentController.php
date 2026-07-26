@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ApproveStudentSelectionRequest;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateCourseSelectionSettingRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
@@ -165,72 +166,62 @@ class DepartmentController extends Controller
     /**
      * Approve student course selections and enroll them into the final table.
      */
-    public function approveStudentSelection(Request $request)
-    {
-        $validated = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'academic_year_id' => 'required|exists:academic_years,id',
-        ]);
+    public function StudentSelection(ApproveStudentSelectionRequest $request) {
+        $credentials = $request->validated();
 
-        $student = Student::findOrFail($validated['student_id']);
-        $department = Department::findOrFail($student->department_id);
-
-        $this->authorize('manageCourseSelections', $department);
-
-        $studentId = $validated['student_id'];
-        $academicYearId = $validated['academic_year_id'];
-
-        $pendingSelections = CourseSelection::with('course:id,name,code,type')
-            ->where('student_id', $studentId)
-            ->where('academic_year_id', $academicYearId)
+        $selection = CourseSelection::query()
+            ->with('course:id,name,code,type')
+            ->whereKey($credentials['selection_id'])
+            ->where(
+                'academic_year_id',
+                $credentials['academic_year_id']
+            )
             ->where('status', 'pending')
-            ->get();
+            ->firstOrFail();
 
-        if ($pendingSelections->isEmpty()) {
-            return $this->error('No pending course selections found for this student.', 404);
-        }
+        $student = Student::findOrFail($selection->student_id);
 
-        DB::transaction(function () use ($studentId, $academicYearId, $pendingSelections) {
-            CourseSelection::where('student_id', $studentId)
-                ->where('academic_year_id', $academicYearId)
-                ->where('status', 'pending')
-                ->update([
-                    'status' => 'approved',
-                    'updated_at' => now(),
-                ]);
+        $department = Department::findOrFail(
+            $student->department_id
+        );
 
-            $enrollmentData = [];
+        $this->authorize(
+            'manageCourseSelections',
+            $department
+        );
 
-            foreach ($pendingSelections as $selection) {
-                $enrollmentData[] = [
-                    'student_id' => $studentId,
-                    'course_id' => $selection->course_id,
-                    'academic_year_id' => $academicYearId,
-                    'enrolled_at' => now(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
+        DB::transaction(function () use ($selection,$student,$credentials) {
 
-            DB::table('course_student')
-                ->where('student_id', $studentId)
-                ->where('academic_year_id', $academicYearId)
-                ->delete();
+            $selection->update([
+                'status' => $credentials['status'],
+            ]);
 
-            DB::table('course_student')->insert($enrollmentData);
+            DB::table('course_student')->insert([
+                'student_id' => $student->id,
+                'course_id' => $selection->course_id,
+                'academic_year_id' => $selection->academic_year_id,
+                'status' => 'enrolled',
+                'enrolled_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         });
 
-        return $this->ok('Department approved successfully and student is now enrolled.', [
-            'student_id' => $studentId,
-            'academic_year_id' => $academicYearId,
-            'enrolled_courses' => $pendingSelections->map(fn ($selection) => [
-                'selection_id' => $selection->id,
-                'id' => $selection->course->id,
-                'name' => $selection->course->name,
-                'code' => $selection->course->code,
-                'type' => $selection->course->type,
-            ])->values(),
-        ]);
+        return $this->ok(
+            'Course selection approved and student enrolled successfully.',
+            [
+                'student_id' => $student->id,
+                'academic_year_id' => $credentials['academic_year_id'],
+
+                'enrolled_course' => [
+                    'selection_id' => $selection->id,
+                    'id' => $selection->course->id,
+                    'name' => $selection->course->name,
+                    'code' => $selection->course->code,
+                    'type' => $selection->course->type,
+                ],
+            ]
+        );
     }
 
     /**
