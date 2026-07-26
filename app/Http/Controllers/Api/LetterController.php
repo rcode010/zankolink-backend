@@ -338,7 +338,7 @@ class LetterController extends Controller
 
         return $this->ok(
             'Archived letters retrieved successfully',
-            $letters->toArray()
+            LetterResource::collection($letters)->response()->getData(true)
         );
     }
 
@@ -358,6 +358,8 @@ class LetterController extends Controller
             ])
             ->get();
 
-        return $this->ok('Dispatched letters retrieved successfully', $letters->toArray());
+        return $this->ok('Dispatched letters retrieved successfully',
+            LetterResource::collection($letters)->response()->getData(true)
+        );
     }
 }

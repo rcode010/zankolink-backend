@@ -16,6 +16,8 @@ class Letter extends Model
         'letter_uuid', 'qr_code_path', 'payload', 'executed_at',
     ];
 
+    protected $hidden = ['verification_hash'];
+
     // Relationship to the person who sent the letter
     public function sender()
     {
