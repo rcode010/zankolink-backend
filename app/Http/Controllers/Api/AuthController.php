@@ -78,7 +78,6 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        // TASK: Check if user is active (ZEI-5)
         if (! $user->is_active) {
             Auth::logout();
 
@@ -126,7 +125,6 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        // TASK: Check if user is active (ZEI-5)
         if (! $user->is_active) {
             Auth::logout();
 
@@ -174,7 +172,6 @@ class AuthController extends Controller
 
         $user = User::findOrFail($userId);
 
-        // TASK: Check if user is active during 2FA verification (ZEI-5)
         if (! $user->is_active) {
             cache()->forget("2fa_challenge_{$request->challenge_token}");
 
