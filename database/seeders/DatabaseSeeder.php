@@ -211,7 +211,6 @@ class DatabaseSeeder extends Seeder
             'UNIVERSITY_ADMIN' => [
                 'view university', 'view faculties', 'view faculty', 'create faculties', 'update faculties',
                 'view departments', 'view department', 'create departments', 'update departments',
-                'view users','update users', 'activate users', 'deactivate users',
                 'view teachers', 'view students', 'view courses', 'view reports',
                 'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
                 'upload attachments', 'download attachments',
