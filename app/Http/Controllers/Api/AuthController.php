@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\Disable2FARequest;
 use App\Http\Requests\Enable2FARequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -126,7 +127,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        // TASK: Check if user is active (ZEI-5)
+        // Check if user is active 
         if (! $user->is_active) {
             Auth::logout();
 
@@ -174,7 +175,7 @@ class AuthController extends Controller
 
         $user = User::findOrFail($userId);
 
-        // TASK: Check if user is active during 2FA verification (ZEI-5)
+        // Check if user is active during 2FA verification 
         if (! $user->is_active) {
             cache()->forget("2fa_challenge_{$request->challenge_token}");
 
@@ -244,9 +245,14 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
+        if (! $user->two_factor_code || ! $user->two_factor_expires_at) {
+            return $this->error('No active OTP found.', 400);
+        }
+
         if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
             return $this->error('Invalid OTP', 401);
         }
+
         if (now()->isAfter($user->two_factor_expires_at)) {
             return $this->error('OTP has expired, please login again', 401);
         }
@@ -260,16 +266,22 @@ class AuthController extends Controller
         return $this->ok('Two factor authentication enabled');
     }
 
-    public function disableTwoFactor(Request $request)
+    public function disableTwoFactor(Disable2FARequest $request)
     {
         $user = $request->user();
+
+        if (! $user->two_factor_code || ! $user->two_factor_expires_at) {
+            return $this->error('No active OTP found.', 400);
+        }
 
         if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
             return $this->error('Invalid OTP', 401);
         }
+
         if (now()->isAfter($user->two_factor_expires_at)) {
             return $this->error('OTP has expired, please login again', 401);
         }
+
         $user->update([
             'two_factor_code' => null,
             'two_factor_expires_at' => null,
