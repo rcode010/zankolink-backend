@@ -70,13 +70,20 @@ class AuthController extends Controller
     // Login
     public function login(LoginRequest $request, UserScopeResolverService $scopeResolver, TwoFactorAuthenticationService $twoFactorAuthenticationService)
     {
-
         $credentials = $request->validated();
 
         if (! Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
         }
+
         $user = Auth::user();
+
+        if (! $user->is_active) {
+            Auth::logout();
+
+            return $this->error('Your account is deactivated.', 403);
+        }
+
         if (! $user->canAccessAdminPanel()) {
             Auth::logout();
 
@@ -87,10 +94,10 @@ class AuthController extends Controller
             $challengeToken = $twoFactorAuthenticationService->execute($user);
 
             return $this->ok('OTP sent to your email', [
-
                 'challenge_token' => $challengeToken,
             ], 202);
         }
+
         $token = $user->createToken('api-token', ['admin'])->plainTextToken;
 
         $user->load('roles:id,name');
@@ -117,11 +124,19 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+
+        if (! $user->is_active) {
+            Auth::logout();
+
+            return $this->error('Your account is deactivated.', 403);
+        }
+
         if (! $user->canAccessMoodlePanel()) {
             Auth::logout();
 
             return $this->error('You are not allowed to access the Moodle panel.', 403);
         }
+
         // TWO-FACTOR-AUTHENTICATION
         //        if($user->is_two_factor_enabled){
         //            $challengeToken = $twoFactorAuthenticationService->execute($user);
@@ -145,7 +160,6 @@ class AuthController extends Controller
                 'user' => $userData,
             ]
         );
-
     }
 
     public function verify(VerifyRequest $request, UserScopeResolverService $scopeResolver)
@@ -157,6 +171,12 @@ class AuthController extends Controller
         }
 
         $user = User::findOrFail($userId);
+
+        if (! $user->is_active) {
+            cache()->forget("2fa_challenge_{$request->challenge_token}");
+
+            return $this->error('Your account is deactivated.', 403);
+        }
 
         // ↓ brute-force counter goes here, before any OTP check
         $failKey = "2fa_fails_{$request->challenge_token}";
@@ -335,7 +355,6 @@ class AuthController extends Controller
         return $this->ok(
             'User logged in successfully',
             $userData
-
         );
     }
 }

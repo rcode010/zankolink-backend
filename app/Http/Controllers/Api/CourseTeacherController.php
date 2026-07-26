@@ -22,7 +22,7 @@ class CourseTeacherController extends Controller
 
     public function courseTeachers(Request $request, Course $course)
     {
-        $per_page = $request->query('per_page', 15);
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $teachers = $course->teachers()
             ->with('user:id,name')

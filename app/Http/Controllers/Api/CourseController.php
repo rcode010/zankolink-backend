@@ -93,7 +93,6 @@ class CourseController extends Controller
     {
         $this->authorize('viewAny', Course::class);
 
-        $perPage = $request->query('per_page', 15);
 
         $query = Course::query();
 
@@ -117,7 +116,7 @@ class CourseController extends Controller
                 'is_active',
             )
             ->latest()
-            ->paginate($perPage);
+            ->get();
 
         return $this->ok(
             'Courses retrieved successfully.',

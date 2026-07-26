@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('faculty_id')->constrained('faculties')->onDelete('cascade');
             $table->text('name');
-            $table->foreignId('admin_id')->nullable();
+            $table->foreignId('admin_id')->constrained('users')->nullOnDelete();
             $table->boolean('is_active')->default(true);
             $table->bigInteger('seat_available')->nullable();
             $table->timestamps();
