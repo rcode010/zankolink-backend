@@ -29,12 +29,19 @@ class LetterService
             }
             $letter = Letter::create($data)->fresh();
 
-            foreach ($recipientIds as $recipientId) {
-                LetterRecipient::create([
+
+            $now = now();
+
+            $rows = collect($recipientIds)
+                ->map(fn ($recipientId) => [
                     'letter_id' => $letter->id,
                     'recipient_id' => $recipientId,
-                ]);
-            }
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ])
+                ->all();
+
+            LetterRecipient::insert($rows);
 
             $hashData = $letterVerificationHashService->generate($letter);
 
