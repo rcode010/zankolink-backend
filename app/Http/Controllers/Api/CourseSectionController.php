@@ -65,7 +65,7 @@ class CourseSectionController extends Controller
         $this->authorize('viewAny', [CourseSection::class, $course]);
 
       $per_page = max(1, min((int) $request->query('per_page', 15), 100));
-      
+
         $sections = QueryBuilder::for($course->sections())
             ->addSelect([
                 'teacher_role' => DB::table('course_teacher')
@@ -86,7 +86,7 @@ class CourseSectionController extends Controller
                 'submissions.courseAssessment',
             ])
             ->latest()
-            ->paginate($perPage);
+            ->paginate($per_page);
 
         return $this->ok(
             'Course sections retrieved successfully',
