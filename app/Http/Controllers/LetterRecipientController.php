@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreLetterRecipientRequest;
 use App\Http\Resources\LetterRecipientsResource;
 use App\Models\AcademicYear;
+use App\Models\Letter;
+use App\Models\LetterRecipient;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
@@ -23,6 +25,7 @@ class LetterRecipientController extends Controller
         LetterService $letterService,
         LetterPayloadEnrichmentService $enrichmentService
     ) {
+        $this->authorize('createLetterRecipient', Letter::class);
         $user = $request->user();
 
         $data = $request->validated();
