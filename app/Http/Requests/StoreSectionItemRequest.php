@@ -16,7 +16,7 @@ class StoreSectionItemRequest extends FormRequest
         return [
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'file' => 'nullable|prohibits:url|file|max:51200|mimes:pdf,jpg,jpeg,png,doc,docx,ppt,pptx,xls,xlsx,txt',
+            'file' => 'nullable|prohibits:url|file|max:9216|mimes:pdf,jpg,jpeg,png,doc,docx,ppt,pptx,xls,xlsx,txt',
             'url' => 'nullable|prohibits:file|url',
             'material_file_name' => 'nullable|string|max:255',
         ];
