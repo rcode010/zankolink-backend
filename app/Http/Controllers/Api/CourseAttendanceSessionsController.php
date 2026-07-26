@@ -284,7 +284,6 @@ class CourseAttendanceSessionsController extends Controller
     public function show(CourseAttendanceSessions $session, Request $request)
     {
         $this->authorize('view', $session);
-        $teacher = $request->user()->teacher;
 
         $session->load('course', 'teacher.user', 'academicYear');
 
@@ -353,8 +352,6 @@ class CourseAttendanceSessionsController extends Controller
     {
         $this->authorize('update', $session);
 
-        $teacher = $request->user()->teacher;
-
         $session->update($request->validated());
 
         $session->load('course', 'teacher.user', 'academicYear');
@@ -389,8 +386,6 @@ class CourseAttendanceSessionsController extends Controller
     public function destroy(CourseAttendanceSessions $session, Request $request)
     {
         $this->authorize('delete', $session);
-
-        $teacher = $request->user()->teacher;
 
         $session->delete();
 
