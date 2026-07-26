@@ -21,7 +21,7 @@ class TeacherDepartmentController extends Controller
 
     public function index(Request $request, Department $department)
     {
-        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
+        $per_page = $request->query('per_page', 15);
 
         $teachers = $department->teachers()
             ->with('user:id,name')

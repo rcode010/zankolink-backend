@@ -27,7 +27,7 @@ class StudentCourseController extends Controller
 
     public function departmentStudents(Request $request, Department $department)
     {
-       $per_page = max(1, min((int) $request->query('per_page', 15), 100));
+        $per_page = $request->query('per_page', 15);
 
         $students = $department->students()
             ->with('user:id,name,email')

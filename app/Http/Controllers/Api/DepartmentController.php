@@ -34,7 +34,7 @@ class DepartmentController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Department::class);
-        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
+        $per_page = $request->query('per_page', 15);
 
         $query = Department::query();
 

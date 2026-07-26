@@ -93,7 +93,7 @@ class CourseController extends Controller
     {
         $this->authorize('viewAny', Course::class);
 
-        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
+        $perPage = $request->query('per_page', 15);
 
         $query = Course::query();
 

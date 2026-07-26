@@ -27,11 +27,10 @@ class SignatureController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = max(1, min((int) $request->query('per_page', 15), 100));
         $signatures = QueryBuilder::for(LetterSignature::class)
             ->with(['letter', 'user:id,name'])
             ->latest()
-            ->paginate($perPage);
+            ->paginate($request->query('per_page', 15));
 
         return $this->ok(
             'Signatures retrieved successfully.',
