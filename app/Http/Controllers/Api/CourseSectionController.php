@@ -128,8 +128,14 @@ class CourseSectionController extends Controller
 
         $validated['teacher_id'] = $teacher->id;
         $section = $course->sections()->create($validated);
-        $section->load(['course:id,name']);
-
+        $section->load([
+            'course:id,name',
+            'teacher',
+            'items',
+            'submissions.creator',
+            'submissions.attachments',
+            'submissions.courseAssessment',
+        ]);
         return $this->success(
             'Course section created successfully.',
             (new CourseSectionResource($section))->resolve(),
