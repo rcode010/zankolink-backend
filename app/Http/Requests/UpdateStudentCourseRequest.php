@@ -25,6 +25,7 @@ class UpdateStudentCourseRequest extends FormRequest
             'status' => 'sometimes|string|in:enrolled,passed,failed,withdrawn',
             'academic_year_id' => 'sometimes|nullable|exists:academic_years,id',
             'enrolled_at' => 'sometimes|nullable|date',
+            'grade' => 'sometimes|nullable|numeric|min:0',
         ];
     }
 
@@ -46,10 +47,7 @@ class UpdateStudentCourseRequest extends FormRequest
                 $academicYearId = $this->input('academic_year_id');
 
                 if (! $academicYearId) {
-                    $academicYearId = DB::table('course_student')
-                        ->where('course_id', $course->id)
-                        ->where('student_id', $student->id)
-                        ->value('academic_year_id');
+                    $academicYearId = \App\Models\AcademicYear::where('is_active', true)->value('id');
                 }
 
                 if (! $academicYearId) {
