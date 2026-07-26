@@ -28,7 +28,7 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->query('per_page', 15);
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $departmentId = auth()->user()
             ->userScopes()

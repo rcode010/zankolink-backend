@@ -30,10 +30,12 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
         $users = QueryBuilder::for(User::class)
 //            ->allowedFilters('role_scope_type')
             ->latest()
-            ->paginate($request->query('per_page', 10));
+            ->paginate($perPage);
 
         return $this->ok(
             'Users retrieved successfully.',

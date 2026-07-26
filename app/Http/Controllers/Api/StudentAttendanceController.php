@@ -246,7 +246,7 @@ class StudentAttendanceController extends Controller
 
         $student = $request->user()->student;
 
-        $per_page = $request->query('per_page', 15);
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $attendance = QueryBuilder::for(StudentAttendance::class)
             ->where('student_id', $student->id)
