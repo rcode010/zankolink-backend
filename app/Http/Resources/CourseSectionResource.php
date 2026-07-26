@@ -21,7 +21,9 @@ class CourseSectionResource extends JsonResource
                 return $teacher;
             }),
             'items' => SectionItemResource::collection($this->whenLoaded('items')),
-            'submissions' => SectionSubmissionResource::collection($this->whenLoaded('submissions')->load('creator', 'attachments', 'courseAssessment')),
+            'submissions' => SectionSubmissionResource::collection(
+                $this->whenLoaded('submissions')
+            ),
 
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
