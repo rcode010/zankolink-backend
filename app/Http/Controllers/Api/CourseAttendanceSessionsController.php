@@ -104,7 +104,7 @@ class CourseAttendanceSessionsController extends Controller
 
         $teacher = $request->user()->teacher;
 
-        $per_page = $request->query('per_page', 15);
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $sessions = QueryBuilder::for(CourseAttendanceSessions::class)
             ->where('teacher_id', $teacher->id)

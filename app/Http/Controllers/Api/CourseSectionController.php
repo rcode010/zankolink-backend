@@ -64,9 +64,8 @@ class CourseSectionController extends Controller
     {
         $this->authorize('viewAny', [CourseSection::class, $course]);
 
-        $perPage = (int) $request->input('per_page', 15);
-        $perPage = max(1, min($perPage, 100));
-
+      $per_page = max(1, min((int) $request->query('per_page', 15), 100));
+      
         $sections = QueryBuilder::for($course->sections())
             ->addSelect([
                 'teacher_role' => DB::table('course_teacher')

@@ -29,7 +29,7 @@ class UniversityController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', University::class);
-        $per_page = $request->query('per_page', 15);
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $universities = QueryBuilder::for(University::class)
             ->with('admin:id,name')
