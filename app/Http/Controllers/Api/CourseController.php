@@ -115,7 +115,8 @@ class CourseController extends Controller
                 AllowedFilter::exact('semester'),
                 'is_active',
             )
-            ->latest();
+            ->latest()
+            ->get();
 
         return $this->ok(
             'Courses retrieved successfully.',
