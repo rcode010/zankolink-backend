@@ -301,6 +301,7 @@ class AuthController extends Controller
         }
 
         $user->update(['password' => $credentials['password']]);
+        $user->tokens()->where('id', '!=', $request->user()->currentAccessToken()->id)->delete();
 
         return $this->ok('Password changed successfully');
     }
