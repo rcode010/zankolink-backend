@@ -264,7 +264,7 @@ class DatabaseSeeder extends Seeder
             // Department
             'HEAD_OF_DEPARTMENT' => [
                 'view department', 'view faculty', 'view university', 'view teachers', 'view teacher', 'assign teachers', 'unassign teachers',
-                'view students', 'update students',
+                'view students', 'update students', 'create students',
                 'view courses', 'create courses', 'update courses', 'delete courses',
                 'assign course teachers', 'view course teachers',
                 'update course teachers', 'delete course teachers',

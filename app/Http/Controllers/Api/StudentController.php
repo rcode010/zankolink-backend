@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
+use App\Models\Department;
 use App\Models\Student;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Student::class);
         $per_page = $request->query('per_page', 15);
 
         $departmentId = auth()->user()
@@ -53,7 +55,7 @@ class StudentController extends Controller
             ->paginate($per_page);
 
         return $this->ok(
-            'Student retrieved successfully.',
+            'Students retrieved successfully.',
             StudentResource::collection($students)
                 ->response()
                 ->getData(true)
@@ -65,6 +67,9 @@ class StudentController extends Controller
      */
     public function store(StoreStudentRequest $request)
     {
+        $department = Department::findOrFail($request->department_id);
+        $this->authorize('create', [Student::class, $department]);
+
         $student = Student::create(
             $request->validated()
         );
@@ -86,6 +91,8 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
+        $this->authorize('view', $student);
+
         $student->load([
             'user:id,name,email',
             'department:id,name',
@@ -103,6 +110,8 @@ class StudentController extends Controller
      */
     public function update(UpdateStudentRequest $request, Student $student)
     {
+        $this->authorize('update', $student);
+
         $validated = $request->validated();
 
         $userData = Arr::only($validated, [
@@ -144,6 +153,8 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
+        $this->authorize('delete', $student);
+
         $student->delete();
 
         return $this->ok(
