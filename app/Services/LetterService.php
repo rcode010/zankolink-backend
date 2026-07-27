@@ -29,16 +29,23 @@ class LetterService
             }
             $letter = Letter::create($data)->fresh();
 
-            foreach ($recipientIds as $recipientId) {
-                LetterRecipient::create([
+
+            $now = now();
+
+            $rows = collect($recipientIds)
+                ->map(fn ($recipientId) => [
                     'letter_id' => $letter->id,
                     'recipient_id' => $recipientId,
-                ]);
-            }
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ])
+                ->all();
+
+            LetterRecipient::insert($rows);
 
             $hashData = $letterVerificationHashService->generate($letter);
 
-            $qrCodePath = $qrCodeService->generate($letter, 'private', 'qr-codes', 400);
+            $qrCodePath = $qrCodeService->generate($letter, 'public', 'qr-codes', 400);
             $letter->update([
                 'verification_hash' => $hashData,
                 'qr_code_path' => $qrCodePath,
@@ -49,7 +56,7 @@ class LetterService
             ]);
 
             foreach ($files as $file) {
-                $path = $file->store('attachments/letters/'.$letter->id, 'private');
+                $path = $file->store('attachments/letters/'.$letter->id, 'public');
 
                 $letter->attachments()->create([
                     'file_name' => $file->getClientOriginalName(),

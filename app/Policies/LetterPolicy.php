@@ -151,6 +151,11 @@ class LetterPolicy
             && (int) $letter->receiver_id === (int) $user->id;
     }
 
+    public function createLetterRecipient(User $user): bool
+    {
+        return $user->hasPermissionTo('create letter broadcast');
+    }
+
     /**
      * Determine whether the user can delete a letter.
      */

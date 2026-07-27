@@ -13,6 +13,7 @@ use App\Models\Department;
 use App\Models\Student;
 use App\Services\CoursePrerequisiteEligibilityService;
 use App\Services\StudentAvailableCoursesService;
+use App\Services\UniqueCourseRequestService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
@@ -27,7 +28,7 @@ class StudentCourseController extends Controller
 
     public function departmentStudents(Request $request, Department $department)
     {
-       $per_page = max(1, min((int) $request->query('per_page', 15), 100));
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $students = $department->students()
             ->with('user:id,name,email')
@@ -150,12 +151,24 @@ class StudentCourseController extends Controller
             'Student removed from course successfully.'
         );
     }
-    public function availableCourses(Request $request, StudentAvailableCoursesService $service){
+
+    public function availableCourses(Request $request, StudentAvailableCoursesService $service, UniqueCourseRequestService $courseRequestService)
+    {
+        $student = $request->user()->student;
+
+        $requestedCourses = $courseRequestService->requestedCourses($student);
+
+        if ($requestedCourses) {
+            return $this->ok('Requested course selection.', ['is_requested' => true, 'courses' => CourseResource::collection($requestedCourses)->resolve()]);
+        }
         $courses = $service->run($request->user());
 
         return $this->ok(
             'Available courses retrieved successfully.',
-            CourseResource::collection($courses)->resolve()
+            [
+                'is_requested' => false,
+                'courses' => CourseResource::collection($courses)->resolve(),
+            ]
         );
     }
 }

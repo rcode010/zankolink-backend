@@ -20,7 +20,7 @@ use Spatie\QueryBuilder\QueryBuilder;
  *
  * APIs for managing course assessments such as quizzes, assignments, midterms, finals, projects, and activities.
  */
-class CourseAssesmentsController extends Controller
+class CourseAssessmentsController extends Controller
 {
     use ApiResponses;
 
@@ -552,6 +552,8 @@ class CourseAssesmentsController extends Controller
 
     public function publishAssessments(PublishAssessmentsRequest $request, Course $course)
     {
+        $this->authorize('publishAssessments', [CourseAssessments::class, $course]);
+
         $course->assessments()->update([
             'is_published' => $request->boolean('is_published'),
         ]);

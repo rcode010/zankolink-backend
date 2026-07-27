@@ -4,9 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
-class ResetPasswordRequest extends FormRequest
+class StoreCourseSelectionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,14 +18,15 @@ class ResetPasswordRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'token' => 'required|string',
-            'email' => 'required|email|exists:users,email',
-            'password' => ['required', 'confirmed', 'string', Password::defaults()],
+            'semester' => 'required|in:fall,spring',
+            'academic_year_id' => 'required|exists:academic_years,id',
+            'course_ids' => 'nullable|array',
+            'course_ids.*' => 'distinct|exists:courses,id',
         ];
     }
 }
