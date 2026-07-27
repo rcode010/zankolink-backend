@@ -8,6 +8,7 @@ use App\Observers\LetterObserver;
 use App\Observers\UniversityObserver;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +32,14 @@ class AppServiceProvider extends ServiceProvider
                 .$token
                 .'&email='
                 .urlencode($user->email);
+        });
+
+        Password::defaults(function () {
+            return Password::min(8)
+                ->symbols()
+                ->mixedCase()
+                ->numbers()
+                ->uncompromised();
         });
     }
 }

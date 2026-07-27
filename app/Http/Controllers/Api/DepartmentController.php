@@ -326,6 +326,7 @@ class DepartmentController extends Controller
      */
     public function updateCourseSelectionSettings(UpdateCourseSelectionSettingRequest $request, Department $department)
     {
+        $this->authorize('updateCourseSelectionSettings', $department);
         $credentials = $request->validated();
 
         $department->update($credentials);
@@ -375,6 +376,7 @@ class DepartmentController extends Controller
      */
     public function closeCourseSelection(Request $request, Department $department)
     {
+        $this->authorize('closeCourseSelection', $department);
         $department->update(['course_selection_ends_at' => now()]);
         $department->refresh();
 
