@@ -29,9 +29,9 @@ class StoreCourseRequest extends FormRequest
             'code' => [
                 'required', 'string', 'max:255',
                 Rule::unique('courses', 'code')
-                    ->where('department_id', $this->department_id)
-                    ->ignore($this->route('course')),
-            ],            'semester' => 'required|in:fall,spring',
+                    ->where('department_id', $this->department_id),
+            ],
+            'semester' => 'required|in:fall,spring',
             'credit_hours' => 'required|integer|min:1',
             'year_level' => 'required|integer|min:1',
             'is_active' => 'nullable|boolean',
