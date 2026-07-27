@@ -156,9 +156,7 @@ class StudentCourseController extends Controller
     {
         $student = $request->user()->student;
 
-        $academicYear = AcademicYear::where('is_active', true)->first();
-
-        $requestedCourses = $courseRequestService->requestedCourses($student, $academicYear->id);
+        $requestedCourses = $courseRequestService->requestedCourses($student);
 
         if ($requestedCourses) {
             return $this->ok('Requested course selection.', ['is_requested' => true, 'courses' => CourseResource::collection($requestedCourses)->resolve()]);
