@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureUserIsActive;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -31,6 +32,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
+
+            'active' => EnsureUserIsActive::class,
+
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
