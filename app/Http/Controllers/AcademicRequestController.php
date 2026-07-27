@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAcademicRequest;
 use App\Http\Resources\AcademicRequestResource;
+use App\Http\Resources\AcademicRequestUserResource;
+use App\Http\Resources\DepartmentAcademicRequestResource;
 use App\Models\AcademicRequest;
 use App\Services\AcademicRequestDepartmentResolver;
 use App\Traits\ApiResponses;
@@ -224,11 +226,24 @@ class AcademicRequestController extends Controller
     {
         $user = $request->user();
         $this->authorize('departmentAcademicRequest', AcademicRequest::class);
-        $departmentId = $user->userScopes()->where('scope_type', 'DEPARTMENT')->value('scope_id');
+
+        $departmentId = $user->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->value('scope_id');
+
         $academicRequests = AcademicRequest::query()
+            ->with([
+                'user.teacher',
+                'user.student',
+                'department',
+                'attachments',
+            ])
             ->where('department_id', $departmentId)
             ->get();
 
-        return $this->ok('Academic Request retrieved successfully', (AcademicRequestResource::collection($academicRequests))->resolve());
+        return $this->ok(
+            'Academic requests retrieved successfully.',
+            DepartmentAcademicRequestResource::collection($academicRequests)->resolve()
+        );
     }
 }
