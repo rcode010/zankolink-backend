@@ -81,9 +81,10 @@ class CourseSectionController extends Controller
             ->with([
                 'course',
                 'teacher',
-                'items',
+                'items.creator',
                 'submissions.attachments',
                 'submissions.courseAssessment',
+                'submissions.creator',
             ])
             ->latest()
             ->paginate($per_page);

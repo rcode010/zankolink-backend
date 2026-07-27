@@ -14,7 +14,7 @@ class CourseSectionResource extends JsonResource
             'title' => $this->title,
 
             'course' => new CourseResource($this->whenLoaded('course')),
-            'teacher' => $this->whenLoaded('teacher', function () use ($request) {
+            'created_by' => $this->whenLoaded('teacher', function () use ($request) {
                 $teacher = (new TeacherResource($this->teacher))->resolve($request);
                 $teacher['role'] = $this->teacher_role;
 
