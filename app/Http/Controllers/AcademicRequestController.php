@@ -217,7 +217,18 @@ class AcademicRequestController extends Controller
      */
     public function show(AcademicRequest $academicRequest)
     {
-
         return $this->ok('Academic Request retrieved successfully', (new AcademicRequestResource($academicRequest->load(['attachments', 'user', 'department'])))->resolve());
+    }
+
+    public function departmentAcademicRequests(Request $request)
+    {
+        $user = $request->user();
+        $this->authorize('departmentAcademicRequest', AcademicRequest::class);
+        $departmentId = $user->userScopes()->where('scope_type', 'DEPARTMENT')->value('scope_id');
+        $academicRequests = AcademicRequest::query()
+            ->where('department_id', $departmentId)
+            ->get();
+
+        return $this->ok('Academic Request retrieved successfully', (AcademicRequestResource::collection($academicRequests))->resolve());
     }
 }
