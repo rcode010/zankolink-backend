@@ -110,9 +110,7 @@ class StudentMarksPolicy
 
     private function isHeadOfDepartment(User $user, Course $course): bool
     {
-        return $user->roles()
-                ->where('name', 'HEAD_OF_DEPARTMENT')
-                ->exists()
+        return $user->hasRole('HEAD_OF_DEPARTMENT)
             &&
             $user->userScopes()
                 ->where('scope_type', 'DEPARTMENT')
