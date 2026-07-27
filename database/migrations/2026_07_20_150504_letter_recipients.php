@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('letter_id')->constrained('letters');
             $table->foreignId('recipient_id')->constrained('users');
             $table->timestamps();
+
+            $table->unique(['letter_id', 'recipient_id'], 'letter_recipients_unique');
         });
     }
 

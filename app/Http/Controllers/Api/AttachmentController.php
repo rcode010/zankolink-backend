@@ -30,7 +30,7 @@ class AttachmentController extends Controller
         foreach ($request->file('file') as $file) {
             $path = $file->store(
                 "attachments/letters/{$letter->id}",
-                'public'
+                'private'
             );
 
             $attachments->push(
@@ -62,14 +62,14 @@ class AttachmentController extends Controller
             );
         }
 
-        if (! Storage::disk('public')->exists($attachment->file_url)) {
+        if (! Storage::disk('private')->exists($attachment->file_url)) {
             return $this->error(
                 'File not found.',
                 404
             );
         }
 
-        return Storage::disk('public')->download(
+        return Storage::disk('private')->download(
             $attachment->file_url,
             $attachment->file_name
         );
@@ -89,8 +89,8 @@ class AttachmentController extends Controller
             );
         }
 
-        if (Storage::disk('public')->exists($attachment->file_url)) {
-            Storage::disk('public')->delete(
+        if (Storage::disk('private')->exists($attachment->file_url)) {
+            Storage::disk('private')->delete(
                 $attachment->file_url
             );
         }

@@ -30,7 +30,8 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Student::class);
-        $per_page = $request->query('per_page', 15);
+
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $user = auth()->user();
 

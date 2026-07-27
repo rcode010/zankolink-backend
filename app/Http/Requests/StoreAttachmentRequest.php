@@ -32,7 +32,7 @@ class StoreAttachmentRequest extends FormRequest
                 'required',
                 'file',
                 'mimes:pdf,doc,docx,jpg,jpeg,png',
-                'max:5120',
+                'max:9216',
             ],
         ];
     }
