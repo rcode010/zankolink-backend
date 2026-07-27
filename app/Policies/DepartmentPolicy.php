@@ -131,6 +131,22 @@ class DepartmentPolicy
         return false;
     }
 
+    public function updateCourseSelectionSettings(User $user, Department $department): bool
+    {
+        return $user->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->where('scope_id', $department->id)
+            ->exists();
+    }
+
+    public function closeCourseSelection(User $user, Department $department): bool
+    {
+        return $user->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->where('scope_id', $department->id)
+            ->exists();
+    }
+
     public function createForFaculty(User $user, Faculty $faculty): bool
     {
         if ($user->hasRole('MINISTRY_ADMIN')) {
