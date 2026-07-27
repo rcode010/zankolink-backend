@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('universities', function (Blueprint $table) {
             $table->id();
             $table->text('name');
-            $table->foreignId('admin_id')->constrained('users')->nullOnDelete();
+            $table->foreignId('admin_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             $table->foreignId('academic_year_id')->constrained('academic_years');
             $table->text('location');
             $table->date('start_date')->nullable();
