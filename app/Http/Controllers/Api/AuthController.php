@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\Disable2FARequest;
 use App\Http\Requests\Enable2FARequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -241,7 +242,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+        if (! $user->two_factor_code || ! Hash::check((string) $request->otp, $user->two_factor_code)) {
             return $this->error('Invalid OTP', 401);
         }
         if (now()->isAfter($user->two_factor_expires_at)) {
@@ -257,11 +258,12 @@ class AuthController extends Controller
         return $this->ok('Two factor authentication enabled');
     }
 
-    public function disableTwoFactor(Request $request)
+    public function disableTwoFactor(Disable2FARequest $request)
     {
         $user = $request->user();
 
-        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+
+        if (! $user->two_factor_code || ! Hash::check((string) $request->otp, $user->two_factor_code)) {
             return $this->error('Invalid OTP', 401);
         }
         if (now()->isAfter($user->two_factor_expires_at)) {
