@@ -22,6 +22,7 @@ class SectionItemResource extends JsonResource
                 return [
                     'id' => $this->creator->id,
                     'name' => $this->creator->user?->name,
+                    'user_id' => $this->creator->user?->id,
                 ];
             }),
             'material_file_type' => $this->material_file_type,
