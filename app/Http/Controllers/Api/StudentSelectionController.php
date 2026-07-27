@@ -82,7 +82,7 @@ class StudentSelectionController extends Controller
             $request->validated()
         );
 
-        return $this->success(
+        return $this->created(
             'Course selection submitted successfully.'
         );
     }
