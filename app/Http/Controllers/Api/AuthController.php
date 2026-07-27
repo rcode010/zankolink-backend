@@ -242,13 +242,26 @@ class AuthController extends Controller
     public function enableTwoFactor(Enable2FARequest $request)
     {
         $user = $request->user();
+        $failKey = "2fa_manage_fails_{$user->id}";
 
-        if (! $user->two_factor_code || ! Hash::check((string) $request->otp, $user->two_factor_code)) {
+        if (cache()->get($failKey, 0) >= 5) {
+            $user->update(['two_factor_code' => null, 'two_factor_expires_at' => null]);
+            cache()->forget($failKey);
+
+            return $this->error('Too many invalid attempts. Request a new code.', 429);
+        }
+
+        if (! $user->two_factor_expires_at || now()->isAfter($user->two_factor_expires_at)) {
+            return $this->error('OTP has expired, please request a new one.', 401);
+        }
+
+        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+            cache()->put($failKey, cache()->get($failKey, 0) + 1, now()->addMinutes(15));
+
             return $this->error('Invalid OTP', 401);
         }
-        if (now()->isAfter($user->two_factor_expires_at)) {
-            return $this->error('OTP has expired, please login again', 401);
-        }
+
+        cache()->forget($failKey);
 
         $user->update([
             'two_factor_code' => null,
@@ -262,14 +275,27 @@ class AuthController extends Controller
     public function disableTwoFactor(Disable2FARequest $request)
     {
         $user = $request->user();
+        $failKey = "2fa_manage_fails_{$user->id}";
 
+        if (cache()->get($failKey, 0) >= 5) {
+            $user->update(['two_factor_code' => null, 'two_factor_expires_at' => null]);
+            cache()->forget($failKey);
 
-        if (! $user->two_factor_code || ! Hash::check((string) $request->otp, $user->two_factor_code)) {
+            return $this->error('Too many invalid attempts. Request a new code.', 429);
+        }
+
+        if (! $user->two_factor_expires_at || now()->isAfter($user->two_factor_expires_at)) {
+            return $this->error('OTP has expired, please request a new one.', 401);
+        }
+
+        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+            cache()->put($failKey, cache()->get($failKey, 0) + 1, now()->addMinutes(15));
+
             return $this->error('Invalid OTP', 401);
         }
-        if (now()->isAfter($user->two_factor_expires_at)) {
-            return $this->error('OTP has expired, please login again', 401);
-        }
+
+        cache()->forget($failKey);
+
         $user->update([
             'two_factor_code' => null,
             'two_factor_expires_at' => null,
