@@ -18,6 +18,7 @@ use App\Services\TwoFactorAuthenticationService;
 use App\Services\UserScopeResolverService;
 use App\Traits\ApiResponses;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,8 +38,8 @@ class AuthController extends Controller
 {
     use ApiResponses;
 
-    // Register
-    public function register(RegisterRequest $request)
+
+    public function register(RegisterRequest $request): JsonResponse
     {
         $credentials = $request->validated();
         [$user, $role] = DB::transaction(function () use ($credentials) {
@@ -63,14 +64,14 @@ class AuthController extends Controller
             return [$user, $role];
         });
 
-        return $this->ok(
+        return $this->created(
             'User registered successfully',
             (new UserResource($user->load(['userScopes.role:id,name', 'role:id,name'])))->resolve()
         );
     }
 
     // Login
-    public function login(LoginRequest $request, UserScopeResolverService $scopeResolver, TwoFactorAuthenticationService $twoFactorAuthenticationService)
+    public function login(LoginRequest $request, UserScopeResolverService $scopeResolver, TwoFactorAuthenticationService $twoFactorAuthenticationService): JsonResponse
     {
         $credentials = $request->validated();
 
@@ -78,24 +79,20 @@ class AuthController extends Controller
             return $this->error('Invalid credentials', 401);
         }
 
-        $user = Auth::user();
+        $user = $request->user();
 
         if (! $user->is_active) {
-            Auth::logout();
-
             return $this->error('Your account is deactivated.', 403);
         }
 
         if (! $user->canAccessAdminPanel()) {
-            Auth::logout();
-
             return $this->error('You are not allowed to access the admin panel.', 403);
         }
 
         if ($user->is_two_factor_enabled) {
             $challengeToken = $twoFactorAuthenticationService->execute($user);
 
-            return $this->ok('OTP sent to your email', [
+            return $this->success('OTP sent to your email', [
                 'challenge_token' => $challengeToken,
             ], 202);
         }
@@ -117,7 +114,7 @@ class AuthController extends Controller
         );
     }
 
-    public function moodleLogin(LoginRequest $request, UserScopeResolverService $scopeResolver, TwoFactorAuthenticationService $twoFactorAuthenticationService)
+    public function moodleLogin(LoginRequest $request, UserScopeResolverService $scopeResolver, TwoFactorAuthenticationService $twoFactorAuthenticationService): JsonResponse
     {
         $credentials = $request->validated();
 
@@ -125,27 +122,15 @@ class AuthController extends Controller
             return $this->error('Invalid credentials', 401);
         }
 
-        $user = Auth::user();
+        $user = $request->user();
 
         if (! $user->is_active) {
-            Auth::logout();
-
             return $this->error('Your account is deactivated.', 403);
         }
 
         if (! $user->canAccessMoodlePanel()) {
-            Auth::logout();
-
             return $this->error('You are not allowed to access the Moodle panel.', 403);
         }
-
-        // TWO-FACTOR-AUTHENTICATION
-        //        if($user->is_two_factor_enabled){
-        //            $challengeToken = $twoFactorAuthenticationService->execute($user);
-        //            return $this->ok('OTP sent to your email', [
-        //                'challenge_token' => $challengeToken,
-        //            ], 202);
-        //        }
 
         $token = $user->createToken('moodle-token', ['moodle'])->plainTextToken;
 
@@ -164,7 +149,7 @@ class AuthController extends Controller
         );
     }
 
-    public function verify(VerifyRequest $request, UserScopeResolverService $scopeResolver)
+    public function verify(VerifyRequest $request, UserScopeResolverService $scopeResolver): JsonResponse
     {
         $userId = cache()->get("2fa_challenge_{$request->challenge_token}");
 
@@ -180,7 +165,6 @@ class AuthController extends Controller
             return $this->error('Your account is deactivated.', 403);
         }
 
-        // ↓ brute-force counter goes here, before any OTP check
         $failKey = "2fa_fails_{$request->challenge_token}";
         $fails = cache()->get($failKey, 0);
 
@@ -224,9 +208,9 @@ class AuthController extends Controller
         );
     }
 
-    public function prepareTwoFactor(Request $request)
+    public function prepareTwoFactor(Request $request): JsonResponse
     {
-        $user = Auth::user();
+        $user = $request->user();
 
         $otp = random_int(100000, 999999);
         $user->update([
@@ -239,7 +223,7 @@ class AuthController extends Controller
         return $this->ok('OTP sent to your email');
     }
 
-    public function enableTwoFactor(Enable2FARequest $request)
+    public function enableTwoFactor(Enable2FARequest $request): JsonResponse
     {
         $user = $request->user();
         $failKey = "2fa_manage_fails_{$user->id}";
@@ -272,7 +256,7 @@ class AuthController extends Controller
         return $this->ok('Two factor authentication enabled');
     }
 
-    public function disableTwoFactor(Disable2FARequest $request)
+    public function disableTwoFactor(Disable2FARequest $request): JsonResponse
     {
         $user = $request->user();
         $failKey = "2fa_manage_fails_{$user->id}";
@@ -306,18 +290,18 @@ class AuthController extends Controller
     }
 
     // Logout
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
 
         return $this->ok('Logged out successfully');
     }
 
-    // Change Password
-    public function changePassword(ChangePasswordRequest $request)
+
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
         $credentials = $request->validated();
-        $user = Auth::user();
+        $user = $request->user();
 
         if (! Hash::check($credentials['current_password'], $user->password)) {
             return $this->error('Current password is incorrect.', 401);
@@ -333,7 +317,7 @@ class AuthController extends Controller
     }
 
     // Forget Password
-    public function forgetPassword(Request $request)
+    public function forgetPassword(Request $request): JsonResponse
     {
         $credentials = $request->validate([
             'email' => 'required|string|email',
@@ -351,7 +335,7 @@ class AuthController extends Controller
     }
 
     // Reset Password
-    public function resetPassword(ResetPasswordRequest $request)
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $credentials = $request->validated();
         $user = User::where('email', $request->email)->first();
@@ -379,10 +363,10 @@ class AuthController extends Controller
             : $this->error('Invalid token or email, Please request a new reset link.', 422);
     }
 
-    // Get Profile
-    public function profile(UserScopeResolverService $scopeResolver)
+
+    public function profile(Request $request, UserScopeResolverService $scopeResolver): JsonResponse
     {
-        $user = Auth::user();
+        $user = $request->user();
 
         $user->load('roles:id,name');
 
@@ -391,7 +375,7 @@ class AuthController extends Controller
         $userData['scopes'] = $scopeResolver->execute($user);
 
         return $this->ok(
-            'User logged in successfully',
+            'User profile retrieved successfully',
             $userData
         );
     }
