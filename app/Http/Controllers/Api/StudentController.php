@@ -32,13 +32,16 @@ class StudentController extends Controller
         $this->authorize('viewAny', Student::class);
         $per_page = $request->query('per_page', 15);
 
-        $departmentId = auth()->user()
-            ->userScopes()
-            ->where('scope_type', 'DEPARTMENT')
-            ->value('scope_id');
+        $user = auth()->user();
 
         $students = QueryBuilder::for(Student::class)
-            ->where('department_id', $departmentId)
+            ->when(! $user->hasRole('MINISTRY_ADMIN'), function ($query) use ($user) {
+                $departmentId = $user->userScopes()
+                    ->where('scope_type', 'DEPARTMENT')
+                    ->value('scope_id');
+
+                $query->where('department_id', $departmentId);
+            })
             ->allowedFilters(
                 AllowedFilter::callback(
                     'search',
