@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -324,7 +325,13 @@ class AuthController extends Controller
     public function resetPassword(ResetPasswordRequest $request)
     {
         $credentials = $request->validated();
+        $user = User::where('email', $request->email)->first();
 
+        if (! $user->is_active) {
+            throw ValidationException::withMessages([
+                'email' => ['Your account is deactivated.'],
+            ]);
+        }
         $status = Password::reset(
             $credentials,
             function (User $user, string $password) {
