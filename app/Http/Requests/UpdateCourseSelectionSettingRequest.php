@@ -23,8 +23,8 @@ class UpdateCourseSelectionSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'course_selection_starts_at' => 'required|date_format:Y-m-d',
-            'course_selection_ends_at' => 'required|date_format:Y-m-d|after:course_selection_starts_at',
+            'course_selection_starts_at' => 'required|date_format:Y-m-d H:i:s',
+            'course_selection_ends_at' => 'required|date_format:Y-m-d H:i:s|after:course_selection_starts_at',
         ];
     }
 }
