@@ -45,7 +45,7 @@ class LetterService
 
             $hashData = $letterVerificationHashService->generate($letter);
 
-            $qrCodePath = $qrCodeService->generate($letter, 'private', 'qr-codes', 400);
+            $qrCodePath = $qrCodeService->generate($letter, 'public', 'qr-codes', 400);
             $letter->update([
                 'verification_hash' => $hashData,
                 'qr_code_path' => $qrCodePath,
@@ -56,7 +56,7 @@ class LetterService
             ]);
 
             foreach ($files as $file) {
-                $path = $file->store('attachments/letters/'.$letter->id, 'private');
+                $path = $file->store('attachments/letters/'.$letter->id, 'public');
 
                 $letter->attachments()->create([
                     'file_name' => $file->getClientOriginalName(),
