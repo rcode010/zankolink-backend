@@ -28,10 +28,10 @@ class UpdateCourseRequest extends FormRequest
             'name' => 'sometimes|string|max:255',
 
             'code' => [
-                'sometimes',
-                'string',
-                'max:50',
-                Rule::unique('courses', 'code')->ignore($this->course),
+                'required', 'string', 'max:255',
+                Rule::unique('courses', 'code')
+                    ->where('department_id', $this->department_id)
+                    ->ignore($this->route('course')),
             ],
 
             'credit_hours' => 'sometimes|integer|min:1',
