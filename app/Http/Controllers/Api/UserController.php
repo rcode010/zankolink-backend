@@ -96,8 +96,6 @@ class UserController extends Controller
             $user->tokens()->delete();
         });
 
-        $user->update(['is_active' => false]);
-
         return $this->ok(
             'User deactivated successfully',
             (new UserResource($user->fresh()))->resolve()
