@@ -65,7 +65,7 @@ class StudentSubmissionPolicy
     private function ownsSectionSubmission(User $user, SectionSubmission $sectionSubmission): bool
     {
         return $user->teacher
-            && $sectionSubmission->section->teacher_id === $user->teacher->id;
+            && $sectionSubmission->created_by_teacher_id === $user->teacher->id;
     }
 
     private function teacherIsPrimaryLecturer(User $user, SectionSubmission $sectionSubmission): bool
