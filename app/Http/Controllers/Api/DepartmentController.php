@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ApproveStudentSelectionRequest;
+use App\Http\Requests\GetStudentSelectionRequest;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateCourseSelectionSettingRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
@@ -226,50 +227,31 @@ class DepartmentController extends Controller
     /**
      * Get the list of pending course selections (for all students or a specific student).
      */
-    public function getStudentSelectedCourses(Request $request)
+    public function getStudentSelectedCourses(GetStudentSelectionRequest $request)
     {
-        $validated = $request->validate([
-            'student_id' => 'sometimes|exists:students,id',
-            'academic_year_id' => 'required|exists:academic_years,id',
-        ]);
-
         $user = $request->user();
+        $credentials = $request->validated();
+        $departmentId = $user->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->value('scope_id');
 
-        $query = CourseSelection::with(['course', 'student.user:id,name,email'])
-            ->where('academic_year_id', $validated['academic_year_id'])
-            ->where('status', 'pending');
+        $department = Department::findOrFail($departmentId);
+        $this->authorize('manageCourseSelections', $department);
 
-        if (! empty($validated['student_id'])) {
-            $student = Student::findOrFail($validated['student_id']);
-            $department = Department::findOrFail($student->department_id);
-
-            $this->authorize('manageCourseSelections', $department);
-
-            $query->where('student_id', $student->id);
-        } elseif (! $user->hasRole('MINISTRY_ADMIN')) {
-            $scope = $user->userScopes()
-                ->where('scope_type', 'DEPARTMENT')
-                ->firstOrFail();
-
-            $department = Department::findOrFail($scope->scope_id);
-
-            $this->authorize('manageCourseSelections', $department);
-
-            $query->whereHas('student', function ($q) use ($department) {
-                $q->where('department_id', $department->id);
-            });
-        }
-
-        $selections = $query->latest()->get();
-
-        if ($selections->isEmpty()) {
-            return $this->ok('No pending course selections found.', []);
-        }
-
+        $selections = CourseSelection::query()
+            ->with([
+                'course',
+                'student.user:id,name,email',
+            ])
+            ->where('academic_year_id', $credentials['academic_year_id'])
+            ->whereHas('student', fn ($query) => $query->where('department_id', $departmentId))
+            ->latest()
+            ->get();
         $selectedCourses = $selections->map(function ($selection) {
             return [
                 'id' => $selection->id,
                 'student_id' => $selection->student_id,
+                'semester' => $selection->semester,
                 'student_name' => $selection->student->user->name ?? 'N/A',
                 'student_email' => $selection->student->user->email ?? 'N/A',
                 'course_id' => $selection->course->id,
@@ -281,7 +263,10 @@ class DepartmentController extends Controller
             ];
         })->all();
 
-        return $this->ok('Pending courses retrieved successfully.', $selectedCourses);
+        return $this->ok(
+            'Course selections retrieved successfully.',
+            $selectedCourses
+        );
     }
 
     /**
