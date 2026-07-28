@@ -172,6 +172,7 @@ class DatabaseSeeder extends Seeder
             // Course Selection
             'view student course selections', 'create student course selections',
             'update course selection settings', 'close course selections',
+            'store student course selections'
 
         ];
 
