@@ -168,7 +168,6 @@ class DatabaseSeeder extends Seeder
             // Student Marks
             'view assessment marks', 'create student marks',
             'view student mark', 'update student mark',
-            'store student course selections'
 
         ];
 

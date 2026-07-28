@@ -23,7 +23,9 @@ class UniqueCourseRequestService
             ->where('academic_year_id', $academicYear->id)
             ->where('semester', $academicYear->semester)
             ->get()
-            ->pluck('course');
+            ->pluck('course')
+            ->filter()
+            ->values();
 
         return $courses->isEmpty() ? null : $courses;
     }

@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Auth\Access\AuthorizationException;
+use App\Http\Middleware\EnsureUserIsActive;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,6 +13,7 @@ use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -30,12 +30,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
+
+            'active' => EnsureUserIsActive::class,
+
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+
         $exceptions->render(function (ValidationException $e) {
             return response()->json([
                 'success' => false,
@@ -50,27 +54,31 @@ return Application::configure(basePath: dirname(__DIR__))
                 'message' => 'Unauthenticated.',
             ], Response::HTTP_UNAUTHORIZED);
         });
+        $exceptions->render(function (Throwable $e, Request $request) {
+            if (! $request->is('api/*')) {
+                return null;
+            }
 
-        $exceptions->render(function (AuthorizationException $e) {
+            if ($e instanceof HttpExceptionInterface) {
+                $status = $e->getStatusCode();
+
+                $message = match ($status) {
+                    403 => 'This action is unauthorized.',
+                    404 => 'Resource not found.',
+                    405 => 'Method not allowed.',
+                    429 => 'Too many requests.',
+                    default => $e->getMessage() ?: (Response::$statusTexts[$status] ?? 'Error'),
+                };
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                ], $status, $e->getHeaders());
+            }
+
             return response()->json([
                 'success' => false,
-                'message' => 'This action is unauthorized.',
-            ], Response::HTTP_FORBIDDEN);
-        });
-
-        $exceptions->render(function (ModelNotFoundException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Resource not found.',
-            ], Response::HTTP_NOT_FOUND);
-        });
-
-        $exceptions->render(function (Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => config('app.debug')
-                    ? $e->getMessage()
-                    : 'Something went wrong.',
+                'message' => config('app.debug') ? $e->getMessage() : 'Something went wrong.',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         });
     })->create();

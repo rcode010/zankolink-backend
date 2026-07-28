@@ -18,7 +18,7 @@ require __DIR__.'/api/auth.php';
 require __DIR__.'/api/letter-verification.php';
 
 // Protected Routes
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'active'])->group(function () {
     require __DIR__.'/api/universities.php';
     require __DIR__.'/api/academic-years.php';
     require __DIR__.'/api/faculties.php';
@@ -44,15 +44,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-Route::middleware(['auth:sanctum', 'ability:moodle,admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'ability:moodle,admin', 'active'])->group(function () {
     require __DIR__.'/api/shared.php';
 });
 // Moodle & Assessment Routes
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'active'])->group(function () {
     require __DIR__.'/api/course-assessment.php';
     require __DIR__.'/api/student-marks.php';
 
-    Route::middleware(['ability:moodle'])->group(function () {
+    Route::middleware(['ability:moodle', 'active'])->group(function () {
         require __DIR__.'/api/course-sections.php';
         require __DIR__.'/api/section-submission.php';
         require __DIR__.'/api/student-submissions.php';

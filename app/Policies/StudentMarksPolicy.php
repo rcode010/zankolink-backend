@@ -79,7 +79,6 @@ class StudentMarksPolicy
             || $this->isHeadOfDepartment($user, $course);
     }
 
-
     public function storeGradeBook(User $user, Course $course): bool
     {
         return $this->teacherIsPrimaryLecturer($user, $course);
@@ -103,15 +102,17 @@ class StudentMarksPolicy
     {
         return $user->teacher &&
             $course->teachers()
-            ->where('teachers.id', $user->teacher->id)
-            ->wherePivot('role', 'primary_lecturer')
-            ->exists();
+                ->where('teachers.id', $user->teacher->id)
+                ->wherePivot('role', 'primary_lecturer')
+                ->exists();
     }
 
     private function isHeadOfDepartment(User $user, Course $course): bool
     {
         return $user->hasRole('HEAD_OF_DEPARTMENT')
-            && $user->userScopes()
+            &&
+            $user->userScopes()
+
                 ->where('scope_type', 'DEPARTMENT')
                 ->where('scope_id', $course->department_id)
                 ->exists();

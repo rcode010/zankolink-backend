@@ -23,15 +23,17 @@ class UpdateCourseRequest extends FormRequest
      */
     public function rules(): array
     {
+        $course = $this->route('course');
+
         return [
             'department_id' => 'sometimes|exists:departments,id',
             'name' => 'sometimes|string|max:255',
 
             'code' => [
-                'sometimes',
-                'string',
-                'max:50',
-                Rule::unique('courses', 'code')->ignore($this->course),
+                'sometimes', 'string', 'max:255',
+                Rule::unique('courses', 'code')
+                    ->where('department_id', $this->input('department_id', $course?->department_id))
+                    ->ignore($course),
             ],
 
             'credit_hours' => 'sometimes|integer|min:1',

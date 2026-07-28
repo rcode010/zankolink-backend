@@ -91,7 +91,10 @@ class UserController extends Controller
      */
     public function deactivate(User $user)
     {
-        $user->update(['is_active' => false]);
+        DB::transaction(function () use ($user) {
+            $user->update(['is_active' => false]);
+            $user->tokens()->delete();
+        });
 
         return $this->ok(
             'User deactivated successfully',

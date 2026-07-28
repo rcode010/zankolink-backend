@@ -86,7 +86,7 @@ class CourseAssessmentsPolicy
             $assessment->teacher_id === $user->teacher->id;
     }
 
-    private function teacherIsPrimaryLecturer(User $user, Course $course)
+    private function teacherIsPrimaryLecturer(User $user, Course $course): bool
     {
         return $course->teachers()
             ->where('teachers.id', $user->teacher->id)
