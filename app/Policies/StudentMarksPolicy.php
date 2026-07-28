@@ -25,7 +25,7 @@ class StudentMarksPolicy
     {
         $assessment = $studentMarks->courseAssessment;
 
-        return $this->teacherOwnsAssessment($user, $assessment)
+        return $this->teacherBelongsToCourse($user, $assessment)
             || $this->teacherIsPrimaryLecturer($user, $assessment->course);
     }
 
@@ -75,7 +75,7 @@ class StudentMarksPolicy
 
     public function viewGradeBook(User $user, Course $course): bool
     {
-        return $this->teacherIsPrimaryLecturer($user, $course)
+        return $this->teacherBelongsToCourse($user, $course)
             || $this->isHeadOfDepartment($user, $course);
     }
 
@@ -115,6 +115,13 @@ class StudentMarksPolicy
 
                 ->where('scope_type', 'DEPARTMENT')
                 ->where('scope_id', $course->department_id)
+                ->exists();
+    }
+    private function teacherBelongsToCourse(User $user, Course $course): bool
+    {
+        return $user->teacher
+            && $course->teachers()
+                ->whereKey($user->teacher->id)
                 ->exists();
     }
 }
