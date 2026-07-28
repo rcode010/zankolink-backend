@@ -4,8 +4,6 @@ use App\Http\Controllers\Api\DepartmentController;
 
 Route::prefix('departments')->group(function () {
 
-    Route::get('/student-selected-courses', [DepartmentController::class, 'getStudentSelectedCourses']);
-
     Route::get('/', [DepartmentController::class, 'index'])->middleware('permission:view departments');
     Route::post('/', [DepartmentController::class, 'store'])->middleware('permission:create departments');
     Route::get('/{department}', [DepartmentController::class, 'show'])->middleware('permission:view department');
@@ -13,9 +11,9 @@ Route::prefix('departments')->group(function () {
     Route::delete('/{department}', [DepartmentController::class, 'destroy'])->middleware('permission:delete departments');
     Route::patch('/{department}/seat', [DepartmentController::class, 'updateSeat'])->middleware('permission:update department seats');
 
-    Route::get('/student-selected-courses', [DepartmentController::class, 'getStudentSelectedCourses']);
-    Route::post('/selection', [DepartmentController::class, 'StudentSelection']);
-    Route::patch('/{department}/course-selection-settings', [DepartmentController::class, 'updateCourseSelectionSettings']);
-    Route::patch('/{department}/course-selection-settings/close', [DepartmentController::class, 'closeCourseSelection']);
+    Route::get('/student-selected-courses', [DepartmentController::class, 'getStudentSelectedCourses'])->middleware('permission:view student course selections');
+    Route::post('/selection', [DepartmentController::class, 'StudentSelection'])->middleware('permission:store student course selections');
+    Route::patch('/{department}/course-selection-settings', [DepartmentController::class, 'updateCourseSelectionSettings'])->middleware('permission:update course selection settings');
+    Route::patch('/{department}/course-selection-settings/close', [DepartmentController::class, 'closeCourseSelection'])->middleware('permission:close course selections');
 
 });
