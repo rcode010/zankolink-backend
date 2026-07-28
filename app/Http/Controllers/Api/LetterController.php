@@ -12,10 +12,10 @@ use App\Models\Letter;
 use App\Models\LetterFlow;
 use App\Models\LetterRecipient;
 use App\QueryFilters\MultiRecipientUniversityFilter;
+use App\Services\LetterPayloadEnrichmentService;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
-use App\Services\LetterPayloadEnrichmentService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -263,7 +263,7 @@ class LetterController extends Controller
                 'receiver:id,name',
                 'attachments',
                 'signatures',
-                'latestFlow:action'
+                'latestFlow:action',
             ])
             ->allowedFilters(
                 AllowedFilter::exact('status')
@@ -283,7 +283,7 @@ class LetterController extends Controller
         if ($user->isMinistryAdmin()) {
             $multiRecipientLetters = QueryBuilder::for(Letter::class)
                 ->where('receiver_id', null)
-                ->with(['sender:id,name', 'attachments', 'recipients',])
+                ->with(['sender:id,name', 'attachments', 'recipients'])
                 ->allowedFilters(
                     AllowedFilter::partial('created_at'),
                     AllowedFilter::custom(
@@ -350,6 +350,7 @@ class LetterController extends Controller
 
         $letters = QueryBuilder::for(Letter::class)
             ->where('sender_id', $user->id)
+            ->where('status', 'pending')
             ->with([
                 'sender:id,name',
                 'receiver:id,name',
@@ -359,7 +360,7 @@ class LetterController extends Controller
             ->get();
 
         return $this->ok('Dispatched letters retrieved successfully',
-            LetterResource::collection($letters)->response()->getData(true)
+            (LetterResource::collection($letters))->resolve()
         );
     }
 }
