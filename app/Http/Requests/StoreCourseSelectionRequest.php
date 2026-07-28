@@ -23,7 +23,6 @@ class StoreCourseSelectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'semester' => 'required|in:fall,spring',
             'academic_year_id' => 'required|exists:academic_years,id',
             'course_ids' => 'nullable|array',
             'course_ids.*' => 'distinct|exists:courses,id',
