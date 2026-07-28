@@ -166,54 +166,53 @@ class DepartmentController extends Controller
     /**
      * Approve student course selections and enroll them into the final table.
      */
-    public function StudentSelection(ApproveStudentSelectionRequest $request) {
+    public function StudentSelection(ApproveStudentSelectionRequest $request)
+    {
         $credentials = $request->validated();
 
         $selection = CourseSelection::query()
             ->with('course:id,name,code,type')
             ->whereKey($credentials['selection_id'])
-            ->where(
-                'academic_year_id',
-                $credentials['academic_year_id']
-            )
+            ->where('academic_year_id', $credentials['academic_year_id'])
             ->where('status', 'pending')
             ->firstOrFail();
 
         $student = Student::findOrFail($selection->student_id);
+        $department = Department::findOrFail($student->department_id);
 
-        $department = Department::findOrFail(
-            $student->department_id
-        );
+        $this->authorize('manageCourseSelections', $department);
 
-        $this->authorize(
-            'manageCourseSelections',
-            $department
-        );
+        DB::transaction(function () use ($selection, $student, $credentials) {
+            $selection->update(['status' => $credentials['status']]);
 
-        DB::transaction(function () use ($selection,$student,$credentials) {
+            if ($credentials['status'] !== 'approved') {
+                return;
+            }
 
-            $selection->update([
-                'status' => $credentials['status'],
-            ]);
-
-            DB::table('course_student')->insert([
-                'student_id' => $student->id,
-                'course_id' => $selection->course_id,
-                'academic_year_id' => $selection->academic_year_id,
-                'status' => 'enrolled',
-                'enrolled_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            DB::table('course_student')->updateOrInsert(
+                [
+                    'student_id' => $student->id,
+                    'course_id' => $selection->course_id,
+                    'academic_year_id' => $selection->academic_year_id,
+                ],
+                [
+                    'status' => 'enrolled',
+                    'enrolled_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         });
 
         return $this->ok(
-            'Course selection approved and student enrolled successfully.',
+            $credentials['status'] === 'approved'
+                ? 'Course selection approved and student enrolled successfully.'
+                : 'Course selection rejected successfully.',
             [
                 'student_id' => $student->id,
                 'academic_year_id' => $credentials['academic_year_id'],
-
-                'enrolled_course' => [
+                'status' => $credentials['status'],
+                'course' => [
                     'selection_id' => $selection->id,
                     'id' => $selection->course->id,
                     'name' => $selection->course->name,
@@ -223,7 +222,6 @@ class DepartmentController extends Controller
             ]
         );
     }
-
     /**
      * Get the list of pending course selections (for all students or a specific student).
      */

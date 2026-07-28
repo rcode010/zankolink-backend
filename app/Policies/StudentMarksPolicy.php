@@ -113,6 +113,7 @@ class StudentMarksPolicy
         return $user->hasRole('HEAD_OF_DEPARTMENT')
             &&
             $user->userScopes()
+
                 ->where('scope_type', 'DEPARTMENT')
                 ->where('scope_id', $course->department_id)
                 ->exists();

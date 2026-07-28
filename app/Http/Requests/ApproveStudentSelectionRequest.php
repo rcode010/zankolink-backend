@@ -25,7 +25,7 @@ class ApproveStudentSelectionRequest extends FormRequest
         return [
             'selection_id' => 'required|exists:course_selections,id',
             'academic_year_id' => 'required|exists:academic_years,id',
-            'status' => 'required|in:pending,approved,declined',
-        ];
+            'status' => 'required|in:approved,rejected',
+            ];
     }
 }
