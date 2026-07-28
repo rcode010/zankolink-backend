@@ -106,8 +106,8 @@ class DatabaseSeeder extends Seeder
     private function seedRoles(): void
     {
         $permissions = [
-            // Letter Broadcast
-            'view letter broadcast', 'create letter broadcast',
+            // Multi Recipient Letters
+            'view multi-recipient letters', 'create multi-recipient letters',
             // Universities
             'view universities', 'view university', 'create universities', 'update universities', 'delete universities',
             // Faculties
@@ -162,12 +162,16 @@ class DatabaseSeeder extends Seeder
             'update attendance records',
             // Course Assessments
             'view course assessments', 'create course assessments', 'update course assessments',
-            'view course assessment', 'delete course assessments',
+            'view course assessment', 'delete course assessments', 'publish course assessments',
             // Course Marks
             'view own marks',
             // Student Marks
             'view assessment marks', 'create student marks',
             'view student mark', 'update student mark',
+            'view gradebook', 'store gradebook',
+            // Course Selection
+            'view student course selections', 'create student course selections',
+            'update course selection settings', 'close course selections',
 
         ];
 
@@ -196,7 +200,7 @@ class DatabaseSeeder extends Seeder
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
                 'create stamps', 'view stamps',
-                'approve letters', 'decline letters', 'forward letters', 'view letter broadcast',
+                'approve letters', 'decline letters', 'forward letters', 'view multi-recipient letters',
             ],
 
             'MINISTRY_ADMINISTRATION_HEAD' => [
@@ -204,7 +208,7 @@ class DatabaseSeeder extends Seeder
                 'upload attachments', 'download attachments',
                 'view signatures', 'create signatures',
                 'create stamps', 'view stamps',
-                'view reports', 'forward letters', 'view letter broadcast',
+                'view reports', 'forward letters', 'view multi-recipient letters',
             ],
 
             // University
@@ -215,7 +219,7 @@ class DatabaseSeeder extends Seeder
                 'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
                 'upload attachments', 'download attachments',
                 'create stamps', 'view stamps',
-                'view signatures', 'create signatures', 'forward letters', 'view letter broadcast',
+                'view signatures', 'create signatures', 'forward letters', 'view multi-recipient letters',
             ],
 
             'UNIVERSITY_ADMIN_ADMINISTRATION' => [
@@ -224,7 +228,7 @@ class DatabaseSeeder extends Seeder
                 'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
                 'create signatures', 'view signatures',
                 'create stamps', 'view stamps',
-                'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
+                'upload attachments', 'download attachments', 'forward letters', 'view multi-recipient letters',
             ],
 
             'UNIVERSITY_ADMIN_STUDENTS' => [
@@ -233,7 +237,7 @@ class DatabaseSeeder extends Seeder
                 'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
                 'create signatures', 'view signatures',
                 'create stamps', 'view stamps',
-                'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
+                'upload attachments', 'download attachments', 'forward letters', 'view multi-recipient letters',
             ],
 
             'UNIVERSITY_ADMIN_SCIENCE' => [
@@ -242,10 +246,10 @@ class DatabaseSeeder extends Seeder
                 'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
                 'create signatures', 'view signatures',
                 'create stamps', 'view stamps',
-                'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
+                'upload attachments', 'download attachments', 'forward letters', 'view multi-recipient letters',
             ],
             'UNIVERSITY_ADMIN_IMPORT_EXPORT' => [
-                'view university', 'view universities', 'view faculties', 'view faculty', 'forward letters', 'view letter broadcast',
+                'view university', 'view universities', 'view faculties', 'view faculty', 'forward letters', 'view multi-recipient letters',
                 'view letters', 'view stamps', 'view signatures',
             ],
 
@@ -258,7 +262,7 @@ class DatabaseSeeder extends Seeder
                 'upload attachments', 'download attachments',
                 'create stamps', 'view stamps',
                 'view signatures', 'create signatures',
-                'view reports', 'forward letters', 'view letter broadcast',
+                'view reports', 'forward letters', 'view multi-recipient letters',
             ],
 
             // Department
@@ -274,8 +278,11 @@ class DatabaseSeeder extends Seeder
                 'view signatures', 'create signatures',
                 'update course students', 'delete course students',
                 'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
-                'upload attachments', 'download attachments', 'forward letters', 'view letter broadcast',
+                'upload attachments', 'download attachments', 'forward letters', 'view multi-recipient letters',
                 'view academic requests', 'view academic request',
+                'view student course selections', 'update course selection settings',
+                'close course selections', 'store student course selections',
+                'view gradebook',
             ],
 
             'lecturer' => [
@@ -301,6 +308,7 @@ class DatabaseSeeder extends Seeder
                 'view course assessment', 'delete course assessments',
                 'view assessment marks', 'create student marks',
                 'view student mark', 'update student mark',
+                'view gradebook', 'store gradebook',
             ],
 
             'student' => [
@@ -314,7 +322,7 @@ class DatabaseSeeder extends Seeder
                 'download student submissions', 'delete student submissions',
                 'view academic requests', 'view academic request',
                 'create academic requests', 'view own attendance records',
-                'view own marks',
+                'view own marks', 'create student course selections',
             ],
 
             // Zankoline portal
