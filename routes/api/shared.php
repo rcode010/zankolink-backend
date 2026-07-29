@@ -8,7 +8,7 @@ use App\Http\Controllers\StudentMarksController;
 
 Route::get('/moodle/courses/{course}/gradebook', [StudentMarksController::class, 'gradeBook'])->middleware('permission:view gradebook');
 Route::get('/students/available-courses', [StudentCourseController::class, 'availableCourses'])->middleware('permission:view courses');
-Route::get('/courses/{course}/my-marks', [CourseMarkController::class, 'myMarks'])->middleware('permission:view own marks');
+Route::get('/moodle/courses/{course}/my-marks', [CourseMarkController::class, 'myMarks'])->middleware('permission:view own marks');
 Route::patch('/moodle/academic-requests/{academicRequest}', [AcademicRequestController::class, 'update'])->middleware('permission:update academic request');
 Route::get('/moodle/academic-requests/department', [AcademicRequestController::class, 'departmentAcademicRequests'])->middleware('permission:view academic requests');
 Route::get('/courses/{course}/students', [StudentCourseController::class, 'courseStudents'])
