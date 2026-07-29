@@ -81,7 +81,7 @@ class StudentMarksPolicy
 
     public function storeGradeBook(User $user, Course $course): bool
     {
-        return $this->teacherIsPrimaryLecturer($user, $course);
+        return $this->teacherBelongsToCourse($user, $course);
     }
 
     public function viewOwn(User $user, Course $course): bool
