@@ -100,7 +100,7 @@ class AppServiceProvider extends ServiceProvider
         {
             $key = $request->user()?->id ?: $request->ip();
 
-            return Limit::perMinute(60)->by($key);
+            return Limit::perMinute(100)->by($key);
         });
     }
 }
