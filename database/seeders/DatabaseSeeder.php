@@ -153,7 +153,7 @@ class DatabaseSeeder extends Seeder
             'create student submissions', 'view student submissions', 'download student submissions', 'delete student submissions',
             'view student submission', 'update student submissions', 'view own submission',
             // Academic Request
-            'view academic requests', 'view academic request', 'create academic requests',
+            'view academic requests', 'view academic request', 'create academic requests', 'update academic request',
             // Attendance Sessions
             'view attendance sessions', 'view attendance session', 'create attendance sessions',
             'update attendance sessions', 'delete attendance sessions',
@@ -172,7 +172,7 @@ class DatabaseSeeder extends Seeder
             // Course Selection
             'view student course selections', 'create student course selections',
             'update course selection settings', 'close course selections',
-            'store student course selections'
+            'store student course selections',
 
         ];
 
@@ -280,7 +280,7 @@ class DatabaseSeeder extends Seeder
                 'update course students', 'delete course students',
                 'view letters', 'create letters', 'raise letters', 'approve letters', 'decline letters',
                 'upload attachments', 'download attachments', 'forward letters', 'view multi-recipient letters',
-                'view academic requests', 'view academic request',
+                'view academic requests', 'view academic request', 'update academic request',
                 'view student course selections', 'update course selection settings',
                 'close course selections', 'store student course selections',
                 'view gradebook',
