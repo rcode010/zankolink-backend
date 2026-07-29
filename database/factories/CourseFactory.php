@@ -47,7 +47,6 @@ class CourseFactory extends Factory
             'year_level' => $yearLevel,
             'credit_hours' => $this->faker->randomElement([2, 3, 4]),
             'is_active' => $this->faker->randomElement([true, false]),
-            'color' => $this->faker->unique()->safeHexColor(),
         ];
     }
 }
