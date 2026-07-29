@@ -37,7 +37,6 @@ class StoreCourseRequest extends FormRequest
             'is_active' => 'nullable|boolean',
             'prerequisites' => 'nullable|array',
             'prerequisites.*' => 'required|integer|exists:courses,id',
-            'color' => 'required|string|max:255',
         ];
     }
 }

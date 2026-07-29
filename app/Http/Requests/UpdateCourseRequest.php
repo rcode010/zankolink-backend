@@ -42,7 +42,6 @@ class UpdateCourseRequest extends FormRequest
             'semester' => 'sometimes|string|in:spring,fall',
             'prerequisites' => ['sometimes', 'array'],
             'prerequisites.*' => ['integer', 'exists:courses,id'],
-            'color' => 'sometimes|string|max:255',
         ];
     }
 }
