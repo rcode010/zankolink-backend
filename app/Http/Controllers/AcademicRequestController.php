@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AcademicRequestUpdateRequest;
 use App\Http\Requests\StoreAcademicRequest;
 use App\Http\Resources\AcademicRequestResource;
 use App\Http\Resources\DepartmentAcademicRequestResource;
@@ -74,6 +75,15 @@ class AcademicRequestController extends Controller
 
         return $this->ok('Academic Request retrieved successfully',
             (AcademicRequestResource::collection($academicRequests))->resolve());
+    }
+
+    public function update(AcademicRequestUpdateRequest $request, AcademicRequest $academicRequest)
+    {
+        $credentials = $request->validated();
+
+        $academicRequest->update($credentials);
+
+        return $this->ok('Academic request updated successfully', (new AcademicRequestResource($academicRequest))->resolve());
     }
 
     /**
