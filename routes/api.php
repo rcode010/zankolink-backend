@@ -17,7 +17,7 @@ Route::get('/user', function (Request $request) {
 require __DIR__.'/api/auth.php';
 require __DIR__.'/api/letter-verification.php';
 
-Route::middleware(['auth:sanctum', 'active'])->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function () {
 
     Route::middleware('ability:admin')->group(function () {
         require __DIR__.'/api/universities.php';
