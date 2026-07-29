@@ -46,6 +46,7 @@ class LecturerCourseController extends Controller
 
         $courses = $teacher->courses()
             ->with(['department:id,name,faculty_id'])
+            ->where('is_active', true)
             ->withCount(['students', 'sections'])
             ->latest('courses.created_at')
             ->get();
