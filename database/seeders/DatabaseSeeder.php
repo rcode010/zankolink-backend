@@ -309,7 +309,7 @@ class DatabaseSeeder extends Seeder
                 'view course assessment', 'delete course assessments',
                 'view assessment marks', 'create student marks',
                 'view student mark', 'update student mark',
-                'view gradebook', 'store gradebook',
+                'view gradebook', 'store gradebook','publish course assessments'
             ],
 
             'student' => [
