@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\CourseSectionResource;
+use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\Student;
@@ -39,9 +40,12 @@ class MoodleStudentCourseController extends Controller
     public function myCourses(Request $request)
     {
         $student = $this->resolveStudent();
+        $academicYear = AcademicYear::where('active', 1)->first();
 
         $courses = $student->courses()
             ->with(['department', 'teachers.user'])
+            ->where('is_active', true)
+            ->where('semester',$academicYear->semester)
             ->withCount(['students', 'sections'])
             ->latest()
             ->get();
