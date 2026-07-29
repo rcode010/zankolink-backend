@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\CourseResource;
 use App\Http\Resources\SectionItemResource;
 use App\Http\Resources\SectionSubmissionResource;
+use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -43,9 +44,13 @@ class LecturerCourseController extends Controller
     public function courses(Request $request)
     {
         $teacher = auth()->user()->teacher;
+        $academicYear = AcademicYear::where('is_active', 1)->first();
+
 
         $courses = $teacher->courses()
             ->with(['department:id,name,faculty_id'])
+            ->where('is_active', true)
+            ->where('semester',$academicYear->semester)
             ->withCount(['students', 'sections'])
             ->latest('courses.created_at')
             ->get();

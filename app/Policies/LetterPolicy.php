@@ -153,7 +153,7 @@ class LetterPolicy
 
     public function createLetterRecipient(User $user): bool
     {
-        return $user->hasPermissionTo('create letter broadcast');
+        return $user->hasPermissionTo('create multi-recipient letters');
     }
 
     /**
