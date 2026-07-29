@@ -40,7 +40,7 @@ class MoodleStudentCourseController extends Controller
     public function myCourses(Request $request)
     {
         $student = $this->resolveStudent();
-        $academicYear = AcademicYear::where('active', 1)->first();
+        $academicYear = AcademicYear::where('is_active', 1)->first();
 
         $courses = $student->courses()
             ->with(['department', 'teachers.user'])
