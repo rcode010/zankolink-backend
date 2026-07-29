@@ -58,13 +58,9 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('verify', function (Request $request)
         {
-            $key = strtolower($request->email).'|'.$request->ip();
+            $key = $request->challenge_token.'|'.$request->ip();
 
-            return [
-                Limit::perMinute(1)->by($key),
-                Limit::perHour(5)->by($key),
-                Limit::perDay(10)->by($key),
-            ];
+            return Limit::perMinute(5)->by($key);
         });
 
         RateLimiter::for('forgetPassword', function (Request $request)
@@ -78,10 +74,33 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        RateLimiter::for('resetPassword', function (Request $request)
+        {
+            $key = strtolower($request->email).'|'.$request->ip();
+
+            return Limit::perMinute(10)->by($key);
+        });
+
+        RateLimiter::for('changePassword', function (Request $request)
+        {
+            return [
+                Limit::perMinute(5)->by($request->user()->id),
+                Limit::perHour(20)->by($request->user()->id),
+            ];
+        });
+
+        RateLimiter::for('register', function (Request $request)
+        {
+            $key = $request->user()?->id ?: $request->ip();
+
+            return Limit::perMinute(5)->by($key);
+        });
+
         RateLimiter::for('api', function (Request $request)
         {
-            return Limit::perMinute(60)
-                ->by($request->user()?->id ?: $request->ip());
+            $key = $request->user()?->id ?: $request->ip();
+
+            return Limit::perMinute(60)->by($key);
         });
     }
 }
