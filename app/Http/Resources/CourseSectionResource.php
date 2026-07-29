@@ -14,14 +14,16 @@ class CourseSectionResource extends JsonResource
             'title' => $this->title,
 
             'course' => new CourseResource($this->whenLoaded('course')),
-            'teacher' => $this->whenLoaded('teacher', function () use ($request) {
+            'created_by' => $this->whenLoaded('teacher', function () use ($request) {
                 $teacher = (new TeacherResource($this->teacher))->resolve($request);
                 $teacher['role'] = $this->teacher_role;
 
                 return $teacher;
             }),
             'items' => SectionItemResource::collection($this->whenLoaded('items')),
-            'submissions' => SectionSubmissionResource::collection($this->whenLoaded('submissions')),
+            'submissions' => SectionSubmissionResource::collection(
+                $this->whenLoaded('submissions')
+            ),
 
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),

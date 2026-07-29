@@ -66,7 +66,7 @@ class SectionSubmissionController extends Controller
     public function index(CourseSection $section)
     {
         $this->authorize('viewAny', [SectionSubmission::class, $section]);
-        $submission = $section->submissions()->with(['attachments', 'section:id,title', 'courseAssessment'])->get();
+        $submission = $section->submissions()->with(['attachments', 'section:id,title', 'courseAssessment', 'creator'])->get();
 
         return $this->success(
             'Assignments retrieved successfully.',
@@ -187,6 +187,7 @@ class SectionSubmissionController extends Controller
                 'attachments',
                 'section:id,title',
                 'courseAssessment',
+                'creator',
             ])
             ))->resolve()
         );
@@ -253,6 +254,7 @@ class SectionSubmissionController extends Controller
                     'section:id,title',
                     'attachments',
                     'courseAssessment',
+                    'creator',
                 ])))->resolve()
             );
         } catch (\Exception $e) {

@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ApproveStudentSelectionRequest extends FormRequest
+class AcademicRequestUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,6 @@ class ApproveStudentSelectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'selection_id' => 'required|exists:course_selections,id',
-            'academic_year_id' => 'required|exists:academic_years,id',
             'status' => 'required|in:approved,rejected',
         ];
     }

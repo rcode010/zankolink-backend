@@ -12,6 +12,7 @@ use App\Models\Letter;
 use App\Models\LetterFlow;
 use App\Models\LetterRecipient;
 use App\QueryFilters\MultiRecipientUniversityFilter;
+use App\Services\LetterPayloadEnrichmentService;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
@@ -37,7 +38,7 @@ class LetterController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Letter::class);
-        $per_page = $request->query('per_page', 15);
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $userId = auth()->id();
 
@@ -66,7 +67,7 @@ class LetterController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreLetterRequest $request, QrCodeService $qrCodeService, LetterVerificationHashService $letterVerificationHashService, LetterService $letterService)
+    public function store(StoreLetterRequest $request, LetterPayloadEnrichmentService $snapshotService, QrCodeService $qrCodeService, LetterVerificationHashService $letterVerificationHashService, LetterService $letterService)
     {
         $this->authorize('create', Letter::class);
         $user = $request->user();
@@ -77,8 +78,7 @@ class LetterController extends Controller
         $data['status'] = 'pending';
 
         $data['letter_uuid'] = (string) Str::uuid();
-
-        $letter = $letterService->create($data, $qrCodeService, $user, $letterVerificationHashService, $request->file('files', []));
+        $letter = $letterService->create($data, $snapshotService, $qrCodeService, $user, $letterVerificationHashService, $request->file('files', []));
 
         if ($letter) {
             return $this->ok(
@@ -225,8 +225,7 @@ class LetterController extends Controller
                 ->with([
                     'letter.sender:id,name',
                     'letter.attachments',
-                    'latestFlow:action',
-
+                    'letter.recipients.recipient:id,name',
                 ])
                 ->latest()
                 ->get()
@@ -239,7 +238,7 @@ class LetterController extends Controller
                 });
         }
 
-        $inbox = $letters->load('payload.teacher')
+        $inbox = $letters
             ->concat($multiRecipientLetters)
             ->sortByDesc('created_at')
             ->values();
@@ -264,7 +263,7 @@ class LetterController extends Controller
                 'receiver:id,name',
                 'attachments',
                 'signatures',
-                'latestFlow:action'
+                'latestFlow:action',
             ])
             ->allowedFilters(
                 AllowedFilter::exact('status')
@@ -284,7 +283,7 @@ class LetterController extends Controller
         if ($user->isMinistryAdmin()) {
             $multiRecipientLetters = QueryBuilder::for(Letter::class)
                 ->where('receiver_id', null)
-                ->with(['sender:id,name', 'attachments', 'recipients','latestFlow:action',])
+                ->with(['sender:id,name', 'attachments', 'recipients'])
                 ->allowedFilters(
                     AllowedFilter::partial('created_at'),
                     AllowedFilter::custom(
@@ -339,7 +338,7 @@ class LetterController extends Controller
 
         return $this->ok(
             'Archived letters retrieved successfully',
-            $letters->toArray()
+            LetterResource::collection($letters)->response()->getData(true)
         );
     }
 
@@ -351,6 +350,7 @@ class LetterController extends Controller
 
         $letters = QueryBuilder::for(Letter::class)
             ->where('sender_id', $user->id)
+            ->where('status', 'pending')
             ->with([
                 'sender:id,name',
                 'receiver:id,name',
@@ -359,6 +359,8 @@ class LetterController extends Controller
             ])
             ->get();
 
-        return $this->ok('Dispatched letters retrieved successfully', $letters->toArray());
+        return $this->ok('Dispatched letters retrieved successfully',
+            (LetterResource::collection($letters))->resolve()
+        );
     }
 }

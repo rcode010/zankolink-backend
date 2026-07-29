@@ -6,6 +6,7 @@ use App\Http\Requests\PublishAssessmentsRequest;
 use App\Http\Requests\StoreCourseAssessmentRequest;
 use App\Http\Requests\SyncCourseAssessmentsRequest;
 use App\Http\Requests\UpdateCourseAssessmentRequest;
+use App\Http\Resources\CourseAssessmentsResource;
 use App\Models\Course;
 use App\Models\CourseAssessments;
 use App\Services\StudentCourseGradeCalculator;
@@ -19,7 +20,7 @@ use Spatie\QueryBuilder\QueryBuilder;
  *
  * APIs for managing course assessments such as quizzes, assignments, midterms, finals, projects, and activities.
  */
-class CourseAssesmentsController extends Controller
+class CourseAssessmentsController extends Controller
 {
     use ApiResponses;
 
@@ -58,12 +59,16 @@ class CourseAssesmentsController extends Controller
         $this->authorize('viewAny', [CourseAssessments::class, $course]);
 
         $assessments = QueryBuilder::for(CourseAssessments::class)
+            ->with(['course', 'teacher', 'academicYear'])
             ->where('course_id', $course->id)
             ->allowedFilters(
                 AllowedFilter::partial('title'),
             )->get();
 
-        return $this->ok('Course Assessments retrieved successfully', $assessments->toArray());
+        return $this->ok(
+            'Course Assessments retrieved successfully',
+            CourseAssessmentsResource::collection($assessments)->resolve()
+        );
     }
 
     /**
@@ -121,7 +126,10 @@ class CourseAssesmentsController extends Controller
             'is_published' => $credentials['is_published'] ?? false,
         ]);
 
-        return $this->created('Course Assessment created successfully', $courseAssessment->toArray());
+        return $this->created(
+            'Course Assessment created successfully',
+            (new CourseAssessmentsResource($courseAssessment))->resolve()
+        );
 
     }
 
@@ -168,7 +176,10 @@ class CourseAssesmentsController extends Controller
 
         $assessment->update($credentials);
 
-        return $this->ok('Course Assessment updated successfully', $assessment->toArray());
+        return $this->ok(
+            'Course Assessment updated successfully',
+            (new CourseAssessmentsResource($assessment))->resolve()
+        );
 
     }
 
@@ -535,12 +546,14 @@ class CourseAssesmentsController extends Controller
 
         return $this->ok(
             'Course assessments saved successfully.',
-            $assessments->toArray()
+            CourseAssessmentsResource::collection($assessments)->resolve()
         );
     }
 
     public function publishAssessments(PublishAssessmentsRequest $request, Course $course)
     {
+        $this->authorize('publishAssessments', [CourseAssessments::class, $course]);
+
         $course->assessments()->update([
             'is_published' => $request->boolean('is_published'),
         ]);
@@ -608,7 +621,7 @@ class CourseAssesmentsController extends Controller
 
         return $this->ok(
             'Course Assessment retrieved successfully',
-            $assessment->toArray()
+            (new CourseAssessmentsResource($assessment))->resolve()
         );
     }
 

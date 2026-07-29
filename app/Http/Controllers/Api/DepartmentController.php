@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ApproveStudentSelectionRequest;
+use App\Http\Requests\GetStudentSelectionRequest;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateCourseSelectionSettingRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
@@ -34,7 +35,7 @@ class DepartmentController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', Department::class);
-        $per_page = $request->query('per_page', 15);
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $query = Department::query();
 
@@ -166,54 +167,53 @@ class DepartmentController extends Controller
     /**
      * Approve student course selections and enroll them into the final table.
      */
-    public function approveStudentSelection(ApproveStudentSelectionRequest $request) {
+    public function StudentSelection(ApproveStudentSelectionRequest $request)
+    {
         $credentials = $request->validated();
 
         $selection = CourseSelection::query()
             ->with('course:id,name,code,type')
             ->whereKey($credentials['selection_id'])
-            ->where(
-                'academic_year_id',
-                $credentials['academic_year_id']
-            )
+            ->where('academic_year_id', $credentials['academic_year_id'])
             ->where('status', 'pending')
             ->firstOrFail();
 
         $student = Student::findOrFail($selection->student_id);
+        $department = Department::findOrFail($student->department_id);
 
-        $department = Department::findOrFail(
-            $student->department_id
-        );
+        $this->authorize('manageCourseSelections', $department);
 
-        $this->authorize(
-            'manageCourseSelections',
-            $department
-        );
+        DB::transaction(function () use ($selection, $student, $credentials) {
+            $selection->update(['status' => $credentials['status']]);
 
-        DB::transaction(function () use ($selection,$student,$credentials) {
+            if ($credentials['status'] !== 'approved') {
+                return;
+            }
 
-            $selection->update([
-                'status' => 'approved',
-            ]);
-
-            DB::table('course_student')->insert([
-                'student_id' => $student->id,
-                'course_id' => $selection->course_id,
-                'academic_year_id' => $selection->academic_year_id,
-                'status' => 'enrolled',
-                'enrolled_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            DB::table('course_student')->updateOrInsert(
+                [
+                    'student_id' => $student->id,
+                    'course_id' => $selection->course_id,
+                    'academic_year_id' => $selection->academic_year_id,
+                ],
+                [
+                    'status' => 'enrolled',
+                    'enrolled_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         });
 
         return $this->ok(
-            'Course selection approved and student enrolled successfully.',
+            $credentials['status'] === 'approved'
+                ? 'Course selection approved and student enrolled successfully.'
+                : 'Course selection rejected successfully.',
             [
                 'student_id' => $student->id,
                 'academic_year_id' => $credentials['academic_year_id'],
-
-                'enrolled_course' => [
+                'status' => $credentials['status'],
+                'course' => [
                     'selection_id' => $selection->id,
                     'id' => $selection->course->id,
                     'name' => $selection->course->name,
@@ -227,52 +227,33 @@ class DepartmentController extends Controller
     /**
      * Get the list of pending course selections (for all students or a specific student).
      */
-    public function getStudentSelectedCourses(Request $request)
+    public function getStudentSelectedCourses(GetStudentSelectionRequest $request)
     {
-        $validated = $request->validate([
-            'student_id' => 'sometimes|exists:students,id',
-            'academic_year_id' => 'required|exists:academic_years,id',
-        ]);
-
         $user = $request->user();
+        $credentials = $request->validated();
+        $departmentId = $user->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->value('scope_id');
 
-        $query = CourseSelection::with(['course', 'student.user:id,name,email'])
-            ->where('academic_year_id', $validated['academic_year_id'])
-            ->where('status', 'pending');
+        $department = Department::findOrFail($departmentId);
+        $this->authorize('manageCourseSelections', $department);
 
-        if (! empty($validated['student_id'])) {
-            $student = Student::findOrFail($validated['student_id']);
-            $department = Department::findOrFail($student->department_id);
-
-            $this->authorize('manageCourseSelections', $department);
-
-            $query->where('student_id', $student->id);
-        } elseif (! $user->hasRole('MINISTRY_ADMIN')) {
-            $scope = $user->userScopes()
-                ->where('scope_type', 'DEPARTMENT')
-                ->firstOrFail();
-
-            $department = Department::findOrFail($scope->scope_id);
-
-            $this->authorize('manageCourseSelections', $department);
-
-            $query->whereHas('student', function ($q) use ($department) {
-                $q->where('department_id', $department->id);
-            });
-        }
-
-        $selections = $query->latest()->get();
-
-        if ($selections->isEmpty()) {
-            return $this->ok('No pending course selections found.', []);
-        }
-
+        $selections = CourseSelection::query()
+            ->with([
+                'course',
+                'student.user:id,name,email',
+            ])
+            ->where('academic_year_id', $credentials['academic_year_id'])
+            ->whereHas('student', fn ($query) => $query->where('department_id', $departmentId))
+            ->latest()
+            ->get();
         $selectedCourses = $selections->map(function ($selection) {
             return [
                 'id' => $selection->id,
                 'student_id' => $selection->student_id,
-                'student_name' => $selection->student->user->name ?? 'N/A',
-                'student_email' => $selection->student->user->email ?? 'N/A',
+                'semester' => $selection->semester,
+                'student_name' => $selection->student->user->name,
+                'student_email' => $selection->student->user->email,
                 'course_id' => $selection->course->id,
                 'course_name' => $selection->course->name,
                 'course_code' => $selection->course->code,
@@ -282,7 +263,10 @@ class DepartmentController extends Controller
             ];
         })->all();
 
-        return $this->ok('Pending courses retrieved successfully.', $selectedCourses);
+        return $this->ok(
+            'Course selections retrieved successfully.',
+            $selectedCourses
+        );
     }
 
     /**
@@ -326,6 +310,7 @@ class DepartmentController extends Controller
      */
     public function updateCourseSelectionSettings(UpdateCourseSelectionSettingRequest $request, Department $department)
     {
+        $this->authorize('updateCourseSelectionSettings', $department);
         $credentials = $request->validated();
 
         $department->update($credentials);
@@ -375,6 +360,7 @@ class DepartmentController extends Controller
      */
     public function closeCourseSelection(Request $request, Department $department)
     {
+        $this->authorize('closeCourseSelection', $department);
         $department->update(['course_selection_ends_at' => now()]);
         $department->refresh();
 

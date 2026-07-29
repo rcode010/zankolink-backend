@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AcademicRequestUpdateRequest;
 use App\Http\Requests\StoreAcademicRequest;
 use App\Http\Resources\AcademicRequestResource;
+use App\Http\Resources\DepartmentAcademicRequestResource;
 use App\Models\AcademicRequest;
 use App\Services\AcademicRequestDepartmentResolver;
 use App\Traits\ApiResponses;
@@ -73,6 +75,15 @@ class AcademicRequestController extends Controller
 
         return $this->ok('Academic Request retrieved successfully',
             (AcademicRequestResource::collection($academicRequests))->resolve());
+    }
+
+    public function update(AcademicRequestUpdateRequest $request, AcademicRequest $academicRequest)
+    {
+        $credentials = $request->validated();
+
+        $academicRequest->update($credentials);
+
+        return $this->ok('Academic request updated successfully', (new AcademicRequestResource($academicRequest))->resolve());
     }
 
     /**
@@ -217,7 +228,31 @@ class AcademicRequestController extends Controller
      */
     public function show(AcademicRequest $academicRequest)
     {
-
         return $this->ok('Academic Request retrieved successfully', (new AcademicRequestResource($academicRequest->load(['attachments', 'user', 'department'])))->resolve());
+    }
+
+    public function departmentAcademicRequests(Request $request)
+    {
+        $user = $request->user();
+        $this->authorize('departmentAcademicRequest', AcademicRequest::class);
+
+        $departmentId = $user->userScopes()
+            ->where('scope_type', 'DEPARTMENT')
+            ->value('scope_id');
+
+        $academicRequests = AcademicRequest::query()
+            ->with([
+                'user.teacher',
+                'user.student',
+                'department',
+                'attachments',
+            ])
+            ->where('department_id', $departmentId)
+            ->get();
+
+        return $this->ok(
+            'Academic requests retrieved successfully.',
+            DepartmentAcademicRequestResource::collection($academicRequests)->resolve()
+        );
     }
 }

@@ -402,6 +402,7 @@ class StudentMarksController extends Controller
      */
     public function gradeBook(GetGradebookRequest $request, Course $course)
     {
+        $this->authorize('viewGradeBook', [StudentMarks::class, $course]);
         $user = auth()->user();
         $credentials = $request->validated();
 
@@ -523,13 +524,11 @@ class StudentMarksController extends Controller
         );
     }
 
-    public function storeGradebook(StoreGradebookMarksRequest $request, Course $course, StudentCourseGradeCalculator $gradeCalculator)
+    public function storeGradeBook(StoreGradebookMarksRequest $request, Course $course, StudentCourseGradeCalculator $gradeCalculator)
     {
-        $teacher = $request->user()->teacher;
+        $this->authorize('storeGradeBook', [StudentMarks::class, $course]);
 
-        if (! $teacher) {
-            return $this->error('Teacher profile not found.', 404);
-        }
+        $teacher = $request->user()->teacher;
 
         $validated = $request->validated();
 

@@ -49,7 +49,7 @@ class StoreLetterRecipientRequest extends FormRequest
                 'nullable',
                 'file',
                 'mimes:pdf,doc,docx,jpg,jpeg,png',
-                'max:5120',
+                'max:9216',
             ],
         ];
     }

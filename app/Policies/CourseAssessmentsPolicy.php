@@ -22,7 +22,7 @@ class CourseAssessmentsPolicy
     public function view(User $user, CourseAssessments $courseAssessments): bool
     {
         return $this->teacherOwnsAssessment($user, $courseAssessments)
-            || $this->teacherIsPrimaryLecturer($user, $courseAssessments);
+            || $this->teacherIsPrimaryLecturer($user, $courseAssessments->course);
     }
 
     /**
@@ -39,7 +39,7 @@ class CourseAssessmentsPolicy
     public function update(User $user, CourseAssessments $courseAssessments): bool
     {
         return $this->teacherOwnsAssessment($user, $courseAssessments)
-            || $this->teacherIsPrimaryLecturer($user, $courseAssessments);
+            || $this->teacherIsPrimaryLecturer($user, $courseAssessments->course);
     }
 
     /**
@@ -48,7 +48,7 @@ class CourseAssessmentsPolicy
     public function delete(User $user, CourseAssessments $courseAssessments): bool
     {
         return $this->teacherOwnsAssessment($user, $courseAssessments)
-            || $this->teacherIsPrimaryLecturer($user, $courseAssessments);
+            || $this->teacherIsPrimaryLecturer($user, $courseAssessments->course);
     }
 
     /**
@@ -67,6 +67,11 @@ class CourseAssessmentsPolicy
         return false;
     }
 
+    public function publishAssessments(User $user, Course $course): bool
+    {
+        return $this->teacherIsPrimaryLecturer($user, $course);
+    }
+
     private function teacherBelongsToCourse(User $user, Course $course): bool
     {
         return $user->teacher &&
@@ -81,9 +86,9 @@ class CourseAssessmentsPolicy
             $assessment->teacher_id === $user->teacher->id;
     }
 
-    private function teacherIsPrimaryLecturer(User $user, CourseAssessments $assessment)
+    private function teacherIsPrimaryLecturer(User $user, Course $course): bool
     {
-        return $assessment->course->teachers()
+        return $course->teachers()
             ->where('teachers.id', $user->teacher->id)
             ->wherePivot('role', 'primary_lecturer')
             ->exists();

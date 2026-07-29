@@ -15,7 +15,7 @@ class StudentMarksPolicy
     public function viewAny(User $user, CourseAssessments $courseAssessments): bool
     {
         return $this->teacherOwnsAssessment($user, $courseAssessments)
-            || $this->teacherIsPrimaryLecturer($user, $courseAssessments);
+            || $this->teacherIsPrimaryLecturer($user, $courseAssessments->course);
     }
 
     /**
@@ -25,8 +25,8 @@ class StudentMarksPolicy
     {
         $assessment = $studentMarks->courseAssessment;
 
-        return $this->teacherOwnsAssessment($user, $assessment)
-            || $this->teacherIsPrimaryLecturer($user, $assessment);
+        return $this->teacherBelongsToCourse($user, $assessment)
+            || $this->teacherIsPrimaryLecturer($user, $assessment->course);
     }
 
     /**
@@ -35,7 +35,7 @@ class StudentMarksPolicy
     public function create(User $user, CourseAssessments $courseAssessments): bool
     {
         return $this->teacherOwnsAssessment($user, $courseAssessments)
-            || $this->teacherIsPrimaryLecturer($user, $courseAssessments);
+            || $this->teacherIsPrimaryLecturer($user, $courseAssessments->course);
     }
 
     /**
@@ -46,7 +46,7 @@ class StudentMarksPolicy
         $assessment = $studentMarks->courseAssessment;
 
         return $this->teacherOwnsAssessment($user, $assessment)
-            || $this->teacherIsPrimaryLecturer($user, $assessment);
+            || $this->teacherIsPrimaryLecturer($user, $assessment->course);
     }
 
     /**
@@ -73,6 +73,17 @@ class StudentMarksPolicy
         return false;
     }
 
+    public function viewGradeBook(User $user, Course $course): bool
+    {
+        return $this->teacherBelongsToCourse($user, $course)
+            || $this->isHeadOfDepartment($user, $course);
+    }
+
+    public function storeGradeBook(User $user, Course $course): bool
+    {
+        return $this->teacherIsPrimaryLecturer($user, $course);
+    }
+
     public function viewOwn(User $user, Course $course): bool
     {
         return $user->student &&
@@ -87,11 +98,30 @@ class StudentMarksPolicy
             $assessment->teacher_id === $user->teacher->id;
     }
 
-    private function teacherIsPrimaryLecturer(User $user, CourseAssessments $assessment)
+    private function teacherIsPrimaryLecturer(User $user, Course $course)
     {
-        return $assessment->course->teachers()
-            ->where('teachers.id', $user->teacher->id)
-            ->wherePivot('role', 'primary_lecturer')
-            ->exists();
+        return $user->teacher &&
+            $course->teachers()
+                ->where('teachers.id', $user->teacher->id)
+                ->wherePivot('role', 'primary_lecturer')
+                ->exists();
+    }
+
+    private function isHeadOfDepartment(User $user, Course $course): bool
+    {
+        return $user->hasRole('HEAD_OF_DEPARTMENT')
+            &&
+            $user->userScopes()
+
+                ->where('scope_type', 'DEPARTMENT')
+                ->where('scope_id', $course->department_id)
+                ->exists();
+    }
+    private function teacherBelongsToCourse(User $user, Course $course): bool
+    {
+        return $user->teacher
+            && $course->teachers()
+                ->whereKey($user->teacher->id)
+                ->exists();
     }
 }

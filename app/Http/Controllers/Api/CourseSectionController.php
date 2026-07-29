@@ -64,8 +64,7 @@ class CourseSectionController extends Controller
     {
         $this->authorize('viewAny', [CourseSection::class, $course]);
 
-        $perPage = (int) $request->input('per_page', 15);
-        $perPage = max(1, min($perPage, 100));
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $sections = QueryBuilder::for($course->sections())
             ->addSelect([
@@ -82,12 +81,13 @@ class CourseSectionController extends Controller
             ->with([
                 'course',
                 'teacher',
-                'items',
+                'items.creator',
                 'submissions.attachments',
                 'submissions.courseAssessment',
+                'submissions.creator',
             ])
             ->latest()
-            ->paginate($perPage);
+            ->paginate($per_page);
 
         return $this->ok(
             'Course sections retrieved successfully',
@@ -121,15 +121,16 @@ class CourseSectionController extends Controller
         $validated = $request->validated();
         $teacher = auth()->user()->teacher;
 
-        abort_unless(
-            $teacher,
-            403,
-            'Only accounts with a teacher profile can create course sections.'
-        );
-
         $validated['teacher_id'] = $teacher->id;
         $section = $course->sections()->create($validated);
-        $section->load(['course:id,name']);
+        $section->load([
+            'course:id,name',
+            'teacher',
+            'items',
+            'submissions.creator',
+            'submissions.attachments',
+            'submissions.courseAssessment',
+        ]);
 
         return $this->success(
             'Course section created successfully.',

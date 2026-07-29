@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCourseRequest extends FormRequest
 {
@@ -25,14 +26,17 @@ class StoreCourseRequest extends FormRequest
         return [
             'department_id' => 'required|exists:departments,id',
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:courses,code',
+            'code' => [
+                'required', 'string', 'max:255',
+                Rule::unique('courses', 'code')
+                    ->where('department_id', $this->department_id),
+            ],
             'semester' => 'required|in:fall,spring',
             'credit_hours' => 'required|integer|min:1',
             'year_level' => 'required|integer|min:1',
             'is_active' => 'nullable|boolean',
             'prerequisites' => 'nullable|array',
             'prerequisites.*' => 'required|integer|exists:courses,id',
-            'color' => 'required|string|max:255',
         ];
     }
 }

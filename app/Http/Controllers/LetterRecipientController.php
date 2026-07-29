@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreLetterRecipientRequest;
 use App\Http\Resources\LetterRecipientsResource;
 use App\Models\AcademicYear;
+use App\Models\Letter;
+use App\Models\LetterRecipient;
 use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
+use App\Services\LetterPayloadEnrichmentService;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Str;
 
@@ -19,8 +22,10 @@ class LetterRecipientController extends Controller
         StoreLetterRecipientRequest $request,
         QrCodeService $qrCodeService,
         LetterVerificationHashService $hashService,
-        LetterService $letterService
+        LetterService $letterService,
+        LetterPayloadEnrichmentService $enrichmentService
     ) {
+        $this->authorize('createLetterRecipient', Letter::class);
         $user = $request->user();
 
         $data = $request->validated();
@@ -35,6 +40,7 @@ class LetterRecipientController extends Controller
 
         $letter = $letterService->create(
             $data,
+            $enrichmentService,
             $qrCodeService,
             $user,
             $hashService,

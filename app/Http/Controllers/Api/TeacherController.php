@@ -29,7 +29,6 @@ class TeacherController extends Controller
     {
         $this->authorize('viewAny', Teacher::class);
 
-        $perPage = $request->query('per_page', 15);
 
         $query = Teacher::query();
 
@@ -59,7 +58,7 @@ class TeacherController extends Controller
             )
             ->with('user:id,name,email', 'departments:id,name')
             ->latest()
-            ->paginate($perPage);
+            ->get();
 
         return $this->ok(
             'Teachers retrieved successfully.',

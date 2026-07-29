@@ -8,26 +8,40 @@ use App\Models\LetterSignature;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
+
 class LetterService
 {
     public function create(
         array $data,
+        LetterPayloadEnrichmentService $snapshotService,
         QrCodeService $qrCodeService,
         User $user,
         LetterVerificationHashService $letterVerificationHashService,
         array $files,
-        array $recipientIds = []
+        array $recipientIds = [],
     ) {
-        return DB::transaction(function () use ($data, $qrCodeService, $user, $letterVerificationHashService, $files, $recipientIds) {
-
+        return DB::transaction(function () use ($data,$snapshotService, $qrCodeService, $user, $letterVerificationHashService, $files, $recipientIds) {
+        if (isset($data['payload'])) {
+                $data['payload'] = $snapshotService->run(
+                    $data['type'],
+                    $data['payload']
+                );
+            }
             $letter = Letter::create($data)->fresh();
 
-            foreach ($recipientIds as $recipientId) {
-                LetterRecipient::create([
+
+            $now = now();
+
+            $rows = collect($recipientIds)
+                ->map(fn ($recipientId) => [
                     'letter_id' => $letter->id,
                     'recipient_id' => $recipientId,
-                ]);
-            }
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ])
+                ->all();
+
+            LetterRecipient::insert($rows);
 
             $hashData = $letterVerificationHashService->generate($letter);
 
@@ -42,7 +56,7 @@ class LetterService
             ]);
 
             foreach ($files as $file) {
-                $path = $file->store('section-submission', 'public');
+                $path = $file->store('attachments/letters/'.$letter->id, 'public');
 
                 $letter->attachments()->create([
                     'file_name' => $file->getClientOriginalName(),

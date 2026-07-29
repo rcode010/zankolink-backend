@@ -104,7 +104,7 @@ class CourseAttendanceSessionsController extends Controller
 
         $teacher = $request->user()->teacher;
 
-        $per_page = $request->query('per_page', 15);
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $sessions = QueryBuilder::for(CourseAttendanceSessions::class)
             ->where('teacher_id', $teacher->id)
@@ -284,7 +284,6 @@ class CourseAttendanceSessionsController extends Controller
     public function show(CourseAttendanceSessions $session, Request $request)
     {
         $this->authorize('view', $session);
-        $teacher = $request->user()->teacher;
 
         $session->load('course', 'teacher.user', 'academicYear');
 
@@ -353,8 +352,6 @@ class CourseAttendanceSessionsController extends Controller
     {
         $this->authorize('update', $session);
 
-        $teacher = $request->user()->teacher;
-
         $session->update($request->validated());
 
         $session->load('course', 'teacher.user', 'academicYear');
@@ -389,8 +386,6 @@ class CourseAttendanceSessionsController extends Controller
     public function destroy(CourseAttendanceSessions $session, Request $request)
     {
         $this->authorize('delete', $session);
-
-        $teacher = $request->user()->teacher;
 
         $session->delete();
 

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('semester', ['fall', 'spring'])->default('fall');
             $table->integer('seats')->nullable();
             $table->text('name');
-            $table->text('code');
+            $table->string('code');
             $table->bigInteger('credit_hours');
             $table->bigInteger('year_level');
             $table->boolean('is_active')->default(true);
@@ -29,6 +29,7 @@ return new class extends Migration
             $table->index(['department_id', 'type', 'is_active'], 'courses_department_type_active_idx');
             $table->index(['department_id', 'year_level'], 'courses_department_year_level_idx');
             $table->unique(['department_id', 'color'], 'courses_department_color_unique');
+            $table->index(['department_id', 'code'], 'courses_department_code_unique');
         });
     }
 

@@ -55,7 +55,6 @@ class StudentAttendanceController extends Controller
         $this->authorize('create', [StudentAttendance::class, $session]);
 
         $data = $request->validated();
-        $teacher = $request->user()->teacher;
 
         $enrolledStudentIds = $session->course
             ->students()
@@ -159,7 +158,6 @@ class StudentAttendanceController extends Controller
     public function getAttendance(CourseAttendanceSessions $session, Request $request)
     {
         $this->authorize('viewAny', [StudentAttendance::class, $session]);
-        $teacher = $request->user()->teacher;
 
         $session->load('attendance.student.user');
 
@@ -246,7 +244,7 @@ class StudentAttendanceController extends Controller
 
         $student = $request->user()->student;
 
-        $per_page = $request->query('per_page', 15);
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
         $attendance = QueryBuilder::for(StudentAttendance::class)
             ->where('student_id', $student->id)
@@ -327,7 +325,6 @@ class StudentAttendanceController extends Controller
     public function updateStudentAttendance(UpdateStudentAttendanceRequest $request, CourseAttendanceSessions $session, Student $student)
     {
         $this->authorize('update', [StudentAttendance::class, $session]);
-        $teacher = $request->user()->teacher;
 
         $attendance = StudentAttendance::where('attendance_session_id', $session->id)
             ->where('student_id', $student->id)

@@ -18,7 +18,7 @@ class OrganizationalHierarchyService
         return match ($user->getRoleNames()->first()) {
             'DEAN' => $this->getAllDeanDepartments($user),
             'UNIVERSITY_ADMIN' => $this->getAllUniversityFaculties($user),
-            'MINISTRY_IMPORT_EXPORT_STAFF' => $this->getAllUniversities(),
+            'MINISTRY_IMPORT_EXPORT_STAFF', 'MINISTRY_ADMIN' => $this->getAllUniversities(),
             default => collect(),
         };
 

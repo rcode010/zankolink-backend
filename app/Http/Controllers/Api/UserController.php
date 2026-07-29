@@ -30,10 +30,12 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        $perPage = max(1, min((int) $request->query('per_page', 10), 100));
+
         $users = QueryBuilder::for(User::class)
 //            ->allowedFilters('role_scope_type')
             ->latest()
-            ->paginate($request->query('per_page', 10));
+            ->paginate($perPage);
 
         return $this->ok(
             'Users retrieved successfully.',
@@ -89,7 +91,10 @@ class UserController extends Controller
      */
     public function deactivate(User $user)
     {
-        $user->update(['is_active' => false]);
+        DB::transaction(function () use ($user) {
+            $user->update(['is_active' => false]);
+            $user->tokens()->delete();
+        });
 
         return $this->ok(
             'User deactivated successfully',

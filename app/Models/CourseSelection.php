@@ -15,6 +15,7 @@ class CourseSelection extends Model
         'course_id',
         'student_id',
         'academic_year_id',
+        'semester',
         'status',
     ];
 

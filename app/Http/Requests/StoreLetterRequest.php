@@ -57,7 +57,7 @@ class StoreLetterRequest extends FormRequest
                 'nullable',
                 'file',
                 'mimes:pdf,doc,docx,jpg,jpeg,png',
-                'max:5120',
+                'max:9216',
             ],
 
             ...$this->payloadRules($type),
