@@ -44,7 +44,7 @@ class LecturerCourseController extends Controller
     public function courses(Request $request)
     {
         $teacher = auth()->user()->teacher;
-        $academicYear = AcademicYear::where('active', 1)->first();
+        $academicYear = AcademicYear::where('is_active', 1)->first();
 
 
         $courses = $teacher->courses()
