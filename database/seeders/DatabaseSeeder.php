@@ -39,17 +39,17 @@ class DatabaseSeeder extends Seeder
 
     private int $teacherNumber = 1;
 
-    private int $universitiesCount = 3;
+    private int $universitiesCount = 4;
 
-    private int $facultiesPerUniversity = 3;
+    private int $facultiesPerUniversity = 5;
 
-    private int $departmentsPerFaculty = 4;
+    private int $departmentsPerFaculty = 6;
 
-    private int $teachersPerDepartment = 5;
+    private int $teachersPerDepartment = 10;
 
-    private int $studentsPerDepartment = 10;
+    private int $studentsPerDepartment = 100;
 
-    private int $coursesPerDepartment = 5;
+    private int $coursesPerDepartment = 25;
 
     private int $lettersCount = 30;
 
@@ -1234,7 +1234,6 @@ class DatabaseSeeder extends Seeder
                 'semester' => 'fall',
                 'type' => 'mandatory',
                 'is_active' => true,
-                'color' => 'red',
             ]
         );
 

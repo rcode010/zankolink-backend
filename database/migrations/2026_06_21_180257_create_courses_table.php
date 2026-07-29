@@ -22,13 +22,12 @@ return new class extends Migration
             $table->bigInteger('credit_hours');
             $table->bigInteger('year_level');
             $table->boolean('is_active')->default(true);
-            $table->string('color');
+            $table->string('color')->nullable();
             $table->timestamps();
 
             $table->index(['department_id', 'is_active'], 'courses_department_active_deleted_idx');
             $table->index(['department_id', 'type', 'is_active'], 'courses_department_type_active_idx');
             $table->index(['department_id', 'year_level'], 'courses_department_year_level_idx');
-            $table->unique(['department_id', 'color'], 'courses_department_color_unique');
             $table->index(['department_id', 'code'], 'courses_department_code_unique');
         });
     }
