@@ -44,6 +44,9 @@ Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function ()
         require __DIR__.'/api/letter-recipients.php';
 
     });
+    Route::middleware('ability:moodle,admin')->group(function () {
+        require __DIR__.'/api/shared.php';
+    });
 
     Route::middleware('ability:moodle')->group(function () {
         require __DIR__.'/api/course-assessment.php';
@@ -58,8 +61,5 @@ Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function ()
         require __DIR__.'/api/course-attendance-sessions.php';
         require __DIR__.'/api/student-attendance.php';
         require __DIR__.'/api/academic-request.php';
-    });
-    Route::middleware('ability:moodle,admin')->group(function () {
-        require __DIR__.'/api/shared.php';
     });
 });
