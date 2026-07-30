@@ -266,7 +266,7 @@
 
             {{-- CTA --}}
             <div class="btn-wrap">
-                <a href="{{ config('frontend.url') }}/login" class="btn">Login to ZankoLink</a>
+                <a href="{{ config('zankobook.url') }}/login" class="btn">Login to ZankoLink</a>
             </div>
 
             <hr class="divider"/>
