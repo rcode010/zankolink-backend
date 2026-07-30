@@ -15,20 +15,9 @@ class CalendarEventsController extends Controller
     public function myAssignments(Request $request)
     {
         $validated = $request->validate([
-            'start_date' => [
-                'required',
-                'date',
-            ],
-            'end_date' => [
-                'required',
-                'date',
-                'after_or_equal:start_date',
-            ],
-            'course_id' => [
-                'sometimes',
-                'integer',
-                'exists:courses,id',
-            ],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'course_id' => ['sometimes', 'integer', 'exists:courses,id'],
         ]);
 
         $student = $request->user()->student;
@@ -48,8 +37,18 @@ class CalendarEventsController extends Controller
         $startDate = Carbon::parse($validated['start_date'])->startOfDay();
         $endDate = Carbon::parse($validated['end_date'])->endOfDay();
 
+        $courseIds = $student->courses()
+            ->wherePivot('academic_year_id', $academicYearId)
+            ->pluck('courses.id');
+
         $assignments = SectionSubmission::query()
             ->select('section_submissions.*')
+            ->join(
+                'course_sections',
+                'course_sections.id',
+                '=',
+                'section_submissions.course_section_id'
+            )
             ->join(
                 'course_assessments',
                 'course_assessments.id',
@@ -57,31 +56,18 @@ class CalendarEventsController extends Controller
                 'section_submissions.course_assessment_id'
             )
             ->whereNull('course_assessments.deleted_at')
-            ->where(
-                'course_assessments.academic_year_id',
-                $academicYearId
-            )
-            ->whereBetween(
-                'course_assessments.due_at',
-                [$startDate, $endDate]
-            )
+            ->where('course_assessments.academic_year_id', $academicYearId)
+            ->whereBetween('course_assessments.due_at', [
+                $startDate,
+                $endDate,
+            ])
+            ->whereIn('course_sections.course_id', $courseIds)
             ->when(
                 isset($validated['course_id']),
                 fn ($query) => $query->where(
-                    'course_assessments.course_id',
+                    'course_sections.course_id',
                     $validated['course_id']
                 )
-            )
-            ->whereHas(
-                'courseAssessment.course.students',
-                function ($query) use ($student, $academicYearId) {
-                    $query
-                        ->where('students.id', $student->id)
-                        ->where(
-                            'course_student.academic_year_id',
-                            $academicYearId
-                        );
-                }
             )
             ->with([
                 'courseAssessment:id,course_id,title,due_at,max_mark,weight',
