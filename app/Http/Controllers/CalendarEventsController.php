@@ -73,7 +73,7 @@ class CalendarEventsController extends Controller
                 )
             )
             ->whereHas(
-                'section.course.students',
+                'courseAssessment.course.students',
                 function ($query) use ($student, $academicYearId) {
                     $query
                         ->where('students.id', $student->id)
@@ -86,7 +86,6 @@ class CalendarEventsController extends Controller
             ->with([
                 'courseAssessment:id,course_id,title,due_at,max_mark,weight',
                 'section.course:id,name,code',
-
                 'studentSubmissions' => fn ($query) => $query
                     ->where('student_id', $student->id),
             ])
@@ -114,7 +113,7 @@ class CalendarEventsController extends Controller
                 'is_submitted' => $submission !== null,
 
                 'is_overdue' => ! $submission
-                    && Carbon::parse($assessment->due_at)->isPast(),
+                    && $assessment->due_at->isPast(),
 
                 'submission' => $submission
                     ? [
