@@ -286,6 +286,7 @@ class LetterController extends Controller
                 ->with(['sender:id,name', 'attachments', 'recipients'])
                 ->allowedFilters(
                     AllowedFilter::partial('created_at'),
+                    AllowedFilter::exact('status'),
                     AllowedFilter::custom(
                         'university',
                         new MultiRecipientUniversityFilter
