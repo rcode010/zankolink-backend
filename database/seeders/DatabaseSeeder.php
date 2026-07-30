@@ -283,7 +283,7 @@ class DatabaseSeeder extends Seeder
                 'view academic requests', 'view academic request', 'update academic request',
                 'view student course selections', 'update course selection settings',
                 'close course selections', 'store student course selections',
-                'view gradebook',
+                'view gradebook','update teachers'
             ],
 
             'lecturer' => [
