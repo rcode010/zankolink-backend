@@ -4,7 +4,9 @@ use App\Http\Controllers\AcademicRequestController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CourseMarkController;
 use App\Http\Controllers\Api\StudentCourseController;
+use App\Http\Controllers\Api\StudentSelectionController;
 use App\Http\Controllers\StudentMarksController;
+Route::post('/students/course-selection', [StudentSelectionController::class, 'saveCourseSelection'])->middleware('permission:create student course selections');
 
 Route::get('/moodle/courses/{course}/gradebook', [StudentMarksController::class, 'gradeBook'])->middleware('permission:view gradebook');
 Route::get('/students/available-courses', [StudentCourseController::class, 'availableCourses'])->middleware('permission:view courses');
