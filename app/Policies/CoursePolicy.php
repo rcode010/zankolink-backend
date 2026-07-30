@@ -83,7 +83,10 @@ class CoursePolicy
      */
     public function delete(User $user, Course $course): bool
     {
-        return $user->hasRole('MINISTRY_ADMIN');
+        return $user->hasRole('MINISTRY_ADMIN')|| $user->userScopes()
+        ->where('scope_type', 'DEPARTMENT')
+        ->where('scope_id', $course->department_id)
+        ->exists();
     }
 
     /**
