@@ -113,7 +113,7 @@ class CalendarEventsController extends Controller
                 'is_submitted' => $submission !== null,
 
                 'is_overdue' => ! $submission
-                    && $assessment->due_at->isPast(),
+                    && Carbon::parse($assessment->due_at)->isPast(),
 
                 'submission' => $submission
                     ? [
