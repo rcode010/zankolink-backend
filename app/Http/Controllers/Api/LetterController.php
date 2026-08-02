@@ -237,7 +237,6 @@ class LetterController extends Controller
                     ];
                 });
         }
-
         $inbox = $letters
             ->concat($multiRecipientLetters)
             ->sortByDesc('created_at')
