@@ -10,8 +10,10 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\VerifyRequest;
+use App\Http\Requests\ZankolineLoginRequest;
 use App\Http\Resources\UserResource;
 use App\Mail\TwoFactorCodeMail;
+use App\Models\HighSchoolStudent;
 use App\Models\User;
 use App\Models\UserScope;
 use App\Services\TwoFactorAuthenticationService;
@@ -74,17 +76,17 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
 
-        if (! Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
         }
 
         $user = $request->user();
 
-        if (! $user->is_active) {
+        if (!$user->is_active) {
             return $this->error('Your account is deactivated.', 403);
         }
 
-        if (! $user->canAccessAdminPanel()) {
+        if (!$user->canAccessAdminPanel()) {
             return $this->error('You are not allowed to access the admin panel.', 403);
         }
 
@@ -117,17 +119,17 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
 
-        if (! Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials)) {
             return $this->error('Invalid credentials', 401);
         }
 
         $user = $request->user();
 
-        if (! $user->is_active) {
+        if (!$user->is_active) {
             return $this->error('Your account is deactivated.', 403);
         }
 
-        if (! $user->canAccessMoodlePanel()) {
+        if (!$user->canAccessMoodlePanel()) {
             return $this->error('You are not allowed to access the Moodle panel.', 403);
         }
 
@@ -148,17 +150,35 @@ class AuthController extends Controller
         );
     }
 
+    public function zankolineLogin(ZankolineLoginRequest $request): JsonResponse
+    {
+        $credentials = $request->validated();
+
+        $student = HighSchoolStudent::where('code', $credentials['code'])->first();
+
+        if (!$student || !Hash::check($credentials['password'], $student->password)) {
+            return $this->error('Invalid credentials', 401);
+        }
+
+        $token = $student->createToken('zankoline-token', ['zankoline'])->plainTextToken;
+
+        return $this->ok('Logged in successfully', [
+            'token' => $token,
+            'student' => $student,
+        ]);
+    }
+
     public function verify(VerifyRequest $request, UserScopeResolverService $scopeResolver): JsonResponse
     {
         $userId = cache()->get("2fa_challenge_{$request->challenge_token}");
 
-        if (! $userId) {
+        if (!$userId) {
             return $this->error('Invalid or expired challenge token', 401);
         }
 
         $user = User::findOrFail($userId);
 
-        if (! $user->is_active) {
+        if (!$user->is_active) {
             cache()->forget("2fa_challenge_{$request->challenge_token}");
 
             return $this->error('Your account is deactivated.', 403);
@@ -173,7 +193,7 @@ class AuthController extends Controller
             return $this->error('Too many attempts, please login again', 429);
         }
 
-        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+        if (!Hash::check((string)$request->otp, $user->two_factor_code)) {
             cache()->put($failKey, $fails + 1, now()->addMinutes(10));
 
             return $this->error('Invalid OTP', 401);
@@ -234,11 +254,11 @@ class AuthController extends Controller
             return $this->error('Too many invalid attempts. Request a new code.', 429);
         }
 
-        if (! $user->two_factor_expires_at || now()->isAfter($user->two_factor_expires_at)) {
+        if (!$user->two_factor_expires_at || now()->isAfter($user->two_factor_expires_at)) {
             return $this->error('OTP has expired, please request a new one.', 401);
         }
 
-        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+        if (!Hash::check((string)$request->otp, $user->two_factor_code)) {
             cache()->put($failKey, cache()->get($failKey, 0) + 1, now()->addMinutes(15));
 
             return $this->error('Invalid OTP', 401);
@@ -267,11 +287,11 @@ class AuthController extends Controller
             return $this->error('Too many invalid attempts. Request a new code.', 429);
         }
 
-        if (! $user->two_factor_expires_at || now()->isAfter($user->two_factor_expires_at)) {
+        if (!$user->two_factor_expires_at || now()->isAfter($user->two_factor_expires_at)) {
             return $this->error('OTP has expired, please request a new one.', 401);
         }
 
-        if (! Hash::check((string) $request->otp, $user->two_factor_code)) {
+        if (!Hash::check((string)$request->otp, $user->two_factor_code)) {
             cache()->put($failKey, cache()->get($failKey, 0) + 1, now()->addMinutes(15));
 
             return $this->error('Invalid OTP', 401);
@@ -301,7 +321,7 @@ class AuthController extends Controller
         $credentials = $request->validated();
         $user = $request->user();
 
-        if (! Hash::check($credentials['current_password'], $user->password)) {
+        if (!Hash::check($credentials['current_password'], $user->password)) {
             return $this->error('Current password is incorrect.', 401);
         }
         if ($credentials['password'] === $credentials['current_password']) {
@@ -323,7 +343,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $credentials['email'])->first();
 
-        if (! $user || ! $user->is_active) {
+        if (!$user || !$user->is_active) {
             return $this->ok('If an account exists for that email, a reset link has been sent.');
         }
 
@@ -338,7 +358,7 @@ class AuthController extends Controller
         $credentials = $request->validated();
         $user = User::where('email', $request->email)->first();
 
-        if (! $user->is_active) {
+        if (!$user->is_active) {
             throw ValidationException::withMessages([
                 'email' => ['Your account is deactivated.'],
             ]);
