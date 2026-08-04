@@ -16,7 +16,7 @@ class HighSchoolStudent extends Model
 
     protected $fillable = [
         'code',
-        'type',
+        'major_type',
         'gender',
         'is_active',
         'status',
