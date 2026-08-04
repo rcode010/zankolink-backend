@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DepartmentOfferings;
+use App\Models\DepartmentOffering;
 use Illuminate\Http\Request;
 
 class DepartmentOfferingsController extends Controller
 {
     public function index()
     {
-        return DepartmentOfferings::all();
+        return DepartmentOffering::all();
     }
 
     public function store(Request $request)
@@ -18,15 +18,15 @@ class DepartmentOfferingsController extends Controller
 
         ]);
 
-        return DepartmentOfferings::create($data);
+        return DepartmentOffering::create($data);
     }
 
-    public function show(DepartmentOfferings $departmentOfferings)
+    public function show(DepartmentOffering $departmentOfferings)
     {
         return $departmentOfferings;
     }
 
-    public function update(Request $request, DepartmentOfferings $departmentOfferings)
+    public function update(Request $request, DepartmentOffering $departmentOfferings)
     {
         $data = $request->validate([
 
@@ -37,7 +37,7 @@ class DepartmentOfferingsController extends Controller
         return $departmentOfferings;
     }
 
-    public function destroy(DepartmentOfferings $departmentOfferings)
+    public function destroy(DepartmentOffering $departmentOfferings)
     {
         $departmentOfferings->delete();
 

@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\HighSchoolStudents;
+use App\Models\HighSchoolStudent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 class HighSchoolStudentsFactory extends Factory
 {
-    protected $model = HighSchoolStudents::class;
+    protected $model = HighSchoolStudent::class;
 
     public function definition(): array
     {

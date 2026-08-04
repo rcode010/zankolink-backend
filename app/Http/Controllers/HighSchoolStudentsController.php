@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\HighSchoolStudents;
+use App\Models\HighSchoolStudent;
 use Illuminate\Http\Request;
 
 class HighSchoolStudentsController extends Controller
 {
     public function index()
     {
-        return HighSchoolStudents::all();
+        return HighSchoolStudent::all();
     }
 
     public function store(Request $request)
@@ -18,15 +18,15 @@ class HighSchoolStudentsController extends Controller
 
         ]);
 
-        return HighSchoolStudents::create($data);
+        return HighSchoolStudent::create($data);
     }
 
-    public function show(HighSchoolStudents $highSchoolStudents)
+    public function show(HighSchoolStudent $highSchoolStudents)
     {
         return $highSchoolStudents;
     }
 
-    public function update(Request $request, HighSchoolStudents $highSchoolStudents)
+    public function update(Request $request, HighSchoolStudent $highSchoolStudents)
     {
         $data = $request->validate([
 
@@ -37,7 +37,7 @@ class HighSchoolStudentsController extends Controller
         return $highSchoolStudents;
     }
 
-    public function destroy(HighSchoolStudents $highSchoolStudents)
+    public function destroy(HighSchoolStudent $highSchoolStudents)
     {
         $highSchoolStudents->delete();
 

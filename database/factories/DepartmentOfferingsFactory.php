@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\DepartmentOfferings;
+use App\Models\DepartmentOffering;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 class DepartmentOfferingsFactory extends Factory
 {
-    protected $model = DepartmentOfferings::class;
+    protected $model = DepartmentOffering::class;
 
     public function definition(): array
     {

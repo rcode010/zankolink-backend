@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StudentSubjects;
+use App\Models\StudentSubject;
 use Illuminate\Http\Request;
 
 class StudentSubjectsController extends Controller
 {
     public function index()
     {
-        return StudentSubjects::all();
+        return StudentSubject::all();
     }
 
     public function store(Request $request)
@@ -18,15 +18,15 @@ class StudentSubjectsController extends Controller
 
         ]);
 
-        return StudentSubjects::create($data);
+        return StudentSubject::create($data);
     }
 
-    public function show(StudentSubjects $studentSubjects)
+    public function show(StudentSubject $studentSubjects)
     {
         return $studentSubjects;
     }
 
-    public function update(Request $request, StudentSubjects $studentSubjects)
+    public function update(Request $request, StudentSubject $studentSubjects)
     {
         $data = $request->validate([
 
@@ -37,7 +37,7 @@ class StudentSubjectsController extends Controller
         return $studentSubjects;
     }
 
-    public function destroy(StudentSubjects $studentSubjects)
+    public function destroy(StudentSubject $studentSubjects)
     {
         $studentSubjects->delete();
 
