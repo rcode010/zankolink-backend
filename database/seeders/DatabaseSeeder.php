@@ -39,19 +39,19 @@ class DatabaseSeeder extends Seeder
 
     private int $teacherNumber = 1;
 
-    private int $universitiesCount = 4;
+    private int $universitiesCount = 3;
 
-    private int $facultiesPerUniversity = 5;
+    private int $facultiesPerUniversity = 3;
 
-    private int $departmentsPerFaculty = 6;
+    private int $departmentsPerFaculty = 3;
 
-    private int $teachersPerDepartment = 10;
+    private int $teachersPerDepartment = 5;
 
-    private int $studentsPerDepartment = 100;
+    private int $studentsPerDepartment = 10;
 
-    private int $coursesPerDepartment = 25;
+    private int $coursesPerDepartment = 5;
 
-    private int $lettersCount = 30;
+    private int $lettersCount = 5;
 
     /** @var array<string, int> */
     private array $roleIds = [];
