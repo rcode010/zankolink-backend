@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('academic_year_id')->constrained('academic_years')->cascadeOnDelete();
             $table->enum('track_type', ['zankoline', 'parallel'])->default('zankoline');
             $table->enum('governorate', ['Erbil', 'Sulaimani', 'Duhok', 'Halabja', 'Kirkuk']);
-            $table->enum('major_type',['Scientific','literary']);
+            $table->enum('major_type',['scientific','literary']);
             $table->text('city');
             $table->decimal('minimum_grade', 6, 3);
             $table->timestamps();
