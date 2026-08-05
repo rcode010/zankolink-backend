@@ -13,4 +13,26 @@ class StudentApplication extends Model
         'draft_choices',
         'submitted_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'draft_choices' => 'array',
+        ];
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(
+            HighSchoolStudent::class,
+            'student_id'
+        );
+    }
+
+    public function academicYear()
+    {
+        return $this->belongsTo(
+            AcademicYear::class
+        );
+    }
 }
