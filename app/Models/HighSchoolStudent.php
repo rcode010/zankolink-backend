@@ -42,6 +42,6 @@ class HighSchoolStudent extends Model
 
     public function contacts()
     {
-        return $this->hasOne(StudentContactInfo::class);
+        return $this->hasOne(StudentContactInfo::class,'student_id');
     }
 }
