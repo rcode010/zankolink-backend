@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentContactInfoRequest;
+use App\Http\Requests\UpdateStudentContactInfoRequest;
 use App\Http\Resources\StudentContactInfoResource;
 use App\Models\StudentContactInfo;
 use App\Traits\ApiResponses;
-use Illuminate\Http\Request;
 
 class StudentContactInfoController extends Controller
 {
@@ -28,15 +28,18 @@ class StudentContactInfoController extends Controller
         return $studentContactInfo;
     }
 
-    public function update(Request $request, StudentContactInfo $studentContactInfo)
+    public function update(UpdateStudentContactInfoRequest $request)
     {
-        $data = $request->validate([
+        $contactInfo = $request->user()->contacts;
 
-        ]);
+        $contactInfo->update(
+            $request->validated()
+        );
 
-        $studentContactInfo->update($data);
-
-        return $studentContactInfo;
+        return $this->ok(
+            'Student contact information updated successfully.',
+            (new StudentContactInfoResource($contactInfo->fresh()))->resolve()
+        );
     }
 
     public function destroy(StudentContactInfo $studentContactInfo)
