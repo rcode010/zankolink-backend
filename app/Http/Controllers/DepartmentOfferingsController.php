@@ -42,7 +42,7 @@ class DepartmentOfferingsController extends Controller
     {
         $credentials = $request->validated();
         $departmentOffering->update($credentials);
-        return $this->ok('Department offerings updated successfully.', $departmentOffering->fresh()->toArray());
+        return $this->ok('Department offerings updated successfully.', (new DepartmentOfferingResource($departmentOffering->fresh()))->resolve());
     }
 
     public function destroy(DepartmentOffering $departmentOfferings)
