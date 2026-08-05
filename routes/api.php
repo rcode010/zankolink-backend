@@ -64,5 +64,6 @@ Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function ()
     });
     Route::middleware('ability:zankoline')->group(function () {
         require __DIR__.'/api/zankoline/student-contact-info.php';
+        require __DIR__.'/api/zankoline/student-application.php';
     });
 });
