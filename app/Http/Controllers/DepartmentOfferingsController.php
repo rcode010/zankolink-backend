@@ -2,23 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDepartmentOfferingRequest;
+use App\Http\Requests\UpdateDepartmentOfferingRequest;
+use App\Http\Resources\DepartmentOfferingResource;
+use App\Models\AcademicYear;
 use App\Models\DepartmentOffering;
-use Illuminate\Http\Request;
+use App\Traits\ApiResponses;
 
 class DepartmentOfferingsController extends Controller
 {
+    use ApiResponses;
+
     public function index()
     {
-        return DepartmentOffering::all();
+        $academic_year = AcademicYear::where('is_active', 1)->firstOrFail();
+        $departmentOfferings = DepartmentOffering::query()
+            ->with('department.faculty.university')
+            ->where('academic_year_id', $academic_year->id)
+            ->get();
+
+        return $this->ok('Department Offerings fetched successfully.', (DepartmentOfferingResource::collection($departmentOfferings))->resolve());
     }
 
-    public function store(Request $request)
+    public function store(StoreDepartmentOfferingRequest $request)
     {
-        $data = $request->validate([
+        $credentials = $request->validated();
 
-        ]);
+        $departmentOffering = DepartmentOffering::create($credentials);
 
-        return DepartmentOffering::create($data);
+        return $this->created('Department offering created successfully.', (new DepartmentOfferingResource($departmentOffering))->resolve());
     }
 
     public function show(DepartmentOffering $departmentOfferings)
@@ -26,21 +38,17 @@ class DepartmentOfferingsController extends Controller
         return $departmentOfferings;
     }
 
-    public function update(Request $request, DepartmentOffering $departmentOfferings)
+    public function update(UpdateDepartmentOfferingRequest $request, DepartmentOffering $departmentOffering)
     {
-        $data = $request->validate([
-
-        ]);
-
-        $departmentOfferings->update($data);
-
-        return $departmentOfferings;
+        $credentials = $request->validated();
+        $departmentOffering->update($credentials);
+        return $this->ok('Department offerings updated successfully.', (new DepartmentOfferingResource($departmentOffering->fresh()))->resolve());
     }
 
-    public function destroy(DepartmentOffering $departmentOfferings)
+    public function destroy(DepartmentOffering $departmentOffering)
     {
-        $departmentOfferings->delete();
+        $departmentOffering->delete();
 
-        return response()->json();
+        return $this->deleted('Department offering deleted successfully.');
     }
 }
