@@ -22,6 +22,6 @@ class StudentContactInfo extends Model
 
     public function student()
     {
-        return $this->belongsTo(HighSchoolStudent::class);
+        return $this->belongsTo(HighSchoolStudent::class,'student_id');
     }
 }

@@ -27,3 +27,7 @@ Route::middleware(['auth:sanctum', 'ability:admin,moodle'])->group(function () {
     Route::get('/auth/me', [AuthController::class, 'profile'])->middleware('throttle:api');
 
 });
+Route::middleware(['auth:sanctum', 'ability:zankoline'])->group(function () {
+
+    Route::get('/auth/zankoline/me',[AuthController::class, 'zankolineMe'])->middleware('throttle:api');
+});

@@ -407,4 +407,13 @@ class AuthController extends Controller
             $userData
         );
     }
+    public function zankolineMe(Request $request){
+        $user = $request->user();
+
+        $user->load('contacts');
+        return $this->ok(
+            'Student profile retrieved successfully.',
+            (new ZankolineStudentResource($user))->resolve()
+        );
+    }
 }
