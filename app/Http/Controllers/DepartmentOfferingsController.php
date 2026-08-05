@@ -2,23 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDepartmentOfferingRequest;
+use App\Http\Resources\DepartmentOfferingResource;
+use App\Models\AcademicYear;
 use App\Models\DepartmentOffering;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
 class DepartmentOfferingsController extends Controller
 {
+    use ApiResponses;
+
     public function index()
     {
-        return DepartmentOffering::all();
+        $academic_year = AcademicYear::where('is_active', 1)->firstOrFail();
+        $departmentOfferings = DepartmentOffering::query()
+            ->with('department.faculty.university')
+            ->where('academic_year_id', $academic_year->id)
+            ->get();
+
+        return $this->ok('Department Offerings fetched successfully.', (DepartmentOfferingResource::collection($departmentOfferings))->resolve());
     }
 
-    public function store(Request $request)
+    public function store(StoreDepartmentOfferingRequest $request)
     {
-        $data = $request->validate([
+        $credentials = $request->validated();
 
-        ]);
+        $departmentOffering = DepartmentOffering::create($credentials);
 
-        return DepartmentOffering::create($data);
+        return $this->created('Department offering created successfully.', (new DepartmentOfferingResource($departmentOffering))->resolve());
     }
 
     public function show(DepartmentOffering $departmentOfferings)

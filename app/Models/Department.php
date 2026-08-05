@@ -47,4 +47,9 @@ class Department extends Model
     {
         return $this->belongsTo(User::class, 'admin_id');
     }
+
+    public function departmentOfferings(): HasMany
+    {
+        return $this->hasMany(DepartmentOffering::class);
+    }
 }
