@@ -19,6 +19,9 @@ require __DIR__.'/api/letter-verification.php';
 
 Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function () {
 
+    Route::middleware('ability:moodle,admin,zankoline')->group(function () {
+        require __DIR__.'/api/general.php';
+    });
     Route::middleware('ability:moodle,admin')->group(function () {
         require __DIR__.'/api/shared.php';
     });
@@ -45,7 +48,6 @@ Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function ()
         require __DIR__.'/api/roles_permissions.php';
         require __DIR__.'/api/letter-stamp.php';
         require __DIR__.'/api/letter-recipients.php';
-
     });
 
     Route::middleware('ability:moodle')->group(function () {
