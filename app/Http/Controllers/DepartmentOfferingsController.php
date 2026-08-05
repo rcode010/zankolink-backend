@@ -45,10 +45,10 @@ class DepartmentOfferingsController extends Controller
         return $this->ok('Department offerings updated successfully.', (new DepartmentOfferingResource($departmentOffering->fresh()))->resolve());
     }
 
-    public function destroy(DepartmentOffering $departmentOfferings)
+    public function destroy(DepartmentOffering $departmentOffering)
     {
-        $departmentOfferings->delete();
+        $departmentOffering->delete();
 
-        return response()->json();
+        return $this->deleted('Department offering deleted successfully.');
     }
 }
