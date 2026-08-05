@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDepartmentOfferingRequest;
+use App\Http\Requests\UpdateDepartmentOfferingRequest;
 use App\Http\Resources\DepartmentOfferingResource;
 use App\Models\AcademicYear;
 use App\Models\DepartmentOffering;
 use App\Traits\ApiResponses;
-use Illuminate\Http\Request;
 
 class DepartmentOfferingsController extends Controller
 {
@@ -38,15 +38,11 @@ class DepartmentOfferingsController extends Controller
         return $departmentOfferings;
     }
 
-    public function update(Request $request, DepartmentOffering $departmentOfferings)
+    public function update(UpdateDepartmentOfferingRequest $request, DepartmentOffering $departmentOffering)
     {
-        $data = $request->validate([
-
-        ]);
-
-        $departmentOfferings->update($data);
-
-        return $departmentOfferings;
+        $credentials = $request->validated();
+        $departmentOffering->update($credentials);
+        return $this->ok('Department offerings updated successfully.', $departmentOffering->fresh()->toArray());
     }
 
     public function destroy(DepartmentOffering $departmentOfferings)
