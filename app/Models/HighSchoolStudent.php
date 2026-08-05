@@ -39,4 +39,9 @@ class HighSchoolStudent extends Model
             'grade_11' => 'decimal:3',
         ];
     }
+
+    public function contacts()
+    {
+        return $this->hasOne(StudentContactInfo::class);
+    }
 }

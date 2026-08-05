@@ -9,11 +9,13 @@ use App\Models\CourseAssessments;
 use App\Models\CourseSection;
 use App\Models\Department;
 use App\Models\Faculty;
+use App\Models\HighSchoolStudent;
 use App\Models\Letter;
 use App\Models\LetterSignature;
 use App\Models\SectionItem;
 use App\Models\SectionSubmission;
 use App\Models\Student;
+use App\Models\StudentContactInfo;
 use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
@@ -93,14 +95,46 @@ class DatabaseSeeder extends Seeder
 
             $this->seedMinistryUsers();
             $this->seedUniversities();
-            $this->seedLetters();
-            $this->createMoodleDemoUsers();
-            $this->createQaCourseUsers();
+            //            $this->seedLetters();
+            //            $this->createMoodleDemoUsers();
+            //            $this->createQaCourseUsers();
+            $this->createTestStudent();
         });
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Artisan::call('zankolink:seed-frontend-users');
+    }
+
+    private function createTestStudent(): void
+    {
+        $student = HighSchoolStudent::updateOrCreate(
+            ['code' => 123456],
+            [
+                'name' => 'student', 
+                'major_type' => 'scientific',
+                'gender' => 'male',
+                'is_active' => true,
+                'status' => 'submitted',
+                'password' => 'password',
+                'grade_average' => 95.500,
+                'grade_10' => 94.250,
+                'grade_11' => 96.750,
+            ]
+        );
+
+        StudentContactInfo::updateOrCreate(
+            ['student_id' => $student->id],
+            [
+                'phone' => '07501234567',
+                'email' => 'student@example.com',
+                'id_number' => 'A123456789',
+                'governorate' => 'Erbil',
+                'home_address' => 'Erbil, Iraq',
+                'emergency_contact_name' => 'Test Guardian',
+                'emergency_contact_phone' => '07507654321',
+            ]
+        );
     }
 
     private function seedRoles(): void
@@ -283,7 +317,7 @@ class DatabaseSeeder extends Seeder
                 'view academic requests', 'view academic request', 'update academic request',
                 'view student course selections', 'update course selection settings',
                 'close course selections', 'store student course selections',
-                'view gradebook','update teachers'
+                'view gradebook', 'update teachers',
             ],
 
             'lecturer' => [
@@ -309,7 +343,7 @@ class DatabaseSeeder extends Seeder
                 'view course assessment', 'delete course assessments',
                 'view assessment marks', 'create student marks',
                 'view student mark', 'update student mark',
-                'view gradebook', 'store gradebook','publish course assessments'
+                'view gradebook', 'store gradebook', 'publish course assessments',
             ],
 
             'student' => [
