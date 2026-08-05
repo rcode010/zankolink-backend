@@ -111,6 +111,7 @@ class DatabaseSeeder extends Seeder
         $student = HighSchoolStudent::updateOrCreate(
             ['code' => 123456],
             [
+                'name' => 'student', 
                 'major_type' => 'scientific',
                 'gender' => 'male',
                 'is_active' => true,
