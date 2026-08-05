@@ -8,7 +8,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class HighSchoolStudent extends Model
 {
-    use HasFactory, HasApiTokens;
+    use HasApiTokens, HasFactory;
 
     protected $hidden = [
         'password',
@@ -37,5 +37,10 @@ class HighSchoolStudent extends Model
             'grade_10' => 'decimal:3',
             'grade_11' => 'decimal:3',
         ];
+    }
+
+    public function contacts()
+    {
+        return $this->hasOne(StudentContactInfo::class);
     }
 }

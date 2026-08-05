@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class StudentContactInfo extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'student_id',
         'phone',
@@ -18,4 +19,9 @@ class StudentContactInfo extends Model
         'emergency_contact_name',
         'emergency_contact_phone',
     ];
+
+    public function student()
+    {
+        return $this->belongsTo(HighSchoolStudent::class);
+    }
 }

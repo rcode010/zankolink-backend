@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreStudentContactInfoRequest;
+use App\Http\Resources\StudentContactInfoResource;
 use App\Models\StudentContactInfo;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
 class StudentContactInfoController extends Controller
 {
-    public function index()
+    use ApiResponses;
+
+    public function store(StoreStudentContactInfoRequest $request)
     {
-        return StudentContactInfo::all();
-    }
+        $credentials = $request->validated();
 
-    public function store(Request $request)
-    {
-        $data = $request->validate([
+        $credentials['student_id'] = $request->user()->id;
 
-        ]);
+        $student = StudentContactInfo::create($credentials);
 
-        return StudentContactInfo::create($data);
+        return $this->created('Student Contact Info created successfully', (new StudentContactInfoResource($student))->resolve());
     }
 
     public function show(StudentContactInfo $studentContactInfo)
