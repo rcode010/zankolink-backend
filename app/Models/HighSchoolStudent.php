@@ -8,7 +8,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class HighSchoolStudent extends Model
 {
-    use HasFactory, HasApiTokens;
+    use HasApiTokens, HasFactory;
 
     protected $hidden = [
         'password',
@@ -17,6 +17,7 @@ class HighSchoolStudent extends Model
 
     protected $fillable = [
         'code',
+        'name',
         'major_type',
         'gender',
         'is_active',

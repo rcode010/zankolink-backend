@@ -6,11 +6,12 @@ use Illuminate\Support\Facades\Route;
 // Public Routes
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:login');
 Route::post('/auth/moodle/login', [AuthController::class, 'moodleLogin'])->middleware('throttle:login');
-Route::post('/auth/zankoline/login', [AuthController::class, 'zankolineLogin']);
+Route::post('/auth/verify', [AuthController::class, 'verify'])->middleware('throttle:verify');
 Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:resetPassword');
 Route::post('/auth/forget-password', [AuthController::class, 'forgetPassword'])->middleware('throttle:forgetPassword');
-Route::post('/auth/verify', [AuthController::class, 'verify'])->middleware('throttle:verify');
 
+Route::post('/auth/zankoline/login', [AuthController::class, 'zankolineLogin']);
+Route::post('/auth/zankoline/register', [AuthController::class, 'zankolineRegister']);
 // Protected Routes
 Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register'])->middleware('permission:create users', 'throttle:register');
