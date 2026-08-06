@@ -48,6 +48,8 @@ Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function ()
         require __DIR__.'/api/roles_permissions.php';
         require __DIR__.'/api/letter-stamp.php';
         require __DIR__.'/api/letter-recipients.php';
+
+        require __DIR__.'/api/department-offering-subjects.php';
     });
 
     Route::middleware('ability:moodle')->group(function () {
