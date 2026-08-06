@@ -24,7 +24,7 @@ class DepartmentOfferingResource extends JsonResource
             'minimum_grade_zankoline' => $this->minimum_grade_zankoline,
             'minimum_grade_parallel' => $this->minimum_grade_parallel,
 
-            'department' => DepartmentResource::make(
+            'department' => DepartmentSummaryResource::make(
                 $this->whenLoaded('department')
             ),
 

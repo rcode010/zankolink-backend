@@ -7,21 +7,26 @@ use App\Http\Requests\UpdateDepartmentOfferingRequest;
 use App\Http\Resources\DepartmentOfferingResource;
 use App\Models\AcademicYear;
 use App\Models\DepartmentOffering;
+use App\Services\DepartmentOfferingHierarchyService;
 use App\Traits\ApiResponses;
 
 class DepartmentOfferingsController extends Controller
 {
     use ApiResponses;
 
-    public function index()
+    public function index(DepartmentOfferingHierarchyService $service)
     {
         $academic_year = AcademicYear::where('is_active', 1)->firstOrFail();
         $departmentOfferings = DepartmentOffering::query()
-            ->with('department.faculty.university')
             ->where('academic_year_id', $academic_year->id)
+            ->with([
+                'department:id,name,faculty_id',
+                'department.faculty:id,name,university_id',
+                'department.faculty.university:id,name',
+            ])
             ->get();
 
-        return $this->ok('Department Offerings fetched successfully.', (DepartmentOfferingResource::collection($departmentOfferings))->resolve());
+        return $this->ok('Department Offerings fetched successfully.', $service->build($departmentOfferings));
     }
 
     public function store(StoreDepartmentOfferingRequest $request)
@@ -42,6 +47,7 @@ class DepartmentOfferingsController extends Controller
     {
         $credentials = $request->validated();
         $departmentOffering->update($credentials);
+
         return $this->ok('Department offerings updated successfully.', (new DepartmentOfferingResource($departmentOffering->fresh()))->resolve());
     }
 
