@@ -16,6 +16,8 @@ use App\Models\SectionItem;
 use App\Models\SectionSubmission;
 use App\Models\Student;
 use App\Models\StudentContactInfo;
+use App\Models\StudentSubject;
+use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\University;
 use App\Models\User;
@@ -98,6 +100,7 @@ class DatabaseSeeder extends Seeder
             //            $this->seedLetters();
             //            $this->createMoodleDemoUsers();
             //            $this->createQaCourseUsers();
+            $this->seedGrade12Subjects();
             $this->createTestStudent();
         });
 
@@ -106,12 +109,44 @@ class DatabaseSeeder extends Seeder
         // Artisan::call('zankolink:seed-frontend-users');
     }
 
+    private function seedGrade12Subjects(): void
+    {
+        $subjects = [
+            ['name' => 'Kurdish', 'credit_number' => 2, 'major_type' => 'general', 'year_level' => 12],
+            ['name' => 'English', 'credit_number' => 2, 'major_type' => 'general', 'year_level' => 12],
+            ['name' => 'Arabic', 'credit_number' => 2, 'major_type' => 'general', 'year_level' => 12],
+            ['name' => 'Mathematics', 'credit_number' => 4, 'major_type' => 'scientific', 'year_level' => 12],
+            ['name' => 'Physics', 'credit_number' => 4, 'major_type' => 'scientific', 'year_level' => 12],
+            ['name' => 'Chemistry', 'credit_number' => 4, 'major_type' => 'scientific', 'year_level' => 12],
+            ['name' => 'Biology', 'credit_number' => 4, 'major_type' => 'scientific', 'year_level' => 12],
+            ['name' => 'History', 'credit_number' => 4, 'major_type' => 'literary', 'year_level' => 12],
+            ['name' => 'Geography', 'credit_number' => 4, 'major_type' => 'literary', 'year_level' => 12],
+            ['name' => 'Economics', 'credit_number' => 4, 'major_type' => 'literary', 'year_level' => 12],
+        ];
+
+        $payload = [];
+
+        foreach ($subjects as $subject) {
+            $payload[] = [
+                'name' => $subject['name'],
+                'credit_number' => $subject['credit_number'],
+                'major_type' => $subject['major_type'],
+                'year_level' => $subject['year_level'],
+            ];
+        }
+
+        Subject::upsert(
+            $payload,
+            ['name', 'major_type', 'year_level'],
+        );
+    }
+
     private function createTestStudent(): void
     {
         $student = HighSchoolStudent::updateOrCreate(
             ['code' => 123456],
             [
-                'name' => 'student', 
+                'name' => 'student',
                 'major_type' => 'scientific',
                 'gender' => 'male',
                 'is_active' => true,
@@ -134,6 +169,22 @@ class DatabaseSeeder extends Seeder
                 'emergency_contact_name' => 'Test Guardian',
                 'emergency_contact_phone' => '07507654321',
             ]
+        );
+        $payload = Subject::query()
+            ->select('id')
+            ->where('major_type', $student->major_type)
+            ->orWhere('major_type', 'general')
+            ->get()
+            ->map(fn ($subject) => [
+                'student_id' => $student->id,
+                'subject_id' => $subject->id,
+                'grade'=>$this->faker->numberBetween(50,100),
+            ])
+            ->toArray();
+
+        StudentSubject::upsert(
+            $payload,
+            ['student_id', 'subject_id']
         );
     }
 
