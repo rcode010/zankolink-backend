@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateStudentContactInfoRequest;
 use App\Http\Resources\StudentContactInfoResource;
 use App\Models\StudentContactInfo;
 use App\Traits\ApiResponses;
+use Illuminate\Http\Request;
 
 class StudentContactInfoController extends Controller
 {
@@ -23,9 +24,18 @@ class StudentContactInfoController extends Controller
         return $this->created('Student Contact Info created successfully', (new StudentContactInfoResource($student))->resolve());
     }
 
-    public function show(StudentContactInfo $studentContactInfo)
+    public function show(Request $request)
     {
-        return $studentContactInfo;
+        $studentContact = $request->user()->contacts;
+
+        if (!$studentContact) {
+            return $this->ok('No contact info found', null);
+        }
+
+        return $this->ok(
+            'Student contact information retrieved successfully.',
+            (new StudentContactInfoResource($studentContact))->resolve()
+        );
     }
 
     public function update(UpdateStudentContactInfoRequest $request)
