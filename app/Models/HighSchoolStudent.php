@@ -42,6 +42,13 @@ class HighSchoolStudent extends Model
 
     public function contacts()
     {
-        return $this->hasOne(StudentContactInfo::class,'student_id');
+        return $this->hasOne(StudentContactInfo::class, 'student_id');
+    }
+
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'subject_student', 'student_id', 'subject_id')
+            ->withPivot('grade')
+            ->withTimestamps();
     }
 }

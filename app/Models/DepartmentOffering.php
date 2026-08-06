@@ -10,9 +10,4 @@ class DepartmentOffering extends Model
     use HasFactory;
 
     protected $fillable = ['department_id', 'academic_year_id', 'track_type', 'governorate', 'major_type', 'city', 'minimum_grade_zankoline', 'minimum_grade_parallel'];
-
-    public function department()
-    {
-        return $this->belongsTo(Department::class);
-    }
 }
