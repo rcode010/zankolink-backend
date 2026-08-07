@@ -13,7 +13,7 @@ class UpdateDepartmentOfferingSubjectRequest extends FormRequest
             'credit' => [
                 'sometimes',
                 'integer',
-                'between:1,10',
+                'between:1,15',
             ],
 
             'minimum_grade' => [
