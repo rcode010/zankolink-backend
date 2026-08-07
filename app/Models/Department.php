@@ -52,4 +52,15 @@ class Department extends Model
     {
         return $this->hasMany(DepartmentOffering::class);
     }
+
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Subject::class,
+            'department_offering_subjects',
+            'department_id',
+            'subject_id'
+        )->withPivot('credit', 'minimum_grade')
+            ->withTimestamps();
+    }
 }

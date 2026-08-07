@@ -2,23 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDepartmentOfferingSubjectRequest;
+use App\Http\Requests\UpdateDepartmentOfferingSubjectRequest;
+use App\Http\Resources\DepartmentOfferingSubjectResource;
 use App\Models\DepartmentOfferingSubject;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
 class DepartmentOfferingSubjectsController extends Controller
 {
-    public function index()
+    use ApiResponses;
+
+    public function index(Request $request)
     {
-        return DepartmentOfferingSubject::all();
+        $departmentId = $request->query('department_id');
+        $subjects = DepartmentOfferingSubject::query()
+            ->with('subject')
+            ->where('department_id',$departmentId)->get();
+        return $this->ok("Department offering subjects retrieved successfully", $subjects->toArray());
     }
 
-    public function store(Request $request)
+    public function store(StoreDepartmentOfferingSubjectRequest $request)
     {
-        $data = $request->validate([
+        $credentials = $request->validated();
 
-        ]);
+        $departmentSubject = DepartmentOfferingSubject::create($credentials);
 
-        return DepartmentOfferingSubject::create($data);
+        return $this->created('Department Offering Subject created', $departmentSubject->toArray());
     }
 
     public function show(DepartmentOfferingSubject $departmentOfferingSubjects)
@@ -26,21 +36,24 @@ class DepartmentOfferingSubjectsController extends Controller
         return $departmentOfferingSubjects;
     }
 
-    public function update(Request $request, DepartmentOfferingSubject $departmentOfferingSubjects)
+    public function update(UpdateDepartmentOfferingSubjectRequest $request,DepartmentOfferingSubject $departmentOfferingSubject)
     {
-        $data = $request->validate([
+        $departmentOfferingSubject->update(
+            $request->validated()
+        );
 
-        ]);
-
-        $departmentOfferingSubjects->update($data);
-
-        return $departmentOfferingSubjects;
+        return $this->ok(
+            'Department subject updated successfully.',
+            (new DepartmentOfferingSubjectResource($departmentOfferingSubject->fresh()))->resolve()
+        );
     }
 
-    public function destroy(DepartmentOfferingSubject $departmentOfferingSubjects)
+    public function destroy(DepartmentOfferingSubject $departmentOfferingSubject)
     {
-        $departmentOfferingSubjects->delete();
+        $departmentOfferingSubject->delete();
 
-        return response()->json();
+        return $this->deleted(
+            'Department subject deleted successfully.'
+        );
     }
 }
