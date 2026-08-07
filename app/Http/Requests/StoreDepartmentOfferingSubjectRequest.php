@@ -30,7 +30,7 @@ class StoreDepartmentOfferingSubjectRequest extends FormRequest
             'credit' => [
                 'required',
                 'integer',
-                'min:1',
+                'between:1,15',
             ],
 
             'minimum_grade' => [
