@@ -24,7 +24,7 @@ class StudentApplicationController extends Controller
             ->first();
 
         if (!$studentApplicationDraft) {
-            return $this->ok("No student application found", null);
+            return $this->noData("No data found");
         }
 
         return $this->ok("Application Draft Retrieved Successfully",

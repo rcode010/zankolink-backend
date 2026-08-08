@@ -63,4 +63,9 @@ trait ApiResponses
             'message' => $message,
         ], $statusCode);
     }
+
+    protected function noData(string $message, array $data = null): JsonResponse
+    {
+        return $this->success($message, $data, 200);
+    }
 }
