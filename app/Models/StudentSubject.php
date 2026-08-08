@@ -13,4 +13,14 @@ class StudentSubject extends Model
         'subject_id',
         'grade',
     ];
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class, 'subject_id');
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+    
 }

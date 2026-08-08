@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\StudentSubject;
 use Illuminate\Http\Request;
+use App\Traits\ApiResponses;
 
 class StudentSubjectsController extends Controller
 {
+    use ApiResponses;
     public function index()
     {
         return StudentSubject::all();
@@ -42,5 +44,15 @@ class StudentSubjectsController extends Controller
         $studentSubjects->delete();
 
         return response()->json();
+    }
+    public function getStudentSubjects(Request $request)
+    {
+        $user = $request->user();
+
+        $studentSubjects = $user->subjects()
+            ->withPivot('grade')
+            ->get();
+
+        return $this->ok('Retrieved student subjects', $studentSubjects->toArray());
     }
 }
