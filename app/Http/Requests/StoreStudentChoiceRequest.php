@@ -10,7 +10,6 @@ class StoreStudentChoiceRequest extends FormRequest
     {
         return [
             'choices' => ['required', 'array', 'min:1', 'max:50'],
-            'student_id' => ['required', 'integer', 'exists:students,id'],
             'academic_year_id' => ['required', 'integer', 'exists:academic_years,id'],
             'choices.*.department_offering_id' => [
                 'required',
