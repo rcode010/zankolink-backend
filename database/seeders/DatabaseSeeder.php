@@ -112,16 +112,18 @@ class DatabaseSeeder extends Seeder
     private function seedGrade12Subjects(): void
     {
         $subjects = [
-            ['name' => 'Kurdish', 'credit_number' => 2, 'major_type' => 'general', 'year_level' => 12],
-            ['name' => 'English', 'credit_number' => 2, 'major_type' => 'general', 'year_level' => 12],
-            ['name' => 'Arabic', 'credit_number' => 2, 'major_type' => 'general', 'year_level' => 12],
-            ['name' => 'Mathematics', 'credit_number' => 4, 'major_type' => 'scientific', 'year_level' => 12],
+            ['name' => 'Kurdish', 'credit_number' => 3, 'major_type' => 'general', 'year_level' => 12],
+            ['name' => 'English', 'credit_number' => 4, 'major_type' => 'general', 'year_level' => 12],
+            ['name' => 'Arabic', 'credit_number' => 3, 'major_type' => 'general', 'year_level' => 12],
+            ['name' => 'Mathematics', 'credit_number' => 5, 'major_type' => 'scientific', 'year_level' => 12],
             ['name' => 'Physics', 'credit_number' => 4, 'major_type' => 'scientific', 'year_level' => 12],
             ['name' => 'Chemistry', 'credit_number' => 4, 'major_type' => 'scientific', 'year_level' => 12],
             ['name' => 'Biology', 'credit_number' => 4, 'major_type' => 'scientific', 'year_level' => 12],
-            ['name' => 'History', 'credit_number' => 4, 'major_type' => 'literary', 'year_level' => 12],
-            ['name' => 'Geography', 'credit_number' => 4, 'major_type' => 'literary', 'year_level' => 12],
-            ['name' => 'Economics', 'credit_number' => 4, 'major_type' => 'literary', 'year_level' => 12],
+            ['name' => 'History', 'credit_number' => 3, 'major_type' => 'literary', 'year_level' => 12],
+            ['name' => 'Geography', 'credit_number' => 3, 'major_type' => 'literary', 'year_level' => 12],
+            ['name' => 'Economics', 'credit_number' => 3, 'major_type' => 'literary', 'year_level' => 12],
+            ['name' => 'Mathematics', 'credit_number' => 3, 'major_type' => 'literary', 'year_level' => 12],
+
         ];
 
         $payload = [];
