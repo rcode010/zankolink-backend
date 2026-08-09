@@ -20,6 +20,7 @@ class DepartmentOfferingsController extends Controller
         $departmentOfferings = DepartmentOffering::query()
             ->where('academic_year_id', $academic_year->id)
             ->with([
+                'department.subjects:id,name,credit_number',
                 'department:id,name,faculty_id',
                 'department.faculty:id,name,university_id',
                 'department.faculty.university:id,name',

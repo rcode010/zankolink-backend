@@ -36,6 +36,8 @@ class DepartmentOfferingHierarchyService
             $result[$track][$governorate][$university][$faculty][$department] = [
                 'id' => $offering->id,
                 'name' => $offering->department->name,
+                'governorate'=>$governorate,
+                'subjects'=>$offering->department->subjects,
             ];
         }
 
