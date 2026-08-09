@@ -64,8 +64,12 @@ trait ApiResponses
         ], $statusCode);
     }
 
-    protected function noData(string $message, array $data = null): JsonResponse
+    protected function noData(string $message, array $data = []): JsonResponse
     {
-        return $this->success($message, $data, 200);
+        return response()->json([
+            'message'=>"No data found",
+            'success'=>false,
+            'data'=>null
+        ],200);
     }
 }
