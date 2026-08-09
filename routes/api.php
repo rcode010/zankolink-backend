@@ -70,6 +70,7 @@ Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function ()
         require __DIR__.'/api/zankoline/student-contact-info.php';
         require __DIR__.'/api/zankoline/student-application.php';
         require __DIR__.'/api/zankoline/student-subjects.php';
+        require __DIR__.'/api/zankoline/student-choice.php';
     });
     require __DIR__.'/api/zankoline/department-offering.php';
 });
