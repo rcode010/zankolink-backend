@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentChoiceRequest;
+use App\Models\HighSchoolStudent;
 use App\Models\StudentsChoice;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -40,9 +41,28 @@ class StudentsChoiceController extends Controller
         return $this->ok('Student choices stored successfully');
     }
 
-    public function show()
+    public function show(Request $request,HighSchoolStudent $highSchoolStudent)
     {
-        return null;
+        $user = $request->user();
+        $choices = $user->choices()
+            ->select([
+                'id',
+                'department_offering_id',
+                'preference_order',
+                'score',
+                'is_local',
+            ])
+            ->with([
+                'department_offering:id,department_id,major_type,track_type',
+                'department_offering.department:id,name',
+            ])
+            ->orderBy('preference_order')
+            ->get();
+
+        return $this->ok(
+            'Student choices retrieved successfully',
+            $choices->toArray()
+        );
     }
 
     public function update(Request $request, StudentsChoice $studentsChoice)

@@ -18,4 +18,12 @@ class StudentsChoice extends Model
         'status',
         'academic_year_id',
     ];
+
+    public function department_offering()
+    {
+        return $this->belongsTo(
+            DepartmentOffering::class,
+            'department_offering_id'
+        );
+    }
 }

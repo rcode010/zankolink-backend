@@ -63,4 +63,9 @@ class HighSchoolStudent extends Model
             ->withPivot('priority', 'status')
             ->withTimestamps();
     }
+
+    public function choices()
+    {
+        return $this->hasMany(StudentsChoice::class, 'student_id');
+    }
 }

@@ -31,12 +31,12 @@ class DepartmentOfferingHierarchyService
                 ->name;
 
             $department = $offering->department
-                ->name;
+                ->ighsname;
 
             $result[$track][$governorate][$university][$faculty][$department] = [
-                    'id' => $offering->id,
-                    'name' => $offering->department->name,
-                ];
+                'id' => $offering->id,
+                'name' => $offering->department->name,
+            ];
         }
 
         return $result;
