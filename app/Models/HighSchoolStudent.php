@@ -51,4 +51,21 @@ class HighSchoolStudent extends Model
             ->withPivot('grade')
             ->withTimestamps();
     }
+
+    public function departmentOfferings()
+    {
+        return $this->belongsToMany(
+            DepartmentOffering::class,
+            'student_choice',
+            'student_id',
+            'department_offering_id'
+        )
+            ->withPivot('priority', 'status')
+            ->withTimestamps();
+    }
+
+    public function choices()
+    {
+        return $this->hasMany(StudentsChoice::class, 'student_id');
+    }
 }

@@ -2,28 +2,68 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreStudentChoiceRequest;
+use App\Models\HighSchoolStudent;
 use App\Models\StudentsChoice;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
 class StudentsChoiceController extends Controller
 {
+    use ApiResponses;
+
     public function index()
     {
         return StudentsChoice::all();
     }
 
-    public function store(Request $request)
+    public function store(StoreStudentChoiceRequest $request)
     {
-        $data = $request->validate([
+        $validated = $request->validated();
+        $user = $request->user();
 
-        ]);
+        $now = now();
+        // ToDo: Validate credits
+        $choices = collect($validated['choices'])
+            ->map(fn ($choice) => [
+                'student_id' => $user->id,
+                'academic_year_id' => $validated['academic_year_id'],
+                'department_offering_id' => $choice['department_offering_id'],
+                'preference_order' => $choice['preference_order'],
+                'score' => $choice['score'],
+                'is_local' => $choice['is_local'],
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])
+            ->all();
 
-        return StudentsChoice::create($data);
+        StudentsChoice::insert($choices);
+
+        return $this->ok('Student choices stored successfully');
     }
 
-    public function show(StudentsChoice $studentsChoice)
+    public function show(Request $request,HighSchoolStudent $highSchoolStudent)
     {
-        return $studentsChoice;
+        $user = $request->user();
+        $choices = $user->choices()
+            ->select([
+                'id',
+                'department_offering_id',
+                'preference_order',
+                'score',
+                'is_local',
+            ])
+            ->with([
+                'department_offering:id,department_id,major_type,track_type',
+                'department_offering.department:id,name',
+            ])
+            ->orderBy('preference_order')
+            ->get();
+
+        return $this->ok(
+            'Student choices retrieved successfully',
+            $choices->toArray()
+        );
     }
 
     public function update(Request $request, StudentsChoice $studentsChoice)

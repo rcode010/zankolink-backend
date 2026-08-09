@@ -44,7 +44,7 @@ class DepartmentOfferingSubjectsController extends Controller
 
         return $this->ok(
             'Department subject updated successfully.',
-            (new DepartmentOfferingSubjectResource($departmentOfferingSubject->fresh()))->resolve()
+            $departmentOfferingSubject->fresh()->toArray()
         );
     }
 
