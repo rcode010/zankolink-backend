@@ -12,6 +12,7 @@ class ZankolineStudentResource extends JsonResource
         return [
             'id' => $this->id,
             'code' => $this->code,
+            'name' => $this->name,
             'major_type' => $this->major_type,
             'gender' => $this->gender,
             'is_active' => $this->is_active,
