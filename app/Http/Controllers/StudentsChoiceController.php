@@ -20,12 +20,13 @@ class StudentsChoiceController extends Controller
     public function store(StoreStudentChoiceRequest $request)
     {
         $validated = $request->validated();
+        $user = $request->user();
 
         $now = now();
         // ToDo: Validate credits
         $choices = collect($validated['choices'])
             ->map(fn ($choice) => [
-                'student_id' => $validated['student_id'],
+                'student_id' => $user->id,
                 'academic_year_id' => $validated['academic_year_id'],
                 'department_offering_id' => $choice['department_offering_id'],
                 'preference_order' => $choice['preference_order'],
