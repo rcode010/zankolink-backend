@@ -31,7 +31,7 @@ class DepartmentOfferingHierarchyService
                 ->name;
 
             $department = $offering->department
-                ->ighsname;
+                ->name;
 
             $result[$track][$governorate][$university][$faculty][$department] = [
                 'id' => $offering->id,
