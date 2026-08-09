@@ -9,8 +9,9 @@ class StoreStudentChoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'choices' => ['required', 'array', 'min:1','max:50'],
+            'choices' => ['required', 'array', 'min:1', 'max:50'],
             'student_id' => ['required', 'integer', 'exists:students,id'],
+            'academic_year_id' => ['required', 'integer', 'exists:academic_years,id'],
             'choices.*.department_offering_id' => [
                 'required',
                 'integer',

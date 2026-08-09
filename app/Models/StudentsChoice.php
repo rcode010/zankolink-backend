@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class StudentsChoice extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'student_id',
         'department_offering_id',
@@ -15,6 +16,6 @@ class StudentsChoice extends Model
         'is_local',
         'preference_order',
         'status',
+        'academic_year_id',
     ];
-
 }

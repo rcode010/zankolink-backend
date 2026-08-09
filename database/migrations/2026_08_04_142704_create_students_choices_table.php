@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignId('department_offering_id')
                 ->constrained('department_offerings')
                 ->cascadeOnDelete();
+            $table->foreignId('academic_year_id')
+                ->constrained('academic_years')
+                ->cascadeOnDelete();
 
             $table->decimal('score', 6, 3);
 

@@ -25,6 +25,7 @@ class StudentsChoiceController extends Controller
         $choices = collect($validated['choices'])
             ->map(fn ($choice) => [
                 'student_id' => $validated['student_id'],
+                'academic_year_id' => $validated['academic_year_id'],
                 'department_offering_id' => $choice['department_offering_id'],
                 'preference_order' => $choice['preference_order'],
                 'score' => $choice['score'],
@@ -39,9 +40,9 @@ class StudentsChoiceController extends Controller
         return $this->ok('Student choices stored successfully');
     }
 
-    public function show(StudentsChoice $studentsChoice)
+    public function show()
     {
-        return $studentsChoice;
+        return null;
     }
 
     public function update(Request $request, StudentsChoice $studentsChoice)
