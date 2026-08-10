@@ -12,12 +12,15 @@ class AcademicYearSeeder extends Seeder
      */
     public function run(): void
     {
-        AcademicYear::create([
-            'year' => '2026-2027',
-            'start_date' => '2026-09-01',
-            'end_date' => '2027-08-31',
-            'semester' => 'fall',
-            'is_active' => true,
-        ]);
+        // The year is unique, so creating it outright breaks every re-run.
+        AcademicYear::firstOrCreate(
+            ['year' => '2026-2027'],
+            [
+                'start_date' => '2026-09-01',
+                'end_date' => '2027-08-31',
+                'semester' => 'fall',
+                'is_active' => true,
+            ]
+        );
     }
 }

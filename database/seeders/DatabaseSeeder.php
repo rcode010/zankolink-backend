@@ -9,6 +9,7 @@ use App\Models\CourseAssessments;
 use App\Models\CourseSection;
 use App\Models\Department;
 use App\Models\DepartmentOffering;
+use App\Models\DepartmentOfferingSubject;
 use App\Models\Faculty;
 use App\Models\HighSchoolStudent;
 use App\Models\Letter;
@@ -102,6 +103,11 @@ class DatabaseSeeder extends Seeder
      */
     private int $departmentsPerFaculty = 6;
 
+    /**
+     * Subjects a department scores its applicants on.
+     */
+    private int $subjectsPerDepartment = 3;
+
     private int $teachersPerDepartment = 5;
 
     private int $studentsPerDepartment = 10;
@@ -159,6 +165,7 @@ class DatabaseSeeder extends Seeder
             //            $this->createMoodleDemoUsers();
             //            $this->createQaCourseUsers();
             $this->seedGrade12Subjects();
+            $this->seedDepartmentSubjects();
             $this->createTestStudent();
             $this->call(HighSchoolStudentSeeder::class);
         });
@@ -200,6 +207,69 @@ class DatabaseSeeder extends Seeder
             $payload,
             ['name', 'major_type', 'year_level'],
         );
+    }
+
+    /**
+     * Give every department the subjects its admission is scored on.
+     *
+     * Runs once the grade 12 subjects exist, so it covers the departments of
+     * earlier runs too. The subjects are taken from the major the department
+     * admits, otherwise a department would be scored on a subject none of its
+     * applicants ever sat.
+     */
+    private function seedDepartmentSubjects(): void
+    {
+        $subjectsByMajorType = [];
+
+        $subjects = Subject::query()
+            ->where('year_level', 12)
+            ->whereIn('major_type', ['scientific', 'literary'])
+            ->orderBy('id')
+            ->get(['id', 'major_type', 'credit_number']);
+
+        foreach ($subjects as $subject) {
+            $subjectsByMajorType[$subject->major_type][] = $subject;
+        }
+
+        $rows = [];
+
+        foreach (Department::query()->orderBy('id')->get(['id', 'name']) as $department) {
+            $pool = $subjectsByMajorType[$this->departmentMajorType($department->name)] ?? [];
+
+            if (count($pool) < $this->subjectsPerDepartment) {
+                continue;
+            }
+
+            for ($index = 0; $index < $this->subjectsPerDepartment; $index++) {
+                // Rotating on the department id keeps the picks stable across
+                // runs, so the upsert updates its rows instead of adding more.
+                $subject = $pool[($department->id + $index) % count($pool)];
+
+                $rows[] = [
+                    'department_id' => $department->id,
+                    'subject_id' => $subject->id,
+                    'credit' => $subject->credit_number,
+                    'minimum_grade' => $this->faker->numberBetween(50, 85),
+                ];
+            }
+        }
+
+        if ($rows === []) {
+            return;
+        }
+
+        DepartmentOfferingSubject::upsert(
+            $rows,
+            ['department_id', 'subject_id'],
+            ['credit', 'minimum_grade'],
+        );
+    }
+
+    private function departmentMajorType(string $name): string
+    {
+        return in_array($name, self::LITERARY_DEPARTMENTS, true)
+            ? 'literary'
+            : 'scientific';
     }
 
     private function createTestStudent(): void
@@ -691,9 +761,7 @@ class DatabaseSeeder extends Seeder
     {
         $governorate = $this->facultyGovernorate($department->faculty_id);
 
-        $majorType = in_array($department->name, self::LITERARY_DEPARTMENTS, true)
-            ? 'literary'
-            : 'scientific';
+        $majorType = $this->departmentMajorType($department->name);
 
         $minimumGradeZankoline = $this->faker->numberBetween(75, 95);
 
