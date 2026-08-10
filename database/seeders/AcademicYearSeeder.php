@@ -12,7 +12,6 @@ class AcademicYearSeeder extends Seeder
      */
     public function run(): void
     {
-        // The year is unique, so creating it outright breaks every re-run.
         AcademicYear::firstOrCreate(
             ['year' => '2026-2027'],
             [
