@@ -341,7 +341,7 @@ class HighSchoolStudentSeeder extends Seeder
 
         $this->prepareNamePools();
 
-        $hashedPassword = $this->defaultPassword;
+        $hashedPassword = Hash::make($this->defaultPassword);
         $now = now();
         $code = $this->nextStudentCode();
 
