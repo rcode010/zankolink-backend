@@ -8,6 +8,8 @@ use App\Models\Course;
 use App\Models\CourseAssessments;
 use App\Models\CourseSection;
 use App\Models\Department;
+use App\Models\DepartmentOffering;
+use App\Models\DepartmentOfferingSubject;
 use App\Models\Faculty;
 use App\Models\HighSchoolStudent;
 use App\Models\Letter;
@@ -33,6 +35,54 @@ use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Tracks every department is offered under.
+     */
+    private const OFFERING_TRACK_TYPES = ['zankoline', 'parallel'];
+
+    /**
+     * Governorates of the department_offerings enum, with their main city.
+     */
+    private const OFFERING_LOCATIONS = [
+        'Erbil' => 'Erbil',
+        'Sulaimani' => 'Sulaimani',
+        'Duhok' => 'Duhok',
+        'Halabja' => 'Halabja',
+        'Kirkuk' => 'Kirkuk',
+    ];
+
+    /**
+     * Departments admitting scientific graduates.
+     */
+    private const SCIENTIFIC_DEPARTMENTS = [
+        'Software Engineering',
+        'Computer Science',
+        'Information Technology',
+        'Civil Engineering',
+        'Mechanical Engineering',
+        'Architectural Engineering',
+        'Medicine and General Surgery',
+        'Orthodontics and Dentistry',
+        'Clinical Pharmacy',
+        'Nursing and Midwifery',
+        'Soil and Water Science',
+    ];
+
+    /**
+     * Departments admitting literary graduates, anything else is scientific.
+     */
+    private const LITERARY_DEPARTMENTS = [
+        'Public Law',
+        'Private Law',
+        'Political Science',
+        'Business Administration',
+        'Accounting and Finance',
+        'English Translation',
+        'Kurdish Literature',
+        'Basic Education and Teaching',
+        'Fine Arts and Design',
+    ];
+
     private Generator $faker;
 
     private ?AcademicYear $activeAcademicYear = null;
@@ -47,7 +97,16 @@ class DatabaseSeeder extends Seeder
 
     private int $facultiesPerUniversity = 3;
 
-    private int $departmentsPerFaculty = 3;
+    /**
+     * Six per faculty gives 27 departments per major, so every student has more
+     * than the 50 offerings of their own major a full choice list needs.
+     */
+    private int $departmentsPerFaculty = 6;
+
+    /**
+     * Subjects a department scores its applicants on.
+     */
+    private int $subjectsPerDepartment = 3;
 
     private int $teachersPerDepartment = 5;
 
@@ -59,6 +118,11 @@ class DatabaseSeeder extends Seeder
 
     /** @var array<string, int> */
     private array $roleIds = [];
+
+    /** @var array<int, string> Governorate resolved once per faculty. */
+    private array $facultyGovernorates = [];
+
+    private int $departmentNumber = 0;
 
     private int $bulkInsertSize = 1000;
 
@@ -101,7 +165,9 @@ class DatabaseSeeder extends Seeder
             //            $this->createMoodleDemoUsers();
             //            $this->createQaCourseUsers();
             $this->seedGrade12Subjects();
+            $this->seedDepartmentSubjects();
             $this->createTestStudent();
+            $this->call(HighSchoolStudentSeeder::class);
         });
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
@@ -143,6 +209,69 @@ class DatabaseSeeder extends Seeder
         );
     }
 
+    /**
+     * Give every department the subjects its admission is scored on.
+     *
+     * Runs once the grade 12 subjects exist, so it covers the departments of
+     * earlier runs too. The subjects are taken from the major the department
+     * admits, otherwise a department would be scored on a subject none of its
+     * applicants ever sat.
+     */
+    private function seedDepartmentSubjects(): void
+    {
+        $subjectsByMajorType = [];
+
+        $subjects = Subject::query()
+            ->where('year_level', 12)
+            ->whereIn('major_type', ['scientific', 'literary'])
+            ->orderBy('id')
+            ->get(['id', 'major_type', 'credit_number']);
+
+        foreach ($subjects as $subject) {
+            $subjectsByMajorType[$subject->major_type][] = $subject;
+        }
+
+        $rows = [];
+
+        foreach (Department::query()->orderBy('id')->get(['id', 'name']) as $department) {
+            $pool = $subjectsByMajorType[$this->departmentMajorType($department->name)] ?? [];
+
+            if (count($pool) < $this->subjectsPerDepartment) {
+                continue;
+            }
+
+            for ($index = 0; $index < $this->subjectsPerDepartment; $index++) {
+                // Rotating on the department id keeps the picks stable across
+                // runs, so the upsert updates its rows instead of adding more.
+                $subject = $pool[($department->id + $index) % count($pool)];
+
+                $rows[] = [
+                    'department_id' => $department->id,
+                    'subject_id' => $subject->id,
+                    'credit' => $subject->credit_number,
+                    'minimum_grade' => $this->faker->numberBetween(50, 85),
+                ];
+            }
+        }
+
+        if ($rows === []) {
+            return;
+        }
+
+        DepartmentOfferingSubject::upsert(
+            $rows,
+            ['department_id', 'subject_id'],
+            ['credit', 'minimum_grade'],
+        );
+    }
+
+    private function departmentMajorType(string $name): string
+    {
+        return in_array($name, self::LITERARY_DEPARTMENTS, true)
+            ? 'literary'
+            : 'scientific';
+    }
+
     private function createTestStudent(): void
     {
         $student = HighSchoolStudent::updateOrCreate(
@@ -180,7 +309,7 @@ class DatabaseSeeder extends Seeder
             ->map(fn ($subject) => [
                 'student_id' => $student->id,
                 'subject_id' => $subject->id,
-                'grade'=>$this->faker->numberBetween(50,100),
+                'grade' => $this->faker->numberBetween(50, 100),
             ])
             ->toArray();
 
@@ -591,8 +720,11 @@ class DatabaseSeeder extends Seeder
         Department::factory()
             ->count($this->departmentsPerFaculty)
             ->for($faculty)
+            ->sequence(fn (): array => ['name' => $this->nextDepartmentName()])
             ->create()
             ->each(function (Department $department, int $index) use ($u, $f) {
+                $this->seedDepartmentOfferings($department);
+
                 $d = $index + 1;
 
                 $positionCode = $this->positionCode($u, $f, $d);
@@ -612,6 +744,69 @@ class DatabaseSeeder extends Seeder
                 $this->seedStudents($department, $u, $f, $d);
                 $this->seedCourses($department);
             });
+    }
+
+    private function nextDepartmentName(): string
+    {
+        $number = $this->departmentNumber++;
+
+        $names = $number % 2 === 0
+            ? self::SCIENTIFIC_DEPARTMENTS
+            : self::LITERARY_DEPARTMENTS;
+
+        return $names[intdiv($number, 2) % count($names)];
+    }
+
+    private function seedDepartmentOfferings(Department $department): void
+    {
+        $governorate = $this->facultyGovernorate($department->faculty_id);
+
+        $majorType = $this->departmentMajorType($department->name);
+
+        $minimumGradeZankoline = $this->faker->numberBetween(75, 95);
+
+        $minimumGradeParallel = max(
+            60,
+            $minimumGradeZankoline - $this->faker->numberBetween(5, 15)
+        );
+
+        $rows = array_map(
+            fn (string $trackType): array => [
+                'department_id' => $department->id,
+                'academic_year_id' => $this->activeAcademicYear->id,
+                'track_type' => $trackType,
+                'governorate' => $governorate,
+                'major_type' => $majorType,
+                'city' => self::OFFERING_LOCATIONS[$governorate],
+                'minimum_grade_zankoline' => $minimumGradeZankoline,
+                'minimum_grade_parallel' => $minimumGradeParallel,
+            ],
+            self::OFFERING_TRACK_TYPES
+        );
+
+        DepartmentOffering::upsert(
+            $rows,
+            ['department_id', 'academic_year_id', 'track_type'],
+            ['governorate', 'major_type', 'city', 'minimum_grade_zankoline', 'minimum_grade_parallel'],
+        );
+    }
+
+    /**
+     * Departments of the same university are offered in the same governorate.
+     */
+    private function facultyGovernorate(int $facultyId): string
+    {
+        if (! isset($this->facultyGovernorates[$facultyId])) {
+            $universityId = (int) DB::table('faculties')
+                ->where('id', $facultyId)
+                ->value('university_id');
+
+            $governorates = array_keys(self::OFFERING_LOCATIONS);
+
+            $this->facultyGovernorates[$facultyId] = $governorates[$universityId % count($governorates)];
+        }
+
+        return $this->facultyGovernorates[$facultyId];
     }
 
     private function seedTeachers(Department $department): void
