@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentChoiceRequest;
+use App\Models\AcademicYear;
 use App\Models\HighSchoolStudent;
 use App\Models\StudentsChoice;
 use App\Traits\ApiResponses;
@@ -21,13 +22,14 @@ class StudentsChoiceController extends Controller
     {
         $validated = $request->validated();
         $user = $request->user();
+        $academicYear = AcademicYear::where('is_active', 1)->first();
 
         $now = now();
         // ToDo: Validate credits
         $choices = collect($validated['choices'])
             ->map(fn ($choice) => [
                 'student_id' => $user->id,
-                'academic_year_id' => $validated['academic_year_id'],
+                'academic_year_id' => $academicYear->id,
                 'department_offering_id' => $choice['department_offering_id'],
                 'preference_order' => $choice['preference_order'],
                 'score' => $choice['score'],
@@ -42,7 +44,7 @@ class StudentsChoiceController extends Controller
         return $this->ok('Student choices stored successfully');
     }
 
-    public function show(Request $request,HighSchoolStudent $highSchoolStudent)
+    public function show(Request $request, HighSchoolStudent $highSchoolStudent)
     {
         $user = $request->user();
         $choices = $user->choices()

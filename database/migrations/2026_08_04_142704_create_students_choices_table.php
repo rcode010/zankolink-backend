@@ -37,16 +37,16 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(
-                ['student_id', 'preference_order'],
+                ['student_id', 'preference_order', 'academic_year_id'],
                 'student_choice_order_unique'
             );
 
             $table->unique(
-                ['student_id', 'department_offering_id'],
+                ['student_id', 'department_offering_id', 'academic_year_id'],
                 'student_choice_department_unique'
             );
 
-            $table->index('status');
+            $table->index(['academic_year_id', 'status']);
         });
     }
 
