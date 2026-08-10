@@ -20,6 +20,7 @@ return new class extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
             $table->boolean('is_active')->default(true);
+            $table->enum('accepted_gender', ['male', 'female', 'both'])->nullable();
             $table->bigInteger('seat_available')->nullable();
             $table->timestamps();
             $table->timestamp('course_selection_starts_at')->nullable();
