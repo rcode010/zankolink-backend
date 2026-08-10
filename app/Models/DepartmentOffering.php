@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,5 +27,10 @@ class DepartmentOffering extends Model
         )
             ->withPivot('priority', 'status')
             ->withTimestamps();
+    }
+
+    public function scopeLiteraryOnly(Builder $query): Builder
+    {
+        return $query->where('major_type', 'literary');
     }
 }

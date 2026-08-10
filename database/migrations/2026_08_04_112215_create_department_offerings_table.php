@@ -21,7 +21,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['department_id', 'academic_year_id', 'track_type']);
+            $table->unique(['department_id', 'academic_year_id', 'track_type'], 'department_offering_unique');
         });
     }
 

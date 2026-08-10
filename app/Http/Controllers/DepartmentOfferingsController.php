@@ -9,16 +9,23 @@ use App\Models\AcademicYear;
 use App\Models\DepartmentOffering;
 use App\Services\DepartmentOfferingHierarchyService;
 use App\Traits\ApiResponses;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class DepartmentOfferingsController extends Controller
 {
     use ApiResponses;
 
-    public function index(DepartmentOfferingHierarchyService $service)
+    public function index(Request $request, DepartmentOfferingHierarchyService $service)
     {
+        $user = $request->user();
         $academic_year = AcademicYear::where('is_active', 1)->firstOrFail();
         $departmentOfferings = DepartmentOffering::query()
             ->where('academic_year_id', $academic_year->id)
+            ->when(
+                $user->major_type === 'literary',
+                fn ($query) => $query->literaryOnly()
+            )
             ->with([
                 'department.subjects:id,name,credit_number',
                 'department:id,name,faculty_id',
