@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ApiResponses;
+
 use App\Models\HighSchoolStudent;
 use Illuminate\Http\Request;
 
 class HighSchoolStudentsController extends Controller
 {
+
+    use ApiResponses;
     public function index()
     {
         return HighSchoolStudent::all();
@@ -59,13 +63,9 @@ class HighSchoolStudentsController extends Controller
                 'choices_count' => $student->choices_count,
             ]);
 
-        return response()->json([
-            'success' => true,
-            'data' => $paginated->items(),
-            'current_page' => $paginated->currentPage(),
-            'last_page' => $paginated->lastPage(),
-            'total' => $paginated->total(),
-            'message' => null,
-        ]);
+        return $this->ok(
+            "Student summary returned successfully",
+            $paginated->toArray()
+        );
     }
 }
