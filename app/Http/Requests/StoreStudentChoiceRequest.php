@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreStudentChoiceRequest extends FormRequest
 {
@@ -13,9 +14,14 @@ class StoreStudentChoiceRequest extends FormRequest
             'academic_year_id' => ['required', 'integer', 'exists:academic_years,id'],
             'choices.*.department_offering_id' => [
                 'required',
-                'integer',
-                'exists:department_offerings,id',
                 'distinct',
+                Rule::exists('department_offerings', 'id')->where(function ($query) use ($student, $activeYearId) {
+                    $query->where('academic_year_id', $activeYearId);
+
+                    if ($student->major_type === 'literary') {
+                        $query->where('major_type', 'literary');
+                    }
+                }),
             ],
             'choices.*.preference_order' => [
                 'required',
