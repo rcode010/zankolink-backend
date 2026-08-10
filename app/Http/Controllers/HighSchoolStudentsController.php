@@ -43,4 +43,29 @@ class HighSchoolStudentsController extends Controller
 
         return response()->json();
     }
+
+    public function summary()
+    {
+        $paginated = HighSchoolStudent::withCount('choices')
+            ->addSelect(['id', 'code', 'name', 'grade_average', 'status'])
+            ->whereHas('choices')
+            ->paginate(50)
+            ->through(fn($student) => [
+                'id' => $student->id,
+                'code' => $student->code,
+                'name' => $student->name,
+                'score' => $student->grade_average,
+                'status' => $student->status,
+                'choices_count' => $student->choices_count,
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $paginated->items(),
+            'current_page' => $paginated->currentPage(),
+            'last_page' => $paginated->lastPage(),
+            'total' => $paginated->total(),
+            'message' => null,
+        ]);
+    }
 }
