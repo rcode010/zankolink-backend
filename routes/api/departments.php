@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\DepartmentAcceptedGenderController;
-use App\Http\Requests\DepartmentAcceptedGenderRequest;
+
 
 Route::prefix('departments')->group(function () {
 
