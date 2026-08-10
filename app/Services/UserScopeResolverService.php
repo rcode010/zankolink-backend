@@ -42,6 +42,7 @@ class UserScopeResolverService
 
                 'departments.id as department_id',
                 'departments.name as department_name',
+                'departments.accepted_gender as department_accepted_gender',
                 'departments.course_selection_starts_at',
                 'departments.course_selection_ends_at',
 
@@ -105,6 +106,7 @@ class UserScopeResolverService
                 'name' => $scope->department_name,
                 'course_selection_starts_at' => $scope->course_selection_starts_at,
                 'course_selection_ends_at' => $scope->course_selection_ends_at,
+                'accepted_gender' => $scope->department_accepted_gender,
                 'is_open' => $scope->course_selection_starts_at &&
                     $scope->course_selection_ends_at &&
                     now()->gte($scope->course_selection_starts_at) &&
