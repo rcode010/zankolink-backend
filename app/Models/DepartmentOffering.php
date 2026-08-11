@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DepartmentOffering extends Model
 {
@@ -14,13 +13,12 @@ class DepartmentOffering extends Model
     protected $fillable = [
         'department_id',
         'academic_year_id',
-        'zankoline_capacity',
-        'parallel_capacity',
+        'capacity',
+        'track_type',
         'governorate',
         'major_type',
         'city',
-        'minimum_grade_zankoline',
-        'minimum_grade_parallel'
+        'minimum_grade',
     ];
 
     public function department()

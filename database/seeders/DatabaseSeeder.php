@@ -98,12 +98,8 @@ class DatabaseSeeder extends Seeder
 
     private int $facultiesPerUniversity = 3;
 
-    /**
-     * A department now has one offering rather than one per track, so it takes
-     * twelve per faculty to reach 54 departments per major and stay above the
-     * 50 offerings of their own major a full choice list needs.
-     */
-    private int $departmentsPerFaculty = 12;
+
+    private int $departmentsPerFaculty = 6;
 
     /**
      * Subjects a department scores its applicants on.
@@ -763,40 +759,36 @@ class DatabaseSeeder extends Seeder
     private function seedDepartmentOfferings(Department $department): void
     {
         $governorate = $this->facultyGovernorate($department->faculty_id);
-
         $majorType = $this->departmentMajorType($department->name);
 
-        $minimumGradeZankoline = $this->faker->numberBetween(75, 95);
-
-        $minimumGradeParallel = max(
-            60,
-            $minimumGradeZankoline - $this->faker->numberBetween(5, 15)
-        );
-
-        // The two capacities split the intake, so they add up to 100. See the
-        // rule in StoreDepartmentOfferingRequest.
         $zankolineCapacity = $this->faker->numberBetween(40, 80);
 
+        $shared = [
+            'department_id'    => $department->id,
+            'academic_year_id' => $this->activeAcademicYear->id,
+            'governorate'      => $governorate,
+            'major_type'       => $majorType,
+            'city'             => self::OFFERING_LOCATIONS[$governorate],
+            'minimum_grade'    => null,
+            'created_at'       => now(),
+            'updated_at'       => now(),
+        ];
+
         DepartmentOffering::upsert(
-            [[
-                'department_id' => $department->id,
-                'academic_year_id' => $this->activeAcademicYear->id,
-                'zankoline_capacity' => $zankolineCapacity,
-                'parallel_capacity' => self::OFFERING_CAPACITY_TOTAL - $zankolineCapacity,
-                'governorate' => $governorate,
-                'major_type' => $majorType,
-                'city' => self::OFFERING_LOCATIONS[$governorate],
-                'minimum_grade_zankoline' => $minimumGradeZankoline,
-                'minimum_grade_parallel' => $minimumGradeParallel,
-            ]],
-            ['department_id', 'academic_year_id'],
             [
-                'zankoline_capacity', 'parallel_capacity', 'governorate',
-                'major_type', 'city', 'minimum_grade_zankoline', 'minimum_grade_parallel',
+                $shared + [
+                    'track_type' => 'zankoline',
+                    'capacity'   => $zankolineCapacity,
+                ],
+                $shared + [
+                    'track_type' => 'parallel',
+                    'capacity'   => self::OFFERING_CAPACITY_TOTAL - $zankolineCapacity,
+                ],
             ],
+            ['department_id', 'academic_year_id', 'track_type'],
+            ['capacity', 'governorate', 'major_type', 'city', 'updated_at'],
         );
     }
-
     /**
      * Departments of the same university are offered in the same governorate.
      */

@@ -12,17 +12,16 @@ return new class extends Migration
             $table->id();
             $table->foreignId('department_id')->constrained('departments')->cascadeOnDelete();
             $table->foreignId('academic_year_id')->constrained('academic_years')->cascadeOnDelete();
-            $table->integer('zankoline_capacity');
-            $table->integer('parallel_capacity');
+            $table->enum('track_type', ['zankoline', 'parallel']);
             $table->enum('governorate', ['Erbil', 'Sulaimani', 'Duhok', 'Halabja', 'Kirkuk']);
+            $table->unsignedTinyInteger('capacity');
             $table->enum('major_type', ['scientific', 'literary']);
-            $table->text('city');
-            $table->decimal('minimum_grade_zankoline', 6, 3)->nullable();
-            $table->decimal('minimum_grade_parallel', 6, 3)->nullable();
+            $table->string('city');
+            $table->decimal('minimum_grade', 6, 3)->nullable();
 
             $table->timestamps();
 
-            $table->unique(['department_id', 'academic_year_id'], 'department_offering_unique');
+            $table->unique(['department_id', 'academic_year_id', 'track_type'], 'department_offering_unique');
         });
     }
 
