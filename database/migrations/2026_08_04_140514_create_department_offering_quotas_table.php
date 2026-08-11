@@ -11,10 +11,11 @@ return new class extends Migration
         Schema::create('department_offering_quotas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('department_offering_id')->constrained()->cascadeOnDelete();
-            $table->enum('gender', ['male', 'female']);
             $table->enum('locality_type', ['internal', 'external']);
             $table->integer('capacity');
             $table->timestamps();
+
+            $table->unique(['department_offering_id', 'locality_type'], 'quotas_unique_locality_type');
         });
     }
 

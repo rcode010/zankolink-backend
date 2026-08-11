@@ -402,6 +402,7 @@ class HighSchoolStudentSeeder extends Seeder
         $isScientific = mt_rand(1, 100) <= $this->scientificPercentage;
         $isMale = mt_rand(0, 1) === 1;
         $ability = mt_rand(55, 98);
+        $percentage = mt_rand(0,10);
 
         $majorType = $isScientific ? self::MAJOR_SCIENTIFIC : self::MAJOR_LITERARY;
 
@@ -430,8 +431,8 @@ class HighSchoolStudentSeeder extends Seeder
             'status' => 'submitted',
             'password' => $hashedPassword,
             'grade_average' => round($weightedMarks / $credits, 3),
-            'grade_10' => $this->gradeAround($ability),
-            'grade_11' => $this->gradeAround($ability),
+            'grade_10' => $percentage,
+            'grade_11' => $percentage,
             'accepted_department_offering_id' => null,
             'created_at' => $now,
             'updated_at' => $now,
@@ -548,14 +549,5 @@ class HighSchoolStudentSeeder extends Seeder
         return $firstNames[array_rand($firstNames)].' '.$this->lastNames[array_rand($this->lastNames)];
     }
 
-    /**
-     * A grade close to the student's ability, kept inside the 50 - 100 range
-     * and rounded to the 3 decimals the column stores.
-     */
-    private function gradeAround(int $ability, int $spread = 5): float
-    {
-        $grade = ($ability * 1000) + mt_rand(-$spread * 1000, $spread * 1000);
 
-        return round(min(100000, max(50000, $grade)) / 1000, 3);
-    }
 }
