@@ -98,10 +98,7 @@ class DatabaseSeeder extends Seeder
 
     private int $facultiesPerUniversity = 3;
 
-    /**
-     * Six per faculty gives 27 departments per major, so every student has more
-     * than the 50 offerings of their own major a full choice list needs.
-     */
+
     private int $departmentsPerFaculty = 6;
 
     /**
