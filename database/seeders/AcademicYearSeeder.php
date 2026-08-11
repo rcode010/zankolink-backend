@@ -19,6 +19,8 @@ class AcademicYearSeeder extends Seeder
                 'end_date' => '2027-08-31',
                 'semester' => 'fall',
                 'is_active' => true,
+                'zankoline_submission_starts_at' => now()->subWeek()->startOfDay(),
+                'zankoline_submission_ends_at' => now()->addMonth()->endOfDay(),
             ]
         );
     }

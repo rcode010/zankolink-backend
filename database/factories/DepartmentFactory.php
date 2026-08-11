@@ -47,6 +47,7 @@ class DepartmentFactory extends Factory
             'faculty_id' => Faculty::factory(),
             'admin_id' => null,
             'is_active' => true,
+            'accepted_gender' => $this->faker->randomElement(['both', 'both', 'both', 'male', 'female']),
         ];
     }
 }

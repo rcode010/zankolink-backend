@@ -36,9 +36,10 @@ use Spatie\Permission\PermissionRegistrar;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Tracks every department is offered under.
+     * An offering splits its intake between the zankoline and parallel tracks,
+     * and the two capacities must add up to this.
      */
-    private const OFFERING_TRACK_TYPES = ['zankoline', 'parallel'];
+    private const OFFERING_CAPACITY_TOTAL = 100;
 
     /**
      * Governorates of the department_offerings enum, with their main city.
@@ -98,10 +99,11 @@ class DatabaseSeeder extends Seeder
     private int $facultiesPerUniversity = 3;
 
     /**
-     * Six per faculty gives 27 departments per major, so every student has more
-     * than the 50 offerings of their own major a full choice list needs.
+     * A department now has one offering rather than one per track, so it takes
+     * twelve per faculty to reach 54 departments per major and stay above the
+     * 50 offerings of their own major a full choice list needs.
      */
-    private int $departmentsPerFaculty = 6;
+    private int $departmentsPerFaculty = 12;
 
     /**
      * Subjects a department scores its applicants on.
@@ -274,7 +276,7 @@ class DatabaseSeeder extends Seeder
 
     private function createTestStudent(): void
     {
-        $percentage = mt_rand(0,10);
+        $percentage = mt_rand(0, 10);
 
         $student = HighSchoolStudent::updateOrCreate(
             ['code' => 123456],
@@ -758,7 +760,6 @@ class DatabaseSeeder extends Seeder
 
         return $names[intdiv($number, 2) % count($names)];
     }
-
     private function seedDepartmentOfferings(Department $department): void
     {
         $governorate = $this->facultyGovernorate($department->faculty_id);
@@ -772,24 +773,27 @@ class DatabaseSeeder extends Seeder
             $minimumGradeZankoline - $this->faker->numberBetween(5, 15)
         );
 
-        $rows = array_map(
-            fn (string $trackType): array => [
+        // The two capacities split the intake, so they add up to 100. See the
+        // rule in StoreDepartmentOfferingRequest.
+        $zankolineCapacity = $this->faker->numberBetween(40, 80);
+
+        DepartmentOffering::upsert(
+            [[
                 'department_id' => $department->id,
                 'academic_year_id' => $this->activeAcademicYear->id,
-                'track_type' => $trackType,
+                'zankoline_capacity' => $zankolineCapacity,
+                'parallel_capacity' => self::OFFERING_CAPACITY_TOTAL - $zankolineCapacity,
                 'governorate' => $governorate,
                 'major_type' => $majorType,
                 'city' => self::OFFERING_LOCATIONS[$governorate],
                 'minimum_grade_zankoline' => $minimumGradeZankoline,
                 'minimum_grade_parallel' => $minimumGradeParallel,
+            ]],
+            ['department_id', 'academic_year_id'],
+            [
+                'zankoline_capacity', 'parallel_capacity', 'governorate',
+                'major_type', 'city', 'minimum_grade_zankoline', 'minimum_grade_parallel',
             ],
-            self::OFFERING_TRACK_TYPES
-        );
-
-        DepartmentOffering::upsert(
-            $rows,
-            ['department_id', 'academic_year_id', 'track_type'],
-            ['governorate', 'major_type', 'city', 'minimum_grade_zankoline', 'minimum_grade_parallel'],
         );
     }
 
