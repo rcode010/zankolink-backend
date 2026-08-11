@@ -16,7 +16,6 @@ class DepartmentOffering extends Model
         'capacity',
         'track_type',
         'governorate',
-        'capacity',
         'major_type',
         'city',
         'minimum_grade',
