@@ -15,7 +15,8 @@ class DepartmentOfferingResource extends JsonResource
             'department_id' => $this->department_id,
             'academic_year_id' => $this->academic_year_id,
 
-            'track_type' => $this->track_type,
+            'zankoline_capacity' => $this->zankoline_capacity,
+            'parallel_capacity' => $this->parallel_capacity,
             'major_type' => $this->major_type,
 
             'governorate' => $this->governorate,
