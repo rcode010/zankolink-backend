@@ -9,7 +9,6 @@ use App\Models\AcademicYear;
 use App\Models\DepartmentOffering;
 use App\Services\DepartmentOfferingHierarchyService;
 use App\Traits\ApiResponses;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class DepartmentOfferingsController extends Controller
@@ -37,13 +36,43 @@ class DepartmentOfferingsController extends Controller
         return $this->ok('Department Offerings fetched successfully.', $service->build($departmentOfferings));
     }
 
-    public function store(StoreDepartmentOfferingRequest $request)
+    public function upsert(StoreDepartmentOfferingRequest $request)
     {
-        $credentials = $request->validated();
+        $data = $request->validated();
 
-        $departmentOffering = DepartmentOffering::create($credentials);
+        $academicYearId = AcademicYear::where('is_active', 1)->value('id');
+        abort_if($academicYearId === null, 409, 'No active academic year.');
 
-        return $this->created('Department offering created successfully.', (new DepartmentOfferingResource($departmentOffering))->resolve());
+        $now = now();
+
+        $shared = [
+            'department_id' => $data['department_id'],
+            'academic_year_id' => $academicYearId,
+            'governorate' => $data['governorate'],
+            'major_type' => $data['major_type'],
+            'city' => $data['city'],
+            'created_at' => $now,
+            'updated_at' => $now,
+        ];
+
+        DepartmentOffering::upsert(
+            [
+                $shared + ['track_type' => 'zankoline', 'capacity' => $data['zankoline_capacity']],
+                $shared + ['track_type' => 'parallel',  'capacity' => $data['parallel_capacity']],
+            ],
+            ['department_id', 'academic_year_id', 'track_type'],
+            ['capacity', 'governorate', 'major_type', 'city', 'updated_at'],
+        );
+
+        $offerings = DepartmentOffering::query()
+            ->where('department_id', $data['department_id'])
+            ->where('academic_year_id', $academicYearId)
+            ->get();
+
+        return $this->ok(
+            'Department offerings saved successfully.',
+            DepartmentOfferingResource::collection($offerings)->resolve()
+        );
     }
 
     public function show(Request $request)
@@ -51,7 +80,7 @@ class DepartmentOfferingsController extends Controller
         $user = $request->user();
         $academicYear = AcademicYear::where('is_active', 1)->firstOrFail();
         $departmentId = $user->userScopes()
-            ->where("scope_type", "DEPARTMENT")
+            ->where('scope_type', 'DEPARTMENT')
             ->value('scope_id');
 
         $offerings = DepartmentOffering::query()
