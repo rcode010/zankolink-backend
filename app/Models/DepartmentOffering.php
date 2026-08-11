@@ -11,7 +11,17 @@ class DepartmentOffering extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['department_id', 'academic_year_id', 'track_type', 'governorate', 'major_type', 'city', 'minimum_grade_zankoline', 'minimum_grade_parallel'];
+    protected $fillable = [
+        'department_id',
+        'academic_year_id',
+        'zankoline_capacity',
+        'parallel_capacity',
+        'governorate',
+        'major_type',
+        'city',
+        'minimum_grade_zankoline',
+        'minimum_grade_parallel'
+    ];
 
     public function department()
     {
@@ -28,11 +38,6 @@ class DepartmentOffering extends Model
         )
             ->withPivot('priority', 'status')
             ->withTimestamps();
-    }
-
-    public function quotas(): HasMany
-    {
-        return $this->hasMany(DepartmentOfferingQuotas::class);
     }
 
     public function scopeLiteraryOnly(Builder $query): Builder

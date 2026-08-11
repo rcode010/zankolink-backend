@@ -12,12 +12,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('department_id')->constrained('departments')->cascadeOnDelete();
             $table->foreignId('academic_year_id')->constrained('academic_years')->cascadeOnDelete();
-            $table->enum('track_type', ['zankoline', 'parallel'])->default('zankoline');
+            $table->integer('zankoline_capacity');
+            $table->integer('parallel_capacity');
             $table->enum('governorate', ['Erbil', 'Sulaimani', 'Duhok', 'Halabja', 'Kirkuk']);
             $table->enum('major_type', ['scientific', 'literary']);
             $table->text('city');
-            $table->decimal('minimum_grade_zankoline', 6, 3);
-            $table->decimal('minimum_grade_parallel', 6, 3);
+            $table->decimal('minimum_grade_zankoline', 6, 3)->nullable();
+            $table->decimal('minimum_grade_parallel', 6, 3)->nullable();
 
             $table->timestamps();
 
