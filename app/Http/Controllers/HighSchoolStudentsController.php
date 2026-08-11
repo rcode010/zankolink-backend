@@ -11,6 +11,7 @@ class HighSchoolStudentsController extends Controller
 {
 
     use ApiResponses;
+
     public function index()
     {
         return HighSchoolStudent::all();
@@ -48,24 +49,34 @@ class HighSchoolStudentsController extends Controller
         return response()->json();
     }
 
-    public function summary()
+    public function summary(Request $request)
     {
-        $paginated = HighSchoolStudent::withCount('choices')
-            ->addSelect(['id', 'code', 'name', 'grade_average', 'status'])
-            ->whereHas('choices')
-            ->paginate(50)
-            ->through(fn($student) => [
-                'id' => $student->id,
-                'code' => $student->code,
-                'name' => $student->name,
-                'score' => $student->grade_average,
-                'status' => $student->status,
-                'choices_count' => $student->choices_count,
-            ]);
+        $search = $request->query('search');
 
-        return $this->ok(
-            "Student summary returned successfully",
-            $paginated->toArray()
-        );
+        if (! $search) {
+            return $this->ok("Student summary returned successfully", []);
+        }
+
+        $student = HighSchoolStudent::withCount('choices')
+            ->addSelect(['id', 'name', 'code', 'grade_average', 'status'])
+            ->where('code', $search)
+            ->first();
+
+        return $this->ok("Student summary returned successfully", $student->toArray());
+    }
+
+    public function zankolineAnalytics()
+    {
+        $stats = HighSchoolStudent::selectRaw(
+            'COUNT(*) as total,
+         SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as submitted,
+         SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as draft'
+        )->first();
+
+        return $this->ok("Zankoline stats returned successfully", [
+            'total' => (int)$stats->total,
+            'submitted' => (int)$stats->submitted,
+            'draft' => (int)$stats->draft,
+        ]);
     }
 }
