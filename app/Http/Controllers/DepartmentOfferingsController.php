@@ -46,9 +46,19 @@ class DepartmentOfferingsController extends Controller
         return $this->created('Department offering created successfully.', (new DepartmentOfferingResource($departmentOffering))->resolve());
     }
 
-    public function show(DepartmentOffering $departmentOfferings)
+    public function show(Request $request)
     {
-        return $departmentOfferings;
+        $user = $request->user();
+        $academicYear = AcademicYear::where('is_active', 1)->firstOrFail();
+        $departmentId = $user->userScopes()
+            ->where("scope_type", "DEPARTMENT")
+            ->value('scope_id');
+
+        $offerings = DepartmentOffering::query()
+            ->where(['department_id' => $departmentId, 'academic_year_id' => $academicYear->id])
+            ->get();
+
+        return $this->ok('Department offerings fetched successfully.', $offerings->toArray());
     }
 
     public function update(UpdateDepartmentOfferingRequest $request, DepartmentOffering $departmentOffering)
