@@ -3,8 +3,7 @@
 use App\Http\Controllers\DepartmentOfferingsController;
 
 Route::middleware('ability:admin')->group(function () {
-    Route::post('/zankoline/department-offering', [DepartmentOfferingsController::class, 'store']);
-    Route::patch('/zankoline/department-offering/{departmentOffering}', [DepartmentOfferingsController::class, 'update']);
+    Route::put('/zankoline/department-offering', [DepartmentOfferingsController::class, 'upsert']);
     Route::delete('/zankoline/department-offering/{departmentOffering}', [DepartmentOfferingsController::class, 'destroy']);
     Route::get('/department-offering', [DepartmentOfferingsController::class, 'show']);
 });
