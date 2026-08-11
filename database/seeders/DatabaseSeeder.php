@@ -274,6 +274,8 @@ class DatabaseSeeder extends Seeder
 
     private function createTestStudent(): void
     {
+        $percentage = mt_rand(0,10);
+
         $student = HighSchoolStudent::updateOrCreate(
             ['code' => 123456],
             [
@@ -284,8 +286,8 @@ class DatabaseSeeder extends Seeder
                 'status' => 'submitted',
                 'password' => 'password',
                 'grade_average' => 95.500,
-                'grade_10' => 94.250,
-                'grade_11' => 96.750,
+                'grade_10' => $percentage,
+                'grade_11' => $percentage,
             ]
         );
 
