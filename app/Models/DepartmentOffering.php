@@ -17,6 +17,7 @@ class DepartmentOffering extends Model
         'zankoline_capacity',
         'parallel_capacity',
         'governorate',
+        'capacity',
         'major_type',
         'city',
         'minimum_grade_zankoline',
