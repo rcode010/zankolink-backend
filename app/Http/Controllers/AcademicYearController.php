@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAcademicYearRequest;
+use App\Http\Requests\UpdateZankolineDeadlineRequest;
 use App\Models\AcademicYear;
 use App\Traits\ApiResponses;
 use Illuminate\Support\Facades\DB;
@@ -74,5 +75,16 @@ class AcademicYearController extends Controller
             'Active Academic Year retrieved successfully.',
             $academicYear->toArray(),
         );
+    }
+
+    public function updateZankolineDeadline(UpdateZankolineDeadlineRequest $request, AcademicYear $academicYear)
+    {
+        $credentials = $request->validated();
+        $academicYear->updateOrFail([
+            'zankoline_submission_starts_at' => $credentials['zankoline_submission_starts_at'],
+            'zankoline_submission_ends_at' => $credentials['zankoline_submission_ends_at'],
+        ]);
+
+        return $this->ok('Academic year zankoline submission deadline updated successfully.', $academicYear->toArray());
     }
 }

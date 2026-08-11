@@ -12,5 +12,8 @@ class AcademicYear extends Model
         'end_date',
         'semester',
         'is_active',
+        'zankoline_submission_starts_at',
+        'zankoline_submission_ends_at',
+
     ];
 }

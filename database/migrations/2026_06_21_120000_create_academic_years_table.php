@@ -17,11 +17,13 @@ return new class extends Migration
             $table->string('year');          // 2025-2026
 
             $table->date('start_date');
-            $table->enum('semester',['fall','spring']);
+            $table->enum('semester', ['fall', 'spring']);
 
             $table->date('end_date');
 
             $table->boolean('is_active')->default(false);
+            $table->dateTime('zankoline_submission_starts_at')->nullable();
+            $table->dateTime('zankoline_submission_ends_at')->nullable();
 
             $table->timestamps();
 
