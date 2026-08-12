@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Services\AdmissionRunService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
@@ -30,17 +31,32 @@ class RunAdmissionJob implements ShouldQueue
         ];
     }
 
-    public function handle(): void
+    /**
+     * The same service call the Artisan command makes, with the cache as the
+     * output sink instead of the console. Nothing about the run lives here, so
+     * a queued run and a local run cannot drift apart.
+     */
+    public function handle(AdmissionRunService $service): void
     {
         $this->progress('running', 'Starting', 0);
 
-        // Placeholder — replaced by the allocator once the pipe is proven.
-        for ($i = 1; $i <= 10; $i++) {
-            sleep(1);
-            $this->progress('running', "Cohort {$i} of 10", $i * 10);
-        }
+        $summary = $service->run(
+            academicYearId: $this->academicYearId,
+            onProgress: fn (string $message, ?int $percent) => $this->progress('running', $message, $percent),
+        );
 
-        $this->progress('completed', 'Done', 100);
+        $placed = $summary->metric('students placed') ?? '0';
+        $unplaced = $summary->metric('students unplaced') ?? '0';
+
+        $this->progress(
+            'completed',
+            "Placed {$placed} students, {$unplaced} unplaced.",
+            100,
+            [
+                'summary' => $summary->toRows(),
+                'warnings' => $summary->warnings(),
+            ]
+        );
     }
 
     public function failed(?Throwable $e): void
@@ -48,13 +64,17 @@ class RunAdmissionJob implements ShouldQueue
         $this->progress('failed', $e?->getMessage() ?? 'Unknown error', null);
     }
 
-    private function progress(string $status, string $message, ?int $percent): void
+    /**
+     * @param  array<string, mixed>  $extra
+     */
+    private function progress(string $status, string $message, ?int $percent, array $extra = []): void
     {
         Cache::put(self::key($this->academicYearId), [
-            'status'     => $status,
-            'message'    => $message,
-            'percent'    => $percent,
+            'status' => $status,
+            'message' => $message,
+            'percent' => $percent,
             'updated_at' => now()->toIso8601String(),
+            ...$extra,
         ], now()->addDay());
     }
 
