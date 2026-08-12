@@ -6,6 +6,7 @@ use App\Http\Requests\StoreStudentChoiceRequest;
 use App\Models\AcademicYear;
 use App\Models\HighSchoolStudent;
 use App\Models\StudentsChoice;
+use App\Services\StudentChoiceService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
@@ -18,14 +19,15 @@ class StudentsChoiceController extends Controller
         return StudentsChoice::all();
     }
 
-    public function store(StoreStudentChoiceRequest $request)
+    public function store(StoreStudentChoiceRequest $request, StudentChoiceService $service)
     {
         $validated = $request->validated();
         $user = $request->user();
-        $academicYear = AcademicYear::where('is_active', 1)->first();
+        $academicYear = AcademicYear::where('is_active', 1)->firstOrFail();
+
+        $service->validateChoices($user, $validated['choices'], $academicYear);
 
         $now = now();
-        // ToDo: Validate credits
         $choices = collect($validated['choices'])
             ->map(fn ($choice) => [
                 'student_id' => $user->id,
