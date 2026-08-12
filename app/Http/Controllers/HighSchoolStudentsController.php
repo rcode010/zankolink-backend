@@ -53,7 +53,7 @@ class HighSchoolStudentsController extends Controller
     {
         $search = $request->query('search');
 
-        if (! $search) {
+        if (!$search) {
             return $this->ok("Student summary returned successfully", []);
         }
 
@@ -70,7 +70,8 @@ class HighSchoolStudentsController extends Controller
         $stats = HighSchoolStudent::selectRaw(
             'COUNT(*) as total,
          SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as submitted,
-         SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as draft'
+         SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) as draft',
+            ['submitted', 'draft']
         )->first();
 
         return $this->ok("Zankoline stats returned successfully", [
