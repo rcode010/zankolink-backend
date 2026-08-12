@@ -46,6 +46,7 @@ class DepartmentFactory extends Factory
             'name' => $this->faker->randomElement($departments),
             'faculty_id' => Faculty::factory(),
             'admin_id' => null,
+            'seat_available' => $this->faker->numberBetween(30,50),
             'is_active' => true,
             'accepted_gender' => $this->faker->randomElement(['both', 'both', 'both', 'male', 'female']),
         ];

@@ -42,7 +42,7 @@ class HighSchoolStudentSeeder extends Seeder
     /**
      * How many high school students the table holds once the seeder finished.
      */
-    private int $studentsCount = 200000;
+    private int $studentsCount = 50000;
 
     /**
      * Rows per bulk statement. Kept low enough that a batch stays under the
@@ -402,7 +402,7 @@ class HighSchoolStudentSeeder extends Seeder
         $isScientific = mt_rand(1, 100) <= $this->scientificPercentage;
         $isMale = mt_rand(0, 1) === 1;
         $ability = mt_rand(55, 98);
-        $percentage = mt_rand(0,10);
+        $percentage = mt_rand(0, 10);
 
         $majorType = $isScientific ? self::MAJOR_SCIENTIFIC : self::MAJOR_LITERARY;
 
@@ -548,6 +548,4 @@ class HighSchoolStudentSeeder extends Seeder
 
         return $firstNames[array_rand($firstNames)].' '.$this->lastNames[array_rand($this->lastNames)];
     }
-
-
 }
