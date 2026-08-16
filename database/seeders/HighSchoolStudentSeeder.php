@@ -42,7 +42,7 @@ class HighSchoolStudentSeeder extends Seeder
     /**
      * How many high school students the table holds once the seeder finished.
      */
-    private int $studentsCount = 50000;
+    private int $studentsCount = 1000;
 
     /**
      * Rows per bulk statement. Kept low enough that a batch stays under the

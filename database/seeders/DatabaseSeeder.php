@@ -546,6 +546,9 @@ class DatabaseSeeder extends Seeder
             'HIGH_SCHOOL_GRADUATE' => [
                 'view departments',
             ],
+            'REGISTRAR'=>[
+                'create students'
+            ]
         ];
 
         foreach ($roles as $roleName => $rolePermissions) {
@@ -631,6 +634,14 @@ class DatabaseSeeder extends Seeder
             scopeType: 'MINISTRY',
             scopeId: null,
             phone: '07700000004'
+        );
+        $this->createScopedUser(
+            name: 'Registrar',
+            email: 'registrar@zankolink.test',
+            roleName: 'REGISTRAR',
+            scopeType: 'MINISTRY',
+            scopeId: null,
+            phone: '07705555555'
         );
     }
 
