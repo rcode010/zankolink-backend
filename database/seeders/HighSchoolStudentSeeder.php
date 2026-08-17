@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\StudentContactInfo;
 use App\Models\Subject;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
@@ -357,24 +358,67 @@ class HighSchoolStudentSeeder extends Seeder
 
             for ($index = 0; $index < $batchSize; $index++) {
                 [$student, $studentMarks] = $this->makeStudent($code + $index, $hashedPassword, $now);
-
                 $students[] = $student;
                 $marks[] = $studentMarks;
             }
 
             DB::table('high_school_students')->insert($students);
 
-            $this->seedStudentSubjects($code, $code + $batchSize - 1, $marks, $now);
+            // Retrieve the inserted IDs (ordered by code, matching the order of $marks)
+            $studentIds = DB::table('high_school_students')
+                ->whereBetween('code', [$code, $code + $batchSize - 1])
+                ->orderBy('code')
+                ->pluck('id')
+                ->all();
+
+            // Insert subjects
+            $this->seedStudentSubjects($studentIds, $marks, $now);
+
+            // Insert contact info
+            $this->seedStudentContactInfo($studentIds, $now);
 
             $code += $batchSize;
-
-            unset($students, $marks);
-
+            unset($students, $marks, $studentIds);
             $progress?->advance($batchSize);
         }
 
         $progress?->finish();
         $output?->newLine();
+    }
+
+    /**
+     * Insert contact info records for a batch of students.
+     *
+     * @param  list<int>  $studentIds
+     */
+    private function seedStudentContactInfo(array $studentIds, Carbon $now): void
+    {
+        $governorates = ['Erbil', 'Sulaimani', 'Duhok', 'Halabja', 'Kirkuk'];
+        $rows = [];
+
+        foreach ($studentIds as $studentId) {
+            $rows[] = [
+                'student_id' => $studentId,
+                'phone' => $this->faker->phoneNumber(),
+                'email' => null, // nullable, so we set it to null
+                'id_number' => 'ID' . str_pad($studentId, 8, '0', STR_PAD_LEFT),
+                'governorate' => $this->faker->randomElement($governorates),
+                'home_address' => $this->faker->address(),
+                'emergency_contact_name' => $this->faker->name(),
+                'emergency_contact_phone' => $this->faker->phoneNumber(),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
+            if (count($rows) >= $this->studentBatchSize) {
+                DB::table('student_contact_infos')->insert($rows);
+                $rows = [];
+            }
+        }
+
+        if ($rows !== []) {
+            DB::table('student_contact_infos')->insert($rows);
+        }
     }
 
     /**
@@ -444,19 +488,11 @@ class HighSchoolStudentSeeder extends Seeder
     /**
      * Write the student_subjects rows of a freshly inserted chunk.
      *
-     * The ids of the chunk are read back with one query on the unique code
-     * column; the codes are sequential, so they line up with the generated
-     * marks by position.
-     *
+     * @param  list<int>  $studentIds
      * @param  list<list<array{subject_id: int, grade: int}>>  $marks
      */
-    private function seedStudentSubjects(int $firstCode, int $lastCode, array $marks, Carbon $now): void
+    private function seedStudentSubjects(array $studentIds, array $marks, Carbon $now): void
     {
-        $studentIds = DB::table('high_school_students')
-            ->whereBetween('code', [$firstCode, $lastCode])
-            ->orderBy('code')
-            ->pluck('id');
-
         $rows = [];
 
         foreach ($studentIds as $index => $studentId) {
@@ -472,7 +508,6 @@ class HighSchoolStudentSeeder extends Seeder
 
             if (count($rows) >= $this->studentSubjectBatchSize) {
                 DB::table('student_subjects')->insert($rows);
-
                 $rows = [];
             }
         }

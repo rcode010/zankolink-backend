@@ -29,10 +29,11 @@ class AcceptedHighschoolStudentsController extends Controller
 
         $highschoolStudents = HighSchoolStudent::query()
             ->whereIn('accepted_department_offering_id', $departmentOfferingIds)
+            ->with("contacts")
             ->get();
 
         return $this->ok(
-            'High school students retrieved successfully.',
+            'Accepted high school students retrieved successfully.',
             $highschoolStudents->toArray()
         );
     }
