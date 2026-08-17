@@ -15,7 +15,7 @@ enum AllowedRoles: string
     case UNIVERSITY_ADMIN_IMPORT_EXPORT = 'UNIVERSITY_ADMIN_IMPORT_EXPORT';
     case DEAN = 'DEAN';
     case HEAD_OF_DEPARTMENT = 'HEAD_OF_DEPARTMENT';
-
+    case REGISTRAR = 'REGISTRAR';
     public static function values(): array
     {
         return array_column(self::cases(), 'value');
