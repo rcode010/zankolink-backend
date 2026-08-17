@@ -3,15 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EnrollHighSchoolStudentRequest;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
+use App\Mail\StudentAccountSetupMail;
 use App\Models\Department;
+use App\Models\HighSchoolStudent;
 use App\Models\Student;
+use App\Models\User;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -164,5 +169,42 @@ class StudentController extends Controller
         return $this->ok(
             'Student deleted successfully.'
         );
+    }
+
+    public function enrollStudents(EnrollHighSchoolStudentRequest $request, HighSchoolStudent $highSchoolStudent)
+    {
+        $credentials = $request->validated();
+        DB::transaction(function () use ($highSchoolStudent, $credentials) {
+
+            $highSchoolStudent->update([
+                'status' => 'enrolled',
+            ]);
+
+            $user = User::create([
+                'email' => $credentials['email'],
+                'name' => $highSchoolStudent->name,
+                'phone' => $credentials['phone'],
+                'password' => 'koya2026',
+            ]);
+            $user->assignRole('student');
+
+            Student::create([
+                'user_id' => $user->id,
+                'department_id' => $credentials['department_id'],
+                'stage' => 1,
+                'enrollment_type' => $credentials['enrollment_type'],
+            ]);
+            $token = bin2hex(random_bytes(32));
+            $expiresAt = now()->addMinutes(15);
+            $setupUrl = env('SETUP_URL').'?token='.$token;
+            Mail::to($credentials['email'])->queue(new StudentAccountSetupMail(
+                username:$highSchoolStudent->name,
+                setupUrl: $setupUrl,
+                expiresAt: $expiresAt->format('F j, Y \a\t g:i A'),
+
+            ));
+        });
+
+        return $this->ok('student enrolled successfully.');
     }
 }

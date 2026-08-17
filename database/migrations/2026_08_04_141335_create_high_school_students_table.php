@@ -27,6 +27,7 @@ return new class extends Migration
                 'submitted',
                 'accepted',
                 'rejected',
+                'enrolled',
             ])->default('draft');
             $table->string('password');
 
