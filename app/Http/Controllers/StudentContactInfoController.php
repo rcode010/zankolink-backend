@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RegistrarUpdateContactInfoRequest;
 use App\Http\Requests\StoreStudentContactInfoRequest;
 use App\Http\Requests\UpdateStudentContactInfoRequest;
 use App\Http\Resources\StudentContactInfoResource;
+use App\Models\HighSchoolStudent;
 use App\Models\StudentContactInfo;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -28,7 +30,7 @@ class StudentContactInfoController extends Controller
     {
         $studentContact = $request->user()->contacts;
 
-        if (!$studentContact) {
+        if (! $studentContact) {
             return $this->ok('No contact info found', null);
         }
 
@@ -57,5 +59,18 @@ class StudentContactInfoController extends Controller
         $studentContactInfo->delete();
 
         return response()->json();
+    }
+
+    public function updateContactInfo(RegistrarUpdateContactInfoRequest $request, HighSchoolStudent $highSchoolStudent)
+    {
+
+        $contactInfo = $highSchoolStudent->contacts;
+
+        $contactInfo->update($request->validated());
+
+        return $this->ok(
+            'Student contact information updated successfully.',
+            (new StudentContactInfoResource($contactInfo->fresh()))->resolve()
+        );
     }
 }
