@@ -3,15 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EnrollHighSchoolStudentRequest;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
+use App\Mail\StudentAccountSetupMail;
 use App\Models\Department;
+use App\Models\HighSchoolStudent;
 use App\Models\Student;
+use App\Models\User;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -164,5 +170,51 @@ class StudentController extends Controller
         return $this->ok(
             'Student deleted successfully.'
         );
+    }
+
+    public function enrollStudents(EnrollHighSchoolStudentRequest $request, HighSchoolStudent $highSchoolStudent)
+    {
+        $credentials = $request->validated();
+        [$token,$expiresAt] = DB::transaction(function () use ($highSchoolStudent, $credentials) {
+
+            $highSchoolStudent->update([
+                'status' => 'enrolled',
+            ]);
+
+            $user = User::create([
+                'email' => $credentials['email'],
+                'name' => $highSchoolStudent->name,
+                'phone' => $credentials['phone'],
+                'password' => Hash::make('koya2026'),
+            ]);
+            $user->assignRole('student');
+
+            Student::create([
+                'user_id' => $user->id,
+                'department_id' => $credentials['department_id'],
+                'stage' => 1,
+                'enrollment_type' => $credentials['enrollment_type'],
+            ]);
+
+            $token = bin2hex(random_bytes(32));
+            $tokenHash = hash('sha256', $token);
+            $expiresAt = now()->addMinutes(15);
+
+            $user->studentAccountSetupTokens()->create([
+                'token_hash' => $tokenHash,
+                'expires_at' => $expiresAt,
+            ]);
+
+            return [$token, $expiresAt];
+        });
+        $setupUrl = config('app.student_setup_url.url').'?token='.$token;
+        Mail::to($credentials['email'])->queue(new StudentAccountSetupMail(
+            username: $highSchoolStudent->name,
+            setupUrl: $setupUrl,
+            expiresAt: $expiresAt->format('F j, Y \a\t g:i A'),
+
+        ));
+
+        return $this->ok('student enrolled successfully.');
     }
 }

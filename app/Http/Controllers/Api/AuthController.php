@@ -10,12 +10,14 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\RegisterZankolineStudentRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\SetPasswordRequest;
 use App\Http\Requests\VerifyRequest;
 use App\Http\Requests\ZankolineLoginRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\ZankolineStudentResource;
 use App\Mail\TwoFactorCodeMail;
 use App\Models\HighSchoolStudent;
+use App\Models\StudentAccountSetupToken;
 use App\Models\User;
 use App\Models\UserScope;
 use App\Services\TwoFactorAuthenticationService;
@@ -407,13 +409,57 @@ class AuthController extends Controller
             $userData
         );
     }
-    public function zankolineMe(Request $request){
+
+    public function zankolineMe(Request $request)
+    {
         $user = $request->user();
 
         $user->load('contacts');
+
         return $this->ok(
             'Student profile retrieved successfully.',
             (new ZankolineStudentResource($user))->resolve()
         );
+    }
+
+    public function setPassword(SetPasswordRequest $request)
+    {
+        $credentials = $request->validated();
+        DB::transaction(function () use ($credentials) {
+            $tokenHash = hash('sha256', $credentials['token']);
+            $token = StudentAccountSetupToken::where('token_hash', $tokenHash)
+                ->whereNull('used_at')
+                ->lockForUpdate()
+                ->first();
+
+            if (! $token) {
+                throw ValidationException::withMessages([
+                    'token' => 'This setup link is invalid or has already been used.',
+                ]);
+            }
+
+            if ($token->isExpired()) {
+                throw ValidationException::withMessages([
+                    'token' => 'This setup link has expired.',
+                ]);
+            }
+
+            $user = $token->user;
+
+            if (! $user) {
+                throw ValidationException::withMessages([
+                    'token' => 'No valid user associated with this token.',
+                ]);
+            }
+
+            $user->update([
+                'password' => Hash::make($credentials['password']),
+            ]);
+
+            $token->update(['used_at' => now()]);
+
+        });
+
+        return $this->ok('Password set successfully.');
     }
 }

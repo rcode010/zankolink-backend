@@ -117,6 +117,9 @@ return [
     | Supported drivers: "file", "cache"
     |
     */
+    'student_setup_url' => [
+        'url' => env('SETUP_URL'),
+    ],
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),

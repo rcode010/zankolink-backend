@@ -12,6 +12,8 @@ Route::post('/auth/forget-password', [AuthController::class, 'forgetPassword'])-
 
 Route::post('/auth/zankoline/login', [AuthController::class, 'zankolineLogin']);
 Route::post('/auth/zankoline/register', [AuthController::class, 'zankolineRegister']);
+
+Route::post('/auth/student/set-password', [AuthController::class, 'setPassword']);
 // Protected Routes
 Route::middleware(['auth:sanctum', 'ability:admin'])->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register'])->middleware('permission:create users', 'throttle:register');
