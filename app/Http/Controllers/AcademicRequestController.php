@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAcademicRequest;
 use App\Http\Resources\AcademicRequestResource;
 use App\Http\Resources\DepartmentAcademicRequestResource;
 use App\Models\AcademicRequest;
+use App\Models\AcademicYear;
 use App\Services\AcademicRequestDepartmentResolver;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
@@ -142,11 +143,12 @@ class AcademicRequestController extends Controller
             $credentials['department_id'] ?? null
         );
         $academicRequest = DB::transaction(function () use ($departmentId, $credentials, $user, $request) {
-
+            $academicYear = AcademicYear::where('is_active', true)->firstOrFail();
             $academicRequest = AcademicRequest::create([
                 'user_id' => $user->id,
                 'department_id' => $departmentId,
                 'subject' => $credentials['subject'],
+                'academic_year_id'=>$academicYear->id,
                 'description' => $credentials['description'],
                 'status' => 'pending',
                 'type' => $credentials['type'],

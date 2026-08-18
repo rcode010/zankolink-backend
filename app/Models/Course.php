@@ -54,4 +54,8 @@ class Course extends Model
     {
         return $this->hasMany(CourseAssessments::class);
     }
+    public function academicYear(): BelongsTo
+    {
+        return $this->belongsTo(AcademicYear::class);
+    }
 }
