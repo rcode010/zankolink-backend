@@ -25,6 +25,7 @@ class CourseResource extends JsonResource
             'department_id' => $this->department_id,
             'color' => $this->color,
             'role' => $this->pivot?->role,
+            'academic_year_id' => $this->academic_year_id,
             'semester' => $this->semester,
             'students_count' => $this->whenCounted('students'),
             'sections_count' => $this->whenCounted('sections'),

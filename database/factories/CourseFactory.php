@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -41,6 +42,7 @@ class CourseFactory extends Factory
         return [
             'name' => $this->faker->randomElement($subjects),
             'department_id' => Department::factory(),
+            'academic_year_id' => AcademicYear::where('is_active', true)->value('id'),
             'code' => $code,
             'type' => $this->faker->randomElement(['mandatory', 'elective']),
             'semester' => $this->faker->randomElement(['fall', 'spring']),

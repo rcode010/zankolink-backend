@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AcademicYear extends Model
 {
@@ -16,4 +17,9 @@ class AcademicYear extends Model
         'zankoline_submission_ends_at',
 
     ];
+
+    public function courses(): HasMany
+    {
+        return $this->hasMany(Course::class);
+    }
 }
