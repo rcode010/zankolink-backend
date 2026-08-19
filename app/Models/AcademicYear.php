@@ -17,9 +17,11 @@ class AcademicYear extends Model
         'zankoline_submission_ends_at',
 
     ];
-  
-    public function AcademicRequest(){
+
+    public function AcademicRequest()
+    {
         return $this->hasMany(AcademicRequest::class);
+    }
 
     public function courses(): HasMany
     {
