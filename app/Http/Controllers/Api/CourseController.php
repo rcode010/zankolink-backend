@@ -498,4 +498,13 @@ class CourseController extends Controller
 
         return $this->ok('Course Teacher retrieved', $teachers->toArray());
     }
+    public function archivedCourses(Request $request){
+        $academicYearId = AcademicYear::where('is_active', true)->value('id');
+
+        $courses = Course::query()
+            ->where('academic_year_id','!=', $academicYearId)
+            ->get();
+
+        return $this->ok("Archived coureses retrieved successfully", (CourseResource::collection($courses))->resolve());
+    }
 }
