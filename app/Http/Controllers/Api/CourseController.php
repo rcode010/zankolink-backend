@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
+use App\Models\AcademicYear;
 use App\Models\Course;
 use App\Models\Department;
 use App\Traits\ApiResponses;
@@ -93,7 +94,6 @@ class CourseController extends Controller
     {
         $this->authorize('viewAny', Course::class);
 
-
         $query = Course::query();
 
         $user = $request->user();
@@ -112,6 +112,7 @@ class CourseController extends Controller
                 AllowedFilter::partial('name'),
                 AllowedFilter::partial('code'),
                 AllowedFilter::exact('department_id'),
+                AllowedFilter::exact('academic_year_id'),
                 AllowedFilter::exact('semester'),
                 'is_active',
             )
@@ -203,7 +204,8 @@ class CourseController extends Controller
         $prerequisites = $validated['prerequisites'] ?? [];
         unset($validated['prerequisites']);
         $course = DB::transaction(function () use ($validated, $prerequisites) {
-
+            $academicYear = AcademicYear::where('is_active', true)->firstOrFail();
+            $validated['academic_year_id'] = $academicYear->id;
             $course = Course::create(
                 $validated
             );

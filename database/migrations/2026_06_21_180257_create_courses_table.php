@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
+            $table->foreignId('academic_year_id')->constrained('academic_years')->onDelete('cascade');
             $table->enum('type', ['mandatory', 'elective'])->default('mandatory');
             $table->enum('semester', ['fall', 'spring'])->default('fall');
             $table->integer('seats')->nullable();
@@ -29,6 +30,10 @@ return new class extends Migration
             $table->index(['department_id', 'type', 'is_active'], 'courses_department_type_active_idx');
             $table->index(['department_id', 'year_level'], 'courses_department_year_level_idx');
             $table->index(['department_id', 'code'], 'courses_department_code_unique');
+            $table->unique(
+                ['department_id', 'academic_year_id', 'code'],
+                'courses_department_year_code_unique'
+            );
         });
     }
 

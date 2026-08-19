@@ -12,7 +12,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['department_id', 'name', 'code', 'credit_hours', 'year_level', 'is_active', 'type', 'seats', 'semester', 'color'];
+    protected $fillable = ['department_id', 'name', 'code', 'credit_hours', 'year_level', 'is_active', 'type', 'seats', 'semester', 'color', 'academic_year_id'];
 
     public function department(): BelongsTo
     {
@@ -54,6 +54,7 @@ class Course extends Model
     {
         return $this->hasMany(CourseAssessments::class);
     }
+
     public function academicYear(): BelongsTo
     {
         return $this->belongsTo(AcademicYear::class);
