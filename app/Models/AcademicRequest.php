@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AcademicRequest extends Model
 {
@@ -13,6 +14,7 @@ class AcademicRequest extends Model
         'user_id',
         'status',
         'department_id',
+        'academic_year_id',
         'file_name',
         'file_type',
         'file_size',
@@ -33,4 +35,7 @@ class AcademicRequest extends Model
     {
         return $this->belongsTo(Department::class);
     }
-}
+    public function academicYear(): BelongsTo
+    {
+        return $this->belongsTo(AcademicYear::class);
+    }}

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('department_id')->constrained();
+            $table->foreignId('academic_year_id')->constrained('academic_years')->onDelete('cascade');
             $table->string('type');
             $table->string('subject');
             $table->text('description');
