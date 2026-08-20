@@ -635,14 +635,6 @@ class DatabaseSeeder extends Seeder
             scopeId: null,
             phone: '07700000004'
         );
-        $this->createScopedUser(
-            name: 'Registrar',
-            email: 'registrar@zankolink.test',
-            roleName: 'REGISTRAR',
-            scopeType: 'MINISTRY',
-            scopeId: null,
-            phone: '07705555555'
-        );
     }
 
     private function seedUniversities(): void
@@ -693,6 +685,13 @@ class DatabaseSeeder extends Seeder
                     roleName: 'UNIVERSITY_ADMIN_IMPORT_EXPORT',
                     scopeType: 'UNIVERSITY',
                     scopeId: $university->id
+                );
+                $this->createScopedUser(
+                    name: "Registrar University {$u}",
+                    email: "registrar{$userCode}{$positionCode}@zankolink.test",
+                    roleName: 'REGISTRAR',
+                    scopeType: 'UNIVERSITY',
+                    scopeId: $university->id,
                 );
                 $university->update(['admin_id' => $admin->id]);
 
