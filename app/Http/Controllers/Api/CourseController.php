@@ -501,10 +501,26 @@ class CourseController extends Controller
     public function archivedCourses(Request $request){
         $academicYearId = AcademicYear::where('is_active', true)->value('id');
 
-        $courses = Course::query()
-            ->where('academic_year_id','!=', $academicYearId)
-            ->get();
+        if (is_null($academicYearId)) {
+            return $this->error('No active academic year found.', 422);
+        }
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
 
-        return $this->ok("Archived coureses retrieved successfully", (CourseResource::collection($courses))->resolve());
+        $courses = QueryBuilder::for(Course::class)
+            ->where('academic_year_id', '!=', $academicYearId)
+            ->allowedFilters(
+                AllowedFilter::callback('search', function ($query, $value) {
+                    $escaped = str_replace(['%', '_'], ['\%', '\_'], $value);
+
+                    $query->where(function ($q) use ($escaped) {
+                        $q->where('name', 'like', "%{$escaped}%")
+                            ->orWhere('code', 'like', "%{$escaped}%");
+                    });
+                })
+            )
+            ->latest()
+            ->paginate($per_page);
+
+        return $this->ok("Archived courses retrieved successfully", CourseResource::collection($courses)->toArray($request));
     }
 }
