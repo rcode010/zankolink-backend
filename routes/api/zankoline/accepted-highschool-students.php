@@ -1,6 +1,7 @@
 <?php
 
-
 use App\Http\Controllers\AcceptedHighschoolStudentsController;
 
-Route::get("/highschool-students/department",[AcceptedHighschoolStudentsController::class,'show']);
+Route::get('/registrar/students', [AcceptedHighschoolStudentsController::class, 'index']);
+Route::get('/registrar/departments', [AcceptedHighschoolStudentsController::class, 'departments']);
+Route::get('/registrar/students/analytics', [AcceptedHighschoolStudentsController::class, 'statistics']);

@@ -56,12 +56,17 @@ class HighSchoolStudent extends Model
     {
         return $this->belongsToMany(
             DepartmentOffering::class,
-            'student_choice',
+            'students_choices',
             'student_id',
             'department_offering_id'
         )
-            ->withPivot('priority', 'status')
+            ->withPivot('preference_order', 'status')
             ->withTimestamps();
+    }
+
+    public function acceptedDepartmentOffering()
+    {
+        return $this->belongsTo(DepartmentOffering::class, 'accepted_department_offering_id');
     }
 
     public function choices()

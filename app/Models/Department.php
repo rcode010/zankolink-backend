@@ -53,6 +53,18 @@ class Department extends Model
         return $this->hasMany(DepartmentOffering::class);
     }
 
+    public function acceptedStudents()
+    {
+        return $this->hasManyThrough(
+            HighSchoolStudent::class,
+            DepartmentOffering::class,
+            'department_id',
+            'accepted_department_offering_id',
+            'id',
+            'id',
+        );
+    }
+
     public function subjects(): BelongsToMany
     {
         return $this->belongsToMany(

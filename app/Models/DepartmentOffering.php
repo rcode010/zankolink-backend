@@ -30,7 +30,7 @@ class DepartmentOffering extends Model
     {
         return $this->belongsToMany(
             HighSchoolStudent::class,
-            'student_choice',
+            'students_choices',
             'department_offering_id',
             'student_id'
         )
