@@ -364,4 +364,18 @@ class LetterController extends Controller
             (LetterResource::collection($letters))->resolve()
         );
     }
+    public function getAllLetters(Request $request){
+        $letters = QueryBuilder::for(Letter::class)
+            ->with([
+                'recipients',
+                'sender:id,name',
+                'receiver:id,name',
+            ])
+            ->allowedFilters(
+                AllowedFilter::exact('status'),
+                AllowedFilter::exact('academic_year_id')
+            )->get();
+
+        return $this->ok("All letters retrieved successfully", (LetterResource::collection($letters))->resolve());
+    }
 }

@@ -55,6 +55,9 @@ class LetterResource extends JsonResource
                     'name' => $this->receiver->name,
                 ];
             }),
+            'recipients' => $this->whenLoaded('recipients', function () {
+                return $this->recipients;
+            }),
             'attachments' => $this->whenLoaded('attachments', function () {
                 return $this->attachments->map(function ($attachment) {
                     return [
