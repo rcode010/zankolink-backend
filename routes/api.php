@@ -56,6 +56,8 @@ Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function ()
         require __DIR__.'/api/zankoline/admission.php';
 
         require __DIR__.'/api/zankoline/registrar-contact-info.php';
+
+        require __DIR__.'/api/backup-academic-request.php';
     });
 
     Route::middleware('ability:moodle')->group(function () {
