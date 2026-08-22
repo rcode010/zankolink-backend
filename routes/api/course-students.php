@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\StudentCourseController;
 
+Route::get('/backup/grades',[StudentCourseController::class,'getGrades']);
 Route::get('/departments/{department}/students', [StudentCourseController::class, 'departmentStudents'])->middleware('permission:view students');
 Route::prefix('courses/{course}')->group(function () {
     Route::post('/assign-student', [StudentCourseController::class, 'store'])->middleware('permission:assign course students');
