@@ -31,16 +31,14 @@ class AcceptedHighschoolStudentsController extends Controller
                 'acceptedDepartmentOffering.department.faculty',
             ])
             ->allowedFilters(
-                AllowedFilter::exact('department_offering_id'),
+                AllowedFilter::exact('accepted_department_offering_id'),
                 AllowedFilter::exact('status'),
-                AllowedFilter::exact('page'),
-                AllowedFilter::exact('per_page'),
                 AllowedFilter::callback('search', function ($query, $value) {
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $value);
 
                     $query->where(function ($q) use ($escaped) {
                         $q->where('name', 'like', "%{$escaped}%")
-                            ->orWhere('code', 'lie', "%{$escaped}%");
+                            ->orWhere('code', 'like', "%{$escaped}%");
                     });
                 })
             )
