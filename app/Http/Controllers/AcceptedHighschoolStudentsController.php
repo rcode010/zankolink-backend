@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AcceptedStudentQueryRequest;
+use App\Http\Requests\AssignHighSchoolStudentEmailRequest;
 use App\Models\Department;
 use App\Models\HighSchoolStudent;
+use App\Models\StudentContactInfo;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -104,5 +106,15 @@ class AcceptedHighschoolStudentsController extends Controller
             'enrolled' => $enrolled,
             'pending' => $pending,
         ]);
+    }
+
+    public function assignEmail(AssignHighSchoolStudentEmailRequest $request, HighSchoolStudent $highSchoolStudent) {
+        $credentials = $request->validated();
+
+        $highSchoolStudent->contacts()->update([
+            "email" => $credentials['email']
+        ]);
+
+        return $this->ok('Email assigned successfully.');
     }
 }
