@@ -12,6 +12,8 @@ use App\Services\AcademicRequestDepartmentResolver;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * @group Academic Requests
@@ -256,5 +258,17 @@ class AcademicRequestController extends Controller
             'Academic requests retrieved successfully.',
             DepartmentAcademicRequestResource::collection($academicRequests)->resolve()
         );
+    }
+    public function getAllAcademicRequests(){
+        $academicRequests = QueryBuilder::for(AcademicRequest::class)
+            ->with(['attachments', 'user', 'department'])
+            ->allowedFilters(
+                AllowedFilter::exact('department_id'),
+                AllowedFilter::exact('academic_year_id'),
+            )
+            ->get();
+
+        return $this->ok('Academic Request retrieved successfully',
+            (AcademicRequestResource::collection($academicRequests))->resolve());
     }
 }

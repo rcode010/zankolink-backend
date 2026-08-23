@@ -159,7 +159,7 @@ class DatabaseSeeder extends Seeder
 
             $this->seedMinistryUsers();
             $this->seedUniversities();
-            //            $this->seedLetters();
+                        $this->seedLetters();
             //            $this->createMoodleDemoUsers();
             //            $this->createQaCourseUsers();
             $this->seedGrade12Subjects();
