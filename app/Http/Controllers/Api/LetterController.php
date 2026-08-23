@@ -377,10 +377,8 @@ class LetterController extends Controller
                 AllowedFilter::exact('academic_year_id'),
                 AllowedFilter::exact('type'),
                 AllowedFilter::callback('search', function (Builder $query, $value) {
-                    $query->whereHas('student.user', function (Builder $query) use ($value) {
                         $query->where('title', 'like', "%{$value}%")
                             ->orWhere('letter_number', 'like', "%{$value}%");
-                    });
                 }),
             )->get();
 

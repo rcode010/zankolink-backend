@@ -10,6 +10,7 @@ use App\Models\AcademicRequest;
 use App\Models\AcademicYear;
 use App\Services\AcademicRequestDepartmentResolver;
 use App\Traits\ApiResponses;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -265,6 +266,10 @@ class AcademicRequestController extends Controller
             ->allowedFilters(
                 AllowedFilter::exact('department_id'),
                 AllowedFilter::exact('academic_year_id'),
+                AllowedFilter::exact('type'),
+                AllowedFilter::callback('search', function (Builder $query, $value) {
+                        $query->where('subject', 'like', "%{$value}%");
+                }),
             )
             ->get();
 
