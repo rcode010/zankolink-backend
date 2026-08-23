@@ -19,6 +19,7 @@ use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @group Student-Course
@@ -29,7 +30,10 @@ class StudentCourseController extends Controller
 {
     use ApiResponses;
 
-    public function getGrades(){
+
+
+    public function getGrades()
+    {
         $courseStudent = QueryBuilder::for(CourseStudents::class)
             ->with([
                 'student.user:id,name,email',
@@ -40,11 +44,21 @@ class StudentCourseController extends Controller
                 AllowedFilter::exact('course_id'),
                 AllowedFilter::exact('student_id'),
                 AllowedFilter::exact('status'),
+
+                AllowedFilter::callback('search', function (Builder $query, $value) {
+                    $query->whereHas('student.user', function (Builder $query) use ($value) {
+                        $query->where('name', 'like', "%{$value}%")
+                            ->orWhere('email', 'like', "%{$value}%");
+                    });
+                }),
             )
             ->allowedSorts('grade')
             ->get();
 
-        return $this->ok("All students enrolled courses", $courseStudent->toArray());
+        return $this->ok(
+            'All students enrolled courses retrieved successfully.',
+            $courseStudent->toArray()
+        );
     }
 
     public function departmentStudents(Request $request, Department $department)

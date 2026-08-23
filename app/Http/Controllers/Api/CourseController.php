@@ -114,7 +114,15 @@ class CourseController extends Controller
                 AllowedFilter::exact('department_id'),
                 AllowedFilter::exact('academic_year_id'),
                 AllowedFilter::exact('semester'),
-                'is_active',
+                AllowedFilter::exact('is_active'),
+                AllowedFilter::callback('search', function ($query, $value) {
+                    $escaped = str_replace(['%', '_'], ['\%', '\_'], $value);
+
+                    $query->where(function ($q) use ($escaped) {
+                        $q->where('name', 'like', "%{$escaped}%")
+                            ->orWhere('code', 'like', "%{$escaped}%");
+                    });
+                })
             )
             ->latest()
             ->get();

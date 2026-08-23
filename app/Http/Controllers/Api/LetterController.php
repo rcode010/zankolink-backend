@@ -17,6 +17,7 @@ use App\Services\LetterService;
 use App\Services\LetterVerificationHashService;
 use App\Services\QrCodeService;
 use App\Traits\ApiResponses;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -373,7 +374,12 @@ class LetterController extends Controller
             ])
             ->allowedFilters(
                 AllowedFilter::exact('status'),
-                AllowedFilter::exact('academic_year_id')
+                AllowedFilter::exact('academic_year_id'),
+                AllowedFilter::exact('type'),
+                AllowedFilter::callback('search', function (Builder $query, $value) {
+                        $query->where('title', 'like', "%{$value}%")
+                            ->orWhere('letter_number', 'like', "%{$value}%");
+                }),
             )->get();
 
         return $this->ok("All letters retrieved successfully", (LetterResource::collection($letters))->resolve());
