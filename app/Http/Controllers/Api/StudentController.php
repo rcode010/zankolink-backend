@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BulkEnrollHighSchoolStudentsRequest;
 use App\Http\Requests\EnrollHighSchoolStudentRequest;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
+use App\Jobs\BulkEnrollHighSchoolStudentsJob;
 use App\Mail\StudentAccountSetupMail;
 use App\Models\Department;
 use App\Models\HighSchoolStudent;
@@ -15,11 +17,13 @@ use App\Models\User;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+use Throwable;
 
 /**
  * @group Student
@@ -212,9 +216,40 @@ class StudentController extends Controller
             username: $highSchoolStudent->name,
             setupUrl: $setupUrl,
             expiresAt: $expiresAt->format('F j, Y \a\t g:i A'),
-
         ));
 
         return $this->ok('student enrolled successfully.');
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function bulkEnrollStudents(BulkEnrollHighSchoolStudentsRequest $request)
+    {
+        $credentials = $request->validated();
+
+        $universityId = $request->user()
+            ->userScopes()
+            ->where('scope_type', 'UNIVERSITY')
+            ->value('scope_id');
+
+        $batch = Bus::batch([
+            new BulkEnrollHighSchoolStudentsJob($credentials['students'], $universityId),
+        ])->dispatch();
+
+        return $this->ok('Enrollment started.', ['batch_id' => $batch->id]);
+    }
+
+    public function bulkEnrollStatus($batchId)
+    {
+        $batch = Bus::findBatch($batchId);
+
+        return $this->ok('Batch status.', [
+            'id' => $batch->id,
+            'progress' => $batch->progress(),
+            'finished' => $batch->finished(),
+            'failed' => $batch->hasFailures(),
+            'total' => $batch->totalJobs,
+        ]);
     }
 }

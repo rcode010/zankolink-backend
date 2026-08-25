@@ -10,3 +10,5 @@ Route::prefix('students')->group(function () {
     Route::delete('/{student}', [StudentController::class, 'destroy'])->middleware('permission:delete students');
 });
 Route::post('/zankoline/students/{highSchoolStudent}/enroll', [StudentController::class, 'enrollStudents']);
+Route::post('/zankoline/students/bulk-enroll', [StudentController::class, 'bulkEnrollStudents']);
+Route::get('/zankoline/bulk-enrollment/status/{batch_id}', [StudentController::class, 'bulkEnrollStatus']);
