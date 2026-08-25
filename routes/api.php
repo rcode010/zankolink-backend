@@ -58,6 +58,7 @@ Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function ()
         require __DIR__.'/api/zankoline/registrar-contact-info.php';
 
         require __DIR__.'/api/backup-academic-request.php';
+        require __DIR__.'/api/global-search.php';
     });
 
     Route::middleware('ability:moodle')->group(function () {
