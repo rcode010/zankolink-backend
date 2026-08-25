@@ -4,9 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class AcademicRequest extends Model
 {
+    use Searchable,Searchable;
+    public function searchableAs(): string
+    {
+        return 'academic_requests_index';
+    }
+    public function toSearchableArray()
+    {
+        return [
+            'subject' => $this->subject,
+        ];
+    }
     protected $fillable = [
         'type',
         'subject',

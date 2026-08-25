@@ -5,10 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Letter extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
+    public function searchableAs(): string
+    {
+        return 'letters_index';
+    }
+    public function toSearchableArray()
+    {
+        return [
+            'title' => $this->title,
+            'letter_number' =>  $this->letter_number,
+        ];
+    }
 
     protected $fillable = [
         'letter_number', 'title', 'body', 'type', 'receiver_id', 'sender_id',

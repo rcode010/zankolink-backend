@@ -7,10 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 class Course extends Model
 {
-    use HasFactory;
+    use HasFactory,Searchable;
+    public function searchableAs(): string
+    {
+        return 'courses_index';
+    }
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+            'code' =>  $this->code,
+        ];
+    }
 
     protected $fillable = ['department_id', 'name', 'code', 'credit_hours', 'year_level', 'is_active', 'type', 'seats', 'semester', 'color', 'academic_year_id'];
 
