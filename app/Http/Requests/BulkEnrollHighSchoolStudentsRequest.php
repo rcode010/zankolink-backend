@@ -15,6 +15,7 @@ class BulkEnrollHighSchoolStudentsRequest extends FormRequest
             'students.*.email' => 'required|email|max:255|unique:users,email',
             'students.*.phone' => 'required|string',
             'students.*.student_id' => 'required|integer|exists:high_school_students,id',
+
             'students.*.department_id' => [
                 'required',
                 'integer',

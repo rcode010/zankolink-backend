@@ -10,8 +10,11 @@ use App\Models\AcademicRequest;
 use App\Models\AcademicYear;
 use App\Services\AcademicRequestDepartmentResolver;
 use App\Traits\ApiResponses;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * @group Academic Requests
@@ -256,5 +259,21 @@ class AcademicRequestController extends Controller
             'Academic requests retrieved successfully.',
             DepartmentAcademicRequestResource::collection($academicRequests)->resolve()
         );
+    }
+    public function getAllAcademicRequests(){
+        $academicRequests = QueryBuilder::for(AcademicRequest::class)
+            ->with(['attachments', 'user', 'department'])
+            ->allowedFilters(
+                AllowedFilter::exact('department_id'),
+                AllowedFilter::exact('academic_year_id'),
+                AllowedFilter::exact('type'),
+                AllowedFilter::callback('search', function (Builder $query, $value) {
+                        $query->where('subject', 'like', "%{$value}%");
+                }),
+            )
+            ->get();
+
+        return $this->ok('Academic Request retrieved successfully',
+            (AcademicRequestResource::collection($academicRequests))->resolve());
     }
 }

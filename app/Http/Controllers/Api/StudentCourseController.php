@@ -9,6 +9,7 @@ use App\Http\Resources\CourseResource;
 use App\Http\Resources\StudentResource;
 use App\Models\AcademicYear;
 use App\Models\Course;
+use App\Models\CourseStudents;
 use App\Models\Department;
 use App\Models\Student;
 use App\Services\CoursePrerequisiteEligibilityService;
@@ -16,6 +17,9 @@ use App\Services\StudentAvailableCoursesService;
 use App\Services\UniqueCourseRequestService;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @group Student-Course
@@ -25,6 +29,37 @@ use Illuminate\Http\Request;
 class StudentCourseController extends Controller
 {
     use ApiResponses;
+
+
+
+    public function getGrades()
+    {
+        $courseStudent = QueryBuilder::for(CourseStudents::class)
+            ->with([
+                'student.user:id,name,email',
+                'course',
+            ])
+            ->allowedFilters(
+                AllowedFilter::exact('academic_year_id'),
+                AllowedFilter::exact('course_id'),
+                AllowedFilter::exact('student_id'),
+                AllowedFilter::exact('status'),
+
+                AllowedFilter::callback('search', function (Builder $query, $value) {
+                    $query->whereHas('student.user', function (Builder $query) use ($value) {
+                        $query->where('name', 'like', "%{$value}%")
+                            ->orWhere('email', 'like', "%{$value}%");
+                    });
+                }),
+            )
+            ->allowedSorts('grade')
+            ->get();
+
+        return $this->ok(
+            'All students enrolled courses retrieved successfully.',
+            $courseStudent->toArray()
+        );
+    }
 
     public function departmentStudents(Request $request, Department $department)
     {
