@@ -8,6 +8,7 @@ use App\Http\Requests\EnrollHighSchoolStudentRequest;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
+use App\Jobs\BulkEnrollHighSchoolStudentsJob;
 use App\Mail\StudentAccountSetupMail;
 use App\Models\Department;
 use App\Models\HighSchoolStudent;
@@ -16,6 +17,7 @@ use App\Models\User;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -226,59 +228,28 @@ class StudentController extends Controller
     {
         $credentials = $request->validated();
 
-        $tokens = DB::transaction(function () use ($credentials) {
-                $generatedTokens = [];
+        $universityId = $request->user()
+            ->userScopes()
+            ->where('scope_type', 'UNIVERSITY')
+            ->value('scope_id');
 
-                foreach ($credentials['students'] as $student) {
-                    $highSchoolStudent = HighSchoolStudent::findOrFail($student['student_id']);
+        $batch = Bus::batch([
+            new BulkEnrollHighSchoolStudentsJob($credentials['students'], $universityId),
+        ])->dispatch();
 
-                    $highSchoolStudent->update(['status' => 'enrolled']);
+        return $this->ok('Enrollment started.', ['batch_id' => $batch->id]);
+    }
 
-                    $user = User::create([
-                        'email' => $student['email'],
-                        'name' => $highSchoolStudent->name,
-                        'phone' => $student['phone'],
-                        'password' => Hash::make('koya2026')
-                    ]);
+    public function bulkEnrollStatus($batchId)
+    {
+        $batch = Bus::findBatch($batchId);
 
-                    $user->assignRole('student');
-
-                    Student::create([
-                        'user_id' => $user->id,
-                        'department_id' => $student['department_id'],
-                        'stage' => 1,
-                        'enrollment_type' => $student['enrollment_type'],
-                    ]);
-
-                    $token = bin2hex(random_bytes(32));
-                    $tokenHash = hash('sha256', $token);
-                    $expiresAt = now()->addMinutes(15);
-
-                    $user->studentAccountSetupTokens()->create([
-                        'token_hash' => $tokenHash,
-                        'expires_at' => $expiresAt,
-                    ]);
-
-                    $generatedTokens[] = [
-                        'email' => $student['email'],
-                        'name' => $highSchoolStudent->name,
-                        'token' => $token,
-                        'expires_at' => $expiresAt,
-                    ];
-                }
-
-                return $generatedTokens;
-        });
-
-        foreach ($tokens as $token) {
-            $setupUrl = config('app.student_setup_url.url') . '?token=' . $token['token'];
-            Mail::to($token['email'])->queue(new StudentAccountSetupMail(
-                username: $token['name'],
-                setupUrl: $setupUrl,
-                expiresAt: $token['expires_at']->format('F j, Y \a\t g:i A'),
-            ));
-        }
-
-        return $this->ok("Students enrolled successfully");
+        return $this->ok('Batch status.', [
+            'id' => $batch->id,
+            'progress' => $batch->progress(),
+            'finished' => $batch->finished(),
+            'failed' => $batch->hasFailures(),
+            'total' => $batch->totalJobs,
+        ]);
     }
 }

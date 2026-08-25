@@ -10,11 +10,12 @@ class BulkEnrollHighSchoolStudentsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'students' => 'array|min:1|required',
+            'students' => 'required|array|min:1',
 
             'students.*.email' => 'required|email|max:255|unique:users,email',
             'students.*.phone' => 'required|string',
-            'students.*.student_id'=>'required|integer|exists:high_school_students,id',
+            'students.*.student_id' => 'required|integer|exists:high_school_students,id',
+
             'students.*.department_id' => [
                 'required',
                 'integer',

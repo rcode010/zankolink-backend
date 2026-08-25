@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AcceptedStudentQueryRequest;
+use App\Http\Requests\AssignHighSchoolStudentEmailRequest;
 use App\Models\Department;
 use App\Models\HighSchoolStudent;
+use App\Models\StudentContactInfo;
 use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -31,16 +33,14 @@ class AcceptedHighschoolStudentsController extends Controller
                 'acceptedDepartmentOffering.department.faculty',
             ])
             ->allowedFilters(
-                AllowedFilter::exact('department_offering_id'),
+                AllowedFilter::exact('accepted_department_offering_id'),
                 AllowedFilter::exact('status'),
-                AllowedFilter::exact('page'),
-                AllowedFilter::exact('per_page'),
                 AllowedFilter::callback('search', function ($query, $value) {
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $value);
 
                     $query->where(function ($q) use ($escaped) {
                         $q->where('name', 'like', "%{$escaped}%")
-                            ->orWhere('code', 'lie', "%{$escaped}%");
+                            ->orWhere('code', 'like', "%{$escaped}%");
                     });
                 })
             )
@@ -106,5 +106,15 @@ class AcceptedHighschoolStudentsController extends Controller
             'enrolled' => $enrolled,
             'pending' => $pending,
         ]);
+    }
+
+    public function assignEmail(AssignHighSchoolStudentEmailRequest $request, HighSchoolStudent $highSchoolStudent) {
+        $credentials = $request->validated();
+
+        $highSchoolStudent->contacts()->update([
+            "email" => $credentials['email']
+        ]);
+
+        return $this->ok('Email assigned successfully.');
     }
 }
