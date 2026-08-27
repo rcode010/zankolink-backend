@@ -19,7 +19,6 @@ class EnrollHighSchoolStudentRequest extends FormRequest
             'phone'=>[
               'required',
               'string',
-              'regex:/^07[0-9]{9}$/',
             ],
             'department_id' => [
                 'required',
