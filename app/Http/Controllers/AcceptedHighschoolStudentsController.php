@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AcceptedStudentQueryRequest;
 use App\Http\Requests\AssignHighSchoolStudentEmailRequest;
+use App\Http\Requests\GenerateStudentEmailsRequest;
 use App\Models\Department;
 use App\Models\HighSchoolStudent;
 use App\Models\StudentContactInfo;
@@ -18,7 +18,7 @@ class AcceptedHighschoolStudentsController extends Controller
 
     public function index(Request $request)
     {
-        $per_page = max(1, min((int)$request->query('per_page', 15), 100));
+        $per_page = max(1, min((int) $request->query('per_page', 15), 100));
         $universityId = $request->user()->userScopes()
             ->where('scope_type', 'UNIVERSITY')
             ->value('scope_id');
@@ -108,13 +108,47 @@ class AcceptedHighschoolStudentsController extends Controller
         ]);
     }
 
-    public function assignEmail(AssignHighSchoolStudentEmailRequest $request, HighSchoolStudent $highSchoolStudent) {
+    public function assignEmail(AssignHighSchoolStudentEmailRequest $request, HighSchoolStudent $highSchoolStudent)
+    {
         $credentials = $request->validated();
 
         $highSchoolStudent->contacts()->update([
-            "email" => $credentials['email']
+            'email' => $credentials['email'],
         ]);
 
         return $this->ok('Email assigned successfully.');
+    }
+
+    public function generateEmails(GenerateStudentEmailsRequest $request)
+    {
+        $credentials = $request->validated();
+
+        $universityId = $request->user()->userScopes()
+            ->where('scope_type', 'UNIVERSITY')
+            ->value('scope_id');
+
+        $students = HighSchoolStudent::query()
+            ->whereIn('id', $credentials['students'])
+            ->whereHas('acceptedDepartmentOffering.department.faculty.university', function ($q) use ($universityId) {
+                $q->where('id', $universityId);
+            })
+            ->with('contacts')
+            ->get()
+            ->keyBy('id');
+
+        foreach ($students as $student) {
+            $student->contacts?->update([
+                'email' => $this->generateEmail($student->name, $student->code),
+            ]);
+        }
+
+        return $this->ok('Emails generated successfully.', [
+            'generated' => $students->count(),
+        ]);
+    }
+
+    private function generateEmail(string $name, int $code)
+    {
+        return str_replace(' ', '', $name) . '.' . $code . '@zankolink.test';
     }
 }
