@@ -22,6 +22,7 @@ class HighSchoolStudent extends Model
         'gender',
         'is_active',
         'status',
+        'current_step',
         'password',
         'grade_average',
         'grade_10',
