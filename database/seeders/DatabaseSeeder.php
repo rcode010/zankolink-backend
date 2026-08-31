@@ -281,7 +281,7 @@ class DatabaseSeeder extends Seeder
                 'major_type' => 'scientific',
                 'gender' => 'male',
                 'is_active' => true,
-                'status' => 'submitted',
+                'status' => 'draft',
                 'password' => 'password',
                 'grade_average' => 95.500,
                 'grade_10' => $percentage,

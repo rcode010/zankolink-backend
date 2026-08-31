@@ -41,6 +41,7 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->timestamps();
             $table->index('status');
+            $table->string('current_step')->nullable();
         });
     }
 
