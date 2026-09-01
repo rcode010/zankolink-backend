@@ -26,6 +26,8 @@ class StudentsChoiceController extends Controller
         $academicYear = AcademicYear::where('is_active', 1)->firstOrFail();
 
         $service->validateChoices($user, $validated['choices'], $academicYear);
+        $user->status = 'submitted';
+        $user->save();
 
         $now = now();
         $choices = collect($validated['choices'])

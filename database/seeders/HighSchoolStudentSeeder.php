@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\StudentContactInfo;
 use App\Models\Subject;
 use Faker\Factory as FakerFactory;
 use Faker\Generator;
@@ -172,6 +171,7 @@ class HighSchoolStudentSeeder extends Seeder
 
         DB::table('high_school_students')
             ->select('id', 'major_type', 'grade_average')
+            ->whereNot('id', 1)
             ->whereNotExists($this->missingChoices())
             ->orderBy('id')
             ->chunkById($this->choiceStudentChunkSize, function ($students) use (
@@ -401,7 +401,7 @@ class HighSchoolStudentSeeder extends Seeder
                 'student_id' => $studentId,
                 'phone' => $this->faker->phoneNumber(),
                 'email' => null, // nullable, so we set it to null
-                'id_number' => 'ID' . str_pad($studentId, 8, '0', STR_PAD_LEFT),
+                'id_number' => 'ID'.str_pad($studentId, 8, '0', STR_PAD_LEFT),
                 'governorate' => $this->faker->randomElement($governorates),
                 'home_address' => $this->faker->address(),
                 'emergency_contact_name' => $this->faker->name(),

@@ -98,7 +98,6 @@ class DatabaseSeeder extends Seeder
 
     private int $facultiesPerUniversity = 3;
 
-
     private int $departmentsPerFaculty = 6;
 
     /**
@@ -159,7 +158,7 @@ class DatabaseSeeder extends Seeder
 
             $this->seedMinistryUsers();
             $this->seedUniversities();
-                        $this->seedLetters();
+            $this->seedLetters();
             //            $this->createMoodleDemoUsers();
             //            $this->createQaCourseUsers();
             $this->seedGrade12Subjects();
@@ -282,6 +281,7 @@ class DatabaseSeeder extends Seeder
                 'gender' => 'male',
                 'is_active' => true,
                 'status' => 'draft',
+                'current_step' => 'guide',
                 'password' => 'password',
                 'grade_average' => 95.500,
                 'grade_10' => $percentage,
@@ -546,9 +546,9 @@ class DatabaseSeeder extends Seeder
             'HIGH_SCHOOL_GRADUATE' => [
                 'view departments',
             ],
-            'REGISTRAR'=>[
-                'create students'
-            ]
+            'REGISTRAR' => [
+                'create students',
+            ],
         ];
 
         foreach ($roles as $roleName => $rolePermissions) {
@@ -766,6 +766,7 @@ class DatabaseSeeder extends Seeder
 
         return $names[intdiv($number, 2) % count($names)];
     }
+
     private function seedDepartmentOfferings(Department $department): void
     {
         $governorate = $this->facultyGovernorate($department->faculty_id);
@@ -774,31 +775,32 @@ class DatabaseSeeder extends Seeder
         $zankolineCapacity = $this->faker->numberBetween(40, 80);
 
         $shared = [
-            'department_id'    => $department->id,
+            'department_id' => $department->id,
             'academic_year_id' => $this->activeAcademicYear->id,
-            'governorate'      => $governorate,
-            'major_type'       => $majorType,
-            'city'             => self::OFFERING_LOCATIONS[$governorate],
-            'minimum_grade'    => null,
-            'created_at'       => now(),
-            'updated_at'       => now(),
+            'governorate' => $governorate,
+            'major_type' => $majorType,
+            'city' => self::OFFERING_LOCATIONS[$governorate],
+            'minimum_grade' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
 
         DepartmentOffering::upsert(
             [
                 $shared + [
                     'track_type' => 'zankoline',
-                    'capacity'   => $zankolineCapacity,
+                    'capacity' => $zankolineCapacity,
                 ],
                 $shared + [
                     'track_type' => 'parallel',
-                    'capacity'   => self::OFFERING_CAPACITY_TOTAL - $zankolineCapacity,
+                    'capacity' => self::OFFERING_CAPACITY_TOTAL - $zankolineCapacity,
                 ],
             ],
             ['department_id', 'academic_year_id', 'track_type'],
             ['capacity', 'governorate', 'major_type', 'city', 'updated_at'],
         );
     }
+
     /**
      * Departments of the same university are offered in the same governorate.
      */
