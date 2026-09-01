@@ -23,6 +23,7 @@ class ZankolineStudentResource extends JsonResource
             'grade_11' => $this->grade_11,
 
             'accepted_department_offering_id' => $this->accepted_department_offering_id,
+            'current_step'=>$this->current_step,
             'contacts' => StudentContactInfoResource::make(
                 $this->whenLoaded('contacts')
             ),
