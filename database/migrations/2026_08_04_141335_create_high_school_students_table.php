@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ApplicationStep;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -41,7 +42,10 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->timestamps();
             $table->index('status');
-            $table->string('current_step')->nullable();
+            $table->enum(
+                'current_step',
+                array_column(ApplicationStep::cases(), 'value')
+            )->default(ApplicationStep::GUIDE->value);
         });
     }
 
