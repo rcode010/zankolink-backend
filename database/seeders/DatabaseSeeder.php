@@ -35,6 +35,7 @@ use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
+    // test
     /**
      * An offering splits its intake between the zankoline and parallel tracks,
      * and the two capacities must add up to this.
