@@ -451,7 +451,7 @@ class HighSchoolStudentSeeder extends Seeder
         $majorType = $isScientific ? self::MAJOR_SCIENTIFIC : self::MAJOR_LITERARY;
 
         $marks = [];
-        $weightedMarks = 0;
+        $Marks = 0;
         $credits = 0;
 
         foreach ($this->subjectsByMajorType[$majorType] as $subject) {
@@ -462,10 +462,10 @@ class HighSchoolStudentSeeder extends Seeder
                 'grade' => $mark,
             ];
 
-            $weightedMarks += $mark * $subject['credit_number'];
+            $Marks += $mark;
             $credits += $subject['credit_number'];
         }
-
+        $average = round($Marks / count($marks), 3);
         $student = [
             'name' => $this->randomName($isMale),
             'code' => $code,
@@ -474,7 +474,7 @@ class HighSchoolStudentSeeder extends Seeder
             'is_active' => true,
             'status' => 'submitted',
             'password' => $hashedPassword,
-            'grade_average' => round($weightedMarks / $credits, 3),
+            'grade_average' => $average,
             'grade_10' => $percentage,
             'grade_11' => $percentage,
             'accepted_department_offering_id' => null,
@@ -544,13 +544,8 @@ class HighSchoolStudentSeeder extends Seeder
             DB::update(<<<'SQL'
                 update high_school_students
                 set grade_average = (
-                        select round(
-                            (1.0 * sum(student_subjects.grade * subjects.credit_number))
-                                / nullif(sum(subjects.credit_number), 0),
-                            3
-                        )
+                        select round(avg(student_subjects.grade), 3)
                         from student_subjects
-                        inner join subjects on subjects.id = student_subjects.subject_id
                         where student_subjects.student_id = high_school_students.id
                     ),
                     updated_at = ?
@@ -558,13 +553,11 @@ class HighSchoolStudentSeeder extends Seeder
                     and exists (
                         select 1
                         from student_subjects
-                        inner join subjects on subjects.id = student_subjects.subject_id
                         where student_subjects.student_id = high_school_students.id
                     )
                 SQL, [$now, $from, $to]);
         }
     }
-
     /**
      * Build the name pools once instead of calling faker per student.
      */
