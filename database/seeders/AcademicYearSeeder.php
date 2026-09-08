@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AcademicYear;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class AcademicYearSeeder extends Seeder
 {
@@ -12,16 +13,36 @@ class AcademicYearSeeder extends Seeder
      */
     public function run(): void
     {
-        AcademicYear::firstOrCreate(
-            ['year' => '2026-2027'],
-            [
-                'start_date' => '2026-09-01',
-                'end_date' => '2027-08-31',
-                'semester' => 'fall',
-                'is_active' => true,
-                'zankoline_submission_starts_at' => now()->subWeek()->startOfDay(),
-                'zankoline_submission_ends_at' => now()->addMonth()->endOfDay(),
-            ]
-        );
+        $years = range(2020, 2026);
+
+        foreach ($years as $year) {
+            $yearLabel = "{$year}-" . ($year + 1);
+            $isActive = ($year === 2026);
+
+            $startDate = Carbon::create($year, 9, 1);
+            $endDate = Carbon::create($year + 1, 8, 31);
+
+            AcademicYear::updateOrCreate(
+                ['year' => $yearLabel],
+                [
+                    'start_date' => $startDate,
+                    'end_date'   => $endDate,
+                    'semester'   => 'fall',
+                    'is_active'  => $isActive,
+                    'zankoline_submission_starts_at' => $isActive
+                        ? now()->subWeek()->startOfDay()
+                        : $startDate->copy()->subMonth()->startOfDay(),
+                    'zankoline_submission_ends_at'   => $isActive
+                        ? now()->addMonth()->endOfDay()
+                        : $startDate->copy()->endOfDay(),
+                ]
+            );
+        }
+    }
+
+    public function seedInactiveAcademicYears(): void {
+        for ($i = 1; $i <= 5; $i++) {
+
+        }
     }
 }
