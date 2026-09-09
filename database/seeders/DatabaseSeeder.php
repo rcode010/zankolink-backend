@@ -727,13 +727,17 @@ class DatabaseSeeder extends Seeder
 
     private function seedDepartments(Faculty $faculty, int $u, int $f): void
     {
+        $academicYears = AcademicYear::orderBy('id')->get();
         Department::factory()
             ->count($this->departmentsPerFaculty)
             ->for($faculty)
             ->sequence(fn (): array => ['name' => $this->nextDepartmentName()])
             ->create()
-            ->each(function (Department $department, int $index) use ($u, $f) {
-                $this->seedDepartmentOfferings($department);
+            ->each(function (Department $department, int $index) use ($u, $f, $academicYears) {
+                foreach ($academicYears as $academicYear) {
+                    $isActive = $academicYear->is_active;
+                    $this->seedDepartmentOfferings($department, $academicYear->id, $isActive);
+                }
 
                 $d = $index + 1;
 
@@ -767,20 +771,35 @@ class DatabaseSeeder extends Seeder
         return $names[intdiv($number, 2) % count($names)];
     }
 
-    private function seedDepartmentOfferings(Department $department): void
+    private function generateHistoricalMinimumGrade(string $departmentName, string $majorType, int $academicYearId): float
+    {
+        $seed = crc32($departmentName . $majorType);
+        mt_srand($seed + $academicYearId);
+
+        $baseMin = $majorType === 'scientific' ? 70 : 60;
+        $baseMax = $majorType === 'scientific' ? 95 : 85;
+
+        $grade = mt_rand($baseMin * 100, $baseMax * 100) / 100;
+        mt_srand();
+
+        return round($grade, 3);
+    }
+
+    private function seedDepartmentOfferings(Department $department, int $academicYearId, bool $isActive = false): void
     {
         $governorate = $this->facultyGovernorate($department->faculty_id);
         $majorType = $this->departmentMajorType($department->name);
 
         $zankolineCapacity = $this->faker->numberBetween(40, 80);
+        $minimumGrade = $isActive ? null : $this->generateHistoricalMinimumGrade($department->name, $majorType, $academicYearId);
 
         $shared = [
             'department_id' => $department->id,
-            'academic_year_id' => $this->activeAcademicYear->id,
+            'academic_year_id' => $academicYearId,
             'governorate' => $governorate,
             'major_type' => $majorType,
             'city' => self::OFFERING_LOCATIONS[$governorate],
-            'minimum_grade' => null,
+            'minimum_grade' => $minimumGrade,
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -797,7 +816,7 @@ class DatabaseSeeder extends Seeder
                 ],
             ],
             ['department_id', 'academic_year_id', 'track_type'],
-            ['capacity', 'governorate', 'major_type', 'city', 'updated_at'],
+            ['capacity', 'governorate', 'major_type', 'city', 'minimum_grade', 'updated_at'],
         );
     }
 
