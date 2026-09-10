@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DepartmentOffering extends Model
 {
@@ -36,6 +37,11 @@ class DepartmentOffering extends Model
         )
             ->withPivot('priority', 'status')
             ->withTimestamps();
+    }
+
+    public function academicYear(): BelongsTo
+    {
+        return $this->belongsTo(AcademicYear::class);
     }
 
     public function scopeLiteraryOnly(Builder $query): Builder
