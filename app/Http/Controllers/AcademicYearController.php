@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GetAcademicYearByIdRequest;
 use App\Http\Requests\StoreAcademicYearRequest;
 use App\Http\Requests\UpdateZankolineDeadlineRequest;
 use App\Models\AcademicYear;
@@ -86,5 +87,16 @@ class AcademicYearController extends Controller
         ]);
 
         return $this->ok('Academic year zankoline submission deadline updated successfully.', $academicYear->toArray());
+    }
+
+    public function show(GetAcademicYearByIdRequest $request)
+    {
+        $credentials = $request->validated();
+
+        $academicYear = AcademicYear::findOrFail(
+            $credentials['academic_year_id']
+        );
+
+        return $this->ok('Academic Year retrieved successfully.', $academicYear->toArray());
     }
 }
