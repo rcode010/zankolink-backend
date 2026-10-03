@@ -30,6 +30,8 @@ class CourseResource extends JsonResource
             'students_count' => $this->whenCounted('students'),
             'sections_count' => $this->whenCounted('sections'),
 
+            'academic_year' => $this->whenLoaded('academicYear', fn () => $this->academicYear?->year),
+
             'department' => $this->whenLoaded('department', function () {
                 return new DepartmentResource($this->department);
             }),
