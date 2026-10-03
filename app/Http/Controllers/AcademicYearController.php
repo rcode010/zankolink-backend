@@ -88,15 +88,4 @@ class AcademicYearController extends Controller
 
         return $this->ok('Academic year zankoline submission deadline updated successfully.', $academicYear->toArray());
     }
-
-    public function show(GetAcademicYearByIdRequest $request)
-    {
-        $credentials = $request->validated();
-
-        $academicYear = AcademicYear::findOrFail(
-            $credentials['academic_year_id']
-        );
-
-        return $this->ok('Academic Year retrieved successfully.', $academicYear->toArray());
-    }
 }
