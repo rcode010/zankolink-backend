@@ -16,7 +16,9 @@ class AcademicRequestResource extends JsonResource
             'subject' => $this->subject,
             'description' => $this->description,
             'status' => $this->status,
-            'academic_year_id'=>$this->academic_year_id,
+            'academic_year' => [
+                'id' => $this->academic_year_id,
+                'year' => $this->whenLoaded('academicYear', fn () => $this->academicYear->year)],
             'user' => [
                 'id' => $this->user_id,
                 'name' => $this->whenLoaded('user', fn () => $this->user->name),

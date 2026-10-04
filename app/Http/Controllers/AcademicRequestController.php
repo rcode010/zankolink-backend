@@ -262,7 +262,7 @@ class AcademicRequestController extends Controller
     }
     public function getAllAcademicRequests(){
         $academicRequests = QueryBuilder::for(AcademicRequest::class)
-            ->with(['attachments', 'user', 'department'])
+            ->with(['attachments', 'user', 'department', 'academicYear'])
             ->allowedFilters(
                 AllowedFilter::exact('department_id'),
                 AllowedFilter::exact('academic_year_id'),
