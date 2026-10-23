@@ -84,4 +84,5 @@ Route::middleware(['auth:sanctum', 'throttle:api', 'active'])->group(function ()
         require __DIR__.'/api/zankoline/cutoffs.php';
     });
     require __DIR__.'/api/zankoline/department-offering.php';
+    require __DIR__.'/api/zankoline/rejected-highschool-students.php';
 });
